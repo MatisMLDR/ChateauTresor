@@ -23,7 +23,7 @@ export default function LoginForm() {
                 />
             </div>
             <div className="grid gap-2 mt-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Mot De Passe</Label>
                 <Input
                     id="password"
                     type="password"
@@ -31,7 +31,7 @@ export default function LoginForm() {
                     required
                 />
             </div>
-            <Button className="w-full mt-4" type="submit">Sign In</Button>
+            <Button className="w-full mt-4" type="submit">Se connecter</Button>
             {formState?.message && (
                 <p className="text-sm text-red-500 text-center py-2">{formState.message}</p>
             )}
