@@ -5,3 +5,10 @@ interface StripeProduct {
   features: string[];
   price: Stripe.Price;
 }
+
+interface InputWithLabelProps {
+  label: string;
+  inputType: string;
+  inputPlaceholder?: string;
+  inputId;
+}
