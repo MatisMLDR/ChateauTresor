@@ -3,7 +3,6 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation"
 import { revalidatePath } from 'next/cache'
 import { createStripeCustomer } from '@/utils/stripe/api'
-import { eq } from 'drizzle-orm'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
 
@@ -47,7 +46,12 @@ export async function signup(currentState: { message: string }, formData: FormDa
     const data = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
-        name: formData.get('name') as string,
+        nom: formData.get('nom') as string,
+        prenom: formData.get('prenom') as string,
+        fullname: `${formData.get('nom')} ${formData.get('prenom')}` as string,
+        adresse: formData.get('adresse') as string,
+        ville: formData.get('ville') as string,
+        codePostal: formData.get('code_postal') as string,
     }
 
     try {
@@ -71,7 +75,10 @@ export async function signup(currentState: { message: string }, formData: FormDa
                 emailRedirectTo: `${PUBLIC_URL}/auth/callback`,
                 data: {
                     email_confirm: process.env.NODE_ENV !== 'production',
-                    full_name: data.name
+                    full_name: data.fullname,
+                    adresse: data.adresse,
+                    ville: data.ville,
+                    code_postal: data.codePostal
                 }
             }
         })
@@ -94,7 +101,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
         try {
             supabase.from('users').insert({
                 id: signUpData.user.id,
-                name: data.name,
+                name: data.fullname,
                 email: signUpData.user.email!,
                 stripe_id: stripeID,
                 plan: 'none'

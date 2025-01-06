@@ -17,6 +17,9 @@ export default function SignupForm() {
     const [password, setPassword] = useState("")
     const [verifPassword, setVerifPassword] = useState("")
     const [passwordMatch, setPasswordMatch] = useState(true)
+    const [postalCode, setPostalCode] = useState("")
+    const [isValidPostal, setIsValidPostal] = useState(true)
+    const [showPostalError, setShowPostalError] = useState(false)
 
     const validatePasswords = (pass: string, verify: string) => {
         const isMatch = pass === verify
@@ -37,6 +40,21 @@ export default function SignupForm() {
     const handleNextStep = (e: React.FormEvent) => {
         e.preventDefault()
         setStep(2)
+    }
+
+    const validatePostalCode = (value: string) => {
+        return /^\d{5}$/.test(value)
+    }
+
+    const handlePostalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        setPostalCode(value)
+        setIsValidPostal(validatePostalCode(value))
+        setShowPostalError(true)
+    }
+
+    const handlePostalBlur = () => {
+        setShowPostalError(false)
     }
 
     return (
@@ -107,7 +125,7 @@ export default function SignupForm() {
                     <form action={formAction}>
                         <div className="flex gap-4">
                             <div className="grid gap-2 mt-2 flex-1">
-                                <Label htmlFor="nom">Nom</Label>
+                                <Label htmlFor="nom">Nom*</Label>
                                 <Input
                                     id="nom"
                                     type="text"
@@ -116,7 +134,7 @@ export default function SignupForm() {
                                 />
                             </div>
                             <div className="grid gap-2 mt-2 flex-1">
-                                <Label htmlFor="prenom">Prénom</Label>
+                                <Label htmlFor="prenom">Prénom*</Label>
                                 <Input
                                     id="prenom"
                                     type="text"
@@ -131,7 +149,6 @@ export default function SignupForm() {
                                 id="adresse"
                                 type="text"
                                 name="adresse"
-                                required
                             />
                         </div>
                         <div className="flex gap-4">
@@ -141,17 +158,23 @@ export default function SignupForm() {
                                     id="ville"
                                     type="text"
                                     name="ville"
-                                    required
                                 />
                             </div>
-                            <div className="grid gap-2 mt-2">
-                                <Label htmlFor="code_postal">Code postal </Label>
+                            <div className="grid gap-2 mt-2" style={{ minHeight: '80px' }}>
+                                <Label htmlFor="code_postal">Code postal</Label>
                                 <Input
                                     id="code_postal"
                                     type="text"
                                     name="code_postal"
-                                    required
+                                    maxLength={5}
+                                    value={postalCode}
+                                    onChange={handlePostalChange}
+                                    onBlur={handlePostalBlur}
+                                    className={!isValidPostal ? "border-red-500 focus:border-red-500" : ""}
                                 />
+                                {!isValidPostal && showPostalError && (
+                                    <p className="text-sm text-red-500">Incorrect</p>
+                                )}
                             </div>
                         </div>
 
