@@ -12,3 +12,9 @@ interface InputWithLabelProps {
   inputPlaceholder?: string;
   inputId;
 }
+
+interface SliderWithBoundsProps {
+  min: number;
+  max: number;
+  step: number;
+}

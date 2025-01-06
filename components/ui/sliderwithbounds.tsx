@@ -1,0 +1,14 @@
+import { Slider } from './slider';
+
+export function SliderWithBounds({ max, min, step }: SliderWithBoundsProps) {
+
+    return (
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Slider max={max} min={min} step={step} />
+            <div className="flex justify-between">
+                <span>{min}</span>
+                <span>{max}</span>
+            </div>
+        </div>
+    );
+}
