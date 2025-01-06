@@ -16,8 +16,8 @@ export default function Login() {
                         </Link>
                     </div>
 
-                    <CardTitle className="text-2xl font-bold">Login</CardTitle>
-                    <CardDescription>Choose your preferred login method</CardDescription>
+                    <CardTitle className="text-2xl font-bold">Connexion</CardTitle>
+                    <CardDescription>Choisir votre méthode de connexion préférée</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                     <LoginForm />
@@ -26,17 +26,17 @@ export default function Login() {
                             <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                            <span className="bg-background px-2 text-muted-foreground">Ou continuer avec</span>
                         </div>
                     </div>
                     <ProviderSigninBlock />
                 </CardContent>
                 <CardFooter className="flex-col text-center">
                     <Link className="w-full text-sm text-muted-foreground " href="/forgot-password">
-                        Forgot password?
+                        Mot de passe oublié?
                     </Link>
                     <Link className="w-full text-sm text-muted-foreground" href="/signup">
-                        Don&apos;t have an account? Signup
+                        Vous n&apos;avez pas de compte? Créer un compte
                     </Link>
                 </CardFooter>
             </Card>

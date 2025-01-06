@@ -29,22 +29,22 @@ export default async function DashboardHeader() {
                     </Suspense>
                     <nav className="flex items-center space-x-6 text-sm font-medium">
                         <Link className="transition-colors hover:text-foreground/80 text-foreground" href="#">
-                            Home
+                            Accueil
                         </Link>
                         <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
-                            Projects
+                            Projets
                         </Link>
                         <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
-                            Tasks
+                            Tâches
                         </Link>
                         <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
-                            Reports
+                            Rapports
                         </Link>
                     </nav>
                 </div>
                 <Button variant="outline" size="icon" className="mr-2 md:hidden">
                     <Menu className="h-5 w-5" />
-                    <span className="sr-only">Toggle Menu</span>
+                    <span className="sr-only">Menu Bascule</span>
                 </Button>
                 <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
                     <div className="w-full flex-1 md:w-auto md:flex-none">

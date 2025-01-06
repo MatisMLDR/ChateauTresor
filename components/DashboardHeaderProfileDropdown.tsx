@@ -28,34 +28,34 @@ export default async function DashboardHeaderProfileDropdown() {
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
                         <User className="h-4 w-4" />
-                        <span className="sr-only">Open user menu</span>
+                        <span className="sr-only">Ouvrir Menu Utilisateur</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuLabel>Mon Profil</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <Link href="#">
                         <DropdownMenuItem>
                             <User className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
+                            <span>Profil</span>
                         </DropdownMenuItem>
                     </Link>
                     <Link href="#">
                         <DropdownMenuItem>
                             <Settings className="mr-2 h-4 w-4" />
-                            <span>Settings</span>
+                            <span>Paramètres</span>
                         </DropdownMenuItem>
                     </Link>
                     <Link href="#">
                         <DropdownMenuItem>
                             <ReceiptText className="mr-2 h-4 w-4" />
-                            <Link href={billingPortalURL}>Billing</Link>
+                            <Link href={billingPortalURL}>Facturation</Link>
                         </DropdownMenuItem>
                     </Link>
                     <Link href="#">
                         <DropdownMenuItem>
                             <HelpCircle className="mr-2 h-4 w-4" />
-                            <span>Help</span>
+                            <span>Aide</span>
                         </DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
@@ -63,7 +63,7 @@ export default async function DashboardHeaderProfileDropdown() {
                         <form action={logout} className="w-full">
                             <button type="submit" className="w-full flex" >
                                 <LogOut className="mr-2 h-4 w-4" />
-                                <span > Log out</span>
+                                <span >Se Déconnecter</span>
                             </button>
                         </form>
                     </DropdownMenuItem>
