@@ -11,13 +11,23 @@ interface InputWithLabelProps {
   inputType: string;
   inputPlaceholder?: string;
   inputId;
+  className?: string;
 }
 
 interface SliderWithBoundsProps {
   min: number;
   max: number;
   step: number;
+  className?: string;
 }
+
+interface TitleTwoProps {
+  text: string;
+  color: 'light' | 'dark';
+  className?: string;
+}
+
+
 
 
 //// Création de chasse au trésor ////

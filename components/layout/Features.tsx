@@ -1,13 +1,12 @@
 import { ClipboardList, Clock, BarChart2 } from 'lucide-react'
 import React from 'react'
+import { TitleTwo } from "@/components/ui/TitleTwo";
 
 const Features = () => {
   return (
     <section className="w-full py-10 md:py-20 lg:py-32 bg-[#f7f7f7]" id="features">
       <div className="container px-4 md:px-6">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4 text-[#2b4e73]">
-          Pourquoi choisir Château Trésor ?
-        </h2>
+        <TitleTwo text={"Pourquoi choisir Château Trésor ?"} color="dark" />
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
           <div className="flex flex-col items-center space-y-2 border-[#d1d1d1] p-4 rounded-lg">
             <div className="p-2 bg-[#e7f0f8] rounded-full">
