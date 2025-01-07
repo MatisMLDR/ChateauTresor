@@ -1,20 +1,16 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
+// GET : Toutes les chasses ou les chasses d'un château spécifique
 export async function GET(request: Request) {
+  const supabase = createClient();
+  const url = new URL(request.url);
+  const chateauId = url.searchParams.get('chateauId'); // Filtre par id_chateau si fourni
+
   try {
-    const supabase = createClient();
-    const url = new URL(request.url);
-    const id_chateau = url.searchParams.get('id_chateau');
-
-    let query = supabase
-      .from('chasse')
-      .select(
-        'id_chasse, titre, description, image, difficulte, prix, date_debut, date_fin'
-      );
-
-    if (id_chateau) {
-      query = query.eq('id_chateau', id_chateau);
+    const query = supabase.from('chasse').select('*');
+    if (chateauId) {
+      query.eq('id_chateau', chateauId); // Ajoute un filtre si un château spécifique est demandé
     }
 
     const { data, error } = await query;
@@ -29,7 +25,7 @@ export async function GET(request: Request) {
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: 'Une erreur est survenue', details: String(err) },
+      { error: 'Une erreur est survenue lors du traitement de la requête', details: String(err) },
       { status: 500 }
     );
   }
