@@ -10,7 +10,7 @@ CREATE TABLE public.profiles (
     adresse text default 'Non spécifiée',
     ville text default 'Non spécifiée',
     code_postal text default 'Non spécifié',
-    stripe_id VARCHAR UNIQUE,
+    stripe_id text,
     plan text NOT NULL DEFAULT 'none'
 );
 
