@@ -32,7 +32,7 @@ export default function LoginForm() {
                 />
             </div>
             <Button className="w-full mt-4" type="submit">Se connecter</Button>
-            {formState?.message && (
+            {formState.message && (
                 <p className="text-sm text-red-500 text-center py-2">{formState.message}</p>
             )}
         </form>

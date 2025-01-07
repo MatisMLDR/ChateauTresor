@@ -4,7 +4,8 @@ import Image from 'next/image'
 import SignupForm from "@/components/SignupForm"
 import ProviderSigninBlock from "@/components/ProviderSigninBlock"
 
-export default function Signup() {
+export default async function Signup() {
+    
     return (
         <div className="flex items-center justify-center bg-muted min-h-screen">
 
@@ -16,8 +17,8 @@ export default function Signup() {
                         </Link>
                     </div>
 
-                    <CardTitle className="text-2x\l font-bold">Signup</CardTitle>
-                    <CardDescription>Create your account now!</CardDescription>
+                    <CardTitle className="text-2x\l font-bold">S'inscrire</CardTitle>
+                    <CardDescription>Créer mon compte</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                     <SignupForm />
@@ -26,14 +27,14 @@ export default function Signup() {
                             <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                            <span className="bg-background px-2 text-muted-foreground">Ou continuer avec</span>
                         </div>
                     </div>
                     <ProviderSigninBlock />
                 </CardContent>
                 <CardFooter className="flex-col text-center">
                     <Link className="w-full text-sm text-muted-foreground" href="/login">
-                        Have an account? Login
+                        Déjà un compte ? Se connecter
                     </Link>
                 </CardFooter>
             </Card>

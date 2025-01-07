@@ -10,14 +10,32 @@ export async function POST(request: Request) {
         // On subscribe, write to db
         console.log(response.data.object.customer)
 
-        // await db.update(usersTable).set({ plan: response.data.object.id }).where(eq(usersTable.stripe_id, response.data.object.customer));
-        const { error } = await supabase
-            .from('users')
-            .update({ plan: response.data.object.id })
-            .eq('stripe_id', response.data.object.customer);
+        const { error: planError } = await supabase.auth.updateUser({
+            data: {
+                plan: response.data.object.id,
+            },
+        })
 
-        if (error) {
-            throw new Error(`Supabase error: ${error.message}`);
+        if (planError) {
+            throw new Error(`Supabase error: ${planError.message}`);
+        }
+
+        // Update the user's plan in the database
+
+
+        const { error: updateError } = await supabase.auth.updateUser({
+            data: {
+                plan: response.data.object.id,
+            },
+        })
+
+        // const { error } = await supabase
+        //     .from('users')
+        //     .update({ plan: response.data.object.id })
+        //     .eq('stripe_id', response.data.object.customer);
+
+        if (updateError) {
+            throw new Error(`Supabase error: ${updateError.message}`);
         }
         // Process the webhook payload
     } catch (error: any) {

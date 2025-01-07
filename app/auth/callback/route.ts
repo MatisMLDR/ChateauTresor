@@ -15,36 +15,24 @@ export async function GET(request: Request) {
         if (!error) {
             const {
                 data: { user },
+                error: getUserError,
             } = await supabase.auth.getUser()
 
-            // check to see if user already exists in db
-            const {
-                data: checkUserInDB,
-                error: checkUserInDBError
-            } = await supabase.from('users').select().eq('email', user!.email!)
-
-            if (checkUserInDBError) {
-                return NextResponse.redirect(`${origin}/auth?error=${checkUserInDBError.message}`)
+            if (getUserError) {
+                console.log("Error getting user: ", getUserError)
+                return NextResponse.redirect(`${origin}/auth?error=Erreur lors de la récupération de l'utilisateur`)
             }
-
-            // const checkUserInDB = await db.select().from(usersTable).where(eq(usersTable.email, user!.email!))
-            const isUserInDB = checkUserInDB.length > 0 ? true : false
-            if (!isUserInDB) {
-                // create Stripe customers
-                const stripeID = await createStripeCustomer(user!.id, user!.email!, user!.user_metadata.full_name)
-                // Create record in DB
-                const { error: insertError } = await supabase.from('users').insert({
-                    id: user!.id,
-                    name: user!.user_metadata.full_name,
-                    email: user!.email!,
-                    stripe_id: stripeID,
-                    plan: 'none'
-                })
-
-                if (insertError) {
-                    return NextResponse.redirect(`${origin}/auth?error=${insertError.message}`)
-                }
-                // await db.insert(usersTable).values({ name: user!.user_metadata.full_name, email: user!.email!, stripe_id: stripeID, plan: 'none' })
+            // create Stripe customers
+            const stripeID = await createStripeCustomer(user!.id, user!.email!, user!.user_metadata.full_name)
+            // Mettre à jour l'utilisateur avec le stripeID
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ stripe_id: stripeID })
+                .match({ email: user!.email });
+            
+            if (updateError) {
+                console.log("Error updating user to add his stripeID: ", updateError)
+                return NextResponse.redirect(`${origin}/auth?error=Erreur lors de la mise à jour de l'utilisateur`)
             }
 
             const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
@@ -61,5 +49,5 @@ export async function GET(request: Request) {
     }
 
     // return the user to an error page with instructions
-    return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+    return NextResponse.redirect(`${origin}/auth?error=Erreur lors de la connexion`)
 }

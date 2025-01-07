@@ -6,16 +6,19 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function getStripePlan(email: string) {
     const supabase = createClient()
-    const {
-        data: user
-    } = await supabase.from('users').select().eq('email', email)
+    // const {
+    //     data: user
+    // } = await supabase.from('users').select().eq('email', email)
 
-    if (!user || user.length === 0) {
+
+    const user = await (await supabase.auth.getUser()).data.user;
+
+    if (!user) {
         throw new Error("User not found")
     }
 
     const subscription = await stripe.subscriptions.retrieve(
-        user[0].stripe_subscription_id as string
+        user.user_metadata.stripe_id as string
     );
     const productId = subscription.items.data[0].plan.product as string
     const product = await stripe.products.retrieve(productId)
@@ -36,16 +39,15 @@ export async function createStripeCustomer(id: string, email: string, name?: str
 
 export async function createStripeCheckoutSession(email: string) {
     const supabase = createClient()
-    const {
-        data: user
-    } = await supabase.from('users').select().eq('email', email)
+    
+    const user = await (await supabase.auth.getUser()).data.user
 
-    if (!user || user.length === 0) {
+    if (!user) {
         throw new Error("User not found")
     }
 
     const customerSession = await stripe.customerSessions.create({
-        customer: user[0].stripe_id,
+        customer: user.user_metadata.stripe_id as string,
         components: {
             pricing_table: {
                 enabled: true,
@@ -57,16 +59,15 @@ export async function createStripeCheckoutSession(email: string) {
 
 export async function generateStripeBillingPortalLink(email: string) {
     const supabase = createClient()
-    const {
-        data: user
-    } = await supabase.from('users').select().eq('email', email)
+    
+    const user = await (await supabase.auth.getUser()).data.user
 
-    if (!user || user.length === 0) {
+    if (!user) {
         throw new Error("User not found")
     }
 
     const portalSession = await stripe.billingPortal.sessions.create({
-        customer: user[0].stripe_id,
+        customer: user.user_metadata.stripe_id as string,
         return_url: `${PUBLIC_URL}/dashboard`,
     });
     return portalSession.url
