@@ -5,8 +5,7 @@ import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import PopUpChateau from '@/components/participants/PopUpChateau';
 import { Chateau } from '@/types';
-import {NavigationVerticale} from "@/components/ui/navigationverticale";
-
+import { NavigationVerticale } from '@/components/ui/navigationverticale';
 
 // Import dynamique des composants React-Leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
@@ -25,23 +24,29 @@ export default function ParticipantsPage() {
       setLeaflet(leaflet);
     };
 
-    fetchLeaflet();
-
     const fetchChateaux = async () => {
-      const response = await fetch('/api/chateaux');
-      const chateauxData: Chateau[] = await response.json();
+      try {
+        const response = await fetch('/api/chateaux');
+        const chateauxData: Chateau[] = await response.json();
 
-      const chateauxWithChasses = await Promise.all(
-        chateauxData.map(async (chateau) => {
-          const response = await fetch(`/api/chasses?id_chateau=${chateau.id_chateau}`);
-          const chasses = (await response.json()) || [];
-          return { ...chateau, chasses };
-        })
-      );
+        console.log('Châteaux récupérés :', chateauxData); // Debug
 
-      setChateaux(chateauxWithChasses);
+        const chateauxWithChasses = await Promise.all(
+          chateauxData.map(async (chateau) => {
+            const response = await fetch(`/api/chasses/byChateau?id_chateau=${chateau.id_chateau}`);
+            const chasses = await response.json();
+            console.log(`Chasses pour le château ${chateau.nom}:`, chasses); // Debug
+            return { ...chateau, chasses };
+          })
+        );
+
+        setChateaux(chateauxWithChasses);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des châteaux :', error);
+      }
     };
 
+    fetchLeaflet();
     fetchChateaux();
   }, []);
 
@@ -89,6 +94,8 @@ export default function ParticipantsPage() {
               const position = chateau.localisation
                 .split(',')
                 .map((coord) => parseFloat(coord.trim())) as [number, number];
+
+              console.log(`Position pour le château ${chateau.nom}:`, position); // Debug
 
               return (
                 <Marker key={chateau.id_chateau} position={position} icon={customIcon}>
