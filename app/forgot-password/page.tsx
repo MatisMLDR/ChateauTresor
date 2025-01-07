@@ -9,7 +9,7 @@ export default function ForgotPassword() {
             <Card className="w-[350px] mx-auto">
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center py-4">
-                        <Image src="/logo.png" alt="logo" width={50} height={50} />
+                        <Image src="/logo.svg" alt="logo" width={50} height={50} />
                     </div>
 
                     <CardTitle className="text-2xl font-bold">Forgot Your Password?</CardTitle>

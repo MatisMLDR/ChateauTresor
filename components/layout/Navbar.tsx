@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center  bg-white border-b fixed border-b-slate-200 w-full" id='navbar'>
       <Link className="flex items-center justify-center" href="#">
-        <Image src="/logo.png" alt="logo" width={50} height={50} />
+        <Image src="/logo.svg" alt="logo" width={50} height={50} />
         <span className="sr-only">Acme Inc</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6">

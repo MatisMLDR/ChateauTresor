@@ -31,7 +31,7 @@ export default function LoginForm() {
                     required
                 />
             </div>
-            <Button className="w-full mt-4" type="submit">Se connecter</Button>
+            <Button className="w-full text-secondary mt-4" type="submit">Se connecter</Button>
             {formState.message && (
                 <p className="text-sm text-red-500 text-center py-2">{formState.message}</p>
             )}

@@ -22,7 +22,7 @@ export default function ForgotPasswordForm() {
                     required
                 />
             </div>
-            <Button className="w-full mt-4" type="submit">Réinitialiser Mot De Passe</Button>
+            <Button className="w-full text-secondary mt-4" type="submit">Réinitialiser Mot De Passe</Button>
             {formState?.message && (
                 <p className="text-sm text-red-500 text-center py-2">{formState.message}</p>
             )}
