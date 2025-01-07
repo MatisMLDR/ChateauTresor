@@ -1,4 +1,6 @@
 import React from 'react'
+import { Card, CardContent } from '../ui/card'
+import { Star } from 'lucide-react'
 import { TitleTwo } from "@/components/ui/TitleTwo";
 
 const Testimonials = () => {
