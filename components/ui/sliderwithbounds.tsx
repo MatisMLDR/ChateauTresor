@@ -1,4 +1,5 @@
 import { Slider } from './slider';
+import {SliderWithBoundsProps} from "@/types";
 
 export function SliderWithBounds({ max, min, step, className }: SliderWithBoundsProps) {
 
