@@ -52,10 +52,12 @@ export type Castle = {
 
 export type ClueType = 'image' | 'sound' | 'text';
 
+// Indice
 export type Clue = {
   id: string;
   type: ClueType;
   content: string;
+  degre_difficulte: number;
 };
 
 export type Riddle = {
