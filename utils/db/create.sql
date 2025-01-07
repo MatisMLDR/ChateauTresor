@@ -4,43 +4,70 @@ CREATE TABLE public.profiles (
     username text unique default 'anonyme',
     updated_at timestamp with time zone,
     email text UNIQUE NOT NULL,
-    birthdate date,
+    birthday date,
     email_confirm boolean DEFAULT false,
-    full_name text,
-    adresse text,
-    ville text,
-    code_postal text,
+    full_name text default 'Jean Neymar',
+    adresse text default 'Non spécifiée',
+    ville text default 'Non spécifiée',
+    code_postal text default 'Non spécifié',
     stripe_id uuid UNIQUE,
     plan text NOT NULL DEFAULT 'none'
 );
 
-alter table profiles
-  enable row level security;
+alter table
+    profiles enable row level security;
 
-create policy "Public profiles are viewable by everyone." on profiles
-  for select using (true);
+create policy "Public profiles are viewable by everyone." on profiles for
+select
+    using (true);
 
-create policy "Users can insert their own profile." on profiles
-  for insert with check ((select auth.uid()) = id_user);
+create policy "Users can insert their own profile." on profiles for
+insert
+    with check (
+        (
+            select
+                auth.uid()
+        ) = id_user
+    );
 
-create policy "Users can update own profile." on profiles
-  for update using ((select auth.uid()) = id_user);
+create policy "Users can update own profile." on profiles for
+update
+    using (
+        (
+            select
+                auth.uid()
+        ) = id_user
+    );
 
--- This trigger automatically creates a profile entry when a new user signs up via Supabase Auth.
+email_confirm: process.env.NODE_ENV != = 'production',
+full_name: data.fullname,
+adresse: data.adresse,
+ville: data.ville,
+code_postal: data.codePostal,
+stripe_id: null,
+plan: 'none' -- This trigger automatically creates a profile entry when a new user signs up via Supabase Auth.
 -- See https://supabase.com/docs/guides/auth/managing-user-data#using-triggers for more details.
-create function public.handle_new_user()
-returns trigger
-set search_path = ''
-as $$
-begin
-  insert into public.profiles (id_user, email, full_name)
-  values (new.id_user, new.email, new.raw_user_meta_data->>'full_name');
-  return new;
+create function public.handle_new_user() returns trigger
+set
+    search_path = '' as $ $ begin
+insert into
+    public.profiles (id_user, email)
+values
+    (
+        new.id_user,
+        new.email,
+    );
+
+return new;
+
 end;
-$$ language plpgsql security definer;
+
+$ $ language plpgsql security definer;
+
 create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
+after
+insert
+    on auth.users for each row execute procedure public.handle_new_user();
 
 -- Table Proprietaire_Chateau
 CREATE TABLE public.Proprietaire_Chateau (
