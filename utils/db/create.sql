@@ -1,7 +1,7 @@
 -- Table users in schema public
 CREATE TABLE public.profiles (
     id uuid references auth.users on delete cascade not null primary key,
-    username text unique default 'anonyme',
+    username text default 'anonyme',
     updated_at timestamp with time zone,
     email text UNIQUE NOT NULL,
     birthday date,
