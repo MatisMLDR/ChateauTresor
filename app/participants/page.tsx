@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import PopUpChateau from '@/components/participants/PopUpChateau';
+import { Chateau } from '@/types';
 
 
 // Import dynamique des composants React-Leaflet

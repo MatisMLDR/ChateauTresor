@@ -1,3 +1,4 @@
+import { Chateau } from '@/types';
 import React from 'react';
 
 interface PopUpChateauProps {

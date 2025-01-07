@@ -3,23 +3,21 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const idChateau = searchParams.get('id_chateau'); // Récupération du paramètre id_chateau
+    const supabase = createClient();
+    const url = new URL(request.url);
+    const id_chateau = url.searchParams.get('id_chateau');
 
-    if (!idChateau) {
-      return NextResponse.json(
-        { error: 'id_chateau est requis pour récupérer les chasses' },
-        { status: 400 }
+    let query = supabase
+      .from('chasse')
+      .select(
+        'id_chasse, titre, description, image, difficulte, prix, date_debut, date_fin'
       );
+
+    if (id_chateau) {
+      query = query.eq('id_chateau', id_chateau);
     }
 
-    const supabase = createClient();
-
-    // Récupération des chasses liées au château
-    const { data, error } = await supabase
-      .from('chasse')
-      .select('id_chasse, titre, description, date_debut, date_fin, difficulte, prix, theme, statut, image')
-      .eq('id_chateau', idChateau);
+    const { data, error } = await query;
 
     if (error) {
       return NextResponse.json(
@@ -31,7 +29,7 @@ export async function GET(request: Request) {
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: 'Une erreur est survenue lors du traitement de la requête', details: String(err) },
+      { error: 'Une erreur est survenue', details: String(err) },
       { status: 500 }
     );
   }
