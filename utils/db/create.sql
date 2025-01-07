@@ -33,8 +33,8 @@ returns trigger
 set search_path = ''
 as $$
 begin
-  insert into public.profiles (id_user, full_name)
-  values (new.id_user, new.raw_user_meta_data->>'full_name');
+  insert into public.profiles (id_user, email, full_name)
+  values (new.id_user, new.email, new.raw_user_meta_data->>'full_name');
   return new;
 end;
 $$ language plpgsql security definer;
