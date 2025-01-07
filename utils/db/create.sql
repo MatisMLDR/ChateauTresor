@@ -1,6 +1,6 @@
 -- Table users in schema public
 CREATE TABLE public.profiles (
-    id_user uuid references auth.users on delete cascade not null primary key,
+    id uuid references auth.users on delete cascade not null primary key,
     username text unique default 'anonyme',
     updated_at timestamp with time zone,
     email text UNIQUE NOT NULL,
@@ -21,10 +21,10 @@ create policy "Public profiles are viewable by everyone." on profiles
   for select using (true);
 
 create policy "Users can insert their own profile." on profiles
-  for insert with check ((select auth.uid()) = id_user);
+  for insert with check ((select auth.uid()) = id);
 
 create policy "Users can update own profile." on profiles
-  for update using ((select auth.uid()) = id_user);
+  for update using ((select auth.uid()) = id);
 
 
 -- This trigger automatically creates a profile entry when a new user signs up via Supabase Auth.
@@ -34,11 +34,12 @@ returns trigger
 set search_path = ''
 as $$
 begin
-  insert into public.profiles (id_user, email)
-  values (new.id_user, new.email);
+  insert into public.profiles (id, email)
+  values (new.id, new.email);
   return new;
 end;
 $$ language plpgsql security definer;
+
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
