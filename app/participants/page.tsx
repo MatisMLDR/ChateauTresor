@@ -64,6 +64,7 @@ export default function ParticipantsPage() {
 
   return (
     <div className="flex">
+      <NavigationVerticale />
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Barre de recherche */}
