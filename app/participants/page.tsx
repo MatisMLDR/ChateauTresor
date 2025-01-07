@@ -84,7 +84,7 @@ export default function ParticipantsPage() {
         </div>
 
         {/* Carte */}
-        <div style={{ height: 'calc(100vh - 64px)', width: '100%' }}>
+        <div style={{ height: 'calc(100vh - 74px)', width: '100%' }}>
           <MapContainer center={franceCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

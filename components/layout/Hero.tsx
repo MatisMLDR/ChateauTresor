@@ -10,7 +10,7 @@ const Hero = () => {
         <div className="flex flex-col space-y-4 md:w-1/2 w-full">
           <div className="space-y-2">
             <h1 className="text-3xl font-extrabold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl text-[#2b4e73]">
-              Plus d'aventure, moins de tracas avec <span className="text-[#6c757d]">Château Trésor</span>
+              Plus d&apos;aventure, moins de tracas avec <span className="text-[#6c757d]">Château Trésor</span>
             </h1>
             <p className="text-muted-foreground md:text-xl text-[#6c757d]">
               Gagnez du temps, attirez plus de visiteurs : on gère les détails, vous récoltez le succès.
@@ -19,7 +19,7 @@ const Hero = () => {
           <div className="space-x-4">
   <Button>
     <Link
-      className="text-sm font-medium hover:underline underline-offset-4"
+      className="text-secondary text-sm font-medium hover:underline underline-offset-4"
       href="/login"
     >
       Commencer Maintenant
