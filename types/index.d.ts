@@ -72,3 +72,23 @@ export type TreasureHunt = {
   imageUrl: string;
   createdBy: string;
 };
+
+type Chasse = {
+  id_chasse: number;
+  titre: string;
+  description: string;
+  image: string;
+  difficulte: number;
+  prix: number;
+  date_debut: string;
+  date_fin: string;
+};
+
+type Chateau = {
+  id_chateau: number;
+  nom: string;
+  description: string;
+  image: string;
+  localisation: string; // Format : "latitude,longitude"
+  chasses?: Chasse[];
+};
