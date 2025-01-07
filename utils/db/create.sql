@@ -10,8 +10,8 @@ CREATE TABLE public.profiles (
     adresse text default 'Non spécifiée',
     ville text default 'Non spécifiée',
     code_postal text default 'Non spécifié',
-    stripe_id uuid UNIQUE,
-    plan text NOT NULL DEFAULT 'none'
+    stripe_id uuid,
+    plan text
 );
 
 alter table profiles
