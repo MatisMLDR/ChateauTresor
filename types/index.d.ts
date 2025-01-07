@@ -16,18 +16,11 @@ interface InputWithLabelProps {
   inputType: string;
   inputPlaceholder?: string;
   inputId;
+  className?: string;
 }
 
 interface SliderWithBoundsProps {
   min: number;
   max: number;
   step: number;
-}
-
-interface LoginFormProps {
-  error?: string | string[];
-}
-
-interface SignupFormProps {
-  error?: string | string[];
 }
