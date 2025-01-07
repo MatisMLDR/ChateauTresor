@@ -19,7 +19,7 @@ const Hero = () => {
           <div className="space-x-4">
   <Button>
     <Link
-      className="text-sm font-medium hover:underline underline-offset-4"
+      className="text-secondary text-sm font-medium hover:underline underline-offset-4"
       href="/login"
     >
       Commencer Maintenant
