@@ -19,7 +19,6 @@ export default async function LandingPage() {
         <Hero />
         <Features />
         <Testimonials />
-        <Pricing />
         <Cta />
       </main>
       <Footer />
