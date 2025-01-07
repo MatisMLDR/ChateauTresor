@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import PopUpChateau from '@/components/participants/PopUpChateau';
 import { Chateau } from '@/types';
+import {NavigationVerticale} from "@/components/ui/navigationverticale";
 
 
 // Import dynamique des composants React-Leaflet

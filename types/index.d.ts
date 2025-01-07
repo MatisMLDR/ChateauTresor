@@ -27,6 +27,12 @@ interface TitleTwoProps {
   className?: string;
 }
 
+interface NavigationVerticaleItemsProps {
+  name: string;
+  link: string;
+  imagePath: string;
+  className?: string;
+}
 
 
 
