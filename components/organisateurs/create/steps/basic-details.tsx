@@ -11,89 +11,138 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { translations } from "@/lib/contenuCreationChasse";
+import { contenuTextuel } from "@/lib/contenuCreationChasse";
 
+/**
+ * Ce code définit un composant React appelé BasicDetails qui fait partie d'un formulaire multi-étapes
+ * pour créer une chasse au trésor. Le composant est responsable de la collecte des détails de base de
+ * la chasse au trésor, tels que le titre, la description, la durée, le prix et le niveau de difficulté.
+ */
+
+// Définition des props pour le composant BasicDetails
 interface BasicDetailsProps {
-  formData: Partial<TreasureHunt>;
-  setFormData: (data: Partial<TreasureHunt>) => void;
+  formData: Partial<TreasureHunt>; // Les données actuelles du formulaire
+  setFormData: (data: Partial<TreasureHunt>) => void; // Fonction pour mettre à jour les données du formulaire
 }
 
+// Définition du composant BasicDetails
 export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
   return (
     <div className="space-y-6">
+      {/* Champ de saisie pour le titre */}
       <div className="space-y-2">
-        <Label htmlFor="title">{translations.create.form.huntTitle}</Label>
+        <Label htmlFor="title">{contenuTextuel.create.form.huntTitle}</Label>
         <Input
-          id="title"
-          value={formData.title || ""}
+          id="titre"
+          value={formData.titre || ""}
           onChange={(e) =>
-            setFormData({ ...formData, title: e.target.value })
+            setFormData({ ...formData, titre: e.target.value })
           }
-          placeholder={translations.create.form.titlePlaceholder}
+          placeholder={contenuTextuel.create.form.titlePlaceholder}
         />
       </div>
 
+      {/* Champ de saisie pour la description */}
       <div className="space-y-2">
-        <Label htmlFor="description">{translations.create.form.description}</Label>
+        <Label htmlFor="description">{contenuTextuel.create.form.description}</Label>
         <Textarea
           id="description"
           value={formData.description || ""}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          placeholder={translations.create.form.descriptionPlaceholder}
+          placeholder={contenuTextuel.create.form.descriptionPlaceholder}
           rows={4}
         />
       </div>
 
+      {/* Champs de saisie pour la durée et le prix */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="duration">{translations.create.form.duration}</Label>
+          <Label htmlFor="duration">{contenuTextuel.create.form.duration}</Label>
           <Input
-            id="duration"
+            id="duree_estime"
             type="number"
-            min={30}
-            max={180}
-            value={formData.duration || ""}
+            min={0}
+            step={15}
+            value={formData.duree_estime || 0}
             onChange={(e) =>
-              setFormData({ ...formData, duration: parseInt(e.target.value) })
+              setFormData({ ...formData, duree_estime: parseInt(e.target.value) })
             }
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="price">{translations.create.form.price}</Label>
+          <Label htmlFor="prix">{contenuTextuel.create.form.price}</Label>
           <Input
-            id="price"
+            id="prix"
             type="number"
             min={0}
             step={0.01}
-            value={formData.price || ""}
+            value={formData.prix || 0}
             onChange={(e) =>
-              setFormData({ ...formData, price: parseFloat(e.target.value) })
+              setFormData({ ...formData, prix: parseFloat(e.target.value) })
             }
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="difficulty">{translations.create.form.difficultyLevel}</Label>
-        <Select
-          value={formData.difficulty}
-          onValueChange={(value: "easy" | "medium" | "hard") =>
-            setFormData({ ...formData, difficulty: value })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={translations.create.form.selectDifficulty} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="easy">{translations.common.difficulty.easy}</SelectItem>
-            <SelectItem value="medium">{translations.common.difficulty.medium}</SelectItem>
-            <SelectItem value="hard">{translations.common.difficulty.hard}</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        {/* Sélecteur pour le niveau de difficulté */}
+        <div className="space-y-2">
+          <Label htmlFor="difficulty">{contenuTextuel.create.form.difficultyLevel}</Label>
+          <Select
+            value={formData.difficulte}
+            onValueChange={(value: "easy" | "medium" | "hard") =>
+              setFormData({ ...formData, difficulte: value })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={contenuTextuel.create.form.selectDifficulty} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="easy">{contenuTextuel.common.difficulty.easy}</SelectItem>
+              <SelectItem value="medium">{contenuTextuel.common.difficulty.medium}</SelectItem>
+              <SelectItem value="hard">{contenuTextuel.common.difficulty.hard}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+
+        <div className="space-y-2">
+          <Label htmlFor="Age_requis">{contenuTextuel.create.form.age}</Label>
+          <Input
+            id="age_requis"
+            type="number"
+            min={0}
+            max={110}
+            value={formData.age_requis || 1}
+            onChange={(e) =>
+              setFormData({ ...formData, age_requis: parseFloat(e.target.value) })
+            }
+          />
+        </div>
       </div>
-    </div>
-  );
+
+      <div className="space-y-6">
+        {/* Champ de saisie pour le theme */}
+        <div className="space-y-2">
+          <Label htmlFor="theme">{contenuTextuel.create.form.themeContent}</Label>
+          <Input
+            id="theme"
+            value={formData.theme || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, theme: e.target.value })
+            }
+            placeholder={contenuTextuel.create.form.themePlaceholder}
+          />
+        </div>
+      </div>
+
+
+
+</div>)
+  ;
+
 }
