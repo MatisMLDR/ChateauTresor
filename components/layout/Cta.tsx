@@ -15,7 +15,7 @@ const Cta = () => {
           </p>
           <div className="w-full max-w-sm">
             <Button className="w-full bg-[#8797af] hover:bg-[#6d8096] text-white">
-              Essayez gratuitement aujourd'hui
+              Commencer Maintenant
             </Button>
           </div>
         </div>
