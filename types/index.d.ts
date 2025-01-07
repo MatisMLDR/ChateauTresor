@@ -98,3 +98,7 @@ type Chateau = {
   localisation: string; // Format : "latitude,longitude"
   chasses?: Chasse[];
 };
+
+interface AvatarLinksProps {
+  isShowed: boolean;
+}
