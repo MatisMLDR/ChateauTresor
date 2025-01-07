@@ -13,10 +13,15 @@ const Cta = () => {
             Inscrivez-vous maintenant et accédez gratuitement à toutes les fonctionnalités premium.
           </p>
           <div className="w-full max-w-sm">
-            <Button className="w-full bg-[#8797af] hover:bg-[#6d8096] text-white">
-              Commencer Maintenant
-            </Button>
-          </div>
+          <Button className="w-full bg-[#8797af] hover:bg-[#6d8096] text-white">
+          <Link
+          className="text-sm font-medium hover:underline underline-offset-4 text-white"
+          href="/login"
+          >
+          Commencer Maintenant
+          </Link>
+          </Button>
+        </div>
         </div>
       </div>
     </section>
