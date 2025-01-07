@@ -6,14 +6,18 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const supabase = createClient();
-  const chasseId = params.id;
+  const chasseId = parseInt(params.id);
+
+  if (!chasseId) {
+    return NextResponse.json({ error: 'Paramètre id manquant ou invalide' }, { status: 400 });
+  }
 
   try {
     const { data, error } = await supabase
       .from('chasse')
       .select('*')
       .eq('id_chasse', chasseId)
-      .single(); // Retourne un seul résultat
+      .single();
 
     if (error) {
       return NextResponse.json(
@@ -25,7 +29,7 @@ export async function GET(
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: 'Une erreur est survenue lors du traitement de la requête', details: String(err) },
+      { error: 'Une erreur est survenue lors du traitement de la requête', details: err },
       { status: 500 }
     );
   }

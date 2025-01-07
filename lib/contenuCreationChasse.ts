@@ -1,4 +1,4 @@
-export const translations = {
+export const contenuTextuel = {
   common: {
     home: "Accueil",
     treasureHunts: "Chasses au Trésor",
@@ -55,6 +55,12 @@ export const translations = {
       descriptionPlaceholder: "Décrivez ce qui rend votre chasse passionnante et unique",
       duration: "Durée (minutes)",
       price: "Prix (€)",
+      age: "Age Minimum",
+      capaciteMaxTxt: "Capacité maximale",
+      date_d: "Date de Début",
+      date_f: "Date de Fin",
+      themeContent: "Thème de la chasse",
+      themePlaceholder: "Dynastie Royale",
       difficultyLevel: "Niveau de Difficulté",
       selectDifficulty: "Sélectionnez le niveau de difficulté",
       selectCastle: "Sélectionner un Château",

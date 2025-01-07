@@ -13,11 +13,11 @@ export default async function Signup() {
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center py-4">
                         <Link href='/'>
-                            <Image src="/logo.png" alt="logo" width={50} height={50} />
+                            <Image src="/logo.svg" alt="logo" width={50} height={50} />
                         </Link>
                     </div>
 
-                    <CardTitle className="text-2x\l font-bold">S'inscrire</CardTitle>
+                    <CardTitle className="text-2x\l font-bold">S&apos;inscrire</CardTitle>
                     <CardDescription>Créer mon compte</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">

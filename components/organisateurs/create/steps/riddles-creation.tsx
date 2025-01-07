@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
 import { TreasureHunt, Riddle, ClueType } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,10 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+/**
+ * Ce code définit un composant React appelé RiddlesCreation qui gère la création et l'organisation
+ * des énigmes dans un formulaire multi-étapes pour créer une chasse au trésor.
+ */
 interface RiddlesCreationProps {
   formData: Partial<TreasureHunt>;
   setFormData: (data: Partial<TreasureHunt>) => void;
@@ -203,11 +208,11 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    
+
     if (active.id !== over.id) {
       const oldIndex = newRiddle.clues.findIndex((clue) => clue.id === active.id);
       const newIndex = newRiddle.clues.findIndex((clue) => clue.id === over.id);
-      
+
       const newClues = arrayMove(newRiddle.clues, oldIndex, newIndex);
       setNewRiddle({ ...newRiddle, clues: newClues });
     }
@@ -218,7 +223,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     if (active.id !== over?.id) {
       const oldIndex = formData.riddles.findIndex((r) => r.id === active.id);
       const newIndex = formData.riddles.findIndex((r) => r.id === over.id);
-      
+
       setFormData({
         ...formData,
         riddles: arrayMove(formData.riddles || [], oldIndex, newIndex),
