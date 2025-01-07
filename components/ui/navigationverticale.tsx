@@ -1,10 +1,4 @@
-"use client"
-
 import { NavigationVerticale_Bouton } from '@/components/ui/navigationverticale_bouton';
-import { participantMenuLinks } from '@/constants';
-import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import Avatar from '../participants/Avatar';
 
 export function NavigationVerticale() {
