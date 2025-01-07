@@ -32,6 +32,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { CreateIndice } from "./create_indice";
 
 /**
  * Ce code définit un composant React appelé RiddlesCreation qui gère la création et l'organisation
@@ -160,12 +161,31 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     })
   );
 
+  // Add new state for modal
+  const [showClueModal, setShowClueModal] = useState(false);
+
+  // Update addClue function
   const addClue = () => {
+    setShowClueModal(true);
+  };
+
+  // Add handler for new clue submission
+  const handleClueSubmit = (clue: {
+    type: "text" | "image" | "sound";
+    content: string;
+    difficulty?: number;
+    order?: number;
+  }) => {
     setNewRiddle({
       ...newRiddle,
       clues: [
         ...(newRiddle.clues || []),
-        { id: crypto.randomUUID(), type: "text", content: "" },
+        { 
+          id: crypto.randomUUID(),
+          type: clue.type,
+          content: clue.content,
+          difficulty: clue.difficulty || 1
+        },
       ],
     });
   };
@@ -326,6 +346,19 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           </Button>
         </CardContent>
       </Card>
+
+      {/* Add CreateIndice component */}
+      {showClueModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <CreateIndice
+            onClose={() => setShowClueModal(false)}
+            onSubmit={(clue) => {
+              handleClueSubmit(clue);
+              setShowClueModal(false);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
