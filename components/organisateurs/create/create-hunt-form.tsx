@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { BasicDetails } from "./steps/basic-details";
 import { CastleSelection } from "./steps/castle-selection";
@@ -8,13 +6,13 @@ import { ReviewSubmit } from "./steps/review-submit";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { TreasureHunt } from "@/types";
-import { translations } from "@/lib/contenuCreationChasse";
+import { contenuTextuel } from "@/lib/contenuCreationChasse";
 
 const steps = [
-  { title: translations.create.steps.basicDetails, component: BasicDetails },
-  { title: translations.create.steps.castleSelection, component: CastleSelection },
-  { title: translations.create.steps.riddlesClues, component: RiddlesCreation },
-  { title: translations.create.steps.reviewSubmit, component: ReviewSubmit },
+  { title: contenuTextuel.create.steps.basicDetails, component: BasicDetails },
+  { title: contenuTextuel.create.steps.castleSelection, component: CastleSelection },
+  { title: contenuTextuel.create.steps.riddlesClues, component: RiddlesCreation },
+  { title: contenuTextuel.create.steps.reviewSubmit, component: ReviewSubmit },
 ];
 
 export function CreateHuntForm() {
@@ -28,6 +26,8 @@ export function CreateHuntForm() {
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
+      console.log(`Moving to next step: ${currentStep + 1}`);
+      console.log("Current formData:", formData);
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
     }
@@ -35,14 +35,21 @@ export function CreateHuntForm() {
 
   const handlePrevious = () => {
     if (currentStep > 0) {
+      console.log(`Returning to previous step: ${currentStep - 1}`);
+      console.log("Current formData:", formData);
       setCurrentStep(currentStep - 1);
       window.scrollTo(0, 0);
     }
   };
 
   const handleSubmit = async () => {
-    // TODO: Implement form submission
-    console.log("Form submitted:", formData);
+    console.log("Final form data submitted:", formData);
+    // TODO: Add your submission logic here
+  };
+
+  const handleFormDataUpdate = (updatedData: Partial<TreasureHunt>) => {
+    console.log("Updating formData:", updatedData);
+    setFormData((prevData) => ({ ...prevData, ...updatedData }));
   };
 
   return (
@@ -57,7 +64,7 @@ export function CreateHuntForm() {
       <div className="bg-card p-6 rounded-lg border">
         <CurrentStepComponent
           formData={formData}
-          setFormData={setFormData}
+          setFormData={handleFormDataUpdate} // Passe la fonction de mise à jour avec log
         />
       </div>
 
@@ -67,16 +74,16 @@ export function CreateHuntForm() {
           onClick={handlePrevious}
           disabled={currentStep === 0}
         >
-          {translations.common.previous}
+          {contenuTextuel.common.previous}
         </Button>
-        
+
         {currentStep === steps.length - 1 ? (
           <Button onClick={handleSubmit}>
-            {translations.create.form.review.createHunt}
+            {contenuTextuel.create.form.review.createHunt}
           </Button>
         ) : (
           <Button onClick={handleNext}>
-            {translations.common.next}
+            {contenuTextuel.common.next}
           </Button>
         )}
       </div>

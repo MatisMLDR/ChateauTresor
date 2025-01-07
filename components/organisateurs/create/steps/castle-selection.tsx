@@ -5,18 +5,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { MapPin } from "lucide-react";
+import { contenuTextuel } from '@/lib/contenuCreationChasse';
+import { Input } from '@/components/ui/input';
 
 interface CastleSelectionProps {
   formData: Partial<TreasureHunt>;
   setFormData: (data: Partial<TreasureHunt>) => void;
 }
 
-// Mock data - replace with API call
 const AVAILABLE_CASTLES: Castle[] = [
   {
     id: "1",
     name: "Edinburgh Castle",
-    description: "Historic fortress dominating the skyline of Edinburgh, Scotland",
+    description: "Forteresse historique dominant la skyline d'Édimbourg, Écosse",
     location: { lat: 55.9486, lng: -3.1999 },
     imageUrl: "https://images.unsplash.com/photo-1580910527739-36f06b8feca3?auto=format&fit=crop&q=80",
     address: "Castlehill, Edinburgh EH1 2NG"
@@ -24,7 +25,7 @@ const AVAILABLE_CASTLES: Castle[] = [
   {
     id: "2",
     name: "Stirling Castle",
-    description: "One of Scotland's most historically significant fortresses",
+    description: "Une des forteresses les plus historiquement significatives d'Écosse",
     location: { lat: 56.1238, lng: -3.9470 },
     imageUrl: "https://images.unsplash.com/photo-1600620795669-0559c9a5a1f6?auto=format&fit=crop&q=80",
     address: "Castle Esplanade, Stirling FK8 1EJ"
@@ -35,7 +36,7 @@ export function CastleSelection({ formData, setFormData }: CastleSelectionProps)
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Label>Select Castle</Label>
+        <Label>Sélectionner un château</Label>
         <RadioGroup
           value={formData.castle?.id}
           onValueChange={(value) => {
@@ -48,10 +49,9 @@ export function CastleSelection({ formData, setFormData }: CastleSelectionProps)
               <Card
                 key={castle.id}
                 className={`cursor-pointer transition-all ${
-                  formData.castle?.id === castle.id
-                    ? "ring-2 ring-primary"
-                    : ""
+                  formData.castle?.id === castle.id ? "ring-2 ring-primary" : ""
                 }`}
+                onClick={() => setFormData({ ...formData, castle })}
               >
                 <CardContent className="p-0">
                   <div className="relative">
@@ -83,6 +83,47 @@ export function CastleSelection({ formData, setFormData }: CastleSelectionProps)
             ))}
           </div>
         </RadioGroup>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="date_debut">{contenuTextuel.create.form.date_d}</Label>
+          <Input
+            id="date_debut"
+            type="date"
+            min={1}
+            step={1}
+            value={formData.date_debut || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, date_debut: e.target.value })
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="date_fin">{contenuTextuel.create.form.date_f}</Label>
+          <Input
+            id="date_fin"
+            type="date"
+            min={1}
+            step={1}
+            value={formData.date_fin || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, date_fin: e.target.value })
+            }
+          />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="capacite">{contenuTextuel.create.form.capaciteMaxTxt}</Label>
+        <Input
+          id="capacite"
+          type="number"
+          min={0}
+          value={formData.capacite || 1}
+          onChange={(e) =>
+            setFormData({ ...formData, capacite: parseFloat(e.target.value) })
+          }
+        />
       </div>
     </div>
   );

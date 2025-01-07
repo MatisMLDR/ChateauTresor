@@ -67,13 +67,18 @@ export type Riddle = {
 };
 
 export type TreasureHunt = {
-  id: string;
-  title: string;
+  id_chasse: string;
+  titre: string;
   description: string;
   castle: Castle;
-  price: number;
-  duration: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+  prix: number;
+  capacite: number;
+  duree_estime: number;
+  difficulte: 'easy' | 'medium' | 'hard';
+  age_requis:number;
+  date_debut: string,
+  date_fin: string,
+  theme: string;
   riddles: Riddle[];
   imageUrl: string;
   createdBy: string;

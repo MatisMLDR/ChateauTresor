@@ -1,5 +1,6 @@
-import { Chateau } from '@/types';
 import React from 'react';
+import Link from 'next/link';
+import { Chateau } from '@/types';
 
 interface PopUpChateauProps {
   chateau: Chateau;
@@ -8,7 +9,6 @@ interface PopUpChateauProps {
 const PopUpChateau: React.FC<PopUpChateauProps> = ({ chateau }) => {
   return (
     <div style={{ width: '100%', padding: '16px', backgroundColor: '#ffffff', borderRadius: '8px' }}>
-      {/* Section Château */}
       <div
         style={{
           display: 'flex',
@@ -18,13 +18,11 @@ const PopUpChateau: React.FC<PopUpChateauProps> = ({ chateau }) => {
           paddingBottom: '16px',
         }}
       >
-        {/* Texte à gauche */}
         <div style={{ flex: 1 }}>
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>{chateau.nom}</h2>
           <p style={{ fontSize: '14px', lineHeight: '1.5', color: '#666' }}>{chateau.description}</p>
         </div>
 
-        {/* Image à droite */}
         {chateau.image && (
           <div style={{ marginLeft: '16px' }}>
             <img
@@ -42,7 +40,6 @@ const PopUpChateau: React.FC<PopUpChateauProps> = ({ chateau }) => {
         )}
       </div>
 
-      {/* Section Chasses disponibles */}
       <div>
         <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px', color: '#333' }}>
           Chasses disponibles
@@ -60,7 +57,6 @@ const PopUpChateau: React.FC<PopUpChateauProps> = ({ chateau }) => {
                   marginBottom: '16px',
                 }}
               >
-                {/* Image de la chasse */}
                 {chasse.image && (
                   <img
                     src={chasse.image}
@@ -75,17 +71,30 @@ const PopUpChateau: React.FC<PopUpChateauProps> = ({ chateau }) => {
                   />
                 )}
 
-                {/* Détails de la chasse */}
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>{chasse.titre}</h4>
-                  <p style={{ fontSize: '14px', marginBottom: '8px', color: '#666' }}>{chasse.description}</p>
+                  <h4 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    {chasse.titre}
+                  </h4>
+                  <p style={{ fontSize: '14px', marginBottom: '8px', color: '#666' }}>
+                    {chasse.description}
+                  </p>
                   <p style={{ fontSize: '14px', marginBottom: '4px' }}>
                     Difficulté : {chasse.difficulte} / 3 | Prix : {chasse.prix} €
                   </p>
-                  <p style={{ fontSize: '14px', color: '#666' }}>
-                    {new Date(chasse.date_debut).toLocaleDateString()} -{' '}
-                    {new Date(chasse.date_fin).toLocaleDateString()}
-                  </p>
+                  <Link href={`/participants/chasses/${chasse.id_chasse}`}>
+                    <button
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#007BFF',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Voir plus
+                    </button>
+                  </Link>
                 </div>
               </li>
             ))
