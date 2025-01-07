@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Château Trésor",
     description: "Participez à une expérience ludique et interactive dans les châteaux de la Loire.",
-    url: process.env.NEXT_PUBLIC_SITE_URL,
+    url: process.env.NEXT_PUBLIC_WEBSITE_URL,
     siteName: "Château Trésor",
     locale: "fr_FR",
     type: "website",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     description: "Participez à une expérience ludique et interactive dans les châteaux de la Loire.",
     creatorId: "@chateautresor",
-    site: process.env.NEXT_PUBLIC_SITE_URL,
+    site: process.env.NEXT_PUBLIC_WEBSITE_URL,
     // images: [""], -> Add images
   },
 };

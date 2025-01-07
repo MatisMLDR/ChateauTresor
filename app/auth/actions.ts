@@ -13,17 +13,19 @@ export async function resetPassword(currentState: { message: string }, formData:
         code: formData.get('code') as string
     }
     if (passwordData.password !== passwordData.confirm_password) {
-        return { message: "Passwords do not match" }
+        console.log('Passwords do not match')
+        redirect(`/forgot-password/reset?error=Les mots de passe ne correspondent pas`)
     }
 
     const { data } = await supabase.auth.exchangeCodeForSession(passwordData.code)
 
     let { error } = await supabase.auth.updateUser({
-        password: passwordData.password
-
+        password: passwordData.password,
     })
+
     if (error) {
-        return { message: error.message }
+        console.error('Error updating password:', error)
+        return { message: "Erreur lors de la mise à jour du mot de passe" }
     }
     redirect(`/forgot-password/reset/success`)
 }
@@ -41,8 +43,6 @@ export async function forgotPassword(currentState: { message: string }, formData
 
 }
 export async function signup(currentState: { message: string }, formData: FormData) {
-    const supabase = createClient()
-
     const data = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
@@ -52,73 +52,92 @@ export async function signup(currentState: { message: string }, formData: FormDa
         adresse: formData.get('adresse') as string,
         ville: formData.get('ville') as string,
         codePostal: formData.get('code_postal') as string,
+        pseudo: formData.get('pseudo') as string,
+    }
+    console.log("formData : ", data)
+    if (data.email === '' || data.password === '') {
+        return { message: "Veuillez remplir tous les champs" }
     }
 
-    try {
-        // Check if user exists in our database first
-        const supabase = createClient()
+    const supabase = createClient()
 
-        const { data: existingDBUser, error: existingDBUserError } = await supabase.from('users').select().eq('email', data.email)
-
-        if (existingDBUserError) {
-            return { message: existingDBUserError.message }
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+            emailRedirectTo: `${PUBLIC_URL}/auth/callback`,
+            // data: {
+            //     email_confirm: process.env.NODE_ENV !== 'production',
+            //     full_name: data.fullname,
+            // }
         }
-        
-        if (existingDBUser.length > 0) {
-            return { message: "An account with this email already exists. Please login instead." }
+    })
+
+    if (signUpError) {
+        let message = "Erreur lors de la création du compte";
+        if (signUpError.message.includes("already registered")) {
+            message = "Un compte avec cet email existe déjà. Veuillez vous connecter à la place."
         }
-
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: data.email,
-            password: data.password,
-            options: {
-                emailRedirectTo: `${PUBLIC_URL}/auth/callback`,
-                data: {
-                    email_confirm: process.env.NODE_ENV !== 'production',
-                    full_name: data.fullname,
-                    adresse: data.adresse,
-                    ville: data.ville,
-                    code_postal: data.codePostal
-                }
-            }
-        })
-
-        if (signUpError) {
-            if (signUpError.message.includes("already registered")) {
-                return { message: "An account with this email already exists. Please login instead." }
-            }
-            return { message: signUpError.message }
-        }
-
-        if (!signUpData?.user) {
-            return { message: "Failed to create user" }
-        }
-
-        // create Stripe Customer Record using signup response data
-        const stripeID = await createStripeCustomer(signUpData.user.id, signUpData.user.email!, data.name)
-        
-        // Create record in DB
-        try {
-            supabase.from('users').insert({
-                id: signUpData.user.id,
-                name: data.fullname,
-                email: signUpData.user.email!,
-                stripe_id: stripeID,
-                plan: 'none'
-            })
-            
-        } catch (error) {
-            console.error('Error in signup:', error)
-            return { message: "Failed to setup user account" }
-            
-        }
-
-        revalidatePath('/', 'layout')
-        redirect('/subscribe')
-    } catch (error) {
-        console.error('Error in signup:', error)
-        return { message: "Failed to setup user account" }
+        console.log("ERREUR A LIRE IMPORTANT:",signUpError.message)
+        return { message: message }
     }
+
+    if (!signUpData.user) {
+        console.log('User data is empty or undefined')
+        return { message: "L'utilisateur n'a pas été trouvé" }
+    }
+
+    // Update profile data in public.profiles table
+    const { error: errorUpdate } = await supabase
+        .from('profiles')
+        .update(
+            {
+                full_name: data.fullname,
+                adresse: data.adresse,
+                ville: data.ville,
+                code_postal: data.codePostal,
+                username: data.pseudo
+            }
+        )
+        .match({ email: data.email });
+
+    if (errorUpdate) {
+        console.log('Error updating profile:', errorUpdate)
+        return { message: "Erreur lors de la mise à jour du profil" }
+    }
+
+    // create Stripe Customer Record using signup response data
+    const stripeID = await createStripeCustomer(signUpData.user.id, signUpData.user.email!, data.fullname)
+
+    // Update user's stripe_id in the database
+
+    const { error: errorStripe } = await supabase
+        .from('profiles')
+        .update({ stripe_id: stripeID })
+        .match({ email: data.email });
+
+    if (errorStripe) {
+        console.log('Cannot update user with stripe customer id:', errorStripe)
+        return { message: "Impossible de mettre à jour le profil avec le stripeID" }
+    }
+
+    // Créer un profil participant
+    const { error: errorProfile } = await supabase
+        .from('participant')
+        .insert([{
+            id_user: signUpData.user.id,
+        }])
+
+    if (errorProfile) {
+        console.log('Cannot create participant profile:', errorProfile)
+        return { message: "Erreur lors de la création du profil participant" }
+    }
+    console.log("User created successfully:", signUpData)
+    // Revalider le chemin pour mettre à jour les données de l'utilisateur
+    revalidatePath('/', 'layout')
+    // Rediriger vers la page d'accueil du participant
+    redirect('/participant')
+
 }
 
 export async function loginUser(currentState: { message: string }, formData: FormData) {
@@ -132,11 +151,13 @@ export async function loginUser(currentState: { message: string }, formData: For
     const { error } = await supabase.auth.signInWithPassword(data)
 
     if (error) {
-        return { message: error.message }
+        console.error('Error logging in:', error)
+        return { message: "Erreur lors de la connexion" }
     }
-
+    // Revalider le chemin pour mettre à jour les données de l'utilisateur
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    // Rediriger vers la page d'accueil du participant
+    redirect('/participant')
 }
 
 
@@ -144,6 +165,11 @@ export async function loginUser(currentState: { message: string }, formData: For
 export async function logout() {
     const supabase = createClient()
     const { error } = await supabase.auth.signOut()
+
+    if (error) {
+        console.error('Error logging out:', error)
+    }
+
     redirect('/login')
 }
 
@@ -155,6 +181,10 @@ export async function signInWithGoogle() {
             redirectTo: `${PUBLIC_URL}/auth/callback`,
         },
     })
+
+    if (error) {
+        console.error('Error signing in with Google:', error)
+    }
 
     if (data.url) {
         redirect(data.url) // use the redirect API for your server framework

@@ -1,3 +1,8 @@
+declare type SearchParamProps = {
+  params: { [key: string]: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
 interface StripeProduct {
   id: string;
   name: string;
@@ -17,4 +22,12 @@ interface SliderWithBoundsProps {
   min: number;
   max: number;
   step: number;
+}
+
+interface LoginFormProps {
+  error?: string | string[];
+}
+
+interface SignupFormProps {
+  error?: string | string[];
 }

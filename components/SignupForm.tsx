@@ -15,6 +15,8 @@ export default function SignupForm() {
     const { pending } = useFormStatus()
     const [step, setStep] = useState(1)
     const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("")
+    const [pseudo, setPseudo] = useState("")
     const [verifPassword, setVerifPassword] = useState("")
     const [passwordMatch, setPasswordMatch] = useState(true)
     const [postalCode, setPostalCode] = useState("")
@@ -37,8 +39,20 @@ export default function SignupForm() {
         validatePasswords(password, e.target.value)
     }
 
-    const handleNextStep = (e: React.FormEvent) => {
+    const handleNextStep = (e: any) => {
         e.preventDefault()
+        const form = e.target
+
+        const formData = new FormData(form)
+        // Je veux récupérer les données des inputs de la première étape et le mettre dans les states
+        const pseudo = formData.get('pseudo') as string
+        const password = formData.get('password') as string
+        const email = formData.get('email') as string
+
+        setPassword(password)
+        setEmail(email)
+        setPseudo(pseudo)
+
         setStep(2)
     }
 
@@ -56,7 +70,6 @@ export default function SignupForm() {
     const handlePostalBlur = () => {
         setShowPostalError(false)
     }
-
     return (
         <>
             {step === 1 && (
@@ -123,6 +136,10 @@ export default function SignupForm() {
             {step === 2 && (
                 <div>
                     <form action={formAction}>
+                        {/* Optionally, pass data from step 1 as hidden inputs */}
+                        <input type="hidden" name="pseudo" value={pseudo} />
+                        <input type="hidden" name="email" value={email} />
+                        <input type="hidden" name="password" value={password} />
                         <div className="flex gap-4">
                             <div className="grid gap-2 mt-2 flex-1">
                                 <Label htmlFor="nom">Nom*</Label>
@@ -190,4 +207,5 @@ export default function SignupForm() {
             )}
         </>
     )
+
 }
