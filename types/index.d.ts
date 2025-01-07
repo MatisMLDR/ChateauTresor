@@ -18,3 +18,10 @@ interface SliderWithBoundsProps {
   max: number;
   step: number;
 }
+
+interface TitleTwoProps {
+  text: string;
+  color: 'light' | 'dark';
+  className?: string;
+}
+
