@@ -1,3 +1,47 @@
+-- Table users in schema public
+CREATE TABLE public.profiles (
+    id_user uuid references auth.users on delete cascade not null primary key,
+    username text unique default 'anonyme',
+    updated_at timestamp with time zone,
+    email text UNIQUE NOT NULL,
+    birthdate date,
+    email_confirm boolean DEFAULT false,
+    full_name text,
+    adresse text,
+    ville text,
+    code_postal text,
+    stripe_id uuid UNIQUE,
+    plan text NOT NULL DEFAULT 'none'
+);
+
+alter table profiles
+  enable row level security;
+
+create policy "Public profiles are viewable by everyone." on profiles
+  for select using (true);
+
+create policy "Users can insert their own profile." on profiles
+  for insert with check ((select auth.uid()) = id_user);
+
+create policy "Users can update own profile." on profiles
+  for update using ((select auth.uid()) = id_user);
+
+-- This trigger automatically creates a profile entry when a new user signs up via Supabase Auth.
+-- See https://supabase.com/docs/guides/auth/managing-user-data#using-triggers for more details.
+create function public.handle_new_user()
+returns trigger
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (id_user, full_name)
+  values (new.id_user, new.raw_user_meta_data->>'full_name');
+  return new;
+end;
+$$ language plpgsql security definer;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
 -- Table Proprietaire_Chateau
 CREATE TABLE public.Proprietaire_Chateau (
     id_proprietaire SERIAL PRIMARY KEY,
@@ -74,7 +118,10 @@ CREATE TABLE public.Chasse (
     date_debut TIMESTAMP DEFAULT NULL,
     date_fin TIMESTAMP DEFAULT NULL,
     prix NUMERIC(10, 2) DEFAULT 0.00,
-    difficulte INT DEFAULT 1 CHECK (difficulte BETWEEN 1 AND 3),
+    difficulte INT DEFAULT 1 CHECK (
+        difficulte BETWEEN 1
+        AND 3
+    ),
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
     nb_enigmes INT DEFAULT 0,
     theme VARCHAR(255) DEFAULT 'Aucun thème',
@@ -146,7 +193,10 @@ CREATE TABLE public.Indice (
     id_indice SERIAL PRIMARY KEY,
     contenu TEXT DEFAULT 'Pas de contenu',
     ordre INT DEFAULT 1,
-    degre_difficulte INT DEFAULT 1 CHECK (degre_difficulte BETWEEN 1 AND 5),
+    degre_difficulte INT DEFAULT 1 CHECK (
+        degre_difficulte BETWEEN 1
+        AND 5
+    ),
     est_decouvert BOOLEAN DEFAULT FALSE,
     id_enigme INT REFERENCES Enigme(id_enigme)
 );
