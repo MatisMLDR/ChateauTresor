@@ -136,6 +136,12 @@ class Chasse {
     this.date_modification = date_modification;
   }
 
+  /* 
+   * Méthode pour charger les données de l'objet indice dans la classe
+   */
+  public read(): void {
+    /* A compléter */
+  }
 
   // Méthodes pour calculer des statistiques
   /*
@@ -143,7 +149,7 @@ class Chasse {
   * @returns number La durée moyenne des participations
   */
   public async getDureeMoyenne(): Promise<number> {
-  
+
     // On récupère les données
     const data = await getAllParticipations(this.id_chasse);
     if (data.length === 0) {
@@ -161,7 +167,7 @@ class Chasse {
   */
   public async getReussiteMoyenne(): Promise<number> {
     // Récupération dans la base de la réussite de chaques participations avec l'id de la chasse
-    
+
     // On récupère les données
     const data = await getAllParticipations(this.id_chasse);
 
@@ -180,7 +186,7 @@ class Chasse {
   */
   public async getScoreMoyen(): Promise<number> {
     // Récupération dans la base des scores de chaques participations avec l'id de la chasse
-    
+
     // On récupère les données
     const data = await getAllParticipations(this.id_chasse);
     if (data.length === 0) {
@@ -198,13 +204,13 @@ class Chasse {
   */
   // public async getIndicesMoyens(): Promise<number> {
   //   // Récupération dans la base des indices utilisés par chaques participations avec l'id de la chasse
-    
+
   //   // On récupère les données
   //   const data = await getAllIndices();
   //   if (data.length === 0) {
   //     return 0;
   //   }
-    
+
 
   //   return 0;
   // }
@@ -215,7 +221,7 @@ class Chasse {
   */
   public async getEnigmesResoluesMoyennes(): Promise<number> {
     // Récupération dans la base des énigmes résolues par chaques participations avec l'id de la chasse
-    
+
     // On récupère les données
     const data = await getAllParticipations(this.id_chasse);
     if (data.length === 0) {
@@ -234,7 +240,7 @@ class Chasse {
 
   public async getNbRecompensesAttribuees(): Promise<number> {
     // Récupération dans la base des récompenses attribuées avec l'id de la chasse
-    
+
     // On récupère les données
     const data = await getAllRecompenses(this.id_chasse);
     return data.length;
@@ -246,7 +252,7 @@ class Chasse {
   */
   public async getNoteMoyenne(): Promise<number> {
     // Récupération dans la base des notes attribuées de chaques avis avec l'id de la chasse
-    
+
     // On récupère les données
     const data = await getAllAvis(this.id_chasse);
 

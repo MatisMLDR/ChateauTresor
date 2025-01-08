@@ -53,7 +53,7 @@ export type Indice = {
 
 // Énigme
 export type EnigmeType = {
-  id: string;
+  id: number;
   titre: string;
   indices: Indice[];
   qrCode: string;

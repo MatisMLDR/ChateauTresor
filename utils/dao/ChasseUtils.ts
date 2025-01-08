@@ -1,10 +1,10 @@
- /*
-  * Méthode pour récupérer toutes les participations à une chasse
-  * @returns Promise<any> Un tableau de participations
-  * @throws Error si la récupération des participations échoue
-  * @example const participations = await getAllParticipations();
-  */
- export async function getAllParticipations(id_chasse: number): Promise<any> {
+/*
+ * Méthode pour récupérer toutes les participations à une chasse
+ * @returns Promise<any> Un tableau de participations
+ * @throws Error si la récupération des participations échoue
+ * @example const participations = await getAllParticipations();
+ */
+export async function getAllParticipations(id_chasse: number): Promise<any> {
   const res = await fetch(`/api/participations/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des participations');
@@ -64,6 +64,20 @@ export async function getAllAvis(id_chasse: number): Promise<any> {
   const res = await fetch(`/api/avis/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis');
+  }
+  return await res.json();
+}
+
+/*
+* Méthode pour récupérer une chasse par son id
+* @returns Promise<any> La chasse correspondante à l'id
+* @throws Error si la récupération de la chasse échoue
+* @example const chasse = await getChasseById(1);
+*/
+export async function getChasseById(id_chasse: number): Promise<any> {
+  const res = await fetch(`/api/chasses/${id_chasse}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération de la chasse');
   }
   return await res.json();
 }
