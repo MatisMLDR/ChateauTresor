@@ -1,4 +1,4 @@
-import { ChasseType } from "@/types";
+import { ChasseType, EnigmeType } from "@/types";
 
 class Chasse {
   private id_chasse: number;
@@ -17,6 +17,7 @@ class Chasse {
   private id_equipe: number;
   private statut: string;
   private date_modification: string;
+  private enigmes: EnigmeType[];
 
   constructor(chasse: ChasseType) {
     this.id_chasse = chasse.id_chasse;
