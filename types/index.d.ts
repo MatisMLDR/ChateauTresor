@@ -86,8 +86,9 @@ export type TreasureHunt = {
   createdBy: string;
 };
 
-type Chasse = {
+type ChasseType = {
   id_chasse: number;
+  image: string;
   titre: string;
   description: string;
   image: string;
@@ -95,9 +96,17 @@ type Chasse = {
   prix: number;
   date_debut: string;
   date_fin: string;
+  capacite: number;
+  age_requis: number;
+  duree_estime: number;
+  theme: string;
+  id_chateau: number;
+  id_equipe: number;
+  statut: string;
+  date_modification: string;
 };
 
-type Chateau = {
+type ChateauType = {
   id_chateau: number;
   nom: string;
   description: string;
@@ -109,3 +118,8 @@ type Chateau = {
 interface AvatarLinksProps {
   isShowed: boolean;
 }
+
+type SearchParamProps = {
+  params: { [key: string]: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};

@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const ChasseDetailsPage: React.FC = () => {
   const params = useParams(); // Utilisez useParams pour récupérer les paramètres
@@ -44,6 +46,11 @@ const ChasseDetailsPage: React.FC = () => {
           Date : {new Date(chasse.date_debut).toLocaleDateString()} -{' '}
           {new Date(chasse.date_fin).toLocaleDateString()}
         </p>
+        <Button className='text-gray-50'>
+          <Link href={`/participants/chasses/${params.id}/inscription`}>
+            Réserver
+          </Link>
+        </Button>
       </div>
     </div>
   );
