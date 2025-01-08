@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import PopUpChateau from '@/components/participants/PopUpChateau';
 import { Chateau } from '@/types';
-import { NavigationVerticale } from '@/components/ui/navigationverticale';
+import { SideBar } from '@/components/ui/SideBar';
 
 // Import dynamique des composants React-Leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
@@ -69,7 +69,7 @@ export default function ParticipantsPage() {
 
   return (
     <div className="flex">
-      <NavigationVerticale />
+      <SideBar />
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Barre de recherche */}
