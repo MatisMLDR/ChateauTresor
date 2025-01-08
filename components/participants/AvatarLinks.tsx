@@ -1,6 +1,7 @@
 import { participantMenuLinks } from '@/constants';
 import { AvatarLinksProps } from '@/types';
 import { createClient } from '@/utils/supabase/client';
+import { redirect } from 'next/navigation';
 import router from 'next/router';
 import React from 'react'
 
@@ -10,8 +11,7 @@ const AvatarLinks = ({ isShowed }: AvatarLinksProps) => {
       
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/login');
-    
+    redirect('/');
   }
 
   return (
