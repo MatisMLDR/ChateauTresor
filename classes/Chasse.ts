@@ -340,3 +340,5 @@ class Chasse {
   }
 
 }
+
+export default Chasse;
