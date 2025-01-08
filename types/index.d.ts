@@ -1,4 +1,4 @@
-interface StripeProduct {
+export interface StripeProduct {
   id: string;
   name: string;
   description: string | null;
@@ -6,7 +6,7 @@ interface StripeProduct {
   price: Stripe.Price;
 }
 
-interface InputWithLabelProps {
+export interface InputWithLabelProps {
   label: string;
   inputType: string;
   inputPlaceholder?: string;
@@ -14,20 +14,20 @@ interface InputWithLabelProps {
   className?: string;
 }
 
-interface SliderWithBoundsProps {
+export interface SliderWithBoundsProps {
   min: number;
   max: number;
   step: number;
   className?: string;
 }
 
-interface TitleTwoProps {
+export interface TitleTwoProps {
   text: string;
   color: 'light' | 'dark';
   className?: string;
 }
 
-interface NavigationVerticaleItemsProps {
+export interface NavigationVerticaleItemsProps {
   name: string;
   link: string;
   imagePath: string;
@@ -92,7 +92,7 @@ export type TreasureHunt = {
   createdBy: string;
 };
 
-type ChasseType = {
+export type ChasseType = {
   id_chasse: number;
   image: string;
   titre: string;
@@ -110,9 +110,11 @@ type ChasseType = {
   id_equipe: number;
   statut: string;
   date_modification: string;
+  enigmes: Riddle[];
+  chateau: ChateauType;
 };
 
-type ChateauType = {
+export type ChateauType = {
   id_chateau: number;
   nom: string;
   description: string;
@@ -121,15 +123,15 @@ type ChateauType = {
   chasses?: Chasse[];
 };
 
-interface AvatarLinksProps {
+export interface AvatarLinksProps {
   isShowed: boolean;
 }
 
-type SearchParamProps = {
+export type SearchParamProps = {
   params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
-interface DoubleLineChartProps {
+export interface DoubleLineChartProps {
   title: string,
   description: string,
   data: LineChart[];
@@ -138,7 +140,7 @@ interface DoubleLineChartProps {
   className?: string;
 }
 
-type LineChart = {
+export type LineChart = {
   x_axis: string,
   firstLine: number,
   secondLine: number
