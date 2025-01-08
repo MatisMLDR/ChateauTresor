@@ -98,7 +98,7 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
             {formData.riddles?.map((riddle, index) => (
               <div key={riddle.id} className="rounded-lg bg-muted p-4">
                 <h3 className="mb-2 font-semibold">Riddle {index + 1}</h3>
-                <p className="mb-2 text-muted-foreground">{riddle.question}</p>
+                <p className="mb-2 text-muted-foreground">{riddle.titre}</p>
                 <div className="text-sm text-muted-foreground">
                   {riddle.clues.length} clues provided
                 </div>
