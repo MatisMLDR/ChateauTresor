@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Castle } from "@/types";
+import { ChateauType } from "@/types";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 
 // Mock data - replace with actual API call
-const MOCK_CASTLES: Castle[] = [
+const MOCK_CASTLES: ChateauType[] = [
   {
     id: "1",
     name: "Edinburgh Castle",
@@ -24,7 +24,7 @@ const MOCK_CASTLES: Castle[] = [
 ];
 
 export function MapComponent() {
-  const [selectedCastle, setSelectedCastle] = useState<Castle | null>(null);
+  const [selectedCastle, setSelectedCastle] = useState<ChateauType | null>(null);
 
   return (
     <div className="relative w-full h-full bg-gray-100">
@@ -36,13 +36,13 @@ export function MapComponent() {
       {selectedCastle && (
         <Card className="absolute bottom-4 right-4 w-80">
           <CardHeader>
-            <CardTitle>{selectedCastle.name}</CardTitle>
-            <CardDescription>{selectedCastle.address}</CardDescription>
+            <CardTitle>{selectedCastle.nom}</CardTitle>
+            <CardDescription>{selectedCastle.address_postale}</CardDescription>
           </CardHeader>
           <CardContent>
             <img
-              src={selectedCastle.imageUrl}
-              alt={selectedCastle.name}
+              src={selectedCastle.image}
+              alt={selectedCastle.nom}
               className="w-full h-40 object-cover rounded-md mb-4"
             />
             <p className="text-sm text-muted-foreground">
