@@ -57,15 +57,21 @@ export type Clue = {
   id: string;
   type: ClueType;
   content: string;
-  degre_difficulte: number;
+  degre_aide: number;
 };
 
+// Énigme
 export type Riddle = {
   id: string;
-  question: string;
+  titre: string;
   clues: Clue[];
   qrCode: string;
   code: string;
+  description: string;
+  endroit_qrcode: string;
+  temps_max: number;
+  description_reponse: string;
+  image_reponse: string;
 };
 
 export type TreasureHunt = {
@@ -123,3 +129,17 @@ type SearchParamProps = {
   params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
+interface DoubleLineChartProps {
+  title: string,
+  description: string,
+  data: LineChart[];
+  firstLineLabel: string;
+  secondLineLabel: string;
+  className?: string;
+}
+
+type LineChart = {
+  x_axis: string,
+  firstLine: number,
+  secondLine: number
+}

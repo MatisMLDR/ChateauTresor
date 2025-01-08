@@ -7,7 +7,9 @@ export async function GET(
 ) {
   try {
     const supabase = createClient();
-    const id = params.id;
+
+    // Résolution de la promise `params`
+    const id = (await params).id;
 
     if (!id) {
       return NextResponse.json(

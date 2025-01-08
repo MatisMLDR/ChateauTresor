@@ -176,7 +176,7 @@ CREATE TABLE public.Enigme (
     titre VARCHAR(255) DEFAULT 'Nouvelle Énigme',
     description TEXT DEFAULT 'Pas de description',
     ordre INT DEFAULT 1,
-    degre_difficulte VARCHAR(50) DEFAULT 'Facile',
+    degre_difficulte INT DEFAULT 1 CHECK (degre_difficulte BETWEEN 1 AND 3),
     temps_max INTERVAL DEFAULT INTERVAL '00:30:00',
     code_reponse VARCHAR(255) DEFAULT NULL,
     endroit_qrcode VARCHAR(255) DEFAULT NULL,
@@ -203,8 +203,8 @@ CREATE TABLE public.Indice (
     id_indice SERIAL PRIMARY KEY,
     contenu TEXT DEFAULT 'Pas de contenu',
     ordre INT DEFAULT 1,
-    degre_difficulte INT DEFAULT 1 CHECK (
-        degre_difficulte BETWEEN 1
+    degre_aide INT DEFAULT 1 CHECK (
+        degre_aide BETWEEN 1
         AND 5
     ),
     id_enigme INT REFERENCES Enigme(id_enigme)
