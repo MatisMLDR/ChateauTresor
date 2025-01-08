@@ -96,10 +96,16 @@ export type ChasseType = {
 export type ChateauType = {
   id_chateau: number;
   nom: string;
+  adresse_postale: string;
+  localisation: string; // Format : "latitude,longitude"
+  capacite: number;
+  prix_location: number;
+  telephone: string | null;
   description: string;
-  image: string;
-  localisation: string;// Format : "latitude,longitude"
-  chasses?: Chasse[];
+  image: string | null;
+  site_web: string | null;
+  id_proprietaire: number | null; // Référence vers Proprietaire_Chateau
+  chasses?: ChasseType[]; // Liste des chasses liées au château
 };
 
 export interface AvatarLinksProps {
