@@ -3,6 +3,14 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '../supabase/server';
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
+export interface StripeProduct {
+    id: string;
+    name: string;
+    description: string | null;
+    features: string[];
+    price: Stripe.Price;
+}
+
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function getStripePlan(email: string) {
     const supabase = createClient()
@@ -86,7 +94,7 @@ export async function getStripeProducts(): Promise<StripeProduct[]> {
     return products.data.map(product => ({
         id: product.id,
         name: product.name,
-        description: product.description,
+        description: product.description || null,
         features: product.metadata?.features ? JSON.parse(product.metadata.features) : [],
         price: product.default_price as Stripe.Price
     }));
