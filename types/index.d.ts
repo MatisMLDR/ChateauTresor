@@ -109,3 +109,18 @@ type Chateau = {
 interface AvatarLinksProps {
   isShowed: boolean;
 }
+
+interface DoubleLineChartProps {
+  title: string,
+  description: string,
+  data: LineChart[];
+  firstLineLabel: string;
+  secondLineLabel: string;
+  className?: string;
+}
+
+type LineChart = {
+  x_axis: string,
+  firstLine: number,
+  secondLine: number
+}
