@@ -10,7 +10,7 @@ const Cta = () => {
         <div className="flex flex-col items-center justify-center space-y-4 text-center text-white">
           <TitleTwo text={"Prêt à révolutionner votre organisation ?"} color={"light"} />
           <p className="max-w-[600px] text-lg md:text-xl">
-            Inscrivez-vous maintenant et accédez gratuitement à toutes les fonctionnalités premium.
+            Inscrivez-vous maintenant et accédez au différents plans pour les fonctionnalités premium.
           </p>
           <div className="w-full max-w-sm">
           <Button className="w-full bg-[#8797af] hover:bg-[#6d8096] text-white">
