@@ -1,6 +1,6 @@
 "use client";
 
-import { TreasureHunt } from "@/types";
+import { ChasseType } from '@/types';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,8 +21,8 @@ import { contenuTextuel } from "@/lib/contenuCreationChasse";
 
 // Définition des props pour le composant BasicDetails
 interface BasicDetailsProps {
-  formData: Partial<TreasureHunt>; // Les données actuelles du formulaire
-  setFormData: (data: Partial<TreasureHunt>) => void; // Fonction pour mettre à jour les données du formulaire
+  formData: Partial<ChasseType>; // Les données actuelles du formulaire
+  setFormData: (data: Partial<ChasseType>) => void; // Fonction pour mettre à jour les données du formulaire
 }
 
 // Définition du composant BasicDetails
@@ -91,9 +91,9 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
 
         {/* Sélecteur pour le niveau de difficulté */}
         <div className="space-y-2">
-          <Label htmlFor="difficulty">{contenuTextuel.create.form.difficultyLevel}</Label>
+          <Label htmlFor="difficulte">{contenuTextuel.create.form.difficultyLevel}</Label>
           <Select
-            value={formData.difficulte}
+            value={formData.difficulte?.toString() || ""}
             onValueChange={(value: "easy" | "medium" | "hard") =>
               setFormData({ ...formData, difficulte: value })
             }

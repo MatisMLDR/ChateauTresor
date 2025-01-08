@@ -38,33 +38,24 @@ export interface NavigationVerticaleItemsProps {
 
 //// Création de chasse au trésor ////
 
-export type Castle = {
-  id: string;
-  name: string;
-  description: string;
-  location: {
-    lat: number;
-    lng: number;
-  };
-  imageUrl: string;
-  address: string;
-};
 
-export type ClueType = 'image' | 'sound' | 'text';
+
+export type IndiceType = 'image' | 'sound' | 'text';
 
 // Indice
-export type Clue = {
+export type Indice = {
   id: string;
-  type: ClueType;
-  content: string;
+  type: IndiceType;
+  contenu: string;
   degre_aide: number;
+  ordre: number;
 };
 
 // Énigme
-export type Riddle = {
+export type EnigmeType = {
   id: string;
   titre: string;
-  clues: Clue[];
+  indices: Indice[];
   qrCode: string;
   code: string;
   description: string;
@@ -74,23 +65,8 @@ export type Riddle = {
   image_reponse: string;
 };
 
-export type TreasureHunt = {
-  id_chasse: string;
-  titre: string;
-  description: string;
-  castle: Castle;
-  prix: number;
-  capacite: number;
-  duree_estime: number;
-  difficulte: 'easy' | 'medium' | 'hard';
-  age_requis:number;
-  date_debut: string,
-  date_fin: string,
-  theme: string;
-  riddles: Riddle[];
-  imageUrl: string;
-  createdBy: string;
-};
+
+///////////
 
 export type ChasseType = {
   id_chasse: number;
@@ -98,7 +74,7 @@ export type ChasseType = {
   titre: string;
   description: string;
   image: string;
-  difficulte: number;
+  difficulte: number | 0;
   prix: number;
   date_debut: string;
   date_fin: string;
@@ -110,8 +86,11 @@ export type ChasseType = {
   id_equipe: number;
   statut: string;
   date_modification: string;
-  enigmes: Riddle[];
   chateau: ChateauType;
+  nb_enigmes: number;
+  enigmes: EnigmeType[];
+
+
 };
 
 export type ChateauType = {
@@ -119,7 +98,7 @@ export type ChateauType = {
   nom: string;
   description: string;
   image: string;
-  localisation: string; // Format : "latitude,longitude"
+  localisation: string;// Format : "latitude,longitude"
   chasses?: Chasse[];
 };
 

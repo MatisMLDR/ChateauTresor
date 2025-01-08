@@ -5,7 +5,7 @@ import { RiddlesCreation } from "./steps/riddles-creation";
 import { ReviewSubmit } from "./steps/review-submit";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { TreasureHunt } from "@/types";
+import { ChasseType } from "@/types";
 import { contenuTextuel } from "@/lib/contenuCreationChasse";
 
 const steps = [
@@ -18,8 +18,8 @@ const steps = [
 export function CreateHuntForm() {
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<Partial<TreasureHunt>>({
-    riddles: [],
+  const [formData, setFormData] = useState<Partial<ChasseType>>({
+    enigmes: [],
   });
 
   const progress = ((currentStep + 1) / steps.length) * 100;
@@ -45,11 +45,32 @@ export function CreateHuntForm() {
 
   const handleSubmit = async () => {
     console.log("Final form data submitted:", formData);
-    // TODO: Add your submission logic here
+
+    // Calculer le nombre d'énigmes
+    const nbEnigmes = formData.enigmes?.length || 0;
+
+    // Préparer les données pour l'API
+    const treasureHuntData = {
+      titre: formData.titre,
+      description: formData.description,
+      id_chateau: formData.chateau?.id_chateau, // ID du château
+      prix: formData.prix,
+      capacite: formData.capacite,
+      duree_estime: formData.duree_estime,
+      difficulte: formData.difficulte,
+      age_requis: formData.age_requis,
+      date_debut: formData.date_debut,
+      date_fin: formData.date_fin,
+      theme: formData.theme,
+      imageUrl: formData.chateau?.id_chateau, // Utiliser l'image associée au château
+      nb_enigmes: nbEnigmes, // Ajouter le nombre d'énigmes calculé
+    };
 
   };
 
-  const handleFormDataUpdate = (updatedData: Partial<TreasureHunt>) => {
+
+
+  const handleFormDataUpdate = (updatedData: Partial<ChasseType>) => {
     console.log("Updating formData:", updatedData);
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
   };
