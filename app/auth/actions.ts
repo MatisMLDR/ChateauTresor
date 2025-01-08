@@ -136,7 +136,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
     revalidatePath('/', 'layout')
     // Rediriger vers la page d'accueil du participant
-    redirect('/participant')
+    redirect('/participants')
 
 }
 
@@ -157,7 +157,7 @@ export async function loginUser(currentState: { message: string }, formData: For
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
     revalidatePath('/', 'layout')
     // Rediriger vers la page d'accueil du participant
-    redirect('/participant')
+    redirect('/participants')
 }
 
 

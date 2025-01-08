@@ -18,16 +18,16 @@ interface CreateIndiceProps {
   onClose: () => void;
   onSubmit: (indice: {
     type: "text" | "image" | "sound";
-    content: string;
-    difficulty?: number;
-    order?: number;
+    contenu: string;
+    degre_aide?: number;
+    ordre?: number;
   }) => void;
 }
 
 export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
   const [type, setType] = useState<"text" | "image" | "sound">("text");
   const [content, setContent] = useState("");
-  const [difficulty, setDifficulty] = useState(1);
+  const [degre_aide, setAide] = useState(1);
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,8 +49,8 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
   const handleSubmit = () => {
     onSubmit({
       type,
-      content: type === "text" ? content : file?.name || "",
-      difficulty,
+      contenu: type === "text" ? content : file?.name || "",
+      degre_aide,
     });
     onClose();
   };
@@ -58,7 +58,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
-        <CardTitle>Create New Clue</CardTitle>
+        <CardTitle>Créer un indice</CardTitle>
       </CardHeader>
       
       <CardContent className="space-y-4">
@@ -74,14 +74,14 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
             <SelectContent>
               <SelectItem value="text">Text</SelectItem>
               <SelectItem value="image">Image</SelectItem>
-              <SelectItem value="sound">Sound</SelectItem>
+              <SelectItem value="sound">Son</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {type === "text" ? (
           <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
+            <Label htmlFor="content">Contenu</Label>
             <Textarea
               id="content"
               value={content}
@@ -110,13 +110,13 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="difficulty">Difficulty</Label>
+          <Label htmlFor="degre_aide">Degré d'aide</Label>
           <Select
-            value={difficulty.toString()}
-            onValueChange={(value) => setDifficulty(parseInt(value))}
+            value={degre_aide.toString()}
+            onValueChange={(value) => setAide(parseInt(value))}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select difficulty" />
+              <SelectValue placeholder="CHoisir le degré d'aide" />
             </SelectTrigger>
             <SelectContent>
               {[1, 2, 3, 4, 5].map((level) => (
@@ -131,7 +131,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
 
       <CardFooter className="flex justify-end space-x-2">
         <Button variant="outline" onClick={onClose}>
-          Cancel
+          Quitter
         </Button>
         <Button onClick={handleSubmit}>Create Clue</Button>
       </CardFooter>

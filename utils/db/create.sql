@@ -125,14 +125,8 @@ CREATE TABLE public.Chasse (
         AND 3
     ),
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
-    nb_enigmes INT DEFAULT 0,
     theme VARCHAR(255) DEFAULT 'Aucun thème',
     statut VARCHAR(50) DEFAULT 'Inactif',
-    nb_enigmes_resolues INT DEFAULT 0,
-    note_moyenne NUMERIC(3, 2) DEFAULT 0.00,
-    recompenses_attribuees INT DEFAULT 0,
-    reussite_moyenne NUMERIC(5, 2) DEFAULT 0.00,
-    duree_moyenne INTERVAL DEFAULT INTERVAL '00:00:00',
     id_chateau INT DEFAULT NULL REFERENCES Chateau(id_chateau),
     id_equipe INT DEFAULT NULL REFERENCES Equipe_Organisatrice(id_equipe)
 );
@@ -144,6 +138,7 @@ CREATE TABLE public.Participation (
     duree_totale INTERVAL DEFAULT INTERVAL '00:00:00',
     score INT DEFAULT 0,
     nb_enigmes_resolues INT DEFAULT 0,
+    est_terminee BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id_participant, id_chasse),
     FOREIGN KEY (id_participant) REFERENCES Participant(id_participant),
     FOREIGN KEY (id_chasse) REFERENCES Chasse(id_chasse)
@@ -190,17 +185,40 @@ CREATE TABLE public.Enigme (
     id_chasse INT REFERENCES Chasse(id_chasse)
 );
 
+-- Table Enigme_Participant
+CREATE TABLE public.Enigme_Participant (
+    id_enigme INT,
+    id_participant INT,
+    est_resolue BOOLEAN DEFAULT FALSE,
+    duree REAL DEFAULT 0.00,
+    indice_reveles INT DEFAULT 0,
+    date_resolution TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_enigme, id_participant),
+    FOREIGN KEY (id_enigme) REFERENCES Enigme(id_enigme),
+    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant)
+);
+
 -- Table Indice
 CREATE TABLE public.Indice (
     id_indice SERIAL PRIMARY KEY,
     contenu TEXT DEFAULT 'Pas de contenu',
     ordre INT DEFAULT 1,
-    degre_difficulte INT DEFAULT 1 CHECK (
-        degre_difficulte BETWEEN 1
+    degre_aide INT DEFAULT 1 CHECK (
+        degre_aide BETWEEN 1
         AND 5
     ),
-    est_decouvert BOOLEAN DEFAULT FALSE,
     id_enigme INT REFERENCES Enigme(id_enigme)
+);
+
+-- Table Indice_Participant
+CREATE TABLE public.Indice_Participant (
+    id_indice INT,
+    id_participant INT,
+    est_decouvert BOOLEAN DEFAULT FALSE,
+    date_utilisation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_indice, id_participant),
+    FOREIGN KEY (id_indice) REFERENCES Indice(id_indice),
+    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant)
 );
 
 -- Table Image_indice

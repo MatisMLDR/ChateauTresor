@@ -1,4 +1,4 @@
-interface StripeProduct {
+export interface StripeProduct {
   id: string;
   name: string;
   description: string | null;
@@ -6,7 +6,7 @@ interface StripeProduct {
   price: Stripe.Price;
 }
 
-interface InputWithLabelProps {
+export interface InputWithLabelProps {
   label: string;
   inputType: string;
   inputPlaceholder?: string;
@@ -14,20 +14,20 @@ interface InputWithLabelProps {
   className?: string;
 }
 
-interface SliderWithBoundsProps {
+export interface SliderWithBoundsProps {
   min: number;
   max: number;
   step: number;
   className?: string;
 }
 
-interface TitleTwoProps {
+export interface TitleTwoProps {
   text: string;
   color: 'light' | 'dark';
   className?: string;
 }
 
-interface NavigationVerticaleItemsProps {
+export interface NavigationVerticaleItemsProps {
   name: string;
   link: string;
   imagePath: string;
@@ -38,74 +38,95 @@ interface NavigationVerticaleItemsProps {
 
 //// Création de chasse au trésor ////
 
-export type Castle = {
-  id: string;
-  name: string;
-  description: string;
-  location: {
-    lat: number;
-    lng: number;
-  };
-  imageUrl: string;
-  address: string;
-};
 
-export type ClueType = 'image' | 'sound' | 'text';
+
+export type IndiceType = 'image' | 'sound' | 'text';
 
 // Indice
-export type Clue = {
+export type Indice = {
   id: string;
-  type: ClueType;
-  content: string;
-  degre_difficulte: number;
+  type: IndiceType;
+  contenu: string;
+  degre_aide: number;
+  ordre: number;
 };
 
-export type Riddle = {
+// Énigme
+export type EnigmeType = {
   id: string;
-  question: string;
-  clues: Clue[];
+  titre: string;
+  indices: Indice[];
   qrCode: string;
   code: string;
-};
-
-export type TreasureHunt = {
-  id_chasse: string;
-  titre: string;
   description: string;
-  castle: Castle;
-  prix: number;
-  capacite: number;
-  duree_estime: number;
-  difficulte: 'easy' | 'medium' | 'hard';
-  age_requis:number;
-  date_debut: string,
-  date_fin: string,
-  theme: string;
-  riddles: Riddle[];
-  imageUrl: string;
-  createdBy: string;
+  endroit_qrcode: string;
+  temps_max: number;
+  description_reponse: string;
+  image_reponse: string;
 };
 
-type Chasse = {
+
+///////////
+
+export type ChasseType = {
   id_chasse: number;
+  image: string;
   titre: string;
   description: string;
   image: string;
-  difficulte: number;
+  difficulte: number | 0;
   prix: number;
   date_debut: string;
   date_fin: string;
+  capacite: number;
+  age_requis: number;
+  duree_estime: number;
+  theme: string;
+  id_chateau: number;
+  id_equipe: number;
+  statut: string;
+  date_modification: string;
+  chateau: ChateauType;
+  nb_enigmes: number;
+  enigmes: EnigmeType[];
+
+
 };
 
-type Chateau = {
+export type ChateauType = {
   id_chateau: number;
   nom: string;
-  description: string;
-  image: string;
+  adresse_postale: string;
   localisation: string; // Format : "latitude,longitude"
-  chasses?: Chasse[];
+  capacite: number;
+  prix_location: number;
+  telephone: string | null;
+  description: string;
+  image: string | null;
+  site_web: string | null;
+  id_proprietaire: number | null; // Référence vers Proprietaire_Chateau
+  chasses?: ChasseType[]; // Liste des chasses liées au château
 };
 
-interface AvatarLinksProps {
+export interface AvatarLinksProps {
   isShowed: boolean;
+}
+
+export type SearchParamProps = {
+  params: { [key: string]: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+export interface DoubleLineChartProps {
+  title: string,
+  description: string,
+  data: LineChart[];
+  firstLineLabel: string;
+  secondLineLabel: string;
+  className?: string;
+}
+
+export type LineChart = {
+  x_axis: string,
+  firstLine: number,
+  secondLine: number
 }

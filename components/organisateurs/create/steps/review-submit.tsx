@@ -1,6 +1,6 @@
 "use client";
 
-import { TreasureHunt } from "@/types";
+import { ChasseType } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, MapPin, AlertTriangle } from "lucide-react";
 
@@ -12,8 +12,8 @@ import { Clock, MapPin, AlertTriangle } from "lucide-react";
 
 // Définition des props pour le composant ReviewSubmit
 interface ReviewSubmitProps {
-  formData: Partial<TreasureHunt>; // Les données actuelles du formulaire
-  setFormData: (data: Partial<TreasureHunt>) => void; // Fonction pour mettre à jour les données du formulaire
+  formData: Partial<ChasseType>; // Les données actuelles du formulaire
+  setFormData: (data: Partial<ChasseType>) => void; // Fonction pour mettre à jour les données du formulaire
 }
 
 // Définition du composant ReviewSubmit
@@ -22,7 +22,7 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
   const isComplete =
     formData.titre &&
     formData.description &&
-    formData.castle &&
+    formData.chateau &&
     formData.prix &&
     formData.age_requis &&
     formData.duree_estime &&
@@ -31,7 +31,7 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
     formData.date_debut &&
     formData.theme &&
     formData.capacite &&
-    formData.riddles?.length;
+    formData.enigmes?.length;
 
   return (
     <div className="space-y-8">
@@ -67,18 +67,18 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
           <CardTitle>Selected Castle</CardTitle>
         </CardHeader>
         <CardContent>
-          {formData.castle ? (
+          {formData.chateau ? (
             <div className="space-y-4">
               <img
-                src={formData.castle.imageUrl}
-                alt={formData.castle.name}
+                src={formData.chateau.image}
+                alt={formData.chateau.nom}
                 className="h-48 w-full rounded-lg object-cover"
               />
               <div>
-                <h3 className="font-semibold">{formData.castle.name}</h3>
+                <h3 className="font-semibold">{formData.chateau.nom}</h3>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
-                  {formData.castle.address}
+                  {formData.chateau.localisation}
                 </div>
               </div>
             </div>
@@ -91,16 +91,16 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
       {/* Carte pour les énigmes */}
       <Card>
         <CardHeader>
-          <CardTitle>Riddles ({formData.riddles?.length || 0})</CardTitle>
+          <CardTitle>Riddles ({formData.enigmes?.length || 0})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {formData.riddles?.map((riddle, index) => (
+            {formData.enigmes?.map((riddle, index) => (
               <div key={riddle.id} className="rounded-lg bg-muted p-4">
                 <h3 className="mb-2 font-semibold">Riddle {index + 1}</h3>
-                <p className="mb-2 text-muted-foreground">{riddle.question}</p>
+                <p className="mb-2 text-muted-foreground">{riddle.titre}</p>
                 <div className="text-sm text-muted-foreground">
-                  {riddle.clues.length} clues provided
+                  {riddle.indices.length} clues provided
                 </div>
               </div>
             ))}

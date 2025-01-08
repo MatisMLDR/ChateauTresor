@@ -1,7 +1,6 @@
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
 import Cta from "@/components/layout/Cta"
-import Pricing from "@/components/layout/Pricing"
 import Testimonials from "@/components/layout/Testimonials"
 import Features from "@/components/layout/Features"
 import Hero from "@/components/layout/Hero"

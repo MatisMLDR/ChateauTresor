@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import PopUpChateau from '@/components/participants/PopUpChateau';
-import { Chateau } from '@/types';
+import { ChateauType } from '@/types';
 import { SideBar } from '@/components/ui/SideBar';
 
 // Import dynamique des composants React-Leaflet
@@ -14,7 +14,7 @@ const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), 
 const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
 export default function ParticipantsPage() {
-  const [chateaux, setChateaux] = useState<Chateau[]>([]);
+  const [chateaux, setChateaux] = useState<ChateauType[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [L, setLeaflet] = useState<any>(null); // Charger Leaflet côté client
 
@@ -27,13 +27,13 @@ export default function ParticipantsPage() {
     const fetchChateaux = async () => {
       try {
         const response = await fetch('/api/chateaux');
-        const chateauxData: Chateau[] = await response.json();
+        const chateauxData: ChateauType[] = await response.json();
 
         console.log('Châteaux récupérés :', chateauxData); // Debug
 
         const chateauxWithChasses = await Promise.all(
           chateauxData.map(async (chateau) => {
-            const response = await fetch(`/api/chasses/byChateau?id_chateau=${chateau.id_chateau}`);
+            const response = await fetch(`/api/chasses/chateau?id_chateau=${chateau.id_chateau}`);
             const chasses = await response.json();
             console.log(`Chasses pour le château ${chateau.nom}:`, chasses); // Debug
             return { ...chateau, chasses };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Castle, TreasureHunt } from "@/types";
+import { ChateauType, ChasseType } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -9,26 +9,24 @@ import { contenuTextuel } from '@/lib/contenuCreationChasse';
 import { Input } from '@/components/ui/input';
 
 interface CastleSelectionProps {
-  formData: Partial<TreasureHunt>;
-  setFormData: (data: Partial<TreasureHunt>) => void;
+  formData: Partial<ChasseType>;
+  setFormData: (data: Partial<ChasseType>) => void;
 }
 
-const AVAILABLE_CASTLES: Castle[] = [
+const AVAILABLE_CASTLES: ChateauType[] = [
   {
-    id: "1",
-    name: "Edinburgh Castle",
+    id_chateau: 1,
+    nom: "Edinburgh Castle",
     description: "Forteresse historique dominant la skyline d'Édimbourg, Écosse",
-    location: { lat: 55.9486, lng: -3.1999 },
-    imageUrl: "https://images.unsplash.com/photo-1580910527739-36f06b8feca3?auto=format&fit=crop&q=80",
-    address: "Castlehill, Edinburgh EH1 2NG"
+    localisation: "55.9486,-3.1999",
+    image: "https://images.unsplash.com/photo-1580910527739-36f06b8feca3?auto=format&fit=crop&q=80",
   },
   {
-    id: "2",
-    name: "Stirling Castle",
+    id_chateau: 2,
+    nom: "Stirling Castle",
     description: "Une des forteresses les plus historiquement significatives d'Écosse",
-    location: { lat: 56.1238, lng: -3.9470 },
-    imageUrl: "https://images.unsplash.com/photo-1600620795669-0559c9a5a1f6?auto=format&fit=crop&q=80",
-    address: "Castle Esplanade, Stirling FK8 1EJ"
+    localisation:"56.1238,-3.9470",
+    image: "https://images.unsplash.com/photo-1600620795669-0559c9a5a1f6?auto=format&fit=crop&q=80",
   }
 ];
 
@@ -38,41 +36,41 @@ export function CastleSelection({ formData, setFormData }: CastleSelectionProps)
       <div className="space-y-4">
         <Label>Sélectionner un château</Label>
         <RadioGroup
-          value={formData.castle?.id}
+          value={formData.id_chateau?.toString()}
           onValueChange={(value) => {
-            const castle = AVAILABLE_CASTLES.find((c) => c.id === value);
-            setFormData({ ...formData, castle });
+            const castle = AVAILABLE_CASTLES.find((c) => c.id_chateau === parseInt(value));
+            setFormData({ ...formData, id_chateau: parseInt(value), chateau: castle });
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {AVAILABLE_CASTLES.map((castle) => (
               <Card
-                key={castle.id}
+                key={castle.id_chateau}
                 className={`cursor-pointer transition-all ${
-                  formData.castle?.id === castle.id ? "ring-2 ring-primary" : ""
+                  formData.chateau?.id_chateau === castle.id_chateau ? "ring-2 ring-primary" : ""
                 }`}
-                onClick={() => setFormData({ ...formData, castle })}
+                onClick={() => setFormData({ ...formData, chateau: castle })}
               >
                 <CardContent className="p-0">
                   <div className="relative">
                     <img
-                      src={castle.imageUrl}
-                      alt={castle.name}
+                      src={castle.image}
+                      alt={castle.image}
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <RadioGroupItem
-                        value={castle.id}
-                        id={castle.id}
+                        value={formData.id_chateau}
+                        id={formData.id_chateau?.toString()}
                         className="sr-only"
                       />
                     </div>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold mb-2">{castle.name}</h3>
+                    <h3 className="font-semibold mb-2">{castle.nom}</h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                       <MapPin className="h-4 w-4" />
-                      {castle.address}
+                      {castle.localisation}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {castle.description}
