@@ -16,6 +16,7 @@ const steps = [
 ];
 
 export function CreateHuntForm() {
+
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<TreasureHunt>>({
     riddles: [],
@@ -45,6 +46,7 @@ export function CreateHuntForm() {
   const handleSubmit = async () => {
     console.log("Final form data submitted:", formData);
     // TODO: Add your submission logic here
+
   };
 
   const handleFormDataUpdate = (updatedData: Partial<TreasureHunt>) => {

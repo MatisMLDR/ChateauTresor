@@ -33,7 +33,7 @@ export default function ParticipantsPage() {
 
         const chateauxWithChasses = await Promise.all(
           chateauxData.map(async (chateau) => {
-            const response = await fetch(`/api/chasses/byChateau?id_chateau=${chateau.id_chateau}`);
+            const response = await fetch(`/api/chasses/chateau?id_chateau=${chateau.id_chateau}`);
             const chasses = await response.json();
             console.log(`Chasses pour le château ${chateau.nom}:`, chasses); // Debug
             return { ...chateau, chasses };

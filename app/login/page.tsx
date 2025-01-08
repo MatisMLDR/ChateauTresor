@@ -38,6 +38,9 @@ export default function Login() {
                     <Link className="w-full text-sm text-muted-foreground" href="/signup">
                         Vous n&apos;avez pas de compte? Créer un compte
                     </Link>
+                    <Link className="w-full text-sm text-muted-foreground" href="/organisateurs">
+                        Vous êtes un organisateur? Connectez-vous ici
+                    </Link>
                 </CardFooter>
             </Card>
         </div >
