@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ChasseType } from "@/types";
 import { contenuTextuel } from "@/lib/contenuCreationChasse";
+import toast, { Toaster } from 'react-hot-toast';
 
 const steps = [
   { title: contenuTextuel.create.steps.basicDetails, component: BasicDetails },
@@ -16,7 +17,6 @@ const steps = [
 ];
 
 export function CreateHuntForm() {
-
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<ChasseType>>({
     enigmes: [],
@@ -38,6 +38,7 @@ export function CreateHuntForm() {
     if (currentStep > 0) {
       console.log(`Returning to previous step: ${currentStep - 1}`);
       console.log("Current formData:", formData);
+      toast.success("Les informations sont bien sauvegardées.");
       setCurrentStep(currentStep - 1);
       window.scrollTo(0, 0);
     }
@@ -45,6 +46,7 @@ export function CreateHuntForm() {
 
   const handleSubmit = async () => {
     console.log("Final form data submitted:", formData);
+    toast.success("Les données sont sauvegardées et en cours de chargement.");
 
     // Calculer le nombre d'énigmes
     const nbEnigmes = formData.enigmes?.length || 0;
@@ -66,9 +68,9 @@ export function CreateHuntForm() {
       nb_enigmes: nbEnigmes, // Ajouter le nombre d'énigmes calculé
     };
 
+    // Envoyer les données à l'API (à implémenter)
+    // await api.submitTreasureHunt(treasureHuntData);
   };
-
-
 
   const handleFormDataUpdate = (updatedData: Partial<ChasseType>) => {
     console.log("Updating formData:", updatedData);
@@ -77,6 +79,7 @@ export function CreateHuntForm() {
 
   return (
     <div className="space-y-8">
+      <Toaster /> {/* Ajouter le composant Toaster pour afficher les notifications */}
       <div className="space-y-2">
         <Progress value={progress} className="h-2" />
         <div className="text-sm text-muted-foreground">
