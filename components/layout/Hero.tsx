@@ -13,7 +13,7 @@ const Hero = () => {
               Plus d&apos;aventure, moins de tracas avec <span className="text-[#6c757d]">Château Trésor</span>
             </h1>
             <p className="text-muted-foreground md:text-xl text-[#6c757d]">
-              Gagnez du temps, attirez plus de visiteurs : on gère les détails, vous récoltez le succès.
+              Venez participer à une expérience unique dans les châteaux de loire tout en découvrant leurs histoires.
             </p>
           </div>
           <div className="space-x-4">
