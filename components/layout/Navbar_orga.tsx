@@ -17,6 +17,9 @@ const Navbar = () => {
         <a className="text-sm font-medium hover:underline underline-offset-4" href="#testimonials">
           Témoignages
         </a>
+        <a className="text-sm font-medium hover:underline underline-offset-4" href="#pricing">
+          Plans
+        </a>
       </nav>
       <Button className="mx-2 md:mx-4 lg:mx-6 xl:mx-10" >
         <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
