@@ -16,7 +16,7 @@ const ChateauListPage: React.FC = () => {
 
         const chateauxWithChasses = await Promise.all(
           chateauxData.map(async (chateau: any) => {
-            const chassesResponse = await fetch(`/api/chasses/byChateau?id_chateau=${chateau.id_chateau}`);
+            const chassesResponse = await fetch(`/api/chasses/chateau?id_chateau=${chateau.id_chateau}`);
             const chasses = await chassesResponse.json();
             return { ...chateau, chasses };
           })
