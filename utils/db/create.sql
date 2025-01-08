@@ -181,7 +181,7 @@ CREATE TABLE public.Enigme (
     titre VARCHAR(255) DEFAULT 'Nouvelle Énigme',
     description TEXT DEFAULT 'Pas de description',
     ordre INT DEFAULT 1,
-    degre_difficulte VARCHAR(50) DEFAULT 'Facile',
+    degre_difficulte INT DEFAULT 1 CHECK (degre_difficulte BETWEEN 1 AND 3),
     temps_max INTERVAL DEFAULT INTERVAL '00:30:00',
     code_reponse VARCHAR(255) DEFAULT NULL,
     endroit_qrcode VARCHAR(255) DEFAULT NULL,
