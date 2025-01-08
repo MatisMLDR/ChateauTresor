@@ -1,4 +1,5 @@
-import { ChasseType, EnigmeType } from "@/types";
+import { ChasseType } from "@/types";
+import { getAllParticipations, getAllRecompenses, getAllAvis } from "@/utils/dao/ChasseUtils";
 
 class Chasse {
   private id_chasse: number;
@@ -17,7 +18,6 @@ class Chasse {
   private id_equipe: number;
   private statut: string;
   private date_modification: string;
-  private enigmes: EnigmeType[];
 
   constructor(chasse: ChasseType) {
     this.id_chasse = chasse.id_chasse;
@@ -136,77 +136,6 @@ class Chasse {
     this.date_modification = date_modification;
   }
 
-  // Méthodes pour récupérer des données liées à la chasse
-
-  /*
-  * Méthode pour récupérer toutes les participations à une chasse
-  * @returns Promise<any> Un tableau de participations
-  * @throws Error si la récupération des participations échoue
-  * @example const participations = await chasse.getAllParticipations();
-  */
-  protected async getAllParticipations(): Promise<any> {
-    const res = await fetch(`/api/participations/chasse?id_chasse=${this.id_chasse}`);
-    if (!res.ok) {
-      throw new Error('Erreur lors de la récupération des participations');
-    }
-    return await res.json();
-  }
-
-  /*
-  * Méthode pour récupérer toutes les énigmes d'une chasse
-  * @returns Promise<any> Un tableau d'énigmes
-  * @throws Error si la récupération des énigmes échoue
-  * @example const enigmes = await chasse.getAllEnigmes();
-  */
-  protected async getAllEnigmes(): Promise<any> {
-    const res = await fetch(`/api/enigmes/chasse?id_chasse=${this.id_chasse}`);
-    if (!res.ok) {
-      throw new Error('Erreur lors de la récupération des énigmes');
-    }
-    return await res.json();
-  }
-
-  /*
-  * Méthode pour récupérer toutes les indices d'une chasse
-  * @returns Promise<any> Un tableau d'indices
-  * @throws Error si la récupération des indices échoue
-  * @example const indices = await chasse.getAllIndices();
-  */
-  protected async getAllIndices(): Promise<any> {
-    const res = await fetch(`/api/indices/chasse?id_chasse=${this.id_chasse}`);
-    if (!res.ok) {
-      throw new Error('Erreur lors de la récupération des indices');
-    }
-    return await res.json();
-  }
-
-  /*
-  * Méthode pour récupérer toutes les récompenses d'une chasse
-  * @returns Promise<any> Un tableau de récompenses
-  * @throws Error si la récupération des récompenses échoue
-  * @example const recompenses = await chasse.getAllRecompenses();
-  */
-  protected async getAllRecompenses(): Promise<any> {
-    const res = await fetch(`/api/recompenses/chasse?id_chasse=${this.id_chasse}`);
-    if (!res.ok) {
-      throw new Error('Erreur lors de la récupération des récompenses');
-    }
-    return await res.json();
-  }
-
-  /*
-  * Méthode pour récupérer toutes les avis d'une chasse
-  * @returns Promise<any> Un tableau d'avis
-  * @throws Error si la récupération des avis échoue
-  * @example const avis = await chasse.getAllAvis();
-  */
-  protected async getAllAvis(): Promise<any> {
-    const res = await fetch(`/api/avis/chasse?id_chasse=${this.id_chasse}`);
-    if (!res.ok) {
-      throw new Error('Erreur lors de la récupération des avis');
-    }
-    return await res.json();
-  }
 
   // Méthodes pour calculer des statistiques
   /*
@@ -216,7 +145,7 @@ class Chasse {
   public async getDureeMoyenne(): Promise<number> {
   
     // On récupère les données
-    const data = await this.getAllParticipations();
+    const data = await getAllParticipations(this.id_chasse);
     if (data.length === 0) {
       return 0;
     }
@@ -234,7 +163,7 @@ class Chasse {
     // Récupération dans la base de la réussite de chaques participations avec l'id de la chasse
     
     // On récupère les données
-    const data = await this.getAllParticipations();
+    const data = await getAllParticipations(this.id_chasse);
 
     if (data.length === 0) {
       return 0;
@@ -253,7 +182,7 @@ class Chasse {
     // Récupération dans la base des scores de chaques participations avec l'id de la chasse
     
     // On récupère les données
-    const data = await this.getAllParticipations();
+    const data = await getAllParticipations(this.id_chasse);
     if (data.length === 0) {
       return 0;
     }
@@ -271,7 +200,7 @@ class Chasse {
   //   // Récupération dans la base des indices utilisés par chaques participations avec l'id de la chasse
     
   //   // On récupère les données
-  //   const data = await this.getAllIndices();
+  //   const data = await getAllIndices();
   //   if (data.length === 0) {
   //     return 0;
   //   }
@@ -288,7 +217,7 @@ class Chasse {
     // Récupération dans la base des énigmes résolues par chaques participations avec l'id de la chasse
     
     // On récupère les données
-    const data = await this.getAllParticipations();
+    const data = await getAllParticipations(this.id_chasse);
     if (data.length === 0) {
       return 0;
     }
@@ -307,7 +236,7 @@ class Chasse {
     // Récupération dans la base des récompenses attribuées avec l'id de la chasse
     
     // On récupère les données
-    const data = await this.getAllRecompenses();
+    const data = await getAllRecompenses(this.id_chasse);
     return data.length;
   }
 
@@ -319,7 +248,7 @@ class Chasse {
     // Récupération dans la base des notes attribuées de chaques avis avec l'id de la chasse
     
     // On récupère les données
-    const data = await this.getAllAvis();
+    const data = await getAllAvis(this.id_chasse);
 
     if (data.length === 0) {
       return 0;
@@ -336,7 +265,7 @@ class Chasse {
   */
   public async getNbAvis(): Promise<number> {
     // Récupération dans la base des avis avec l'id de la chasse
-    const data = await this.getAllAvis();
+    const data = await getAllAvis(this.id_chasse);
     return data.length;
   }
 
