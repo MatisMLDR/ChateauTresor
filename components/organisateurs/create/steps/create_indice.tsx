@@ -18,9 +18,9 @@ interface CreateIndiceProps {
   onClose: () => void;
   onSubmit: (indice: {
     type: "text" | "image" | "sound";
-    content: string;
+    contenu: string;
     degre_aide?: number;
-    order?: number;
+    ordre?: number;
   }) => void;
 }
 
@@ -49,7 +49,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
   const handleSubmit = () => {
     onSubmit({
       type,
-      content: type === "text" ? content : file?.name || "",
+      contenu: type === "text" ? content : file?.name || "",
       degre_aide,
     });
     onClose();

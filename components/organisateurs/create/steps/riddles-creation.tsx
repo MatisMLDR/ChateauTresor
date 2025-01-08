@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useEffect } from "react";
-import { TreasureHunt, Riddle, ClueType } from "@/types";
+import { ChasseType, EnigmeType, Indice, IndiceType } from '@/types';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,8 +40,8 @@ import { contenuTextuel } from '@/lib/contenuCreationChasse';
  * des énigmes dans un formulaire multi-étapes pour créer une chasse au trésor.
  */
 interface RiddlesCreationProps {
-  formData: Partial<TreasureHunt>;
-  setFormData: (data: Partial<TreasureHunt>) => void;
+  formData: Partial<ChasseType>;
+  setFormData: (data: Partial<ChasseType>) => void;
 }
 
 // Create a new SortableItem component
@@ -86,9 +86,9 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
       default:
         return (
           <Input
-            value={clue.content}
+            value={clue.contenu}
             onChange={(e) =>
-              updateClue(index, "content", e.target.value)
+              updateClue(index, "contenu", e.target.value)
             }
             placeholder="Enter text content"
           />
@@ -109,7 +109,7 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
       <div className="flex-1 space-y-2">
         <Select
           value={clue.type}
-          onValueChange={(value: ClueType) =>
+          onValueChange={(value: IndiceType) =>
             updateClue(index, "type", value)
           }
         >
@@ -185,15 +185,16 @@ function SortableRiddle({ riddle, index, removeRiddle }) {
         <CardContent>
           <p className="font-medium">{riddle.question}</p>
           <div className="mt-4 space-y-2">
-            {riddle.clues.map((clue, i) => (
-              <div key={clue.id} className="text-sm text-muted-foreground">
+            {riddle.indices.map((indice, i) => (
+              <div key={`${indice.id}-${i}`} className="text-sm text-muted-foreground">
                 <span>Clue {i + 1}:</span>
-                <span className="ml-2">{clue.content}</span>
+                <span className="ml-2">{indice.contenu}</span>
                 <span className="ml-2 text-xs bg-muted px-2 py-1 rounded-full">
-                  Aide niveau {clue.degre_aide || 1}
+                Aide niveau {indice.degre_aide || 1}
                 </span>
               </div>
             ))}
+
           </div>
         </CardContent>
       </Card>
@@ -202,8 +203,8 @@ function SortableRiddle({ riddle, index, removeRiddle }) {
 }
 
 export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps) {
-  const [newRiddle, setNewRiddle] = useState<Partial<Riddle>>({
-    clues: [],
+  const [newRiddle, setNewRiddle] = useState<Partial<EnigmeType>>({
+    indices: [],
   });
 
   const sensors = useSensors(
@@ -230,9 +231,9 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
   }) => {
     setNewRiddle({
       ...newRiddle,
-      clues: [
-        ...(newRiddle.clues || []),
-        { 
+      indices: [
+        ...(newRiddle.indices || []),
+        {
           id: crypto.randomUUID(),
           type: clue.type,
           content: clue.content,
@@ -245,36 +246,36 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
   const removeClue = (index: number) => {
     setNewRiddle({
       ...newRiddle,
-      clues: newRiddle.clues?.filter((_, i) => i !== index),
+      indices: newRiddle.indices?.filter((_, i) => i !== index),
     });
   };
 
   const updateClue = (index: number, field: string, value: string) => {
     setNewRiddle({
       ...newRiddle,
-      clues: newRiddle.clues?.map((clue, i) =>
+      indices: newRiddle.indices?.map((clue, i) =>
         i === index ? { ...clue, [field]: value } : clue
       ),
     });
   };
 
   const addRiddle = () => {
-    if (newRiddle.titre && newRiddle.clues?.length) {
+    if (newRiddle.titre && newRiddle.indices?.length) {
       setFormData({
         ...formData,
-        riddles: [
-          ...(formData.riddles || []),
-          { ...newRiddle, id: crypto.randomUUID() } as Riddle,
+        enigmes: [
+          ...(formData.enigmes || []),
+          { ...newRiddle, id: crypto.randomUUID() } as EnigmeType,
         ],
       });
-      setNewRiddle({ clues: [] });
+      setNewRiddle({ indices: [] });
     }
   };
 
   const removeRiddle = (index: number) => {
     setFormData({
       ...formData,
-      riddles: formData.riddles?.filter((_, i) => i !== index),
+      enigmes: formData.enigmes?.filter((_, i) => i !== index),
     });
   };
 
@@ -282,23 +283,23 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      const oldIndex = newRiddle.clues.findIndex((clue) => clue.id === active.id);
-      const newIndex = newRiddle.clues.findIndex((clue) => clue.id === over.id);
+      const oldIndex = newRiddle.indices.findIndex((clue) => clue.id === active.id);
+      const newIndex = newRiddle.indices.findIndex((clue) => clue.id === over.id);
 
-      const newClues = arrayMove(newRiddle.clues, oldIndex, newIndex);
-      setNewRiddle({ ...newRiddle, clues: newClues });
+      const newClues = arrayMove(newRiddle.indices, oldIndex, newIndex);
+      setNewRiddle({ ...newRiddle, indices: newClues });
     }
   };
 
   const handleRiddleDragEnd = (event) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = formData.riddles.findIndex((r) => r.id === active.id);
-      const newIndex = formData.riddles.findIndex((r) => r.id === over.id);
+      const oldIndex = formData.enigmes.findIndex((r) => r.id === active.id);
+      const newIndex = formData.enigmes.findIndex((r) => r.id === over.id);
 
       setFormData({
         ...formData,
-        riddles: arrayMove(formData.riddles || [], oldIndex, newIndex),
+        enigmes: arrayMove(formData.enigmes || [], oldIndex, newIndex),
       });
     }
   };
@@ -311,10 +312,10 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
         onDragEnd={handleRiddleDragEnd}
       >
         <SortableContext
-          items={formData.riddles?.map((riddle) => riddle.id) || []}
+          items={formData.enigmes?.map((riddle) => riddle.id) || []}
           strategy={verticalListSortingStrategy}
         >
-          {formData.riddles?.map((riddle, index) => (
+          {formData.enigmes?.map((riddle, index) => (
             <SortableRiddle
               key={riddle.id}
               riddle={riddle}
@@ -369,10 +370,10 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={newRiddle.clues.map((clue) => clue.id)}
+                items={newRiddle.indices.map((clue) => clue.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {newRiddle.clues?.map((clue, index) => (
+                {newRiddle.indices?.map((clue, index) => (
                   <SortableClue
                     key={clue.id}
                     clue={clue}
@@ -433,7 +434,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           </div>
 
           {/* Bouton pour ajouter une énigme */}
-          <Button onClick={addRiddle} disabled={!newRiddle.titre || !newRiddle.clues?.length}>
+          <Button onClick={addRiddle} disabled={!newRiddle.titre || !newRiddle.indices?.length}>
             Ajouter une énigme
           </Button>
         </CardContent>
