@@ -195,8 +195,8 @@ CREATE TABLE public.Indice (
     id_indice SERIAL PRIMARY KEY,
     contenu TEXT DEFAULT 'Pas de contenu',
     ordre INT DEFAULT 1,
-    degre_difficulte INT DEFAULT 1 CHECK (
-        degre_difficulte BETWEEN 1
+    degre_aide INT DEFAULT 1 CHECK (
+        degre_aide BETWEEN 1
         AND 5
     ),
     est_decouvert BOOLEAN DEFAULT FALSE,
