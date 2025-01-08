@@ -19,6 +19,7 @@ export default async function LandingPage() {
         <Hero_orga />
         <Features_orga />
         <Testimonials_orga />
+        <Pricing_orga />
         <Cta_orga />
       </main>
       <Footer_orga />
