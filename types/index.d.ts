@@ -36,6 +36,12 @@ export interface NavigationVerticaleItemsProps {
   className?: string;
 }
 
+export interface AudioPlayerProps {
+  soundLink: string;
+  className?: string;
+}
+
+
 
 
 //// Création de chasse au trésor ////
