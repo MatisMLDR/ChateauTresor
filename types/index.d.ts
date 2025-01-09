@@ -1,3 +1,5 @@
+import { UUID } from "crypto";
+
 export interface StripeProduct {
   id: string;
   name: string;
@@ -172,6 +174,12 @@ export type ProfilType = {
   plan: string; // Non null, défaut 'none'
 }
 
+export type TexteType = {
+  id_texte: number;
+  contenu: string;
+  id_indice: number;
+}
+
 export type Haut_FaitType = {
   id_haut_fait: number;
   titre: string;
@@ -191,4 +199,17 @@ export type EquipeOrganisatriceType = {
   adresse_postale: string;        // VARCHAR(255), avec une valeur par défaut 'Non spécifiée'
   telephone: string | null;       // VARCHAR(20), peut être null
   id_user: string;                // UUID, obligatoire, avec une contrainte de clé étrangère
-};
+}
+
+export type RecompenseType = {
+  id_recompense: number;
+  nom: string;
+  description: string;
+  type: string;
+  valeur: number;
+  quantite_dispo: number;
+  prix_reel: number;
+  image: string;
+  date_modification: string;
+  id_chasse: number;
+}
