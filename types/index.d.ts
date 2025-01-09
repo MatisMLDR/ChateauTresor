@@ -1,5 +1,3 @@
-import { UUID } from "crypto";
-
 export interface StripeProduct {
   id: string;
   name: string;
@@ -159,18 +157,38 @@ export type AvisType = {
 }
 
 export type ProfilType = {
-  id: UUID;
-  nom: string;
-  prenom: string;
-  username: string;
-  email: string;
-  adresse: string;
-  ville: string;
-  code_postal: string;
-  birthday: string;
-  telephone?: string;
-  stripe_id: string;
-  plan: string;
-  updated_at: string;
-  email_confirm: boolean;
+  id: string; // UUID, non null
+  username?: string; // Optionnel, défaut 'anonyme'
+  updated_at?: string | null; // Timestamp ISO 8601, nullable
+  email: string; // Unique et non null
+  birthday?: string | null; // Date ISO 8601, nullable
+  email_confirm?: boolean; // Défaut à false
+  nom?: string; // Défaut 'Non spécifié'
+  prenom?: string; // Défaut 'Non spécifié'
+  adresse?: string; // Défaut 'Non spécifiée'
+  ville?: string; // Défaut 'Non spécifiée'
+  code_postal?: string; // Défaut 'Non spécifié'
+  stripe_id?: string | null; // Nullable
+  plan: string; // Non null, défaut 'none'
 }
+
+export type Haut_FaitType = {
+  id_haut_fait: number;
+  titre: string;
+  description: string;
+  condition: string;
+  image_badge: string;
+  date: string;
+}
+
+export type EquipeOrganisatriceType = {
+  id_equipe: number;              // SERIAL PRIMARY KEY, donc un nombre entier auto-incrémenté
+  type: string;                   // VARCHAR(255), avec une valeur par défaut 'Association'
+  n_siret: string | null;         // VARCHAR(255), peut être null
+  id_taxes: string | null;        // VARCHAR(255), peut être null
+  nb_membres: number;             // INT, avec une valeur par défaut 0
+  site_web: string | null;        // VARCHAR(255), peut être null
+  adresse_postale: string;        // VARCHAR(255), avec une valeur par défaut 'Non spécifiée'
+  telephone: string | null;       // VARCHAR(20), peut être null
+  id_user: string;                // UUID, obligatoire, avec une contrainte de clé étrangère
+};

@@ -1,5 +1,5 @@
 import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
-import { getEquipeById, getAllEquipes } from "@/utils/dao/EquipeUtils";
+import { getEquipeById, getAllEquipes } from '@/utils/dao/EquipeOrganisatriceUtils';
 
 class EquipeOrganisatrice {
   private id_equipe: number;
