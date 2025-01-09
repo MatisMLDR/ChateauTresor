@@ -95,3 +95,5 @@ class Avis {
         this.id_participant = row.id_participant;
     }
 }
+
+export default Avis;
