@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /*
  * Méthode pour récupérer un participant par son id
  * @returns Promise<any> Le tableau du participant

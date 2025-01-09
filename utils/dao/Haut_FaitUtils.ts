@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /**
  * @param id_haut_fait 
  * @returns Promise<any> Le tableau des hauts faits

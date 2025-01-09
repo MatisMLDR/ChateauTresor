@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /**
  * Fonction permettant de récupérer tous les avis d'une énigme
  * @returns Promise<any> Le tableau des avis de l'énigme

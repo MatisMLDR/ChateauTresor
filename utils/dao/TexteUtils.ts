@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /**
  * Récupère un texte par son id
  * @returns Promise<any> Le tableau des textes

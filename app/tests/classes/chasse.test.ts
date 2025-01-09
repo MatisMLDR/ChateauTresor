@@ -182,6 +182,8 @@ describe("Classe Chasse", () => {
 });
 */
 
+
+
 describe("Tests réels avec DAO", () => {
   it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
     // Récupère les données de la chasse via le DAO

@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /*
  * Méthode pour récupérer tout les indices associés aux participants
     * @returns Promise<any> Un tableau d'indices

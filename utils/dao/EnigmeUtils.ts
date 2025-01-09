@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /*
  * Méthode pour récupérer tout les indices d'une enigme
  * @returns Promise<any> Le tableau des indices de l'enigme

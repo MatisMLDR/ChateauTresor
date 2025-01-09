@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 /*
 * Méthode pour récupérer toutes les chasses associées à un château
 * @returns Promise<any> Un tableau de chasses

@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /*
  * Méthode pour récupérer une équipe organisatrice par son ID
  * @param id_equipe Le ID de l'équipe organisatrice

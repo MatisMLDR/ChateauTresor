@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 /*
  * Méthode pour récupérer toutes les participations à une chasse
  * @returns Promise<any> Un tableau de participations
