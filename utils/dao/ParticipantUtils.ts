@@ -4,7 +4,7 @@
  * @params id_participant L'identifiant du participant 
  */
 export async function getParticipantById(id_participant: number): Promise<any> {
-  const res = await fetch(`/api/participants/${id_participant}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération du participant');
   }
@@ -19,7 +19,7 @@ export async function getParticipantById(id_participant: number): Promise<any> {
  * @params id_participant L'identifiant du participant
  */
 export async function getAllParticipantEnigmes(id_participant: number): Promise<any> {
-  const res = await fetch(`/api/participants/enigmes/${id_participant}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/enigmes/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des participations aux énigmes');
   }
@@ -34,7 +34,7 @@ export async function getAllParticipantEnigmes(id_participant: number): Promise<
  * @params id_participant L'identifiant du participant
  */
 export async function getAllParticipantChasses(id_participant: number): Promise<any> {
-  const res = await fetch(`/api/participants/chasses/${id_participant}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/chasses/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des chasses du participant');
   }
@@ -50,7 +50,7 @@ export async function getAllParticipantChasses(id_participant: number): Promise<
  * @params id_participant L'identifiant du participant
  */
 export async function getAllParticipantAvis(id_participant: number): Promise<any> {
-  const res = await fetch(`/api/participants/avis/${id_participant}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/avis/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis du participant');
   }
@@ -65,7 +65,7 @@ export async function getAllParticipantAvis(id_participant: number): Promise<any
  * @params id_participant L'identifiant du participant
  */
 export async function getAllParticipantIndice(id_participant: number): Promise<any> {
-  const res = await fetch(`/api/participants/indices/${id_participant}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/indices/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des indices du participant');
   }

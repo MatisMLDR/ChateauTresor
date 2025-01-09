@@ -5,7 +5,7 @@
  * @example const participations = await getAllParticipations();
  */
 export async function getAllParticipations(id_chasse: number): Promise<any> {
-  const res = await fetch(`/api/participations/chasse?id_chasse=${id_chasse}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participations/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des participations');
   }
@@ -19,7 +19,7 @@ export async function getAllParticipations(id_chasse: number): Promise<any> {
 * @example const enigmes = await getAllEnigmes();
 */
 export async function getAllEnigmes(id_chasse: number): Promise<any> {
-  const res = await fetch(`/api/enigmes/chasse?id_chasse=${id_chasse}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des énigmes');
   }
@@ -33,7 +33,7 @@ export async function getAllEnigmes(id_chasse: number): Promise<any> {
 * @example const indices = await getAllIndices();
 */
 export async function getAllIndices(id_chasse: number): Promise<any> {
-  const res = await fetch(`/api/indices/chasse?id_chasse=${id_chasse}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des indices');
   }
@@ -47,7 +47,7 @@ export async function getAllIndices(id_chasse: number): Promise<any> {
 * @example const recompenses = await getAllRecompenses();
 */
 export async function getAllRecompenses(id_chasse: number): Promise<any> {
-  const res = await fetch(`/api/recompenses/chasse?id_chasse=${id_chasse}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des récompenses');
   }
@@ -61,7 +61,7 @@ export async function getAllRecompenses(id_chasse: number): Promise<any> {
 * @example const avis = await getAllAvis();
 */
 export async function getAllAvis(id_chasse: number): Promise<any> {
-  const res = await fetch(`/api/avis/chasse?id_chasse=${id_chasse}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis');
   }
@@ -75,7 +75,7 @@ export async function getAllAvis(id_chasse: number): Promise<any> {
 * @example const chasse = await getChasseById(1);
 */
 export async function getChasseById(id_chasse: number): Promise<any> {
-  const res = await fetch(`http://localhost:3000/api/chasses/${id_chasse}`); 
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`); 
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de la chasse');
   }

@@ -5,7 +5,7 @@
  * @example const haut_fait = await getHaut_FaitById(1);
  */
 export async function getHaut_FaitById(id_haut_fait:number): Promise<any> {
-    const res = await fetch(`/api/haut_fait/${id_haut_fait}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/haut_fait/${id_haut_fait}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération des hauts faits');
     }
@@ -18,7 +18,7 @@ export async function getHaut_FaitById(id_haut_fait:number): Promise<any> {
  * @example const haut_fait = await getAllHaut_Faits();
  */
 export async function getAllHaut_Faits(): Promise<any> {
-    const res = await fetch(`/api/haut_fait`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/haut_fait`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération des hauts faits');
     }

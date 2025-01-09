@@ -6,7 +6,7 @@
  * @params id_enigme L'identifiant d'une énigme
  **/
 export async function getAllAvis(id_enigme: number): Promise<any> {
-  const res = await fetch(`/api/avis/enigme?id_enigme=${id_enigme}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/enigme?id_enigme=${id_enigme}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis');
   }
@@ -21,7 +21,7 @@ export async function getAllAvis(id_enigme: number): Promise<any> {
  * @params id_avis L'identifiant d'un avis
  **/
 export async function getAvisById(id_avis: number): Promise<any> {
-  const res = await fetch(`/api/avis/${id_avis}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/${id_avis}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de l\'avis');
   }

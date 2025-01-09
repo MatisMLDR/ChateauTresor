@@ -6,7 +6,7 @@
  * @params id_enigmes L'identifiant d'une énigme
  */
 export async function getAllIndices(id_enigme: number): Promise<any> {
-  const res = await fetch(`/api/indices/enigme?id_enigme=${id_enigme}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/enigme?id_enigme=${id_enigme}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des indices');
   }
@@ -21,7 +21,7 @@ export async function getAllIndices(id_enigme: number): Promise<any> {
   * @params id_enigmes L'identifiant d'une énigme
   */ 
 export async function getEnigmeById(id_enigme: number): Promise<any> {
-  const res = await fetch(`/api/enigmes/${id_enigme}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${id_enigme}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de l\'énigme');
   }
@@ -36,7 +36,7 @@ export async function getEnigmeById(id_enigme: number): Promise<any> {
  * @params id_enigmes L'identifiant d'une énigme
  */
 export async function getAllEnigmesParticipants(id_enigme: number): Promise<any> {
-  const res = await fetch(`/api/enigmes/participants/${id_enigme}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/participants/${id_enigme}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des énigmes des participants');
   }
