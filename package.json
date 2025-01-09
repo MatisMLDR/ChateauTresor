@@ -15,7 +15,9 @@
     "format:check": "prettier --check .",
     "stripe:setup": "ts-node stripeSetup.ts",
     "test": "jest",
-    "test:chasse": "jest app/tests/classes/chasse.test.ts"
+    "test:chasse": "jest app/tests/classes/chasse.test.ts",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

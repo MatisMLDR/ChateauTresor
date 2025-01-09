@@ -8,39 +8,41 @@ import {
 
 class Chasse {
   private id_chasse: number;
-  private image: string;
   private titre: string;
-  private description: string;
-  private difficulte: number;
-  private prix: number;
-  private date_debut: string;
-  private date_fin: string;
   private capacite: number;
+  private description: string;
   private age_requis: number;
-  private duree_estime: number;
-  private theme: string;
-  private id_chateau: number;
-  private id_equipe: number;
-  private statut: string;
+  private image: string | null;
+  private date_creation: string;
   private date_modification: string;
+  private date_debut: string | null;
+  private date_fin: string | null;
+  private prix: number;
+  private difficulte: number;
+  private duree_estime: string;
+  private theme: string;
+  private statut: string;
+  private id_chateau: number | null;
+  private id_equipe: number | null;
 
-  constructor(chasse: ChasseType) {
+  constructor(chasse: Chasse) {
     this.id_chasse = chasse.id_chasse;
-    this.image = chasse.image;
-    this.titre = chasse.titre;
-    this.description = chasse.description;
-    this.difficulte = chasse.difficulte;
-    this.prix = chasse.prix;
-    this.date_debut = chasse.date_debut;
-    this.date_fin = chasse.date_fin;
-    this.capacite = chasse.capacite;
-    this.age_requis = chasse.age_requis;
-    this.duree_estime = chasse.duree_estime;
-    this.theme = chasse.theme;
-    this.id_chateau = chasse.id_chateau;
-    this.id_equipe = chasse.id_equipe;
-    this.statut = chasse.statut;
-    this.date_modification = chasse.date_modification;
+    this.titre = chasse.titre ?? "Nouvelle Chasse";
+    this.capacite = chasse.capacite ?? 0;
+    this.description = chasse.description ?? "Pas de description";
+    this.age_requis = chasse.age_requis ?? 0;
+    this.image = chasse.image ?? null;
+    this.date_creation = chasse.date_creation ?? new Date().toISOString();
+    this.date_modification = chasse.date_modification ?? new Date().toISOString();
+    this.date_debut = chasse.date_debut ?? null;
+    this.date_fin = chasse.date_fin ?? null;
+    this.prix = chasse.prix ?? 0.0;
+    this.difficulte = chasse.difficulte ?? 1;
+    this.duree_estime = chasse.duree_estime ?? "00:00:00";
+    this.theme = chasse.theme ?? "Aucun thème";
+    this.statut = chasse.statut ?? "Inactif";
+    this.id_chateau = chasse.id_chateau ?? null;
+    this.id_equipe = chasse.id_equipe ?? null;
   }
 
   // Getters
@@ -48,7 +50,7 @@ class Chasse {
   public getIdChasse(): number {
     return this.id_chasse;
   }
-  public getImage(): string {
+  public getImage(): string | null {
     return this.image;
   }
   public getTitre(): string {
@@ -63,10 +65,10 @@ class Chasse {
   public getPrix(): number {
     return this.prix;
   }
-  public getDateDebut(): string {
+  public getDateDebut(): string | null {
     return this.date_debut;
   }
-  public getDateFin(): string {
+  public getDateFin(): string | null {
     return this.date_fin;
   }
   public getCapacite(): number {
@@ -75,16 +77,16 @@ class Chasse {
   public getAgeRequis(): number {
     return this.age_requis;
   }
-  public getDureeEstime(): number {
+  public getDureeEstime(): string {
     return this.duree_estime;
   }
   public getTheme(): string {
     return this.theme;
   }
-  public getIdChateau(): number {
+  public getIdChateau(): number | null {
     return this.id_chateau;
   }
-  public getIdEquipe(): number {
+  public getIdEquipe(): number | null {
     return this.id_equipe;
   }
   public getStatut(): string {
@@ -122,7 +124,7 @@ class Chasse {
   public setAgeRequis(age_requis: number): void {
     this.age_requis = age_requis;
   }
-  public setDureeEstime(duree_estime: number): void {
+  public setDureeEstime(duree_estime: string): void {
     this.duree_estime = duree_estime;
   }
   public setTheme(theme: string): void {

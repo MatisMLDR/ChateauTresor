@@ -6,7 +6,8 @@ CREATE TABLE public.profiles (
     email text UNIQUE NOT NULL,
     birthday date,
     email_confirm boolean DEFAULT false,
-    full_name text default 'Jean Neymar',
+    nom text default 'Non spécifié',
+    prenom text default 'Non spécifié',
     adresse text default 'Non spécifiée',
     ville text default 'Non spécifiée',
     code_postal text default 'Non spécifié',
@@ -83,6 +84,7 @@ CREATE TABLE public.Equipe_Organisatrice (
 CREATE TABLE public.Membre_equipe (
     id_membre SERIAL PRIMARY KEY,
     carte_identite VARCHAR(255) DEFAULT NULL,
+    est_verifie BOOLEAN DEFAULT FALSE,
     role_equipe VARCHAR(255) DEFAULT 'Membre',
     id_user UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE
 );
@@ -187,7 +189,6 @@ CREATE TABLE public.Enigme_Participant (
     id_participant INT,
     est_resolue BOOLEAN DEFAULT FALSE,
     duree REAL DEFAULT 0.00,
-    indice_reveles INT DEFAULT 0,
     date_resolution TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_enigme, id_participant),
     FOREIGN KEY (id_enigme) REFERENCES Enigme(id_enigme),

@@ -16,16 +16,16 @@ class Chateau {
 
   constructor(chateau: ChateauType) {
     this.id_chateau = chateau.id_chateau;
-    this.nom = chateau.nom;
-    this.adresse_postale = chateau.adresse_postale;
-    this.localisation = chateau.localisation;
-    this.capacite = chateau.capacite;
-    this.prix_location = chateau.prix_location;
-    this.telephone = chateau.telephone;
-    this.description = chateau.description;
-    this.image = chateau.image;
-    this.site_web = chateau.site_web;
-    this.id_proprietaire = chateau.id_proprietaire;
+    this.nom = chateau.nom || 'Château inconnu'; // Valeur par défaut si nom est non défini
+    this.adresse_postale = chateau.adresse_postale || 'Non spécifiée'; // Valeur par défaut
+    this.localisation = chateau.localisation || 'Non spécifiée'; // Valeur par défaut
+    this.capacite = chateau.capacite || 0; // Valeur par défaut
+    this.prix_location = chateau.prix_location || 0.00; // Valeur par défaut
+    this.telephone = chateau.telephone || null; // Valeur par défaut
+    this.description = chateau.description || 'Pas de description'; // Valeur par défaut
+    this.image = chateau.image || null; // Valeur par défaut
+    this.site_web = chateau.site_web || null; // Valeur par défaut
+    this.id_proprietaire = chateau.id_proprietaire || null; // Valeur par défaut
   }
 
   // Getters
