@@ -149,3 +149,9 @@ export type AvisType = {
   id_chasse: number;
   id_participant: number;
 }
+
+export type TexteType = {
+  id_texte: number;
+  contenu: string;
+  id_indice: number;
+}
