@@ -3,18 +3,29 @@ import { RecompenseType } from "@/types";
 import { getAllRecompenses, getRecompenseById } from '@/utils/dao/RecompenseUtils';
 
 class Recompense {
-    private id_recompense: number; 
-    private nom: string; 
-    private description: string; 
-    private type: string; 
-    private valeur: number; 
-    private quantite_dispo: number; 
-    private prix_reel: number; 
-    private image: string; 
-    private date_modification: string; 
-    private id_chasse: number;
+    private id_recompense: number;
+    private nom: string;
+    private description: string;
+    private type: string;
+    private valeur: number;
+    private quantite_dispo: number;
+    private prix_reel: number;
+    private image: string | null;
+    private date_modification: string;
+    private id_chasse: number | null;
 
-    constructor(recompense: RecompenseType) {
+    constructor(recompense: {
+        id_recompense: number;
+        nom: string;
+        description: string;
+        type: string;
+        valeur: number;
+        quantite_dispo: number;
+        prix_reel: number;
+        image: string | null;
+        date_modification: string;
+        id_chasse: number | null;
+    }) {
         this.id_recompense = recompense.id_recompense;
         this.nom = recompense.nom;
         this.description = recompense.description;
@@ -55,7 +66,7 @@ class Recompense {
         return this.prix_reel;
     }
 
-    public getImage(): string {
+    public getImage(): string | null {
         return this.image;
     }
 
@@ -63,7 +74,7 @@ class Recompense {
         return this.date_modification;
     }
 
-    public getIdChasse(): number {
+    public getIdChasse(): number | null {
         return this.id_chasse;
     }
 

@@ -71,26 +71,27 @@ export type EnigmeType = {
 ///////////
 
 export type ChasseType = {
-  id_chasse: number;
-  image: string;
-  titre: string;
-  description: string;
-  image: string;
-  difficulte: number | 0;
-  prix: number;
-  date_debut: string;
-  date_fin: string;
-  capacite: number;
-  age_requis: number;
-  duree_estime: number;
-  theme: string;
-  id_chateau: number;
-  id_equipe: number;
-  statut: string;
-  date_modification: string;
-  chateau: ChateauType;
+  id_chasse: number; // Identifiant unique, SERIAL, non null
+  titre?: string; // Optionnel, par défaut 'Nouvelle Chasse'
+  capacite?: number; // Optionnel, par défaut 0
+  description?: string; // Optionnel, par défaut 'Pas de description'
+  age_requis?: number; // Optionnel, par défaut 0
+  image?: string | null; // Peut être null
+  date_creation?: string; // Optionnel, TIMESTAMP, par défaut CURRENT_TIMESTAMP
+  date_modification?: string; // Optionnel, TIMESTAMP, par défaut CURRENT_TIMESTAMP
+  date_debut?: string | null; // Peut être null, TIMESTAMP
+  date_fin?: string | null; // Peut être null, TIMESTAMP
+  prix?: number; // Optionnel, NUMERIC(10, 2), par défaut 0.00
+  difficulte?: number; // Optionnel, entre 1 et 3, par défaut 1
+  duree_estime?: string; // Optionnel, INTERVAL, par défaut '00:00:00'
+  theme?: string; // Optionnel, par défaut 'Aucun thème'
+  statut?: string; // Optionnel, par défaut 'Inactif'
+  id_chateau?: number | null; // Peut être null, clé étrangère vers Chateau(id_chateau)
+  id_equipe?: number | null; // Peut être null, clé étrangère vers Equipe_Organisatrice(id_equipe)
+
+  chateau?: ChateauType;
   nb_enigmes: number;
-  enigmes: EnigmeType[];
+  enigmes?: EnigmeType[];
 };
 
 export type ParticipantType = {
@@ -110,17 +111,18 @@ export type ParticipantType = {
 }
 
 export type ChateauType = {
-  id_chateau: number;
-  nom: string;
-  adresse_postale: string;
-  localisation: string; // Format : "latitude,longitude"
-  capacite: number;
-  prix_location: number;
-  telephone: string | null;
-  description: string;
-  image: string | null;
-  site_web: string | null;
-  id_proprietaire: number | null; // Référence vers Proprietaire_Chateau
+  id_chateau: number; // Clé primaire, identifiant du château
+  nom?: string; // Nom du château, par défaut 'Château inconnu'
+  adresse_postale?: string; // Adresse postale, par défaut 'Non spécifiée'
+  localisation?: string; // Localisation, par défaut 'Non spécifiée'
+  capacite?: number; // Capacité, par défaut 0
+  prix_location?: number; // Prix de location, par défaut 0.00
+  telephone?: string | null; // Numéro de téléphone, par défaut null
+  description?: string; // Description, par défaut 'Pas de description'
+  image?: string | null; // URL de l'image, par défaut null
+  site_web?: string | null; // URL du site web, par défaut null
+  id_proprietaire?: number | null; // Clé étrangère vers Proprietaire_Chateau, par défaut null
+
   chasses?: ChasseType[]; // Liste des chasses liées au château
 };
 
@@ -177,7 +179,7 @@ export type ProfilType = {
 export type TexteType = {
   id_texte: number;
   contenu: string;
-  id_indice: number;
+  id_indice: number | null;
 }
 
 /* A modifier avec les ? */
@@ -218,7 +220,7 @@ export type RecompenseType = {
   valeur: number;
   quantite_dispo: number;
   prix_reel: number;
-  image: string;
+  image: string | null;
   date_modification: string;
-  id_chasse: number;
+  id_chasse: number | null;
 }

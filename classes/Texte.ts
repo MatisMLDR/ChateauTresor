@@ -4,38 +4,41 @@ import { getAllTextes, getTexteById } from '@/utils/dao/TexteUtils';
 
 class Texte {
   private id_texte: number;
-  private contenu: string; 
-  private id_indice: number; 
+  private contenu: string;
+  private id_indice: number | null;
 
-  constructor(texte: TexteType) {
-      this.id_texte = texte.id_texte;
-      this.contenu = texte.contenu;
-      this.id_indice = texte.id_indice;
+  constructor(texte: Texte) {
+    this.id_texte = texte.id_texte;
+    this.contenu = texte.contenu;
+    this.id_indice = texte.id_indice;
   }
 
-    public getIdTexte(): number {
-        return this.id_texte;
-    }
+  // Getters
+  public getIdTexte(): number {
+    return this.id_texte;
+  }
 
-    public getContenu(): string {
-        return this.contenu;
-    }
+  public getContenu(): string {
+    return this.contenu;
+  }
 
-    public getIdIndice(): number {
-        return this.id_indice;
-    }
+  public getIdIndice(): number | null {
+    return this.id_indice;
+  }
 
-    public setIdTexte(id_texte: number): void {
-        this.id_texte = id_texte;
-    }
+  // Setters
+  public setIdTexte(id_texte: number): void {
+    this.id_texte = id_texte;
+  }
 
-    public setContenu(contenu: string): void {
-        this.contenu = contenu;
-    }
+  public setContenu(contenu: string): void {
+    this.contenu = contenu;
+  }
 
-    public setIdIndice(id_indice: number): void {
-        this.id_indice = id_indice;
-    }
+  public setIdIndice(id_indice: number | null): void {
+    this.id_indice = id_indice;
+  }
+
 
     public async read(id_texte: number): Promise<void> {
         const texte = await getTexteById(id_texte);
