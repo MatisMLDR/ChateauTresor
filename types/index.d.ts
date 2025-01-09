@@ -1,3 +1,5 @@
+import { UUID } from "crypto";
+
 export interface StripeProduct {
   id: string;
   name: string;
@@ -154,4 +156,21 @@ export type AvisType = {
   date_modification: string;
   id_chasse: number;
   id_participant: number;
+}
+
+export type ProfilType = {
+  id: UUID;
+  nom: string;
+  prenom: string;
+  username: string;
+  email: string;
+  adresse: string;
+  ville: string;
+  code_postal: string;
+  birthday: string;
+  telephone?: string;
+  stripe_id: string;
+  plan: string;
+  updated_at: string;
+  email_confirm: boolean;
 }
