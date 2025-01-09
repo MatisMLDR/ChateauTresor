@@ -1,4 +1,5 @@
 import { ChateauType } from "@/types";
+import { getChateauById } from '@/utils/dao/ChateauUtils';
 
 class Chateau {
   private id_chateau: number;
@@ -71,6 +72,83 @@ class Chateau {
   public getIdProprietaire(): number | null {
     return this.id_proprietaire;
   }
+
+  // Setters
+  public setIdChateau(id_chateau: number): void {
+    this.id_chateau = id_chateau;
+  }
+
+  public setNom(nom: string): void {
+    this.nom = nom;
+  }
+
+  public setAdressePostale(adresse_postale: string): void {
+    this.adresse_postale = adresse_postale;
+  }
+
+  public setLocalisation(localisation: string): void {
+    this.localisation = localisation;
+  }
+
+  public setCapacite(capacite: number): void {
+    this.capacite = capacite;
+  }
+
+  public setPrixLocation(prix_location: number): void {
+    this.prix_location = prix_location;
+  }
+
+  public setTelephone(telephone: string | null): void {
+    this.telephone = telephone;
+  }
+
+  public setDescription(description: string): void {
+    this.description = description;
+  }
+
+  public setImage(image: string | null): void {
+    this.image = image;
+  }
+
+  public setSiteWeb(site_web: string | null): void {
+    this.site_web = site_web;
+  }
+
+  public setIdProprietaire(id_proprietaire: number | null): void {
+    this.id_proprietaire = id_proprietaire;
+  }
+
+  /*
+   * Méthode pour charger les données de l'objet indice dans la classe
+   */
+  public async read(id_chateau: number): Promise<void> {
+
+    const data = await getChateauById(id_chateau) as any;
+
+    if (data.length == 0) {
+      throw new Error("La chasse n'existe pas");
+    }
+    if (data.length > 1) {
+      throw new Error("Plusieurs chasses trouvées");
+    }
+
+    const row = data[0];
+    this.setIdChateau(row.id_chateau);
+    this.setNom(row.nom);
+    this.setAdressePostale(row.adresse_postale);
+    this.setLocalisation(row.localisation);
+    this.setCapacite(row.capacite);
+    this.setPrixLocation(row.prix_location);
+    this.setTelephone(row.telephone);
+    this.setDescription(row.description);
+    this.setImage(row.image);
+    this.setSiteWeb(row.site_web);
+    this.setIdProprietaire(row.id_proprietaire);
+
+  }
+
+
+
 
 }
 

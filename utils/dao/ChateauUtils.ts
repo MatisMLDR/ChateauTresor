@@ -39,3 +39,20 @@ export async function getAllChateaux(): Promise<any> {
     }
     return await res.json();
   }
+
+/*
+* Méthode pour récupérer un chateau par son id
+* @returns Promise<any> du chateau
+* @throws Error si la récupération de l'enigme échoue
+* @example const chateau = await getChateau(1);
+* @params id_chateau L'identifiant d'une énigme
+*/
+export async function getChateauById(id_chateau: number): Promise<any> {
+const res = await fetch(`/api/chateaux/${id_chateau}`);
+    if (!res.ok) {
+      throw new Error('Erreur lors de la récupération du chateau');
+    }
+    return await res.json();
+
+
+}
