@@ -84,6 +84,7 @@ CREATE TABLE public.Equipe_Organisatrice (
 CREATE TABLE public.Membre_equipe (
     id_membre SERIAL PRIMARY KEY,
     carte_identite VARCHAR(255) DEFAULT NULL,
+    est_verifie BOOLEAN DEFAULT FALSE,
     role_equipe VARCHAR(255) DEFAULT 'Membre',
     id_user UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE
 );

@@ -1,7 +1,8 @@
-export class MembreEquipe {
+export class MembreEquipe extends Profil {
   private id_membre: number;
-  private nom: string;
-  private prenom: string;
   private role: string;
-  private email: string;
-  private 
+  private est_verifie: boolean;
+  private id_equipe: number;
+  private carte_identite: string;
+
+}

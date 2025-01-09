@@ -180,6 +180,14 @@ export type TexteType = {
   id_indice: number;
 }
 
+/* A modifier avec les ? */
+export type MembreEquipeType = {
+  id_membre: number;
+  role: string;
+  est_verifie: boolean;
+  id_equipe: number;
+  carte_identite: string;
+}
 export type Haut_FaitType = {
   id_haut_fait: number;
   titre: string;
