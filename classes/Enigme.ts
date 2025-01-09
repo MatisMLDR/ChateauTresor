@@ -1,5 +1,6 @@
 import { EnigmeType } from "@/types";
 import { getAllEnigmesParticipants, getEnigmeById } from "@/utils/dao/EnigmeUtils";
+import { getAllParticipations } from '@/utils/dao/ChasseUtils';
 
 export class Enigme {
   id: number;
@@ -142,10 +143,19 @@ export class Enigme {
    * Méthode pour calculer la réussite moyenne d'une énigme
    * @returns number La réussite moyenne d'une enigme en pourcentage
    */
-  public getReussiteMoyenne(): number {
-    /* A compléter */
+  public async getReussiteMoyenne(): Promise<number> {
+    // Récupération dans la base de la réussite de chaques participations avec l'id de la chasse
 
-    return 0;
+    // On récupère les données
+    const data = await getAllEnigmesParticipants(this.id);
+
+    if (data.length === 0) {
+      return 0;
+    }
+    // On calcule la somme des réussites
+    const sum = data.reduce((acc: number, participation: any) => acc + participation.est_resolue, 0);
+    // On retourne la moyenne
+    return (sum / data.length) * 100;
   }
 
   /* 

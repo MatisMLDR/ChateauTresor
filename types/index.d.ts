@@ -1,3 +1,5 @@
+import { UUID } from "crypto";
+
 export interface StripeProduct {
   id: string;
   name: string;
@@ -102,9 +104,15 @@ export type ParticipantType = {
   nom: string;
   prenom: string;
   email: string;
-  telephone: string;
-  id_equipe: number;
-  equipe: EquipeType;
+  id_user: string;
+  adresse: string;
+  ville: string;
+  code_postal: string;
+  birthday: string;
+  plan: string;
+  updated_at: string;
+  stripe_id: string;
+  
 }
 
 export type ChateauType = {
@@ -143,4 +151,80 @@ export type LineChart = {
   x_axis: string,
   firstLine: number,
   secondLine: number
+}
+
+export type AvisType = {
+  id_avis: number;
+  note: number;
+  titre: string;
+  description: string;
+  nb_like: number;
+  date_modification: string;
+  id_chasse: number;
+  id_participant: number;
+}
+
+export type ProfilType = {
+  id: string; // UUID, non null
+  username?: string; // Optionnel, défaut 'anonyme'
+  updated_at?: string | null; // Timestamp ISO 8601, nullable
+  email: string; // Unique et non null
+  birthday?: string | null; // Date ISO 8601, nullable
+  email_confirm?: boolean; // Défaut à false
+  nom?: string; // Défaut 'Non spécifié'
+  prenom?: string; // Défaut 'Non spécifié'
+  adresse?: string; // Défaut 'Non spécifiée'
+  ville?: string; // Défaut 'Non spécifiée'
+  code_postal?: string; // Défaut 'Non spécifié'
+  stripe_id?: string | null; // Nullable
+  plan: string; // Non null, défaut 'none'
+}
+
+export type TexteType = {
+  id_texte: number;
+  contenu: string;
+  id_indice: number;
+}
+
+/* A modifier avec les ? */
+export type MembreEquipeType = {
+  id_membre: number; // Identifiant unique, SERIAL, non null
+  carte_identite?: string | null; // Peut être null, sinon VARCHAR(255)
+  est_verifie?: boolean; // Optionnel, par défaut false
+  role_equipe?: string; // Optionnel, par défaut 'Membre'
+  id_user: string; // UUID, non null
+}
+
+export type Haut_FaitType = {
+  id_haut_fait: number;
+  titre: string;
+  description: string;
+  condition: string;
+  image_badge: string;
+  date: string;
+}
+
+export type EquipeOrganisatriceType = {
+  id_equipe: number;              // SERIAL PRIMARY KEY, donc un nombre entier auto-incrémenté
+  type: string;                   // VARCHAR(255), avec une valeur par défaut 'Association'
+  n_siret: string | null;         // VARCHAR(255), peut être null
+  id_taxes: string | null;        // VARCHAR(255), peut être null
+  nb_membres: number;             // INT, avec une valeur par défaut 0
+  site_web: string | null;        // VARCHAR(255), peut être null
+  adresse_postale: string;        // VARCHAR(255), avec une valeur par défaut 'Non spécifiée'
+  telephone: string | null;       // VARCHAR(20), peut être null
+  id_user: string;                // UUID, obligatoire, avec une contrainte de clé étrangère
+}
+
+export type RecompenseType = {
+  id_recompense: number;
+  nom: string;
+  description: string;
+  type: string;
+  valeur: number;
+  quantite_dispo: number;
+  prix_reel: number;
+  image: string;
+  date_modification: string;
+  id_chasse: number;
 }
