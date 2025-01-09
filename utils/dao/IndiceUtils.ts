@@ -6,7 +6,7 @@
     * @param id_indice - l'id de l'indice
 */ 
 export async function getAllIndicesParticipants(id_indice: number): Promise<any> {
-    const res = await fetch(`/api/indices/participants?id_indice=${id_indice}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participants?id_indice=${id_indice}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération des indices');
     }
@@ -20,7 +20,7 @@ export async function getAllIndicesParticipants(id_indice: number): Promise<any>
     * @example const indices = await getAllIndices();
 */
 export async function getIndiceById(id: number): Promise<any> {
-    const res = await fetch(`/api/indices/${id}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/${id}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération de l\'indice');
     }

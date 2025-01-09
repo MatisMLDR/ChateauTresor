@@ -1,8 +1,10 @@
 "use client";
 
+import React, { useState } from "react";
 import { ChasseType } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, MapPin, AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * Ce code définit un composant React appelé ReviewSubmit qui fait partie d'un formulaire
@@ -16,8 +18,41 @@ interface ReviewSubmitProps {
   setFormData: (data: Partial<ChasseType>) => void; // Fonction pour mettre à jour les données du formulaire
 }
 
+// Composant pour sélectionner les récompenses
+function RewardsSelector({ rewards, selectedRewards, onToggle }: { rewards: string[]; selectedRewards: string[]; onToggle: (reward: string) => void }) {
+  return (
+    <div className="space-y-2">
+      {rewards.map((reward, index) => (
+        <div
+          key={index}
+          className={`cursor-pointer rounded-lg border p-2 hover:bg-muted ${
+            selectedRewards.includes(reward) ? "border-2 border-primary" : ""
+          }`}
+          onClick={() => onToggle(reward)}
+        >
+          {reward}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // Définition du composant ReviewSubmit
-export function ReviewSubmit({ formData }: ReviewSubmitProps) {
+export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
+  const [isRewardsVisible, setIsRewardsVisible] = useState(false);
+
+  const rewards = ["Gold Coins", "Treasure Chest", "Mystery Box", "Golden Key"];
+
+  // Fonction pour ajouter ou retirer une récompense dans formData
+  const toggleReward = (reward: string) => {
+    const currentRewards = formData.rewards || [];
+    const updatedRewards = currentRewards.includes(reward)
+      ? currentRewards.filter((r) => r !== reward)
+      : [...currentRewards, reward];
+
+    setFormData({ ...formData, rewards: updatedRewards });
+  };
+
   // Vérifie si toutes les informations requises sont complètes
   const isComplete =
     formData.titre &&
@@ -31,6 +66,7 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
     formData.date_debut &&
     formData.theme &&
     formData.capacite &&
+    formData.rewards?.length &&
     formData.enigmes?.length;
 
   return (
@@ -83,7 +119,7 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
               </div>
             </div>
           ) : (
-            <p className="text-muted-foreground">Aucun chateau seléctionné</p>
+            <p className="text-muted-foreground">Aucun château sélectionné</p>
           )}
         </CardContent>
       </Card>
@@ -107,6 +143,28 @@ export function ReviewSubmit({ formData }: ReviewSubmitProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Bouton pour afficher ou masquer les récompenses */}
+      <Button onClick={() => setIsRewardsVisible(!isRewardsVisible)}>
+        {isRewardsVisible ? "Hide Rewards" : "Select Rewards"}
+      </Button>
+
+      {/* Liste des récompenses */}
+      {isRewardsVisible && (
+        <div className="mt-4 space-y-2">
+          <RewardsSelector
+            rewards={rewards}
+            selectedRewards={formData.rewards || []}
+            onToggle={toggleReward}
+          />
+        </div>
+      )}
+
+      {formData.rewards?.length > 0 && (
+        <div className="text-sm text-muted-foreground">
+          Récompenses: {formData.rewards.join(", ")}
+        </div>
+      )}
 
       {/* Message d'avertissement si les informations ne sont pas complètes */}
       {!isComplete && (

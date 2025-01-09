@@ -5,7 +5,7 @@
  * @example const textes = await getAllTexte();
  */
 export async function getTexteById(id_indice:number): Promise<any> {
-    const res = await fetch(`/api/texte/${id_indice}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/texte/${id_indice}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération des textes');
     }
@@ -19,7 +19,7 @@ export async function getTexteById(id_indice:number): Promise<any> {
  * @example const textes = await getAllTexte();
  */
 export async function getAllTextes(): Promise<any> {
-    const res = await fetch(`/api/texte`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/texte`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération des textes');
     }
