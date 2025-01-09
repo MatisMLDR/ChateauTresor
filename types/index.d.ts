@@ -156,16 +156,8 @@ export type AvisType = {
   id_participant: number;
 }
 
-export type EquipeOrganisatriceType = {
-  id_equipe: number;              // SERIAL PRIMARY KEY, donc un nombre entier auto-incrémenté
-  type: string;                   // VARCHAR(255), avec une valeur par défaut 'Association'
-  n_siret: string | null;         // VARCHAR(255), peut être null
-  id_taxes: string | null;        // VARCHAR(255), peut être null
-  nb_membres: number;             // INT, avec une valeur par défaut 0
-  site_web: string | null;        // VARCHAR(255), peut être null
-  adresse_postale: string;        // VARCHAR(255), avec une valeur par défaut 'Non spécifiée'
-  telephone: string | null;       // VARCHAR(20), peut être null
-  id_user: string;                // UUID, obligatoire, avec une contrainte de clé étrangère
-};
-
-
+export type TexteType = {
+  id_texte: number;
+  contenu: string;
+  id_indice: number;
+}
