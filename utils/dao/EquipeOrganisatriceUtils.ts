@@ -6,7 +6,7 @@
  * @example const equipe = await getEquipeById(1);
  */
 export async function getEquipeById(id_equipe: number): Promise<any> {
-  const res = await fetch(`/api/equipes/${id_equipe}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/${id_equipe}`);
   if (!res.ok) {
     throw new Error(`Erreur lors de la récupération de l'équipe organisatrice avec l'ID ${id_equipe}`);
   }
@@ -20,7 +20,7 @@ export async function getEquipeById(id_equipe: number): Promise<any> {
  * @example const equipes = await getAllEquipes();
  */
 export async function getAllEquipes(): Promise<any[]> {
-  const res = await fetch(`/api/equipes`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de toutes les équipes organisatrices');
   }
@@ -35,7 +35,7 @@ export async function getAllEquipes(): Promise<any[]> {
  * @example const nouvelleEquipe = await createEquipe(equipeData);
  */
 export async function createEquipe(equipe: any): Promise<any> {
-  const res = await fetch(`/api/equipes`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export async function createEquipe(equipe: any): Promise<any> {
  * @example const updatedEquipe = await updateEquipe(1, updatedData);
  */
 export async function updateEquipe(id_equipe: number, updatedData: any): Promise<any> {
-  const res = await fetch(`/api/equipes/${id_equipe}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/${id_equipe}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export async function updateEquipe(id_equipe: number, updatedData: any): Promise
  * @example await deleteEquipe(1);
  */
 export async function deleteEquipe(id_equipe: number): Promise<void> {
-  const res = await fetch(`/api/equipes/${id_equipe}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/${id_equipe}`, {
     method: 'DELETE',
   });
 
