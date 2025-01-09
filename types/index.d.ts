@@ -161,3 +161,12 @@ export type TexteType = {
   contenu: string;
   id_indice: number;
 }
+
+export type Haut_FaitType = {
+  id_haut_fait: number;
+  titre: string;
+  description: string;
+  condition: string;
+  image_badge: string;
+  date: string;
+}
