@@ -158,21 +158,10 @@ export type AvisType = {
   id_participant: number;
 }
 
-export type ProfilType = {
-  id: UUID;
-  nom: string;
-  prenom: string;
-  username: string;
-  email: string;
-  adresse: string;
-  ville: string;
-  code_postal: string;
-  birthday: string;
-  telephone?: string;
-  stripe_id: string;
-  plan: string;
-  updated_at: string;
-  email_confirm: boolean;
+export type TexteType = {
+  id_texte: number;
+  contenu: string;
+  id_indice: number;
 }
 
 /* A modifier avec les ? */
@@ -182,4 +171,37 @@ export type MembreEquipeType = {
   est_verifie: boolean;
   id_equipe: number;
   carte_identite: string;
+}
+export type Haut_FaitType = {
+  id_haut_fait: number;
+  titre: string;
+  description: string;
+  condition: string;
+  image_badge: string;
+  date: string;
+}
+
+export type EquipeOrganisatriceType = {
+  id_equipe: number;              // SERIAL PRIMARY KEY, donc un nombre entier auto-incrémenté
+  type: string;                   // VARCHAR(255), avec une valeur par défaut 'Association'
+  n_siret: string | null;         // VARCHAR(255), peut être null
+  id_taxes: string | null;        // VARCHAR(255), peut être null
+  nb_membres: number;             // INT, avec une valeur par défaut 0
+  site_web: string | null;        // VARCHAR(255), peut être null
+  adresse_postale: string;        // VARCHAR(255), avec une valeur par défaut 'Non spécifiée'
+  telephone: string | null;       // VARCHAR(20), peut être null
+  id_user: string;                // UUID, obligatoire, avec une contrainte de clé étrangère
+}
+
+export type RecompenseType = {
+  id_recompense: number;
+  nom: string;
+  description: string;
+  type: string;
+  valeur: number;
+  quantite_dispo: number;
+  prix_reel: number;
+  image: string;
+  date_modification: string;
+  id_chasse: number;
 }
