@@ -75,9 +75,10 @@ export async function getAllAvis(id_chasse: number): Promise<any> {
 * @example const chasse = await getChasseById(1);
 */
 export async function getChasseById(id_chasse: number): Promise<any> {
-  const res = await fetch(`/api/chasses/${id_chasse}`);
+  const res = await fetch(`http://localhost:3000/api/chasses/${id_chasse}`); 
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de la chasse');
   }
+  console.log(res);
   return await res.json();
 }

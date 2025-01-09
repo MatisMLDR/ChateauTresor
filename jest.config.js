@@ -1,5 +1,5 @@
 module.exports = {
-  rootDir: "./", // Assure que Jest pointe vers la racine de ton projet
+  rootDir: "./",
   testEnvironment: "node",
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
