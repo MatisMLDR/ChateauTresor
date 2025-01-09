@@ -187,7 +187,6 @@ CREATE TABLE public.Enigme_Participant (
     id_participant INT,
     est_resolue BOOLEAN DEFAULT FALSE,
     duree REAL DEFAULT 0.00,
-    indice_reveles INT DEFAULT 0,
     date_resolution TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_enigme, id_participant),
     FOREIGN KEY (id_enigme) REFERENCES Enigme(id_enigme),
