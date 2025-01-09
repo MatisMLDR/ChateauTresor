@@ -1,5 +1,10 @@
 import { ChasseType } from "@/types";
-import { getAllParticipations, getAllRecompenses, getAllAvis } from "@/utils/dao/ChasseUtils";
+import {
+  getAllParticipations,
+  getAllRecompenses,
+  getAllAvis,
+  getChasseById,
+} from '@/utils/dao/ChasseUtils';
 
 class Chasse {
   private id_chasse: number;
@@ -135,13 +140,43 @@ class Chasse {
   public setDateModification(date_modification: string): void {
     this.date_modification = date_modification;
   }
+  public setIdChasse(id_chasse: number): void {
+    this.id_chasse = id_chasse;
+  }
 
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public read(): void {
-    /* A compléter */
-  }
+  public async read(id_chasse: number): Promise<void> {
+
+      const data = await getChasseById(id_chasse) as any;
+
+      if (data.length == 0) {
+        throw new Error("La chasse n'existe pas");
+      }
+      if (data.length > 1) {
+        throw new Error("Plusieurs chasses trouvées");
+      }
+
+      const row = data[0];
+      this.setIdChasse(row.id_chasse);
+      this.setImage(row.image);
+      this.setTitre(row.titre);
+      this.setDescription(row.description);
+      this.setDifficulte(row.difficulte);
+      this.setPrix(row.prix);
+      this.setDateDebut(row.date_debut);
+      this.setDateFin(row.date_fin);
+      this.setCapacite(row.capacite);
+      this.setAgeRequis(row.age_requis);
+      this.setDureeEstime(row.duree_estime);
+      this.setTheme(row.theme);
+      this.setIdChateau(row.id_chateau);
+      this.setIdEquipe(row.id_equipe);
+      this.setStatut(row.statut);
+      this.setDateModification(row.date_modification);
+    }
+
 
   // Méthodes pour calculer des statistiques
   /*

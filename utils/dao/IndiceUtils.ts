@@ -19,7 +19,7 @@ export async function getAllIndicesParticipants(id_indice: number): Promise<any>
     * @throws Error si la récupération des indices échoue
     * @example const indices = await getAllIndices();
 */
-export async function getIndiceById(id: string): Promise<any> {
+export async function getIndiceById(id: number): Promise<any> {
     const res = await fetch(`/api/indices/${id}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération de l\'indice');
