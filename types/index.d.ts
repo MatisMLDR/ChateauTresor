@@ -96,9 +96,15 @@ export type ParticipantType = {
   nom: string;
   prenom: string;
   email: string;
-  telephone: string;
-  id_equipe: number;
-  equipe: EquipeType;
+  id_user: string;
+  adresse: string;
+  ville: string;
+  code_postal: string;
+  birthday: string;
+  plan: string;
+  updated_at: string;
+  stripe_id: string;
+  
 }
 
 export type ChateauType = {
