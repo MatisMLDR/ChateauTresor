@@ -138,3 +138,14 @@ export type LineChart = {
   firstLine: number,
   secondLine: number
 }
+
+export type AvisType = {
+  id_avis: number;
+  note: number;
+  titre: string;
+  description: string;
+  nb_like: number;
+  date_modification: string;
+  id_chasse: number;
+  id_participant: number;
+}
