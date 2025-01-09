@@ -174,3 +174,12 @@ export type ProfilType = {
   updated_at: string;
   email_confirm: boolean;
 }
+
+/* A modifier avec les ? */
+export type MembreEquipeType = {
+  id_membre: number;
+  role: string;
+  est_verifie: boolean;
+  id_equipe: number;
+  carte_identite: string;
+}
