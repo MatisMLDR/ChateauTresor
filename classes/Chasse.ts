@@ -230,7 +230,7 @@ class Chasse {
     // On calcule la somme des scores
     const sum = data.reduce((acc: number, participation: any) => acc + participation.score, 0);
     // On retourne la moyenne
-    return sum / data.length;
+    return (sum / data.length)  * 100;
   }
 
   /*
