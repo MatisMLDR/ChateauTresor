@@ -182,12 +182,13 @@ export type TexteType = {
 
 /* A modifier avec les ? */
 export type MembreEquipeType = {
-  id_membre: number;
-  role: string;
-  est_verifie: boolean;
-  id_equipe: number;
-  carte_identite: string;
+  id_membre: number; // Identifiant unique, SERIAL, non null
+  carte_identite?: string | null; // Peut être null, sinon VARCHAR(255)
+  est_verifie?: boolean; // Optionnel, par défaut false
+  role_equipe?: string; // Optionnel, par défaut 'Membre'
+  id_user: string; // UUID, non null
 }
+
 export type Haut_FaitType = {
   id_haut_fait: number;
   titre: string;
