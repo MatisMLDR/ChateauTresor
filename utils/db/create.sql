@@ -100,10 +100,6 @@ CREATE TABLE public.Appartenance_Equipe (
 -- Table Participant
 CREATE TABLE public.Participant (
     id_participant SERIAL PRIMARY KEY,
-    nb_participations INT DEFAULT 0,
-    nb_chasses_terminees INT DEFAULT 0,
-    score_moyen NUMERIC(5, 2) DEFAULT 0.00,
-    duree_moyenne INTERVAL DEFAULT INTERVAL '00:00:00',
     id_user UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE
 );
 

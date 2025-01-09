@@ -89,9 +89,17 @@ export type ChasseType = {
   chateau: ChateauType;
   nb_enigmes: number;
   enigmes: EnigmeType[];
-
-
 };
+
+export type ParticipantType = {
+  id_participant: number;
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone: string;
+  id_equipe: number;
+  equipe: EquipeType;
+}
 
 export type ChateauType = {
   id_chateau: number;

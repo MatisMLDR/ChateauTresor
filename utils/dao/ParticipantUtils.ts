@@ -4,9 +4,11 @@
  * @params id_participant L'identifiant du participant 
  */
 export async function getParticipantById(id_participant: number): Promise<any> {
-  /* A compléter */
-
-  return 0;
+  const res = await fetch(`/api/participants/${id_participant}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération du participant');
+  }
+  return await res.json();
 } 
 
 /*

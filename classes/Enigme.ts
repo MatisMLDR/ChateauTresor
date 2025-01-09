@@ -1,5 +1,5 @@
 import { EnigmeType } from "@/types";
-import { getAllEnigmesParticipants } from "@/utils/dao/EnigmeUtils";
+import { getAllEnigmesParticipants, getEnigmeById } from "@/utils/dao/EnigmeUtils";
 
 export class Enigme {
   id: number;
@@ -100,10 +100,28 @@ export class Enigme {
   }
 
   /* 
-   * Méthode pour charger les données de l'objet indice dans la classe
+   * Méthode pour charger les données de l'objet énigme dans la classe
+    * @param id_chasse L'identifiant de la chasse
+    * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
-  public read(): void {
+  public read(id_chasse: number): void {
     /* A compléter */
+    const data = getEnigmeById(id_chasse) as any;
+    if (data.length == 0) {
+      throw new Error("L'énigme n'existe pas");
+    }
+    if (data.length > 1) {
+      throw new Error("Plusieurs énigmes trouvées");
+    }
+    const row = data[0];
+    this.setTitre(row.titre);
+    this.setQrCode(row.qrCode);
+    this.setCode(row.code);
+    this.setDescription(row.description);
+    this.setEndroitQrCode(row.endroit_qrcode);
+    this.setTempsMax(row.temps_max);
+    this.setDescriptionReponse(row.description_reponse);
+    this.setImageReponse(row.image_reponse);
   }
 
   // Calculs
