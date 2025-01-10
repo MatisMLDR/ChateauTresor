@@ -93,6 +93,30 @@ class Avis {
 
       return new Avis(avis);
   }
+
+  public async create(): Promise<void> {
+    const avis = await createAvis(this) as any
+
+    if (!avis) {
+        throw new Error('Avis not created');
+    }
+  }
+
+  public async delete (id_avis: number): Promise<void> {
+    try {
+      await deleteAvis(id_avis);
+    } catch (error) {
+        throw new Error('Avis does not exist');
+    }
+  }
+
+  public async update(): Promise<void> {
+    try {
+      await updateAvis(this);
+    } catch (error) {
+        throw new Error('Avis does not exist');
+    }
+  }
 }
 
 export default Avis;
