@@ -165,9 +165,7 @@ class Chasse {
       if (!data) {
         throw new Error("La chasse n'existe pas");
       }
-      
-      console.log("Chasse après appel API dans read", data); 
-
+    
       return new Chasse(data);
   }
 
@@ -233,7 +231,6 @@ class Chasse {
   
     public async delete(): Promise<void> {
       if (!this.id_chasse) {
-        console.log("Pas d'id chasse");
         throw new Error('id_chasse is required');
       }
       try {
