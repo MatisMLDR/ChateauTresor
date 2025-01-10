@@ -1,13 +1,12 @@
 import { TexteType } from "@/types";
-
-import { getAllTextes, getTexteById, createTexte, updateTexte, deleteTexte } from '@/utils/dao/TexteUtils';
+import { getTexteById, createTexte, updateTexte, deleteTexte } from '@/utils/dao/TexteUtils';
 
 class Texte {
   private id_texte: number;
   private contenu: string;
   private id_indice: number | null;
 
-  constructor(texte: Texte) {
+  constructor(texte: TexteType) {
     this.id_texte = texte.id_texte;
     this.contenu = texte.contenu;
     this.id_indice = texte.id_indice;

@@ -1,11 +1,5 @@
 import { ChasseType } from "@/types";
-import {
-  getAllParticipations,
-  getChasseById,
-  createChasse,
-  deleteChasse,
-  updateChasse,
-} from '@/utils/dao/ChasseUtils';
+import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 
