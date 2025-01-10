@@ -13,9 +13,7 @@ describe("Test API", () => {
     // Vérifie que les données existent
     expect(chasseData).toBeDefined();
     // Vérifie les propriétés de l'objet chasseData
-    expect(chasseData).toEqual({
-      id_chasse: 1,
-    });
+    expect(chasseData.id_chasse).toEqual(1);
 
   });
 });

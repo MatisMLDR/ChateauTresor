@@ -4,11 +4,11 @@ import { NextResponse } from 'next/server';
 // GET: Récupérer une chasse par son ID
 export async function GET(request: Request, { params }: { params: { id: number } }) {
   const supabase = createClient();
-  console.log("GET API OK");
+
   try {
     const resolvedParams = await params;
     const chasseId = resolvedParams.id;
-    console.log("Chasse id dans API : ",chasseId);
+
     if (!chasseId) {
       return NextResponse.json({ error: 'Paramètre id manquant ou invalide' }, { status: 400 });
     }
@@ -25,7 +25,7 @@ export async function GET(request: Request, { params }: { params: { id: number }
         { status: 500 }
       );
     }
-    console.log("Tableau de récupération de la chasse : ",data);
+
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json(
