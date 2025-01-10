@@ -153,7 +153,7 @@ export class Profil {
     };
   }
 
-  public async readId(id: string): Promise<any> {
+  public static async readId(id: string): Promise<any> {
     const profile = await getProfilById(id) as any;
 
     if (profile == null) {

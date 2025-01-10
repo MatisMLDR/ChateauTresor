@@ -61,7 +61,7 @@ export class MembreEquipeClass {
     };
   }
 
-  public async readId(id_membre: number): Promise<any> {
+  public static async readId(id_membre: number): Promise<any> {
      const data = await getMembreById(id_membre) as any;
 
      if (!data) {

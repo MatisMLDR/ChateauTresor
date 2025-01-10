@@ -80,7 +80,7 @@ class EquipeOrganisatrice {
   }
 
   // Méthode pour charger les données de l'équipe organisatrice
-  public async readId(id_equipe: number): Promise<any> {
+  public static async readId(id_equipe: number): Promise<any> {
     
     const data = await getEquipeById(id_equipe) as any;
 

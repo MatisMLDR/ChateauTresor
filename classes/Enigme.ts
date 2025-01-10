@@ -105,7 +105,7 @@ export class Enigme {
     * @param id_chasse L'identifiant de la chasse
     * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
-  public async readId(id: number): Promise<any> {
+  public static async readId(id: number): Promise<any> {
     
     const data = getEnigmeById(id) as any;
     

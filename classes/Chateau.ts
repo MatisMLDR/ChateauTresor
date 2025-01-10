@@ -121,7 +121,7 @@ class Chateau {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async readId(id_chateau: number): Promise<any> {
+  public static async readId(id_chateau: number): Promise<any> {
 
     const data = await getChateauById(id_chateau) as any;
 

@@ -107,7 +107,7 @@ class Recompense {
         this.id_chasse = id_chasse;
     }
 
-    public async readId(id_recompense: number): Promise<any> {
+    public static async readId(id_recompense: number): Promise<any> {
         const recompense = await getRecompenseById(id_recompense) as any;
 
         if (!recompense) {

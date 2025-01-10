@@ -40,7 +40,7 @@ class Texte {
   }
 
 
-    public async readId(id_texte: number): Promise<any> {
+    public static async readId(id_texte: number): Promise<any> {
         const texte = await getTexteById(id_texte) as any;
 
         if (!texte) {

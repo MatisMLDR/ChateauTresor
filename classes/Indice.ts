@@ -64,7 +64,7 @@ class Indice {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async readId(id_indice: number): Promise<any> {
+  public static async readId(id_indice: number): Promise<any> {
 
     const data = await getIndiceById(id_indice) as any;
 

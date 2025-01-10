@@ -67,7 +67,7 @@ class Haut_Fait {
         this.date = date;
     }
 
-    public async readId(id_haut_fait: number): Promise<any> {
+    public static async readId(id_haut_fait: number): Promise<any> {
         const haut_fait = await getHaut_FaitById(id_haut_fait) as any;
 
         if (!haut_fait) {

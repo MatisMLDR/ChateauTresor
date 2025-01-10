@@ -151,7 +151,7 @@ export class Participant {
    * Méthode pour charger les données de l'objet participant dans la classe
    * @param id_user L'identifiant de l'utilisateur
    */
-  public async readId(id_participant: number): Promise<any> {
+  public static async readId(id_participant: number): Promise<any> {
     const data = await getParticipantById(id_participant) as any;
     
     if (!data) {
