@@ -9,7 +9,7 @@ export function SideBarHuntCreator () {
             <SideBarButton name={'castle'} link={'/organisateurs/chateaux'} imagePath={'/castle.svg'} />
             <SideBarButton name={'chest'} link={'/organisateurs/chasses'} imagePath={'/chest.svg'} />
             <SideBarButton name={'dashboard'} link={'/organisateurs'} imagePath={'/dashboard.svg'} />
-            <SideBarButton name={'create'} link={'/organisateurs/creation_chasse'} imagePath={'create.svg'} />
+            <SideBarButton name={'create'} link={'/organisateurs/creation_chasse'} imagePath={'/create.svg'} />
             <Avatar />
         </div>
     );
