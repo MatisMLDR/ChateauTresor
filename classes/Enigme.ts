@@ -108,12 +108,11 @@ export class Enigme {
   public read(id_chasse: number): void {
     /* A compléter */
     const data = getEnigmeById(id_chasse) as any;
-    if (data.length == 0) {
+    
+    if (!data) {
       throw new Error("L'énigme n'existe pas");
     }
-    if (data.length > 1) {
-      throw new Error("Plusieurs énigmes trouvées");
-    }
+    console.log("Enigme après appel API dans read", data); 
     const row = data[0];
     this.setTitre(row.titre);
     this.setQrCode(row.qrCode);

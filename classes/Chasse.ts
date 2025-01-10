@@ -95,6 +95,9 @@ class Chasse {
   public getDateModification(): string {
     return this.date_modification;
   }
+  public getDateCreation(): string {
+    return this.date_creation;
+  }
 
   // Setters
   public setImage(image: string): void {
@@ -145,6 +148,9 @@ class Chasse {
   public setIdChasse(id_chasse: number): void {
     this.id_chasse = id_chasse;
   }
+  public setDateCreation(date_creation: string): void {
+    this.date_creation = date_creation;
+  }
 
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
@@ -153,12 +159,11 @@ class Chasse {
 
       const data = await getChasseById(id_chasse) as any;
 
-      if (data.length == 0) {
+      if (!data) {
         throw new Error("La chasse n'existe pas");
       }
-      if (data.length > 1) {
-        throw new Error("Plusieurs chasses trouvées");
-      }
+      
+      console.log("Chasse après appel API dans read", data); 
 
       const row = data[0];
       this.setIdChasse(row.id_chasse);
@@ -177,6 +182,7 @@ class Chasse {
       this.setIdEquipe(row.id_equipe);
       this.setStatut(row.statut);
       this.setDateModification(row.date_modification);
+      this.setDateCreation(row.date_creation);
     }
 
 

@@ -87,6 +87,8 @@ class EquipeOrganisatrice {
       throw new Error("Équipe organisatrice introuvable.");
     }
 
+    console.log("EquipeOrganisatrice après appel API dans read", data); 
+
     this.id_equipe = data.id_equipe;
     this.type = data.type;
     this.n_siret = data.n_siret;

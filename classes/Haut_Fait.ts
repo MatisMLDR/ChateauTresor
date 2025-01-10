@@ -69,6 +69,13 @@ class Haut_Fait {
 
     public async read(id_haut_fait: number): Promise<void> {
         const haut_fait = await getHaut_FaitById(id_haut_fait);
+
+        if (!haut_fait) {
+            throw new Error('Haut_Fait not found');
+        }
+
+        console.log("Haut_Fait après appel API dans read", haut_fait); 
+
         const row = haut_fait[0];
         this.id_haut_fait = row.id_haut_fait;
         this.titre = row.titre;

@@ -1,5 +1,5 @@
 import { ProfilType } from "@/types"; // Assurez-vous que le type Profile est correctement importé
-import { UUID } from "crypto";
+import { getProfilById, getAllProfils } from "@/utils/dao/ProfilUtils";
 
 export class Profil {
   private id: string;
@@ -151,5 +151,27 @@ export class Profil {
       stripe_id: this.stripe_id,
       plan: this.plan,
     };
+  }
+
+  public async read(id: string): Promise<void> {
+    const profile = await getProfilById(id);
+
+    if (profile == null) {
+      throw new Error("Profil introuvable");
+    }
+
+    this.id = profile.id;
+    this.username = profile.username
+    this.updated_at = profile.updated_at
+    this.email = profile.email
+    this.birthday = profile.birthday
+    this.email_confirm = profile.email_confirm
+    this.nom = profile.nom
+    this.prenom = profile.prenom
+    this.adresse = profile.adresse
+    this.ville = profile.ville
+    this.code_postal = profile.code_postal
+    this.stripe_id = profile.stripe_id
+    this.plan = profile.plan
   }
 }

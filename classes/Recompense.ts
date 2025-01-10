@@ -109,6 +109,13 @@ class Recompense {
 
     public async read(id_recompense: number): Promise<void> {
         const recompense = await getRecompenseById(id_recompense);
+
+        if (!recompense) {
+            throw new Error('Recompense not found');
+        }
+
+        console.log("Recompense après appel API dans read", recompense); 
+
         const row = recompense[0];
         this.id_recompense = row.id_recompense;
         this.nom = row.nom;

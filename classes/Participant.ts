@@ -154,12 +154,13 @@ export class Participant {
    */
   public async read(id_user: number): Promise<void> {
     const data = await getParticipantById(id_user);
-    if (data.length === 0) {
+    
+    if (!data) {
       throw new Error("L'énigme n'existe pas");
     }
-    if (data.length > 1) {
-      throw new Error("Plusieurs énigmes trouvées");
-    }
+    
+    console.log("Participants après appel API dans read", data); 
+
     const row = data[0];
     this.setNom(row.nom);
     this.setPrenom(row.prenom);

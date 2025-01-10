@@ -1,4 +1,5 @@
 import { MembreEquipeType } from '@/types';
+import { getMembreById } from '@/utils/dao/MembreEquipeUtils';
 
 export class MembreEquipeClass {
   private id_membre: number;
@@ -58,5 +59,21 @@ export class MembreEquipeClass {
       role_equipe: this.role_equipe,
       id_user: this.id_user,
     };
+  }
+
+  public async read(id_membre: number): Promise<void> {
+     const data = await getMembreById(id_membre) as any;
+
+     if (!data) {
+      throw new Error("Membre not found");
+     }
+
+     console.log("MembreEquipe après appel API dans read", data); 
+
+     this.id_membre = data.id_membre;
+     this.carte_identite = data.carte_identite;
+     this.est_verifie = data.est_verifie;
+     this.role_equipe = data.role_equipe;
+     this.id_user = data.id_user;
   }
 }

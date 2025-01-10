@@ -68,12 +68,11 @@ class Indice {
 
     const data = await getIndiceById(id_indice) as any;
 
-    if (data.length == 0) {
+    if (!data) {
       throw new Error("La chasse n'existe pas");
     }
-    if (data.length > 1) {
-      throw new Error("Plusieurs chasses trouvées");
-    }
+    
+    console.log("Indice après appel API dans read", data); 
 
     const row = data[0];
     this.setId(row.id);

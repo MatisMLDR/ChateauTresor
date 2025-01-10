@@ -125,12 +125,11 @@ class Chateau {
 
     const data = await getChateauById(id_chateau) as any;
 
-    if (data.length == 0) {
-      throw new Error("La chasse n'existe pas");
+    if (!data) {
+      throw new Error("Le château n'existe pas");
     }
-    if (data.length > 1) {
-      throw new Error("Plusieurs chasses trouvées");
-    }
+    
+    console.log("Château après appel API dans read", data); 
 
     const row = data[0];
     this.setIdChateau(row.id_chateau);

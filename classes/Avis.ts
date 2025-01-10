@@ -1,6 +1,6 @@
 import { AvisType } from "@/types";
 
-import { getAllAvis, getAvisById } from '@/utils/dao/AvisUtils';
+import { getAllAvis, getAvisById, createAvis } from '@/utils/dao/AvisUtils';
 
 class Avis {
   private id_avis: number;
@@ -82,17 +82,31 @@ class Avis {
         this.id_participant = id_participant;
     }
 
-    public async read(id_avis: number): Promise<void> {
-        const avis = await getAvisById(id_avis);
-        const row = avis[0];
-        this.id_avis = row.id_avis;
-        this.note = row.note;
-        this.titre = row.titre;
-        this.description = row.description;
-        this.nb_like = row.nb_like;
-        this.date_modification = row.date_modification;
-        this.id_chasse = row.id_chasse;
-        this.id_participant = row.id_participant;
+    public async read(id_avis?: number): Promise<Avis> {
+      const id = id_avis || this.id_avis;
+      const avis = await getAvisById(id);
+
+      if (!avis) {
+          throw new Error('Avis not found');
+      }
+      
+      console.log("Avis après appel API dans read", avis); 
+
+      const row = avis[0];
+      this.id_avis = row.id_avis;
+      this.note = row.note;
+      this.titre = row.titre;
+      this.description = row.description;
+      this.nb_like = row.nb_like;
+      this.date_modification = row.date_modification;
+      this.id_chasse = row.id_chasse;
+      this.id_participant = row.id_participant;
+
+      return new Avis(row);
+  }
+    
+    public async create(): Promise<void> {
+      
     }
 }
 
