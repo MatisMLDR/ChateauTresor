@@ -118,6 +118,11 @@ export class Enigme {
     return new Enigme(data);
   }
 
+  /* 
+   * Méthode pour charger les données de l'objet énigme dans la classe
+    * @param id_chasse L'identifiant de la chasse
+    * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
+   */
   public async read(): Promise<any> {
         if (!this.id) {
             throw new Error('Enigme ID is required');
