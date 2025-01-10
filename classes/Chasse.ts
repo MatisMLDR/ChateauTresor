@@ -168,7 +168,85 @@ class Chasse {
       return new Chasse(data);
   }
 
-
+  public async read(): Promise<any> {
+      if (!this.id_chasse) {
+          throw new Error('Avis ID is required');
+      }
+  
+      const avis = await getChasseById(this.id_chasse) as any
+  
+      if (!avis) {
+          throw new Error('Avis not found');
+      }
+  
+      return new Chasse(avis);
+    }
+  
+    public async load(): Promise<void> {
+      if (!this.id_chasse) {
+          throw new Error('Avis ID is required');
+      }
+  
+      const avis = await getChasseById(this.id_chasse) as any
+  
+      if (!avis) {
+          throw new Error('Avis not found');
+      }
+  
+      this.id_chasse = avis.id_chasse;
+      this.titre = avis.titre;
+      this.capacite = avis.capacite;
+      this.description = avis.description;
+      this.age_requis = avis.age_requis;
+      this.image = avis.image;
+      this.date_creation = avis.date_creation;
+      this.date_modification = avis.date_modification;
+      this.date_debut = avis.date_debut;
+      this.date_fin = avis.date_fin;
+      this.prix = avis.prix;
+      this.difficulte = avis.difficulte;
+      this.duree_estime = avis.duree_estime;
+      this.theme = avis.theme;
+      this.statut = avis.statut;
+      this.id_chateau = avis.id_chateau;
+      this.id_equipe = avis.id_equipe;
+    }
+  
+    public async create(): Promise<void> {
+      const avis = await createChasse(this) as any
+  
+      if (!avis) {
+          throw new Error('Chasse not created');
+      }
+    }
+  
+    public async delete (id_avis: number): Promise<void> {
+      try {
+        await deleteChasse(id_avis);
+      } catch (error) {
+          throw new Error('Chasse does not exist');
+      }
+    }
+  
+    public async delete(): Promise<void> {
+      if (!this.id_chasse) {
+        console.log("Pas d'id chasse");
+        throw new Error('id_chasse is required');
+      }
+      try {
+        await deleteChasse(this.id_avis);
+      } catch (error) {
+          throw new Error('Chasse does not exist');
+      }
+    }
+  
+    public async update(): Promise<void> {
+      try {
+        await updateChasse(this);
+      } catch (error) {
+          throw new Error('Avis does not exist');
+      }
+    }
   // Méthodes pour calculer des statistiques
   /*
   * Méthode pour calculer la durée moyenne des participations à une chasse

@@ -94,6 +94,40 @@ class Avis {
       return new Avis(avis);
   }
 
+  public async read(): Promise<any> {
+    if (!this.id_avis) {
+        throw new Error('Avis ID is required');
+    }
+
+    const avis = await getAvisById(this.id_avis) as any
+
+    if (!avis) {
+        throw new Error('Avis not found');
+    }
+
+    return new Avis(avis);
+  }
+
+  public async load(): Promise<void> {
+    if (!this.id_avis) {
+        throw new Error('Avis ID is required');
+    }
+
+    const avis = await getAvisById(this.id_avis) as any
+
+    if (!avis) {
+        throw new Error('Avis not found');
+    }
+
+    this.note = avis.note;
+    this.titre = avis.titre;
+    this.description = avis.description;
+    this.nb_like = avis.nb_like;
+    this.date_modification = avis.date_modification;
+    this.id_chasse = avis.id_chasse;
+    this.id_participant = avis.id_participant;
+  }
+
   public async create(): Promise<void> {
     const avis = await createAvis(this) as any
 
@@ -105,6 +139,18 @@ class Avis {
   public async delete (id_avis: number): Promise<void> {
     try {
       await deleteAvis(id_avis);
+    } catch (error) {
+        throw new Error('Avis does not exist');
+    }
+  }
+
+  public async delete(): Promise<void> {
+    if (!this.id_avis) {
+      console.log("Pas d'id avis");
+      throw new Error('Avis ID is required');
+    }
+    try {
+      await deleteAvis(this.id_avis);
     } catch (error) {
         throw new Error('Avis does not exist');
     }
