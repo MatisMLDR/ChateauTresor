@@ -280,7 +280,7 @@ describe("Tests update()", () => {
     const chasse = new Chasse({ id_chasse: 1 });
     await chasse.update();
 
-    // Vérifie que les données n'existent plus
+    // Vérifie que les données existent toujours
     expect(chasse).toBeUndefined();
   });
 });
