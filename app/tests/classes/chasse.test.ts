@@ -7,7 +7,7 @@ import {
   getAllAvis,
 } from "@/utils/dao/ChasseUtils";
 
-/*
+
 // Mock des fonctions DAO
 jest.mock("@/utils/dao/ChasseUtils", () => ({
   getChasseById: jest.fn(),
@@ -180,16 +180,14 @@ describe("Classe Chasse", () => {
     });
   });
 });
-*/
 
 
 
-describe("Tests réels avec DAO", () => {
+
+describe("Test API", () => {
   it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
     // Récupère les données de la chasse via le DAO
     const chasseData = await getChasseById(1);
-    console.log("chasseData with id 1 in test : ", chasseData);
-    console.log("chasseData length with id 1 in test : ", chasseData.length);
     // Vérifie que les données existent
     expect(chasseData).toBeDefined();
     // Vérifie les propriétés de l'objet chasseData
@@ -213,6 +211,76 @@ describe("Tests réels avec DAO", () => {
     expect(chasseData.id_chateau).toBe(318);
     expect(chasseData.id_equipe).toBe(1);
 
+
+  });
+});
+
+describe("Tests read()", () => {
+  it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
+    // Récupère les données de la chasse via le DAO
+    const chasse = new Chasse({ id_chasse: 1 });
+    await chasse.read(1);
+
+    // Vérifie que les données existent
+    expect(chasse).toBeDefined();
+    expect(chasse).toEqual({
+      id_chasse: 1,
+      titre: "KIRIKOU",
+      capacite: 300,
+      description: "Découvrez le château de Chambord comme vous ne l'avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !",
+      age_requis: 16,
+      image: "https://www.valdeloire-france.com/app/uploads/202",
+      date_creation: expect.anything(), // Pas définie
+      date_modification: expect.anything(),
+      date_debut: expect.anything(),
+      date_fin: expect.anything(),
+      prix: 8,
+      difficulte: 1,
+      duree_estime: expect.anything(),
+      theme: "Dynastie royale",
+      statut: "Inactif",
+      note_moyenne: 0,
+      recompenses_attribuees: 0, // Pas définie
+      all_recompenses_restantes: 0, // Pas définie
+      id_chateau: 318,
+      id_equipe: 1,
+    });
+  });
+});
+
+describe("Tests create()", () => {
+  it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
+    // Récupère les données de la chasse via le DAO
+    const chasse = new Chasse({ id_chasse: 1 });
+    await chasse.load();
+    await chasse.create();
     
+
+    // Vérifie que les données existent
+    expect(chasse).toBeDefined();
+    // Vérifie les propriétés de l'objet chasse
+    
+  });
+});
+
+describe("Tests delete()", () => {
+  it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
+    // Récupère les données de la chasse via le DAO
+    const chasse = new Chasse({ id_chasse: 1 });
+    await chasse.delete();
+
+    // Vérifie que les données n'existent plus
+    expect(chasse).toBeUndefined();
+  });
+});
+
+describe("Tests update()", () => {
+  it("", async () => {
+    // Récupère les données de la chasse via le DAO
+    const chasse = new Chasse({ id_chasse: 1 });
+    await chasse.update();
+
+    // Vérifie que les données n'existent plus
+    expect(chasse).toBeUndefined();
   });
 });
