@@ -87,16 +87,16 @@ export async function createIndice(indice: any): Promise<any> {
  * @throws Error si la mise à jour échoue
  * @example const updatedIndice = await updateIndice(1, { contenu: 'Indice mis à jour' });
  */
-export async function updateIndice(id_indice: number, updatedData: any): Promise<any> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/${id_indice}`, {
+export async function updateIndice(indice: any): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/${indice.id_indice}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(indice),
     });
     if (!res.ok) {
-        throw new Error(`Erreur lors de la mise à jour de l'indice avec l'ID ${id_indice}`);
+        throw new Error(`Erreur lors de la mise à jour de l'indice avec l'ID ${indice.id_indice}`);
     }
     return await res.json();
 }

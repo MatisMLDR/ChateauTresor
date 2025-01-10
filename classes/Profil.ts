@@ -1,5 +1,5 @@
 import { ProfilType } from "@/types"; // Assurez-vous que le type Profile est correctement importé
-import { getProfilById, getAllProfils, updateProfil, createProfil, deleteProfil } from "@/utils/dao/ProfilUtils";
+import { getProfilById, updateProfil, createProfil, deleteProfil } from "@/utils/dao/ProfilUtils";
 
 export class Profil {
   private id: string;
