@@ -7,7 +7,7 @@ class Texte {
   private id_indice: number | null;
 
   constructor(texte: TexteType) {
-    this.id_texte = texte.id_texte;
+    this.id_texte = texte.id_texte ?? -1;
     this.contenu = texte.contenu;
     this.id_indice = texte.id_indice;
   }
