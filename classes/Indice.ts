@@ -64,7 +64,7 @@ class Indice {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async read(id_indice: number): Promise<any> {
+  public async readId(id_indice: number): Promise<any> {
 
     const data = await getIndiceById(id_indice) as any;
 
@@ -76,6 +76,75 @@ class Indice {
 
     return new Indice(data);
   }
+
+  public async read(): Promise<any> {
+          if (!this.id_indice) {
+              throw new Error('Indice ID is required');
+          }
+      
+          const avis = await getIndiceById(this.id_indice) as any
+      
+          if (!avis) {
+              throw new Error('Indice not found');
+          }
+      
+          return new Indice(avis);
+        }
+      
+        public async load(): Promise<void> {
+          if (!this.id_indice) {
+              throw new Error('Indice ID is required');
+          }
+      
+          const avis = await getIndiceById(this.id_indice) as any
+      
+          if (!avis) {
+              throw new Error('Indice not found');
+          }
+      
+          this.id_indice = avis.id_indice;
+          this.type = avis.type;
+          this.contenu = avis.contenu;
+          this.degre_aide = avis.degre_aide;
+          this.ordre = avis.ordre;
+          this.id_enigme = avis.id_enigme;
+        }
+      
+        public async create(): Promise<void> {
+          const avis = await createIndice(this) as any
+      
+          if (!avis) {
+              throw new Error('Indice not created');
+          }
+        }
+      
+        public async deleteId(id_indice: number): Promise<void> {
+          try {
+            await deleteIndice(id_indice);
+          } catch (error) {
+              throw new Error('Indice does not exist');
+          }
+        }
+      
+        public async delete(): Promise<void> {
+          if (!this.id_indice) {
+            console.log("Pas d'id Indice");
+            throw new Error('id_indice is required');
+          }
+          try {
+            await deleteIndice(this.id_indice);
+          } catch (error) {
+              throw new Error('Indice does not exist');
+          }
+        }
+      
+        public async update(): Promise<void> {
+          try {
+            await updateIndice(this);
+          } catch (error) {
+              throw new Error('Indice does not exist');
+          }
+        }
 }
 
 export default Indice;

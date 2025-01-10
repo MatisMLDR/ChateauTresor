@@ -1,5 +1,5 @@
 import { MembreEquipeType } from '@/types';
-import { getMembreById } from '@/utils/dao/MembreEquipeUtils';
+import { createMembre, deleteMembre, getMembreById, updateMembre } from '@/utils/dao/MembreEquipeUtils';
 
 export class MembreEquipeClass {
   private id_membre: number;
@@ -61,7 +61,7 @@ export class MembreEquipeClass {
     };
   }
 
-  public async read(id_membre: number): Promise<any> {
+  public async readId(id_membre: number): Promise<any> {
      const data = await getMembreById(id_membre) as any;
 
      if (!data) {
@@ -72,4 +72,88 @@ export class MembreEquipeClass {
 
       return new MembreEquipeClass(data); 
   }
+
+  public async read(): Promise<any> {
+          if (!this.id_membre) {
+              throw new Error('Membre ID is required');
+          }
+      
+          const avis = await getMembreById(this.id_membre) as any
+      
+          if (!avis) {
+              throw new Error('Membre not found');
+          }
+      
+          return new MembreEquipeClass(avis);
+        }
+      
+        public async load(): Promise<void> {
+          if (!this.id_membre) {
+              throw new Error('Membre ID is required');
+          }
+      
+          const avis = await getMembreById(this.id_membre) as any
+      
+          if (!avis) {
+              throw new Error('Membre not found');
+          }
+      
+          this.id_membre = avis.id_membre;
+          this.carte_identite = avis.carte_identite;
+          this.est_verifie = avis.est_verifie;
+          this.role_equipe = avis.role_equipe;
+          this.id_user = avis.id_user;
+        }
+
+        public async toObject(): Promise<MembreEquipeType> {
+          const membre = {
+            id_membre: this.id_membre,
+            carte_identite: this.carte_identite,
+            est_verifie: this.est_verifie,
+            role_equipe: this.role_equipe,
+            id_user: this.id_user,
+          }
+          return membre;
+        }
+
+      
+        public async create(): Promise<void> {
+          const data = await this.toObject();
+          if (!data) {
+              throw new Error('Membre data is required');
+          }
+          const avis = await createMembre(data) as any
+      
+          if (!avis) {
+              throw new Error('Membre not created');
+          }
+        }
+      
+        public async deleteId(id_membre: number): Promise<void> {
+          try {
+            await deleteMembre(id_membre);
+          } catch (error) {
+              throw new Error('Membre does not exist');
+          }
+        }
+      
+        public async delete(): Promise<void> {
+          if (!this.id_membre) {
+            console.log("Pas d'id Membre");
+            throw new Error('id_membre is required');
+          }
+          try {
+            await deleteMembre(this.id_membre);
+          } catch (error) {
+              throw new Error('Membre does not exist');
+          }
+        }
+      
+        public async update(): Promise<void> {
+          try {
+            await updateMembre(this.id_membre, this.getMembre());
+          } catch (error) {
+              throw new Error('Membre does not exist');
+          }
+        }
 }
