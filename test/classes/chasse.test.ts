@@ -87,3 +87,4 @@ describe("Tests update()", () => {
     expect(chasse.getTitre()).toEqual(chasse1.getTitre());
   });
 });
+
