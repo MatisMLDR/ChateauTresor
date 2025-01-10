@@ -15,7 +15,7 @@
     "format:check": "prettier --check .",
     "stripe:setup": "ts-node stripeSetup.ts",
     "test": "jest",
-    "test:chasse": "jest app/tests/classes/chasse.test.ts",
+    "test:chasse": "jest test/classes/chasse.test.ts",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
