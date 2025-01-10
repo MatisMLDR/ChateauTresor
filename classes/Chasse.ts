@@ -95,6 +95,9 @@ class Chasse {
   public getDateModification(): string {
     return this.date_modification;
   }
+  public getDateCreation(): string {
+    return this.date_creation;
+  }
 
   // Setters
   public setImage(image: string): void {
@@ -145,41 +148,105 @@ class Chasse {
   public setIdChasse(id_chasse: number): void {
     this.id_chasse = id_chasse;
   }
+  public setDateCreation(date_creation: string): void {
+    this.date_creation = date_creation;
+  }
 
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async read(id_chasse: number): Promise<void> {
+  public async read(id_chasse: number): Promise<any> {
 
       const data = await getChasseById(id_chasse) as any;
 
-      if (data.length == 0) {
+      if (!data) {
         throw new Error("La chasse n'existe pas");
       }
-      if (data.length > 1) {
-        throw new Error("Plusieurs chasses trouvées");
+      
+      console.log("Chasse après appel API dans read", data); 
+
+      return new Chasse(data);
+  }
+
+  public async read(): Promise<any> {
+      if (!this.id_chasse) {
+          throw new Error('Avis ID is required');
       }
-
-      const row = data[0];
-      this.setIdChasse(row.id_chasse);
-      this.setImage(row.image);
-      this.setTitre(row.titre);
-      this.setDescription(row.description);
-      this.setDifficulte(row.difficulte);
-      this.setPrix(row.prix);
-      this.setDateDebut(row.date_debut);
-      this.setDateFin(row.date_fin);
-      this.setCapacite(row.capacite);
-      this.setAgeRequis(row.age_requis);
-      this.setDureeEstime(row.duree_estime);
-      this.setTheme(row.theme);
-      this.setIdChateau(row.id_chateau);
-      this.setIdEquipe(row.id_equipe);
-      this.setStatut(row.statut);
-      this.setDateModification(row.date_modification);
+  
+      const avis = await getChasseById(this.id_chasse) as any
+  
+      if (!avis) {
+          throw new Error('Avis not found');
+      }
+  
+      return new Chasse(avis);
     }
-
-
+  
+    public async load(): Promise<void> {
+      if (!this.id_chasse) {
+          throw new Error('Avis ID is required');
+      }
+  
+      const avis = await getChasseById(this.id_chasse) as any
+  
+      if (!avis) {
+          throw new Error('Avis not found');
+      }
+  
+      this.id_chasse = avis.id_chasse;
+      this.titre = avis.titre;
+      this.capacite = avis.capacite;
+      this.description = avis.description;
+      this.age_requis = avis.age_requis;
+      this.image = avis.image;
+      this.date_creation = avis.date_creation;
+      this.date_modification = avis.date_modification;
+      this.date_debut = avis.date_debut;
+      this.date_fin = avis.date_fin;
+      this.prix = avis.prix;
+      this.difficulte = avis.difficulte;
+      this.duree_estime = avis.duree_estime;
+      this.theme = avis.theme;
+      this.statut = avis.statut;
+      this.id_chateau = avis.id_chateau;
+      this.id_equipe = avis.id_equipe;
+    }
+  
+    public async create(): Promise<void> {
+      const avis = await createChasse(this) as any
+  
+      if (!avis) {
+          throw new Error('Chasse not created');
+      }
+    }
+  
+    public async delete (id_avis: number): Promise<void> {
+      try {
+        await deleteChasse(id_avis);
+      } catch (error) {
+          throw new Error('Chasse does not exist');
+      }
+    }
+  
+    public async delete(): Promise<void> {
+      if (!this.id_chasse) {
+        console.log("Pas d'id chasse");
+        throw new Error('id_chasse is required');
+      }
+      try {
+        await deleteChasse(this.id_avis);
+      } catch (error) {
+          throw new Error('Chasse does not exist');
+      }
+    }
+  
+    public async update(): Promise<void> {
+      try {
+        await updateChasse(this);
+      } catch (error) {
+          throw new Error('Avis does not exist');
+      }
+    }
   // Méthodes pour calculer des statistiques
   /*
   * Méthode pour calculer la durée moyenne des participations à une chasse

@@ -67,15 +67,16 @@ class Haut_Fait {
         this.date = date;
     }
 
-    public async read(id_haut_fait: number): Promise<void> {
-        const haut_fait = await getHaut_FaitById(id_haut_fait);
-        const row = haut_fait[0];
-        this.id_haut_fait = row.id_haut_fait;
-        this.titre = row.titre;
-        this.description = row.description;
-        this.condition = row.condition;
-        this.image_badge = row.image_badge;
-        this.date = row.date;
+    public async read(id_haut_fait: number): Promise<any> {
+        const haut_fait = await getHaut_FaitById(id_haut_fait) as any;
+
+        if (!haut_fait) {
+            throw new Error('Haut_Fait not found');
+        }
+
+        console.log("Haut_Fait après appel API dans read", haut_fait); 
+
+        return new Haut_Fait(haut_fait);    
     }
 }
 

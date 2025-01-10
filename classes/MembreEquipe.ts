@@ -1,4 +1,5 @@
 import { MembreEquipeType } from '@/types';
+import { getMembreById } from '@/utils/dao/MembreEquipeUtils';
 
 export class MembreEquipeClass {
   private id_membre: number;
@@ -58,5 +59,17 @@ export class MembreEquipeClass {
       role_equipe: this.role_equipe,
       id_user: this.id_user,
     };
+  }
+
+  public async read(id_membre: number): Promise<any> {
+     const data = await getMembreById(id_membre) as any;
+
+     if (!data) {
+      throw new Error("Membre not found");
+     }
+
+     console.log("MembreEquipe après appel API dans read", data); 
+
+      return new MembreEquipeClass(data); 
   }
 }

@@ -107,19 +107,17 @@ class Recompense {
         this.id_chasse = id_chasse;
     }
 
-    public async read(id_recompense: number): Promise<void> {
-        const recompense = await getRecompenseById(id_recompense);
-        const row = recompense[0];
-        this.id_recompense = row.id_recompense;
-        this.nom = row.nom;
-        this.description = row.description;
-        this.type = row.type;
-        this.valeur = row.valeur;
-        this.quantite_dispo = row.quantite_dispo;
-        this.prix_reel = row.prix_reel;
-        this.image = row.image;
-        this.date_modification = row.date_modification;
-        this.id_chasse = row.id_chasse;
+    public async read(id_recompense: number): Promise<any> {
+        const recompense = await getRecompenseById(id_recompense) as any;
+
+        if (!recompense) {
+            throw new Error('Recompense not found');
+        }
+
+        console.log("Recompense après appel API dans read", recompense); 
+
+        return new Recompense(recompense);
     }
 } 
+
 export default Recompense;

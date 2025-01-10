@@ -40,12 +40,16 @@ class Texte {
   }
 
 
-    public async read(id_texte: number): Promise<void> {
-        const texte = await getTexteById(id_texte);
-        const row = texte[0];
-        this.id_texte = row.id_texte;
-        this.contenu = row.contenu;
-        this.id_indice = row.id_indice;
+    public async read(id_texte: number): Promise<any> {
+        const texte = await getTexteById(id_texte) as any;
+
+        if (!texte) {
+            throw new Error("Texte not found");
+        }
+
+        console.log("Texte après appel API dans read", texte); 
+
+        return new Texte(texte);
     }
 }
 

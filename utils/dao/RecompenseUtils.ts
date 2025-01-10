@@ -2,28 +2,92 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * @param id_recompense 
- * @returns promise<any> Le tableau des récompenses
- * @throws Error si la récupération des récompenses échoue
+ * Méthode pour récupérer une récompense par son ID
+ * @param id_recompense L'identifiant de la récompense
+ * @returns Promise<any> La récompense
+ * @throws Error si la récupération échoue
  * @example const recompense = await getRecompenseById(1);
  */
-export async function getRecompenseById(id_recompense:number): Promise<any> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompense/${id_recompense}`);
+export async function getRecompenseById(id_recompense: number): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/${id_recompense}`);
     if (!res.ok) {
-        throw new Error('Erreur lors de la récupération des récompenses');
+        throw new Error('Erreur lors de la récupération de la récompense');
     }
-    return await res.json()  
+    return await res.json();
 }
 
 /**
+ * Méthode pour récupérer toutes les récompenses d'une chasse
  * @returns Promise<any> Le tableau des récompenses
- * @throws Error si la récupération des récompenses échoue
- * @example const recompense = await getAllRecompenses();
+ * @throws Error si la récupération échoue
+ * @example const recompenses = await getAllRecompensesByChasse();
  */
-export async function getAllRecompenses(): Promise<any> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompense`);
+export async function getAllRecompensesByChasse(id_chasse: number): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/chasse?id_chasse=${id_chasse}`);
     if (!res.ok) {
-        throw new Error('Erreur lors de la récupération des récompenses');
+        throw new Error('Erreur lors de la récupération des récompenses de la chasse');
     }
-    return await res.json()
+    return await res.json();
+}
+
+/**
+ * Méthode pour créer une nouvelle récompense
+ * @param recompense Les données de la nouvelle récompense
+ * @returns Promise<any> La récompense créée
+ * @throws Error si la création échoue
+ * @example const newRecompense = await createRecompense(recompenseData);
+ */
+export async function createRecompense(recompense: any): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(recompense),
+    });
+
+    if (!res.ok) {
+        throw new Error('Erreur lors de la création de la récompense');
+    }
+    return await res.json();
+}
+
+/**
+ * Méthode pour mettre à jour une récompense
+ * @param id_recompense L'identifiant de la récompense à mettre à jour
+ * @param updatedData Les nouvelles données de la récompense
+ * @returns Promise<any> La récompense mise à jour
+ * @throws Error si la mise à jour échoue
+ * @example const updatedRecompense = await updateRecompense(1, updatedData);
+ */
+export async function updateRecompense(id_recompense: number, updatedData: any): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/${id_recompense}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+    });
+
+    if (!res.ok) {
+        throw new Error('Erreur lors de la mise à jour de la récompense');
+    }
+    return await res.json();
+}
+
+/**
+ * Méthode pour supprimer une récompense
+ * @param id_recompense L'identifiant de la récompense à supprimer
+ * @returns Promise<void>
+ * @throws Error si la suppression échoue
+ * @example await deleteRecompense(1);
+ */
+export async function deleteRecompense(id_recompense: number): Promise<void> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/${id_recompense}`, {
+        method: 'DELETE',
+    });
+
+    if (!res.ok) {
+        throw new Error('Erreur lors de la suppression de la récompense');
+    }
 }

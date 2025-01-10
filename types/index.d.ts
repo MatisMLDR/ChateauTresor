@@ -95,9 +95,7 @@ export type ChasseType = {
   statut?: string; // Optionnel, par défaut 'Inactif'
   id_chateau?: number | null; // Peut être null, clé étrangère vers Chateau(id_chateau)
   id_equipe?: number | null; // Peut être null, clé étrangère vers Equipe_Organisatrice(id_equipe)
-
   chateau?: ChateauType;
-  nb_enigmes: number;
   enigmes?: EnigmeType[];
 };
 
