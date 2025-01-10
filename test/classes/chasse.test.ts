@@ -30,10 +30,9 @@ describe("Tests read()", () => {
   });
   it("devrait throw une erreur car l'id est inexistant", async () => {
     // Crée une instance de Chasse sans ID
-    const chasse = await Chasse.readId(19); // 19
-
+     
     // Vérifie que l'appel de la méthode read() lève une erreur
-    await expect(chasse.read()).toThrow();
+    await expect(Chasse.readId(19)).rejects.toThrow(Error);
   });
 });
 
