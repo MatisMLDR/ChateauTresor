@@ -6,14 +6,11 @@ dotenv.config();
 /**
  * Fonction permettant de récupérer tous les avis d'une chasse
  * @returns Promise<any> Le tableau des avis de la chasse
- * Fonction permettant de récupérer tous les avis d'une chasse
- * @returns Promise<any> Le tableau des avis de la chasse
  * @throws Error si la récupération des avis échoue
- * @example const avis = await getAllAvis(1);
- * @params id_chasse L'identifiant d'une chasse
+ * @example const avis = await getAllAvisByChasse(1);
  * @params id_chasse L'identifiant d'une chasse
  **/
-export async function getAllAvis(id_chasse: number): Promise<any> {
+export async function getAllAvisByChasse(id_chasse: number): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/enigme?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis');
