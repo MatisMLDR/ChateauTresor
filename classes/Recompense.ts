@@ -1,6 +1,6 @@
 import { RecompenseType } from "@/types";
 
-import { createRecompense, deleteRecompense, getAllRecompenses, getRecompenseById, updateRecompense } from '@/utils/dao/RecompenseUtils';
+import { createRecompense, deleteRecompense, getRecompenseById, updateRecompense } from '@/utils/dao/RecompenseUtils';
 
 class Recompense {
     private id_recompense: number;

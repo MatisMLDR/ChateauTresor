@@ -1,5 +1,6 @@
 import { EnigmeType } from "@/types";
 import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, updateEnigme } from "@/utils/dao/EnigmeUtils";
+import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
   id: number;
@@ -187,7 +188,6 @@ export class Enigme {
     
       public async update(): Promise<void> {
         try {
-          await updateEnigme(this);
           await updateEnigme(this);
         } catch (error) {
             throw new Error('Enigme does not exist');
