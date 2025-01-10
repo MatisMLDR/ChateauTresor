@@ -16,19 +16,15 @@ const steps = [
   { title: contenuTextuel.create.steps.reviewSubmit, component: ReviewSubmit },
 ];
 
-export function CreateHuntForm() {
+export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseType> }) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<Partial<ChasseType>>({
-    enigmes: [],
-  });
+  const [formData, setFormData] = useState<Partial<ChasseType>>(initialData || { enigmes: [] });
 
   const progress = ((currentStep + 1) / steps.length) * 100;
   const CurrentStepComponent = steps[currentStep].component;
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      console.log(`Moving to next step: ${currentStep + 1}`);
-      console.log("Current formData:", formData);
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
     }
@@ -36,9 +32,6 @@ export function CreateHuntForm() {
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      console.log(`Returning to previous step: ${currentStep - 1}`);
-      console.log("Current formData:", formData);
-      toast.success("Les informations sont bien sauvegardées.");
       setCurrentStep(currentStep - 1);
       window.scrollTo(0, 0);
     }
@@ -46,71 +39,38 @@ export function CreateHuntForm() {
 
   const handleSubmit = async () => {
     console.log("Final form data submitted:", formData);
-    toast.success("Les données sont sauvegardées et en cours de chargement.");
-
-    // Calculer le nombre d'énigmes
-    const nbEnigmes = formData.enigmes?.length || 0;
-
-    // Préparer les données pour l'API
-    const treasureHuntData = {
-      titre: formData.titre,
-      description: formData.description,
-      id_chateau: formData.chateau?.id_chateau, // ID du château
-      prix: formData.prix,
-      capacite: formData.capacite,
-      duree_estime: formData.duree_estime,
-      difficulte: formData.difficulte,
-      age_requis: formData.age_requis,
-      date_debut: formData.date_debut,
-      date_fin: formData.date_fin,
-      theme: formData.theme,
-      imageUrl: formData.chateau?.id_chateau, // Utiliser l'image associée au château
-      nb_enigmes: nbEnigmes, // Ajouter le nombre d'énigmes calculé
-    };
-
-    // Envoyer les données à l'API (à implémenter)
-    // await api.submitTreasureHunt(treasureHuntData);
+    toast.success("Les données ont été sauvegardées.");
+    // Appeler l'API pour créer ou modifier la chasse
+    // await api.saveOrUpdateHunt(formData);
   };
 
   const handleFormDataUpdate = (updatedData: Partial<ChasseType>) => {
-    console.log("Updating formData:", updatedData);
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
   };
 
   return (
     <div className="space-y-8">
-      <Toaster /> {/* Ajouter le composant Toaster pour afficher les notifications */}
+      <Toaster />
       <div className="space-y-2">
         <Progress value={progress} className="h-2" />
         <div className="text-sm text-muted-foreground">
           Étape {currentStep + 1} sur {steps.length}: {steps[currentStep].title}
         </div>
       </div>
-
       <div className="bg-card p-6 rounded-lg border">
         <CurrentStepComponent
           formData={formData}
-          setFormData={handleFormDataUpdate} // Passe la fonction de mise à jour avec log
+          setFormData={handleFormDataUpdate}
         />
       </div>
-
       <div className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={handlePrevious}
-          disabled={currentStep === 0}
-        >
-          {contenuTextuel.common.previous}
+        <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0}>
+          Précédent
         </Button>
-
         {currentStep === steps.length - 1 ? (
-          <Button onClick={handleSubmit}>
-            {contenuTextuel.create.form.review.createHunt}
-          </Button>
+          <Button onClick={handleSubmit}>Enregistrer</Button>
         ) : (
-          <Button onClick={handleNext}>
-            {contenuTextuel.common.next}
-          </Button>
+          <Button onClick={handleNext}>Suivant</Button>
         )}
       </div>
     </div>

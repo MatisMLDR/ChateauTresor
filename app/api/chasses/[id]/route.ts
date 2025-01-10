@@ -8,7 +8,7 @@ export async function GET(request: Request, { params }: { params: { id: number }
   try {
     const resolvedParams = await params;
     const chasseId = resolvedParams.id;
-
+    
     if (!chasseId) {
       return NextResponse.json({ error: 'Paramètre id manquant ou invalide' }, { status: 400 });
     }
