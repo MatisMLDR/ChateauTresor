@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Euro, Users, Trophy, Star } from "lucide-react";
 import { formatEuro } from "@/lib/utils";
-import { SideBar } from '@/components/ui/SideBar';
+import { SideBarHuntCreator } from '@/components/ui/SideBarHuntCreator';
 
 
 interface DashboardStats {
@@ -162,7 +162,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex">
-      <SideBar />
+      <SideBarHuntCreator />
 
       {/* Contenu de la page */}
       <main className="container mx-auto px-4 py-8">
@@ -270,7 +270,7 @@ export default function DashboardPage() {
                 <tr className="border-b">
                   <th className="h-12 px-4 text-left align-middle font-medium">Nom de la Chasse</th>
                   <th className="h-12 px-4 text-left align-middle font-medium">Note Moyenne</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium">Nombre d'Avis</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium">Nombre d&apos;Avis</th>
                   <th className="h-12 px-4 text-left align-middle font-medium">Taux de Réussite</th>
                 </tr>
                 </thead>
@@ -311,7 +311,7 @@ export default function DashboardPage() {
                   <strong>Note Moyenne:</strong> {popupHunt.averageRating.toFixed(1)}
                 </p>
                 <p>
-                  <strong>Nombre d'Avis:</strong> {popupHunt.reviewCount}
+                  <strong>Nombre d&apos;Avis:</strong> {popupHunt.reviewCount}
                 </p>
                 <p>
                   <strong>Taux de Réussite:</strong> {popupHunt.successRate}%
