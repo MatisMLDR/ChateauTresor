@@ -231,7 +231,6 @@ export class Enigme {
    * Méthode pour calculer le nombre de fois qu'un indice a été révélé
    * @returns number Le nombre de fois qu'un indice a été révélé
    */
-
   public getNbIndiceRevele(): number {
     const data = getAllIndicesParticipants(this.id) as any;
     if (data.length == 0) {

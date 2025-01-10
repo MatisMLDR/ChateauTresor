@@ -1,5 +1,5 @@
 import { Indice as IndiceType, IndiceType as TypeIndice } from "@/types";
-import { getIndiceById } from "@/utils/dao/IndiceUtils";
+import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
 
 class Indice {
   private id_indice: number;
@@ -140,7 +140,7 @@ class Indice {
       
         public async update(): Promise<void> {
           try {
-            await updateIndice(this.id_indice, this.getId());
+            await updateIndice(this);
           } catch (error) {
               throw new Error('Indice does not exist');
           }
