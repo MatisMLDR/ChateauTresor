@@ -1,13 +1,13 @@
 import { ChasseType } from "@/types";
 import {
   getAllParticipations,
-  getAllRecompenses,
-  getAllAvis,
   getChasseById,
   createChasse,
   deleteChasse,
   updateChasse,
 } from '@/utils/dao/ChasseUtils';
+import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
+import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 
 class Chasse {
   private id_chasse: number;
@@ -349,7 +349,7 @@ class Chasse {
     // Récupération dans la base des récompenses attribuées avec l'id de la chasse
 
     // On récupère les données
-    const data = await getAllRecompenses(this.id_chasse);
+    const data = await getAllRecompensesByChasse(this.id_chasse);
     return data.length;
   }
 
@@ -361,7 +361,7 @@ class Chasse {
     // Récupération dans la base des notes attribuées de chaques avis avec l'id de la chasse
 
     // On récupère les données
-    const data = await getAllAvis(this.id_chasse);
+    const data = await getAllAvisByChasse(this.id_chasse);
 
     if (data.length === 0) {
       return 0;
@@ -378,7 +378,7 @@ class Chasse {
   */
   public async getNbAvis(): Promise<number> {
     // Récupération dans la base des avis avec l'id de la chasse
-    const data = await getAllAvis(this.id_chasse);
+    const data = await getAllAvisByChasse(this.id_chasse);
     return data.length;
   }
 
