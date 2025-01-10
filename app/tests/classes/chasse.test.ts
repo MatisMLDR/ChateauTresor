@@ -188,18 +188,31 @@ describe("Tests réels avec DAO", () => {
   it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
     // Récupère les données de la chasse via le DAO
     const chasseData = await getChasseById(1);
-
+    console.log("chasseData with id 1 in test : ", chasseData);
+    console.log("chasseData length with id 1 in test : ", chasseData.length);
     // Vérifie que les données existent
     expect(chasseData).toBeDefined();
-    expect(chasseData.length).toBe(1);
-    //expect(chasseData[0].id_chasse).toBe(1);
+    // Vérifie les propriétés de l'objet chasseData
+    expect(chasseData.id_chasse).toBe(1);
+    expect(chasseData.titre).toEqual("KIRIKOU")
+    expect(chasseData.capacite).toBe(300);
+    expect(chasseData.description).toEqual("Découvrez le château de Chambord comme vous ne l'avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !")
+    expect(chasseData.age_requis).toBe(16);
+    expect(chasseData.image).toEqual("https://www.valdeloire-france.com/app/uploads/202");
+    expect(chasseData.date_creation).toBeDefined(); // Pas définie
+    expect(chasseData.date_modification).toBeDefined(); // Pas définie
+    expect(chasseData.date_debut).toBeDefined(); // Pas définie
+    expect(chasseData.date_fin).toBeDefined(); // Pas définie
+    expect(chasseData.prix).toBe(8); // Pas définie
+    expect(chasseData.difficulte).toBe(1); // Pas définie
+    expect(chasseData.duree_estime).toBeDefined(); // Pas définie
+    expect(chasseData.theme).toEqual("Dynastie royale")
+    expect(chasseData.statut).toEqual("Inactif")
+    expect(chasseData.note_moyenne).toBe(0);
+    expect(chasseData.recompenses_attribuees).toBe(0);
+    expect(chasseData.id_chateau).toBe(318);
+    expect(chasseData.id_equipe).toBe(1);
 
-    // Instancie une chasse avec les données récupérées
-    //const chasse = new Chasse(chasseData[0]);
-
-    // Vérifie les données de la chasse
-    //expect(chasse.getIdChasse()).toBe(1);
-    //expect(chasse.getTitre()).toBeDefined(); // Vérifie que le titre existe
-    //expect(chasse.getTitre()).toBe("Titre attendu dans la BD"); // Adaptez selon les données réelles
+    
   });
 });
