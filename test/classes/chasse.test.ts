@@ -18,7 +18,7 @@ describe("Test API", () => {
   });
 });
 
-describe("Tests read()", () => {
+describe("Tests readId()", () => {
   it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
     // Récupère les données de la chasse via le DAO
 
@@ -37,15 +37,29 @@ describe("Tests read()", () => {
 });
 
 describe("Tests create()", () => {
-  it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
+  it("devrait créer une chasse sans renvoyer une erreur", async () => {
     // Récupère les données de la chasse via le DAO
-    const chasse = new Chasse({ id_chasse: 1 });
-    await chasse.load();
-    await chasse.create();
+    const chasse = new Chasse({ 
+      id_chasse: 10,
+      titre: "Chasse created",
+      description: "Description de la chasse",
+      date_creation: "01/01/2025",
+      date_debut: "01/01/2025",
+      date_fin: "01/02/2025",
+      prix: 25,
+      difficulte: 3,
+      duree_estime: "2h",
+      age_requis: 12,
+      theme: "Theme de la chasse",
+      image: "image.jpg",
+      capacite: 10,
+      id_chateau: 1,
+      id_equipe: 1,
+     });
     
-    // Vérifie que les données existent
-    expect(chasse).toBeDefined();
-    // Vérifie les propriétés de l'objet chasse
+    // Vérifie que les données on bien été créées
+    await expect(chasse.create()).resolves.not.toThrow(Error);
+    await expect(Chasse.readId(10)).resolves.toBeDefined();
     
   });
 });

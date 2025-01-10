@@ -23,7 +23,7 @@ class Chasse {
   private id_equipe: number | null;
 
   constructor(chasse: ChasseType) {
-    this.id_chasse = chasse.id_chasse;
+    this.id_chasse = chasse.id_chasse ?? -1;
     this.titre = chasse.titre ?? "Nouvelle Chasse";
     this.capacite = chasse.capacite ?? 0;
     this.description = chasse.description ?? "Pas de description";
@@ -151,6 +151,7 @@ class Chasse {
 
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
+    * @returns Promise<any> L'objet Chasse avec les données chargées à partir de l'id
    */
   public static async readId(id_chasse: number): Promise<any> {
 

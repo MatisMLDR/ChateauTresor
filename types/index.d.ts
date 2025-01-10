@@ -78,7 +78,7 @@ export type EnigmeType = {
 ///////////
 
 export type ChasseType = {
-  id_chasse: number; // Identifiant unique, SERIAL, non null
+  id_chasse?: number; // Identifiant unique, SERIAL, non null
   titre?: string; // Optionnel, par défaut 'Nouvelle Chasse'
   capacite?: number; // Optionnel, par défaut 0
   description?: string; // Optionnel, par défaut 'Pas de description'
@@ -218,7 +218,7 @@ export type EquipeOrganisatriceType = {
 }
 
 export type RecompenseType = {
-  id_recompense: number;
+  id_recompense?: number;
   nom: string;
   description: string;
   type: string;

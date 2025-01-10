@@ -14,7 +14,7 @@ class Recompense {
     private id_chasse: number | null;
 
     constructor(recompense: RecompenseType) {
-        this.id_recompense = recompense.id_recompense;
+        this.id_recompense = recompense.id_recompense ?? -1;
         this.nom = recompense.nom;
         this.description = recompense.description;
         this.type = recompense.type;
