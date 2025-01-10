@@ -151,6 +151,7 @@ class Chasse {
 
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
+    * @returns Promise<any> L'objet Chasse avec les données chargées à partir de l'id
    */
   public static async readId(id_chasse: number): Promise<any> {
 
@@ -171,7 +172,7 @@ class Chasse {
       const avis = await getChasseById(this.id_chasse) as any
   
       if (!avis) {
-          throw new Error('Avis not found');
+          throw new Error('Chasse not found');
       }
   
       return new Chasse(avis);
@@ -223,7 +224,8 @@ class Chasse {
       }
     }
   
-    public async delete(): Promise<void> {
+  public async delete(): Promise<void> {
+    console.log("Delete : ChasseId : ", this.id_chasse);
       if (!this.id_chasse) {
         throw new Error('id_chasse is required');
       }
