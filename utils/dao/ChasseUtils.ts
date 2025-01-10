@@ -99,10 +99,14 @@ export async function updateChasse(chasse: any): Promise<any> {
 * @example await deleteChasse(1);
 */
 export async function deleteChasse(id_chasse: number): Promise<void> {
+  console.log("DeleteChasse : ChasseUtils : ", id_chasse);
+  console.log("URL : ",`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`)
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`, {
     method: 'DELETE',
   });
+  console.log("RES : ", res);
   if (!res.ok) {
+    console.log("Erreur lors de la suppression de la chasse");
     throw new Error('Erreur lors de la suppression de la chasse');
   }
 }

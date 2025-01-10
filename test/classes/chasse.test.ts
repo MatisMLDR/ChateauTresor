@@ -51,13 +51,14 @@ describe("Tests create()", () => {
 });
 
 describe("Tests delete()", () => {
-  it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
+  it("", async () => {
     // Récupère les données de la chasse via le DAO
-    const chasse = new Chasse({ id_chasse: 1 });
+    const chasse = await Chasse.readId(1);
+    console.log("Chasse ID : ",chasse.getIdChasse())
     await chasse.delete();
 
     // Vérifie que les données n'existent plus
-    expect(chasse).toBeUndefined();
+    expect(chasse.read()).toThrow('Chasse not found');
   });
 });
 
@@ -65,7 +66,10 @@ describe("Tests update()", () => {
   it("", async () => {
     // Récupère les données de la chasse via le DAO
     const chasse = await Chasse.readId(1);
-    chasse.setTitre("KIRIKETTE");
+
+    const randomInt = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+
+    chasse.setTitre(`KIRIKETTE${randomInt}`);
     await chasse.update();
 
     // Vérifie que les données existent toujours
