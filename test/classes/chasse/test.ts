@@ -24,15 +24,15 @@ describe("Tests read()", () => {
   it("devrait récupérer la chasse d'ID 1 depuis la base de données", async () => {
     // Récupère les données de la chasse via le DAO
 
-    const chasse = await Chasse::readId(1);
+    const chasse = await Chasse.readId(1);
 
     // Vérifie que les données existent
     expect(chasse).toBeDefined();
-    expect(chasse.id_chasse).toEqual(id_chasse: 1);
+    expect(chasse.id_chasse).toEqual(1);
   });
   it("devrait throw une erreur car l'id est inexistant", async () => {
     // Crée une instance de Chasse sans ID
-    const chasse = await Chasse::readId(19); // 19
+    const chasse = await Chasse.readId(19); // 19
 
     // Vérifie que l'appel de la méthode read() lève une erreur
     await expect(chasse.read()).toThrow();
