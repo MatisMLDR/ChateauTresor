@@ -121,7 +121,7 @@ class Chateau {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async read(id_chateau: number): Promise<any> {
+  public async readId(id_chateau: number): Promise<any> {
 
     const data = await getChateauById(id_chateau) as any;
 
@@ -132,8 +132,81 @@ class Chateau {
     console.log("Château après appel API dans read", data); 
 
     return new Chateau(data);
-
   }
+
+  public async read(): Promise<any> {
+        if (!this.id_chateau) {
+            throw new Error('Chateau ID is required');
+        }
+    
+        const avis = await getChateauById(this.id_chateau) as any
+    
+        if (!avis) {
+            throw new Error('Chateau not found');
+        }
+    
+        return new Chateau(avis);
+      }
+    
+      public async load(): Promise<void> {
+        if (!this.id_chateau) {
+            throw new Error('chateau ID is required');
+        }
+    
+        const avis = await getChateauById(this.id_chateau) as any
+    
+        if (!avis) {
+            throw new Error('Chateau not found');
+        }
+    
+        this.id_chateau = avis.id_chateau;
+        this.nom = avis.nom;
+        this.adresse_postale = avis.adresse_postale;
+        this.localisation = avis.localisation;
+        this.capacite = avis.capacite;
+        this.prix_location = avis.prix_location;
+        this.telephone = avis.telephone;
+        this.description = avis.description;
+        this.image = avis.image;
+        this.site_web = avis.site_web;
+        this.id_proprietaire = avis.id_proprietaire;
+      }
+    
+      public async create(): Promise<void> {
+        const avis = await createChateau(this) as any
+    
+        if (!avis) {
+            throw new Error('Chasse not created');
+        }
+      }
+    
+      public async deleteId(id_chateau: number): Promise<void> {
+        try {
+          await deleteChateau(id_chateau);
+        } catch (error) {
+            throw new Error('Chateau does not exist');
+        }
+      }
+    
+      public async delete(): Promise<void> {
+        if (!this.id_chateau) {
+          console.log("Pas d'id chateau");
+          throw new Error('id_chateau is required');
+        }
+        try {
+          await deleteChateau(this.id_chateau);
+        } catch (error) {
+            throw new Error('Chateau does not exist');
+        }
+      }
+    
+      public async update(): Promise<void> {
+        try {
+          await updateChateau(this);
+        } catch (error) {
+            throw new Error('Chateau does not exist');
+        }
+      }
 }
 
 export default Chateau;

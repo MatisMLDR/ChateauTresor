@@ -105,9 +105,9 @@ export class Enigme {
     * @param id_chasse L'identifiant de la chasse
     * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
-  public async read(id_chasse: number): Promise<any> {
+  public async readId(id: number): Promise<any> {
     
-    const data = getEnigmeById(id_chasse) as any;
+    const data = getEnigmeById(id) as any;
     
     if (!data) {
       throw new Error("L'énigme n'existe pas");
@@ -116,6 +116,78 @@ export class Enigme {
     
     return new Enigme(data);
   }
+
+  public async read(): Promise<any> {
+        if (!this.id) {
+            throw new Error('Enigme ID is required');
+        }
+    
+        const avis = await getEnigmeById(this.id) as any
+    
+        if (!avis) {
+            throw new Error('Enigme not found');
+        }
+    
+        return new Enigme(avis);
+      }
+    
+      public async load(): Promise<void> {
+        if (!this.id) {
+            throw new Error('Enigme ID is required');
+        }
+    
+        const avis = await getEnigmeById(this.id) as any
+    
+        if (!avis) {
+            throw new Error('Enigme not found');
+        }
+    
+        this.id = avis.id;
+        this.titre = avis.titre;
+        this.qrCode = avis.qrCode;
+        this.code = avis.code;
+        this.description = avis.description;
+        this.endroit_qrcode = avis.endroit_qrcode;
+        this.temps_max = avis.temps_max;
+        this.description_reponse = avis.description_reponse;
+        this.image_reponse = avis.image_reponse;
+      }
+    
+      public async create(): Promise<void> {
+        const avis = await createEnigme(this) as any
+    
+        if (!avis) {
+            throw new Error('Enigme not created');
+        }
+      }
+    
+      public async deleteId(id: number): Promise<void> {
+        try {
+          await deleteEnigme(id);
+        } catch (error) {
+            throw new Error('Chasse does not exist');
+        }
+      }
+    
+      public async delete(): Promise<void> {
+        if (!this.id) {
+          console.log("Pas d'id Enigme");
+          throw new Error('id is required');
+        }
+        try {
+          await deleteEnigme(this.id);
+        } catch (error) {
+            throw new Error('Enigme does not exist');
+        }
+      }
+    
+      public async update(): Promise<void> {
+        try {
+          await updateEnigme(this);
+        } catch (error) {
+            throw new Error('Enigme does not exist');
+        }
+      }
 
   // Calculs
   /*

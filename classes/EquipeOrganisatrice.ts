@@ -80,7 +80,7 @@ class EquipeOrganisatrice {
   }
 
   // Méthode pour charger les données de l'équipe organisatrice
-  public async read(id_equipe: number): Promise<any> {
+  public async readId(id_equipe: number): Promise<any> {
     
     const data = await getEquipeById(id_equipe) as any;
 
@@ -92,6 +92,78 @@ class EquipeOrganisatrice {
 
     return new EquipeOrganisatrice(data);
   }
+
+  public async read(): Promise<any> {
+          if (!this.id_equipe) {
+              throw new Error('Equipe ID is required');
+          }
+      
+          const avis = await getEquipeById(this.id_equipe) as any
+      
+          if (!avis) {
+              throw new Error('EQUIPE not found');
+          }
+      
+          return new EquipeOrganisatrice(avis);
+        }
+      
+        public async load(): Promise<void> {
+          if (!this.id_equipe) {
+              throw new Error('Equipe ID is required');
+          }
+      
+          const avis = await getEquipeById(this.id_equipe) as any
+      
+          if (!avis) {
+              throw new Error('Equipe not found');
+          }
+      
+          this.id_equipe = avis.id_equipe;
+          this.type = avis.type;
+          this.n_siret = avis.n_siret;
+          this.id_taxes = avis.id_taxes;
+          this.nb_membres = avis.nb_membres;
+          this.site_web = avis.site_web;
+          this.adresse_postale = avis.adresse_postale;
+          this.telephone = avis.telephone;
+          this.id_user = avis.id_user;
+        }
+      
+        public async create(): Promise<void> {
+          const avis = await createEquipe(this) as any
+      
+          if (!avis) {
+              throw new Error('Equipe not created');
+          }
+        }
+      
+        public async deleteId(id_equipe: number): Promise<void> {
+          try {
+            await deleteEquipe(id_equipe);
+          } catch (error) {
+              throw new Error('Equipe does not exist');
+          }
+        }
+      
+        public async delete(): Promise<void> {
+          if (!this.id_equipe) {
+            console.log("Pas d'id Equipe");
+            throw new Error('Equipe ID is required');
+          }
+          try {
+            await deleteEquipe(this.id_equipe);
+          } catch (error) {
+              throw new Error('Equipe does not exist');
+          }
+        }
+      
+        public async update(): Promise<void> {
+          try {
+            await updateEquipe(this);
+          } catch (error) {
+              throw new Error('Equipe does not exist');
+          }
+        }
 
   // Méthode pour obtenir la liste de toutes les équipes organisatrices
   public static async getAllEquipes(): Promise<EquipeOrganisatrice[]> {

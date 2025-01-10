@@ -81,7 +81,7 @@ class Avis {
         this.id_participant = id_participant;
     }
 
-    public async read(id_avis: number): Promise<any> {
+    public async readId(id_avis: number): Promise<any> {
       
       const avis = await getAvisById(id_avis) as any
 
@@ -136,7 +136,7 @@ class Avis {
     }
   }
 
-  public async delete (id_avis: number): Promise<void> {
+  public async deleteId(id_avis: number): Promise<void> {
     try {
       await deleteAvis(id_avis);
     } catch (error) {

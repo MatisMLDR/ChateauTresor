@@ -155,7 +155,7 @@ class Chasse {
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async read(id_chasse: number): Promise<any> {
+  public async readId(id_chasse: number): Promise<any> {
 
       const data = await getChasseById(id_chasse) as any;
 
@@ -184,13 +184,13 @@ class Chasse {
   
     public async load(): Promise<void> {
       if (!this.id_chasse) {
-          throw new Error('Avis ID is required');
+          throw new Error('Chasse ID is required');
       }
   
       const avis = await getChasseById(this.id_chasse) as any
   
       if (!avis) {
-          throw new Error('Avis not found');
+          throw new Error('Chasse not found');
       }
   
       this.id_chasse = avis.id_chasse;
@@ -220,9 +220,9 @@ class Chasse {
       }
     }
   
-    public async delete (id_avis: number): Promise<void> {
+    public async deleteId(id_chasse: number): Promise<void> {
       try {
-        await deleteChasse(id_avis);
+        await deleteChasse(id_chasse);
       } catch (error) {
           throw new Error('Chasse does not exist');
       }
@@ -234,7 +234,7 @@ class Chasse {
         throw new Error('id_chasse is required');
       }
       try {
-        await deleteChasse(this.id_avis);
+        await deleteChasse(this.id_chasse);
       } catch (error) {
           throw new Error('Chasse does not exist');
       }
@@ -244,7 +244,7 @@ class Chasse {
       try {
         await updateChasse(this);
       } catch (error) {
-          throw new Error('Avis does not exist');
+          throw new Error('Chasse does not exist');
       }
     }
   // Méthodes pour calculer des statistiques
