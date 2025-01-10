@@ -1,6 +1,5 @@
 import { EnigmeType } from "@/types";
 import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, updateEnigme } from "@/utils/dao/EnigmeUtils";
-import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
   id: number;
@@ -189,6 +188,7 @@ export class Enigme {
       public async update(): Promise<void> {
         try {
           await updateEnigme(this);
+          await updateEnigme(this);
         } catch (error) {
             throw new Error('Enigme does not exist');
         }
@@ -231,7 +231,6 @@ export class Enigme {
    * Méthode pour calculer le nombre de fois qu'un indice a été révélé
    * @returns number Le nombre de fois qu'un indice a été révélé
    */
-
   public getNbIndiceRevele(): number {
     const data = getAllIndicesParticipants(this.id) as any;
     if (data.length == 0) {

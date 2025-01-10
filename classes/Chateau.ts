@@ -1,5 +1,5 @@
 import { ChateauType } from "@/types";
-import { getChateauById } from '@/utils/dao/ChateauUtils';
+import { getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
 
 class Chateau {
   private id_chateau: number;
@@ -202,7 +202,7 @@ class Chateau {
     
       public async update(): Promise<void> {
         try {
-          await updateChateau(this.id_chateau, this.getIdChateau());
+          await updateChateau(this);
         } catch (error) {
             throw new Error('Chateau does not exist');
         }

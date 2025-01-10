@@ -5,6 +5,8 @@ import {
   getAllAvis,
   getChasseById,
   createChasse,
+  deleteChasse,
+  updateChasse,
 } from '@/utils/dao/ChasseUtils';
 
 class Chasse {
@@ -243,7 +245,7 @@ class Chasse {
   
     public async update(): Promise<void> {
       try {
-        await updateChasse(this.id_chasse, this.getIdChasse());
+        await updateChasse(this);
       } catch (error) {
           throw new Error('Chasse does not exist');
       }

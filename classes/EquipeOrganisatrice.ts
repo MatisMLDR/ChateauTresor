@@ -1,5 +1,5 @@
 import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
-import { getEquipeById, getAllEquipes, createEquipe, deleteEquipe, updateEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
+import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
 
 class EquipeOrganisatrice {
   private id_equipe: number;
@@ -159,6 +159,7 @@ class EquipeOrganisatrice {
       
         public async update(): Promise<void> {
           try {
+            await updateEquipe(this);
             await updateEquipe(this);
           } catch (error) {
               throw new Error('Equipe does not exist');

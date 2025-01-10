@@ -135,7 +135,7 @@ export class MembreEquipeClass {
       
         public async update(): Promise<void> {
           try {
-            await updateMembre(this.id_membre, this.getMembre());
+            await updateMembre(this);
           } catch (error) {
               throw new Error('Membre does not exist');
           }
