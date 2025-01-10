@@ -1,5 +1,4 @@
 import { Haut_FaitType } from "@/types";
-
 import { createHaut_Fait, deleteHaut_Fait, getHaut_FaitById, updateHaut_Fait } from '@/utils/dao/Haut_FaitUtils';
 
 class Haut_Fait {

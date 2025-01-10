@@ -1,5 +1,4 @@
 import { RecompenseType } from "@/types";
-
 import { createRecompense, deleteRecompense, getRecompenseById, updateRecompense } from '@/utils/dao/RecompenseUtils';
 
 class Recompense {
