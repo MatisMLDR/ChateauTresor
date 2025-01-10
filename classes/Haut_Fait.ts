@@ -1,6 +1,6 @@
 import { Haut_FaitType } from "@/types";
 
-import { createHaut_Fait, deleteHaut_Fait, getAllHaut_Faits, getHaut_FaitById, updateHaut_Fait } from '@/utils/dao/Haut_FaitUtils';
+import { createHaut_Fait, deleteHaut_Fait, getHaut_FaitById, updateHaut_Fait } from '@/utils/dao/Haut_FaitUtils';
 
 class Haut_Fait {
     private id_haut_fait: number;
@@ -67,7 +67,7 @@ class Haut_Fait {
         this.date = date;
     }
 
-    public async readId(id_haut_fait: number): Promise<any> {
+    public static async readId(id_haut_fait: number): Promise<any> {
         const haut_fait = await getHaut_FaitById(id_haut_fait) as any;
 
         if (!haut_fait) {

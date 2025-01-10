@@ -60,17 +60,17 @@ export async function createEquipe(equipe: any): Promise<any> {
  * @throws Error si la mise à jour échoue
  * @example const updatedEquipe = await updateEquipe(1, updatedData);
  */
-export async function updateEquipe(id_equipe: number, updatedData: any): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/${id_equipe}`, {
+export async function updateEquipe(equipe: any): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/${equipe.id_equipe}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(updatedData),
+    body: JSON.stringify(equipe),
   });
 
   if (!res.ok) {
-    throw new Error(`Erreur lors de la mise à jour de l'équipe organisatrice avec l'ID ${id_equipe}`);
+    throw new Error(`Erreur lors de la mise à jour de l'équipe organisatrice avec l'ID ${equipe.id_equipe}`);
   }
   return await res.json();
 }

@@ -1,5 +1,5 @@
 import { ParticipantType } from "@/types";
-import { getAllParticipantAvis, getAllParticipantChasses, getAllParticipantEnigmes, getAllParticipantIndice, getParticipantById } from "@/utils/dao/ParticipantUtils";
+import { getAllParticipantAvis, getAllParticipantChasses, getAllParticipantEnigmes, getAllParticipantIndice, getParticipantById, createParticipant, deleteParticipant, updateParticipant } from "@/utils/dao/ParticipantUtils";
 
 export class Participant {
   private id_participant: number;
@@ -151,7 +151,7 @@ export class Participant {
    * Méthode pour charger les données de l'objet participant dans la classe
    * @param id_user L'identifiant de l'utilisateur
    */
-  public async readId(id_participant: number): Promise<any> {
+  public static async readId(id_participant: number): Promise<any> {
     const data = await getParticipantById(id_participant) as any;
     
     if (!data) {
@@ -220,8 +220,8 @@ export class Participant {
         
           public async delete(): Promise<void> {
             if (!this.id_participant) {
-              console.log("Pas d'id Membre");
-              throw new Error('id_membre is required');
+              console.log("Pas d'id Participant");
+              throw new Error('id_participant is required');
             }
             try {
               await deleteParticipant(this.id_participant);
@@ -232,9 +232,9 @@ export class Participant {
         
           public async update(): Promise<void> {
             try {
-              await updateParticipant(this.id_participant, this.getParticipant());
+              await updateParticipant(this);
             } catch (error) {
-                throw new Error('Membre does not exist');
+                throw new Error('Participant does not exist');
             }
           }
 

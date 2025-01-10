@@ -43,20 +43,20 @@ export async function getAllMembresByEquipe(id_equipe: number): Promise<MembreEq
  * @returns Promise<MembreEquipeClass> Une instance mise à jour de MembreEquipeClass
  * @throws Error si la mise à jour échoue
  */
-export async function updateMembre(id_membre: number, data: Partial<MembreEquipeType>): Promise<MembreEquipeClass> {
-  const res = await fetch(`${BASE_URL}/${id_membre}`, {
+export async function updateMembre(membre: any): Promise<MembreEquipeClass> {
+  const res = await fetch(`${BASE_URL}/${membre.id_membre}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(membre),
   });
 
   if (!res.ok) {
     throw new Error('Erreur lors de la mise à jour du membre');
   }
-  const membre: MembreEquipeType = await res.json();
-  return new MembreEquipeClass(membre);
+  const membre2: MembreEquipeType = await res.json();
+  return new MembreEquipeClass(membre2);
 }
 
 /*

@@ -61,7 +61,7 @@ export class MembreEquipeClass {
     };
   }
 
-  public async readId(id_membre: number): Promise<any> {
+  public static async readId(id_membre: number): Promise<any> {
      const data = await getMembreById(id_membre) as any;
 
      if (!data) {
@@ -135,7 +135,7 @@ export class MembreEquipeClass {
       
         public async update(): Promise<void> {
           try {
-            await updateMembre(this.id_membre, this.getMembre());
+            await updateMembre(this);
           } catch (error) {
               throw new Error('Membre does not exist');
           }

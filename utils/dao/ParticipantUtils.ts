@@ -44,7 +44,6 @@ export async function getAllParticipantChasses(id_participant: number): Promise<
   return await res.json();
 }
 
-
 /*
  * Méthode pour récupérer toutes les avis des participants
  * @returns Promise<any> Un tableau de avis des participants
@@ -75,4 +74,59 @@ export async function getAllParticipantIndice(id_participant: number): Promise<a
   return await res.json();
 }
 
+/*
+ * Méthode pour créer un participant
+ * @param participant Les données du participant à créer
+ * @returns Promise<any> Le participant créé
+ * @throws Error si la création échoue
+ * @example const nouveauParticipant = await createParticipant({ nom: 'Jean Dupont', email: 'jean@exemple.com' });
+ */
+export async function createParticipant(participant: any): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(participant),
+  });
+  if (!res.ok) {
+    throw new Error('Erreur lors de la création du participant');
+  }
+  return await res.json();
+}
 
+/*
+ * Méthode pour mettre à jour un participant
+ * @returns Promise<any> Le participant mis à jour
+ * @throws Error si la mise à jour échoue
+ * @example const updatedParticipant = await updateParticipant({ id_participant: 1, nom: 'Jean Dupont' });
+ */
+export async function updateParticipant(participant: any): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/${participant.id_participant}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(participant),
+  });
+  if (!res.ok) {
+    throw new Error(`Erreur lors de la mise à jour du participant avec l'ID ${participant.id_participant}`);
+  }
+  return await res.json();
+}
+
+/*
+ * Méthode pour supprimer un participant
+ * @param id_participant L'identifiant du participant à supprimer
+ * @returns Promise<void>
+ * @throws Error si la suppression échoue
+ * @example await deleteParticipant(1);
+ */
+export async function deleteParticipant(id_participant: number): Promise<void> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/${id_participant}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    throw new Error(`Erreur lors de la suppression du participant avec l'ID ${id_participant}`);
+  }
+}

@@ -1,5 +1,5 @@
 import { Indice as IndiceType, IndiceType as TypeIndice } from "@/types";
-import { getIndiceById } from "@/utils/dao/IndiceUtils";
+import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
 
 class Indice {
   private id_indice: number;
@@ -64,7 +64,7 @@ class Indice {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async readId(id_indice: number): Promise<any> {
+  public static async readId(id_indice: number): Promise<any> {
 
     const data = await getIndiceById(id_indice) as any;
 
@@ -140,7 +140,7 @@ class Indice {
       
         public async update(): Promise<void> {
           try {
-            await updateIndice(this.id_indice, this.getId());
+            await updateIndice(this);
           } catch (error) {
               throw new Error('Indice does not exist');
           }

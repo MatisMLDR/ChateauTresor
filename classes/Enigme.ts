@@ -105,7 +105,7 @@ export class Enigme {
     * @param id_chasse L'identifiant de la chasse
     * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
-  public async readId(id: number): Promise<any> {
+  public static async readId(id: number): Promise<any> {
     
     const data = getEnigmeById(id) as any;
     
@@ -231,7 +231,6 @@ export class Enigme {
    * Méthode pour calculer le nombre de fois qu'un indice a été révélé
    * @returns number Le nombre de fois qu'un indice a été révélé
    */
-
   public getNbIndiceRevele(): number {
     const data = getAllIndicesParticipants(this.id) as any;
     if (data.length == 0) {

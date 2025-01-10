@@ -5,6 +5,8 @@ import {
   getAllAvis,
   getChasseById,
   createChasse,
+  deleteChasse,
+  updateChasse,
 } from '@/utils/dao/ChasseUtils';
 
 class Chasse {
@@ -156,7 +158,7 @@ class Chasse {
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async readId(id_chasse: number): Promise<any> {
+  public static async readId(id_chasse: number): Promise<any> {
 
       const data = await getChasseById(id_chasse) as any;
 
@@ -243,7 +245,7 @@ class Chasse {
   
     public async update(): Promise<void> {
       try {
-        await updateChasse(this.id_chasse, this.getIdChasse());
+        await updateChasse(this);
       } catch (error) {
           throw new Error('Chasse does not exist');
       }

@@ -75,13 +75,13 @@ export async function createEnigme(enigme: any): Promise<any> {
  * @throws Error si la mise à jour échoue
  * @example const updatedEnigme = await updateEnigme(1, updatedData);
  */
-export async function updateEnigme(id_enigme: number, updatedData: any): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${id_enigme}`, {
+export async function updateEnigme(enigme: any): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${enigme.id_enigme}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(updatedData),
+    body: JSON.stringify(enigme),
   });
   if (!res.ok) {
     throw new Error('Erreur lors de la mise à jour de l\'énigme');

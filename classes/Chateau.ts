@@ -1,5 +1,5 @@
 import { ChateauType } from "@/types";
-import { getChateauById } from '@/utils/dao/ChateauUtils';
+import { getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
 
 class Chateau {
   private id_chateau: number;
@@ -121,7 +121,7 @@ class Chateau {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async readId(id_chateau: number): Promise<any> {
+  public static async readId(id_chateau: number): Promise<any> {
 
     const data = await getChateauById(id_chateau) as any;
 
@@ -202,7 +202,7 @@ class Chateau {
     
       public async update(): Promise<void> {
         try {
-          await updateChateau(this.id_chateau, this.getIdChateau());
+          await updateChateau(this);
         } catch (error) {
             throw new Error('Chateau does not exist');
         }
