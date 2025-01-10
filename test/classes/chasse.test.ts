@@ -78,10 +78,12 @@ describe("Tests delete()", () => {
 describe("Tests update()", () => {
   it("", async () => {
     // Récupère les données de la chasse via le DAO
-    const chasse = new Chasse({ id_chasse: 1 });
+    const chasse = await Chasse.readId(1);
+    chasse.setTitre("KIRIKETTE");
     await chasse.update();
 
     // Vérifie que les données existent toujours
-    expect(chasse).toBeUndefined();
+    const chasse1 = await Chasse.readId(1);
+    expect(chasse.getTitre()).toEqual(chasse1.getTitre());
   });
 });
