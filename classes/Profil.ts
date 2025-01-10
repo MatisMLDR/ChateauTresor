@@ -213,7 +213,7 @@ export class Profil {
               }
             }
           
-            public async deleteId(id: number): Promise<void> {
+            public async deleteId(id: string): Promise<void> {
               try {
                 await deleteProfil(id);
               } catch (error) {
