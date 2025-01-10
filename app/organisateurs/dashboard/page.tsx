@@ -37,6 +37,8 @@ export default function DashboardPage() {
   const [recentHunts, setRecentHunts] = useState<HuntStats[]>([]);
   const [selectedHunt, setSelectedHunt] = useState<HuntStats | null>(null);
   const [popupHunt, setPopupHunt] = useState<HuntStats | null>(null);
+  const [totalDailyRevenue, setTotalDailyRevenue] = useState([]);
+
 
 // Possible implémentation de la récupération des données de la base de données Supabase
   //useEffect(() => {
@@ -119,6 +121,22 @@ export default function DashboardPage() {
           cluesRevealed: 20,
         },
       ];
+      // Calculate total daily revenue across all hunts
+      const dailyRevenueMap = new Map();
+      testHunts.forEach((hunt) => {
+        hunt.dailyRevenue.forEach(({ date, revenue }) => {
+          dailyRevenueMap.set(date, (dailyRevenueMap.get(date) || 0) + revenue);
+        });
+      });
+
+      const totalRevenueData = Array.from(dailyRevenueMap.entries()).map(([date, revenue]) => ({
+        date,
+        revenue,
+      }));
+
+      setTotalDailyRevenue(totalRevenueData);
+
+
 
       const totalRevenue = testHunts.reduce(
         (sum, hunt) => sum + hunt.dailyRevenue.reduce((revSum, day) => revSum + day.revenue, 0),
@@ -136,14 +154,17 @@ export default function DashboardPage() {
       averageRating,
     });
 
+
     setRecentHunts(testHunts);
       setSelectedHunt(testHunts[0]); // Default selection
     }, []);
 
-  const handleHuntSelection = (huntId: string) => {
-    const hunt = recentHunts.find(h => h.id === huntId);
-    if (hunt) {
-      setSelectedHunt(hunt);
+  const handleHuntSelection = (huntId) => {
+    if (huntId === "total") {
+      setSelectedHunt({ id: "total", title: "Revenus Totaux", dailyRevenue: totalDailyRevenue });
+    } else {
+      const hunt = recentHunts.find((h) => h.id === huntId);
+      setSelectedHunt(hunt || null);
     }
   };
 
@@ -166,9 +187,9 @@ export default function DashboardPage() {
 
       {/* Contenu de la page */}
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Tableau de Bord</h1>
+        <h1 className="mb-8 text-3xl font-bold">Tableau de Bord</h1>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Revenus Totaux</CardTitle>
@@ -212,15 +233,16 @@ export default function DashboardPage() {
 
         {/* Select Hunt Dropdown */}
         <div className="mb-4">
-          <label htmlFor="hunt-select" className="block text-sm font-medium mb-2">
+          <label htmlFor="hunt-select" className="mb-2 block text-sm font-medium">
             Sélectionnez une chasse pour voir ses revenus journaliers :
           </label>
           <select
             id="hunt-select"
-            className="block w-full p-2 border rounded"
+            className="block w-full rounded border p-2"
             onChange={(e) => handleHuntSelection(e.target.value)}
-            value={selectedHunt?.id || ""}
+            value={selectedHunt?.id || ''}
           >
+            <option value="total">Revenus Totaux</option>
             {recentHunts.map((hunt) => (
               <option key={hunt.id} value={hunt.id}>
                 {hunt.title}
@@ -267,26 +289,32 @@ export default function DashboardPage() {
             <div className="relative w-full overflow-auto">
               <table className="w-full caption-bottom text-sm">
                 <thead>
-                <tr className="border-b">
-                  <th className="h-12 px-4 text-left align-middle font-medium">Nom de la Chasse</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium">Note Moyenne</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium">Nombre d&apos;Avis</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium">Taux de Réussite</th>
-                </tr>
+                  <tr className="border-b">
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      Nom de la Chasse
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">Note Moyenne</th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      Nombre d&apos;Avis
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      Taux de Réussite
+                    </th>
+                  </tr>
                 </thead>
                 <tbody>
-                {recentHunts.map((hunt) => (
-                  <tr
-                    key={hunt.id}
-                    className="border-b cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleHuntClick(hunt.id)}
-                  >
-                    <td className="h-12 px-4 align-middle">{hunt.title}</td>
-                    <td className="h-12 px-4 align-middle">{hunt.averageRating.toFixed(1)}</td>
-                    <td className="h-12 px-4 align-middle">{hunt.reviewCount}</td>
-                    <td className="h-12 px-4 align-middle">{hunt.successRate}%</td>
-                  </tr>
-                ))}
+                  {recentHunts.map((hunt) => (
+                    <tr
+                      key={hunt.id}
+                      className="cursor-pointer border-b hover:bg-gray-100"
+                      onClick={() => handleHuntClick(hunt.id)}
+                    >
+                      <td className="h-12 px-4 align-middle">{hunt.title}</td>
+                      <td className="h-12 px-4 align-middle">{hunt.averageRating.toFixed(1)}</td>
+                      <td className="h-12 px-4 align-middle">{hunt.reviewCount}</td>
+                      <td className="h-12 px-4 align-middle">{hunt.successRate}%</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -295,9 +323,9 @@ export default function DashboardPage() {
 
         {/* Popup for Hunt Details */}
         {popupHunt && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white rounded shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2">
-              <div className="flex justify-between items-center mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-11/12 rounded bg-white p-6 shadow-lg md:w-2/3 lg:w-1/2">
+              <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-bold">{popupHunt.title}</h2>
                 <button
                   onClick={closePopup}
@@ -325,17 +353,14 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={closePopup}
-                className="mt-6 w-full bg-primary text-white py-2 rounded hover:bg-blue-700"
+                className="mt-6 w-full rounded bg-primary py-2 text-white hover:bg-blue-700"
               >
                 Fermer
               </button>
             </div>
           </div>
-
         )}
-
       </main>
     </div>
-
-      );
+  );
       }
