@@ -1,6 +1,7 @@
 import { EnigmeType } from "@/types";
 import { getAllEnigmesParticipants, getEnigmeById } from "@/utils/dao/EnigmeUtils";
 import { getAllParticipations } from '@/utils/dao/ChasseUtils';
+import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
   id: number;
@@ -228,8 +229,10 @@ export class Enigme {
    */
 
   public getNbIndiceRevele(): number {
-    /* A compléter */
-
-    return 0;
+    const data = getAllIndicesParticipants(this.id) as any;
+    if (data.length == 0) {
+      return 0;
+    }
+    return data.reduce((acc: number, curr: any) => acc + curr.est_decouvert, 0);
   }
 }
