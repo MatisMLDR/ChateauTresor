@@ -1,67 +1,65 @@
-import { IndiceType } from "@/types";
-import { getIndiceById } from '@/utils/dao/IndiceUtils';
+import { Indice as IndiceType, IndiceType as TypeIndice } from "@/types";
+import { getIndiceById } from "@/utils/dao/IndiceUtils";
 
-export class Indice {
-  id: number;
-  contenu: string; 
-  ordre: number; 
-  degreAide: number; 
-  idEnigme: string;
+class Indice {
+  private id_indice: number;
+  private type: TypeIndice;
+  private contenu: string;
+  private degre_aide: number;
+  private ordre: number;
+  private id_enigme: number;
 
-  constructor(id: number, contenu: string = "Pas de contenu", ordre: number = 1, degreAide: number = 1, idEnigme: string) {
-    if (degreAide < 1 || degreAide > 5) {
-      throw new Error("Le degré d'aide doit être compris entre 1 et 5.");
-    }
-    this.id = id;
-    this.contenu = contenu;
-    this.ordre = ordre;
-    this.degreAide = degreAide;
-    this.idEnigme = idEnigme;
+
+  constructor(indice: IndiceType) {
+    this.id_indice = indice.id_indice;
+    this.type = indice.type;
+    this.contenu = indice.contenu || "Pas de contenu";
+    this.degre_aide = Math.min(Math.max(indice.degre_aide || 1, 1), 5); // Assure le degré entre 1 et 5
+    this.ordre = indice.ordre || 1;
+    this.id_enigme = indice.id_enigme;
+
   }
 
   // Getters
-
   public getId(): number {
-    return this.id;
+    return this.id_indice;
   }
-
+  public getType(): TypeIndice {
+    return this.type;
+  }
   public getContenu(): string {
-      return this.contenu;
+    return this.contenu;
   }
-
-  public getOrdre(): number {
-      return this.ordre;
-  }
-
   public getDegreAide(): number {
-      return this.degreAide;
+    return this.degre_aide;
   }
-
-  public getIdEnigme(): string {
-      return this.idEnigme;
+  public getOrdre(): number {
+    return this.ordre;
+  }
+  public getIdEnigme(): number {
+    return this.id_enigme;
   }
 
   // Setters
-
-  public setId(id: number): void {
-      this.id = id;
-    }
-
+  public setType(type: TypeIndice): void {
+    this.type = type;
+  }
   public setContenu(contenu: string): void {
-      this.contenu = contenu;
+    this.contenu = contenu;
   }
-
+  public setDegreAide(degre_aide: number): void {
+    this.degre_aide = degre_aide;
+  }
   public setOrdre(ordre: number): void {
-      this.ordre = ordre;
+    this.ordre = ordre;
+  }
+  public setId(id: number): void {
+    this.id_indice = id;
+  }
+  public setIdEnigme(id_enigme: number): void {
+    this.id_enigme = id_enigme;
   }
 
-  public setDegreAide(degreAide: number): void {
-      this.degreAide = degreAide;
-  }
-
-  public setIdEnigme(idEnigme: string): void {
-      this.idEnigme = idEnigme;
-  }
 
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
