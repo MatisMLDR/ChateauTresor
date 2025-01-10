@@ -1,6 +1,6 @@
 import { Haut_FaitType } from "@/types";
 
-import { getAllHaut_Faits, getHaut_FaitById } from '@/utils/dao/Haut_FaitUtils';
+import { createHaut_Fait, deleteHaut_Fait, getAllHaut_Faits, getHaut_FaitById, updateHaut_Fait } from '@/utils/dao/Haut_FaitUtils';
 
 class Haut_Fait {
     private id_haut_fait: number;
@@ -142,7 +142,7 @@ class Haut_Fait {
         
           public async update(): Promise<void> {
             try {
-              await updateHaut_Fait(this.id_haut_fait, this.getIdHaut_Fait());
+              await updateHaut_Fait(this);
             } catch (error) {
                 throw new Error('Enigme does not exist');
             }
