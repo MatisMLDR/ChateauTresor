@@ -1,6 +1,5 @@
 import { ParticipantType } from "@/types";
 import { getAllParticipantAvis, getAllParticipantChasses, getAllParticipantEnigmes, getAllParticipantIndice, getParticipantById } from "@/utils/dao/ParticipantUtils";
-import { UUID } from "crypto";
 
 export class Participant {
   private id_participant: number;
@@ -152,26 +151,16 @@ export class Participant {
    * Méthode pour charger les données de l'objet participant dans la classe
    * @param id_user L'identifiant de l'utilisateur
    */
-  public async read(id_user: number): Promise<void> {
-    const data = await getParticipantById(id_user);
-    if (data.length === 0) {
+  public async read(id_user: number): Promise<any> {
+    const data = await getParticipantById(id_user) as any;
+    
+    if (!data) {
       throw new Error("L'énigme n'existe pas");
     }
-    if (data.length > 1) {
-      throw new Error("Plusieurs énigmes trouvées");
-    }
-    const row = data[0];
-    this.setNom(row.nom);
-    this.setPrenom(row.prenom);
-    this.setEmail(row.email);
-    this.setIdUser(row.id_user);
-    this.setAdresse(row.adresse);
-    this.setVille(row.ville);
-    this.setCodePostal(row.code_postal);
-    this.setBirthday(row.birthday);
-    this.setPlan(row.plan);
-    this.setUpdatedAt(row.updated_at);
-    this.setStripeId(row.stripe_id);
+    
+    console.log("Participants après appel API dans read", data); 
+
+    return new Participant(data);
   }
 
   /*

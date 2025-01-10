@@ -2,27 +2,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /*
- * Méthode pour récupérer tout les indices d'une enigme
- * @returns Promise<any> Le tableau des indices de l'enigme
- * @throws Error si la récupération des indices échoue
- * @example const indices = await getAllIndices();
- * @params id_enigmes L'identifiant d'une énigme
+ * Méthode pour récupérer une énigme par son id
+ * @returns Promise<any> L'énigme
+ * @throws Error si la récupération de l'énigme échoue
+ * @example const enigme = await getEnigmeById(1);
+ * @params id_enigme L'identifiant d'une énigme
  */
-export async function getAllIndices(id_enigme: number): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/enigme?id_enigme=${id_enigme}`);
-  if (!res.ok) {
-    throw new Error('Erreur lors de la récupération des indices');
-  }
-  return await res.json()
-}
-
-/*
- * Méthode pour récupérer une enigme par son id
-  * @returns Promise<any> L'enigme
-  * @throws Error si la récupération de l'enigme échoue
-  * @example const enigme = await getEnigme(1);
-  * @params id_enigmes L'identifiant d'une énigme
-  */ 
 export async function getEnigmeById(id_enigme: number): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${id_enigme}`);
   if (!res.ok) {
@@ -36,7 +21,7 @@ export async function getEnigmeById(id_enigme: number): Promise<any> {
  * @returns Promise<any> Un tableau d'énigmes des participants
  * @throws Error si la récupération des énigmes échoue
  * @example const enigmes = await getAllEnigmesParticipants(1);
- * @params id_enigmes L'identifiant d'une énigme
+ * @params id_enigme L'identifiant d'une énigme
  */
 export async function getAllEnigmesParticipants(id_enigme: number): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/participants/${id_enigme}`);
@@ -44,4 +29,78 @@ export async function getAllEnigmesParticipants(id_enigme: number): Promise<any>
     throw new Error('Erreur lors de la récupération des énigmes des participants');
   }
   return await res.json();
+}
+
+/*
+ * Méthode pour récupérer toutes les énigmes d'une chasse
+ * @returns Promise<any> Un tableau d'énigmes
+ * @throws Error si la récupération des énigmes échoue
+ * @example const enigmes = await getAllEnigmesByChasse(1);
+ * @params id_chasse L'identifiant de la chasse
+ */
+export async function getAllEnigmesByChasse(id_chasse: number): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/chasse?id_chasse=${id_chasse}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des énigmes');
+  }
+  return await res.json();
+}
+
+/*
+ * Méthode pour créer une nouvelle énigme
+ * @param enigme Les données de l'énigme à créer
+ * @returns Promise<any> L'énigme créée
+ * @throws Error si la création échoue
+ * @example const newEnigme = await createEnigme(enigmeData);
+ */
+export async function createEnigme(enigme: any): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(enigme),
+  });
+  if (!res.ok) {
+    throw new Error('Erreur lors de la création de l\'énigme');
+  }
+  return await res.json();
+}
+
+/*
+ * Méthode pour mettre à jour une énigme
+ * @param id_enigme L'id de l'énigme à mettre à jour
+ * @param updatedData Les nouvelles données de l'énigme
+ * @returns Promise<any> L'énigme mise à jour
+ * @throws Error si la mise à jour échoue
+ * @example const updatedEnigme = await updateEnigme(1, updatedData);
+ */
+export async function updateEnigme(id_enigme: number, updatedData: any): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${id_enigme}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedData),
+  });
+  if (!res.ok) {
+    throw new Error('Erreur lors de la mise à jour de l\'énigme');
+  }
+  return await res.json();
+}
+
+/*
+ * Méthode pour supprimer une énigme
+ * @param id_enigme L'id de l'énigme à supprimer
+ * @returns Promise<void> Aucune réponse en cas de succès
+ * @throws Error si la suppression échoue
+ * @example await deleteEnigme(1);
+ */
+export async function deleteEnigme(id_enigme: number): Promise<void> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${id_enigme}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    throw new Error('Erreur lors de la suppression de l\'énigme');
+  }
 }

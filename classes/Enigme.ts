@@ -105,24 +105,16 @@ export class Enigme {
     * @param id_chasse L'identifiant de la chasse
     * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
-  public read(id_chasse: number): void {
-    /* A compléter */
+  public async read(id_chasse: number): Promise<any> {
+    
     const data = getEnigmeById(id_chasse) as any;
-    if (data.length == 0) {
+    
+    if (!data) {
       throw new Error("L'énigme n'existe pas");
     }
-    if (data.length > 1) {
-      throw new Error("Plusieurs énigmes trouvées");
-    }
-    const row = data[0];
-    this.setTitre(row.titre);
-    this.setQrCode(row.qrCode);
-    this.setCode(row.code);
-    this.setDescription(row.description);
-    this.setEndroitQrCode(row.endroit_qrcode);
-    this.setTempsMax(row.temps_max);
-    this.setDescriptionReponse(row.description_reponse);
-    this.setImageReponse(row.image_reponse);
+    console.log("Enigme après appel API dans read", data); 
+    
+    return new Enigme(data);
   }
 
   // Calculs
@@ -168,7 +160,4 @@ export class Enigme {
 
     return 0;
   }
-
-
-
 }

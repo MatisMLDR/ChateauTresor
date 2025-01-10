@@ -3,20 +3,6 @@ dotenv.config();
 
 
 /*
-* Méthode pour récupérer toutes les chasses associées à un château
-* @returns Promise<any> Un tableau de chasses
-* @throws Error si la récupération des chasses échoue
-* @example const chasses = await getAllChasses();
-*/
-export async function getAllChasses(id_chateau: number): Promise<any> {
-const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/chateau?id_chateau=${id_chateau}`);
-if (!res.ok) {
-    throw new Error('Erreur lors de la récupération des chasses');
-}
-return await res.json();
-}
-  
-/*
 * Méthode pour récupérer les informations d'un château spécifique
 * @returns Promise<any> Les données du château
 * @throws Error si la récupération des données du château échoue
