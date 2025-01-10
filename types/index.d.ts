@@ -218,7 +218,7 @@ export type EquipeOrganisatriceType = {
 }
 
 export type RecompenseType = {
-  id_recompense: number;
+  id_recompense?: number;
   nom: string;
   description: string;
   type: string;
