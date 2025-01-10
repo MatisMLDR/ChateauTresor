@@ -1,5 +1,5 @@
 import { AvisType } from "@/types";
-import { getAllAvis, getAvisById, createAvis } from '@/utils/dao/AvisUtils';
+import { getAllAvis, getAvisById, createAvis, deleteAvis, updateAvis } from '@/utils/dao/AvisUtils';
 
 class Avis {
   private id_avis: number;
