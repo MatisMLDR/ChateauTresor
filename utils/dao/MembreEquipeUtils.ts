@@ -81,7 +81,7 @@ export async function deleteMembre(id_membre: number): Promise<void> {
  * @returns Promise<MembreEquipeClass> Une instance de MembreEquipeClass pour le membre créé
  * @throws Error si la création échoue
  */
-export async function createMembre(membre: MembreEquipeType): Promise<MembreEquipeClass> {
+export async function createMembre(membre: any): Promise<MembreEquipeClass> {
   const res = await fetch(BASE_URL, {
     method: 'POST',
     headers: {

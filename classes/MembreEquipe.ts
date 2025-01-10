@@ -104,25 +104,9 @@ export class MembreEquipeClass {
           this.role_equipe = avis.role_equipe;
           this.id_user = avis.id_user;
         }
-
-        public async toObject(): Promise<MembreEquipeType> {
-          const membre = {
-            id_membre: this.id_membre,
-            carte_identite: this.carte_identite,
-            est_verifie: this.est_verifie,
-            role_equipe: this.role_equipe,
-            id_user: this.id_user,
-          }
-          return membre;
-        }
-
-      
+        
         public async create(): Promise<void> {
-          const data = await this.toObject();
-          if (!data) {
-              throw new Error('Membre data is required');
-          }
-          const avis = await createMembre(data) as any
+          const avis = await createMembre(this) as any
       
           if (!avis) {
               throw new Error('Membre not created');

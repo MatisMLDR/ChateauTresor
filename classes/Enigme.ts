@@ -183,7 +183,7 @@ export class Enigme {
     
       public async update(): Promise<void> {
         try {
-          await updateEnigme(this);
+          await updateEnigme(this.id, this.getId());
         } catch (error) {
             throw new Error('Enigme does not exist');
         }

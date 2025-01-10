@@ -142,7 +142,7 @@ class Haut_Fait {
         
           public async update(): Promise<void> {
             try {
-              await updateHaut_Fait(this);
+              await updateHaut_Fait(this.id_haut_fait, this.getIdHaut_Fait());
             } catch (error) {
                 throw new Error('Enigme does not exist');
             }

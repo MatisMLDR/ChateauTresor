@@ -158,7 +158,7 @@ class Avis {
 
   public async update(): Promise<void> {
     try {
-      await updateAvis(this);
+      await updateAvis(this.id_avis, this.getIdAvis);
     } catch (error) {
         throw new Error('Avis does not exist');
     }

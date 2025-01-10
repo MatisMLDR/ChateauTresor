@@ -140,7 +140,7 @@ class Indice {
       
         public async update(): Promise<void> {
           try {
-            await updateIndice(this);
+            await updateIndice(this.id_indice, this.getId());
           } catch (error) {
               throw new Error('Indice does not exist');
           }

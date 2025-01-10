@@ -151,8 +151,8 @@ export class Participant {
    * Méthode pour charger les données de l'objet participant dans la classe
    * @param id_user L'identifiant de l'utilisateur
    */
-  public async read(id_user: number): Promise<any> {
-    const data = await getParticipantById(id_user) as any;
+  public async readId(id_participant: number): Promise<any> {
+    const data = await getParticipantById(id_participant) as any;
     
     if (!data) {
       throw new Error("L'énigme n'existe pas");
@@ -162,6 +162,81 @@ export class Participant {
 
     return new Participant(data);
   }
+
+  public async read(): Promise<any> {
+            if (!this.id_participant) {
+                throw new Error('Participant ID is required');
+            }
+        
+            const avis = await getParticipantById(this.id_participant) as any
+        
+            if (!avis) {
+                throw new Error('Participant not found');
+            }
+        
+            return new Participant(avis);
+          }
+        
+          public async load(): Promise<void> {
+            if (!this.id_participant) {
+                throw new Error('Participant ID is required');
+            }
+        
+            const avis = await getParticipantById(this.id_participant) as any
+        
+            if (!avis) {
+                throw new Error('Participant not found');
+            }
+        
+            this.id_participant = avis.id_participant;
+            this.nom = avis.nom;
+            this.prenom = avis.prenom;
+            this.email = avis.email;
+            this.id_user = avis.id_user;
+            this.adresse = avis.adresse;
+            this.ville = avis.ville;
+            this.code_postal = avis.code_postal;
+            this.birthday = avis.birthday;
+            this.plan = avis.plan;
+            this.updated_at = avis.updated_at;
+            this.stripe_id = avis.stripe_id;
+          }
+          
+          public async create(): Promise<void> {
+            const avis = await createParticipant(this) as any
+        
+            if (!avis) {
+                throw new Error('Participant not created');
+            }
+          }
+        
+          public async deleteId(id_participant: number): Promise<void> {
+            try {
+              await deleteParticipant(id_participant);
+            } catch (error) {
+                throw new Error('Participant does not exist');
+            }
+          }
+        
+          public async delete(): Promise<void> {
+            if (!this.id_participant) {
+              console.log("Pas d'id Membre");
+              throw new Error('id_membre is required');
+            }
+            try {
+              await deleteParticipant(this.id_participant);
+            } catch (error) {
+                throw new Error('Participant does not exist');
+            }
+          }
+        
+          public async update(): Promise<void> {
+            try {
+              await updateParticipant(this.id_participant, this.getParticipant());
+            } catch (error) {
+                throw new Error('Membre does not exist');
+            }
+          }
 
   /*
     * Méthode pour retourner toutes les chasses auxquelles le participant a participé

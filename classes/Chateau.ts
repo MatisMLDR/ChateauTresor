@@ -202,7 +202,7 @@ class Chateau {
     
       public async update(): Promise<void> {
         try {
-          await updateChateau(this);
+          await updateChateau(this.id_chateau, this.getIdChateau());
         } catch (error) {
             throw new Error('Chateau does not exist');
         }

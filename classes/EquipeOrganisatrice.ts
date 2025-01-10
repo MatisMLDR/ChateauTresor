@@ -159,7 +159,7 @@ class EquipeOrganisatrice {
       
         public async update(): Promise<void> {
           try {
-            await updateEquipe(this);
+            await updateEquipe(this.id_equipe, this.getIdEquipe());
           } catch (error) {
               throw new Error('Equipe does not exist');
           }
