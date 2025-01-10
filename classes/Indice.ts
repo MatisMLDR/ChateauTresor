@@ -64,7 +64,7 @@ class Indice {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async read(id_indice: number): Promise<void> {
+  public async read(id_indice: number): Promise<any> {
 
     const data = await getIndiceById(id_indice) as any;
 
@@ -74,12 +74,8 @@ class Indice {
     
     console.log("Indice après appel API dans read", data); 
 
-    const row = data[0];
-    this.setId(row.id);
-    this.setContenu(row.contenu);
-    this.setOrdre(row.ordre);
-    this.setDegreAide(row.degre_aide);
-    this.setIdEnigme(row.id_enigme);
+    return new Indice(data);
   }
-
 }
+
+export default Indice;

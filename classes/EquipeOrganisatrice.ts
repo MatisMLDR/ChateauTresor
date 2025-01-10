@@ -80,8 +80,9 @@ class EquipeOrganisatrice {
   }
 
   // Méthode pour charger les données de l'équipe organisatrice
-  public async read(id_equipe: number): Promise<void> {
-    const data = await getEquipeById(id_equipe);
+  public async read(id_equipe: number): Promise<any> {
+    
+    const data = await getEquipeById(id_equipe) as any;
 
     if (!data) {
       throw new Error("Équipe organisatrice introuvable.");
@@ -89,15 +90,7 @@ class EquipeOrganisatrice {
 
     console.log("EquipeOrganisatrice après appel API dans read", data); 
 
-    this.id_equipe = data.id_equipe;
-    this.type = data.type;
-    this.n_siret = data.n_siret;
-    this.id_taxes = data.id_taxes;
-    this.nb_membres = data.nb_membres;
-    this.site_web = data.site_web;
-    this.adresse_postale = data.adresse_postale;
-    this.telephone = data.telephone;
-    this.id_user = data.id_user;
+    return new EquipeOrganisatrice(data);
   }
 
   // Méthode pour obtenir la liste de toutes les équipes organisatrices

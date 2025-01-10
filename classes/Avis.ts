@@ -1,5 +1,4 @@
 import { AvisType } from "@/types";
-
 import { getAllAvis, getAvisById, createAvis } from '@/utils/dao/AvisUtils';
 
 class Avis {
@@ -82,9 +81,9 @@ class Avis {
         this.id_participant = id_participant;
     }
 
-    public async read(id_avis?: number): Promise<Avis> {
-      const id = id_avis || this.id_avis;
-      const avis = await getAvisById(id);
+    public async read(id_avis: number): Promise<any> {
+      
+      const avis = await getAvisById(id_avis) as any
 
       if (!avis) {
           throw new Error('Avis not found');
@@ -92,22 +91,8 @@ class Avis {
       
       console.log("Avis après appel API dans read", avis); 
 
-      const row = avis[0];
-      this.id_avis = row.id_avis;
-      this.note = row.note;
-      this.titre = row.titre;
-      this.description = row.description;
-      this.nb_like = row.nb_like;
-      this.date_modification = row.date_modification;
-      this.id_chasse = row.id_chasse;
-      this.id_participant = row.id_participant;
-
-      return new Avis(row);
+      return new Avis(avis);
   }
-    
-    public async create(): Promise<void> {
-      
-    }
 }
 
 export default Avis;

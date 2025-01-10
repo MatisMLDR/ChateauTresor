@@ -121,7 +121,7 @@ class Chateau {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async read(id_chateau: number): Promise<void> {
+  public async read(id_chateau: number): Promise<any> {
 
     const data = await getChateauById(id_chateau) as any;
 
@@ -131,24 +131,9 @@ class Chateau {
     
     console.log("Château après appel API dans read", data); 
 
-    const row = data[0];
-    this.setIdChateau(row.id_chateau);
-    this.setNom(row.nom);
-    this.setAdressePostale(row.adresse_postale);
-    this.setLocalisation(row.localisation);
-    this.setCapacite(row.capacite);
-    this.setPrixLocation(row.prix_location);
-    this.setTelephone(row.telephone);
-    this.setDescription(row.description);
-    this.setImage(row.image);
-    this.setSiteWeb(row.site_web);
-    this.setIdProprietaire(row.id_proprietaire);
+    return new Chateau(data);
 
   }
-
-
-
-
 }
 
 export default Chateau;

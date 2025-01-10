@@ -61,7 +61,7 @@ export class MembreEquipeClass {
     };
   }
 
-  public async read(id_membre: number): Promise<void> {
+  public async read(id_membre: number): Promise<any> {
      const data = await getMembreById(id_membre) as any;
 
      if (!data) {
@@ -70,10 +70,6 @@ export class MembreEquipeClass {
 
      console.log("MembreEquipe après appel API dans read", data); 
 
-     this.id_membre = data.id_membre;
-     this.carte_identite = data.carte_identite;
-     this.est_verifie = data.est_verifie;
-     this.role_equipe = data.role_equipe;
-     this.id_user = data.id_user;
+      return new MembreEquipeClass(data); 
   }
 }

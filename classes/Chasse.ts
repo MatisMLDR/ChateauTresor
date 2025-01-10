@@ -155,7 +155,7 @@ class Chasse {
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public async read(id_chasse: number): Promise<void> {
+  public async read(id_chasse: number): Promise<any> {
 
       const data = await getChasseById(id_chasse) as any;
 
@@ -165,25 +165,8 @@ class Chasse {
       
       console.log("Chasse après appel API dans read", data); 
 
-      const row = data[0];
-      this.setIdChasse(row.id_chasse);
-      this.setImage(row.image);
-      this.setTitre(row.titre);
-      this.setDescription(row.description);
-      this.setDifficulte(row.difficulte);
-      this.setPrix(row.prix);
-      this.setDateDebut(row.date_debut);
-      this.setDateFin(row.date_fin);
-      this.setCapacite(row.capacite);
-      this.setAgeRequis(row.age_requis);
-      this.setDureeEstime(row.duree_estime);
-      this.setTheme(row.theme);
-      this.setIdChateau(row.id_chateau);
-      this.setIdEquipe(row.id_equipe);
-      this.setStatut(row.statut);
-      this.setDateModification(row.date_modification);
-      this.setDateCreation(row.date_creation);
-    }
+      return new Chasse(data);
+  }
 
 
   // Méthodes pour calculer des statistiques

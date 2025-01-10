@@ -153,25 +153,15 @@ export class Profil {
     };
   }
 
-  public async read(id: string): Promise<void> {
-    const profile = await getProfilById(id);
+  public async read(id: string): Promise<any> {
+    const profile = await getProfilById(id) as any;
 
     if (profile == null) {
       throw new Error("Profil introuvable");
     }
 
-    this.id = profile.id;
-    this.username = profile.username
-    this.updated_at = profile.updated_at
-    this.email = profile.email
-    this.birthday = profile.birthday
-    this.email_confirm = profile.email_confirm
-    this.nom = profile.nom
-    this.prenom = profile.prenom
-    this.adresse = profile.adresse
-    this.ville = profile.ville
-    this.code_postal = profile.code_postal
-    this.stripe_id = profile.stripe_id
-    this.plan = profile.plan
+    console.log("Profil après appel API dans read", profile); 
+
+    return new Profil(profile);
   }
 }
