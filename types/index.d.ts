@@ -52,11 +52,12 @@ export type IndiceType = 'image' | 'sound' | 'text';
 
 // Indice
 export type Indice = {
-  id: string;
-  type: IndiceType;
-  contenu: string;
-  degre_aide: number;
-  ordre: number;
+  id_indice: number; // Identifiant unique de l'indice
+  contenu: string;   // Contenu de l'indice (par défaut : 'Pas de contenu')
+  ordre: number;     // Ordre de l'indice (par défaut : 1)
+  degre_aide: number; // Degré d'aide, doit être compris entre 1 et 5
+  type: IndiceType; // Type de l'indice
+  id_enigme: number; // Identifiant de l'énigme associée
 };
 
 // Énigme
