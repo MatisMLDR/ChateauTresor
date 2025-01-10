@@ -25,7 +25,7 @@ class Chasse {
   private id_chateau: number | null;
   private id_equipe: number | null;
 
-  constructor(chasse: Chasse) {
+  constructor(chasse: ChasseType) {
     this.id_chasse = chasse.id_chasse;
     this.titre = chasse.titre ?? "Nouvelle Chasse";
     this.capacite = chasse.capacite ?? 0;

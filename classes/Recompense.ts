@@ -14,18 +14,7 @@ class Recompense {
     private date_modification: string;
     private id_chasse: number | null;
 
-    constructor(recompense: {
-        id_recompense: number;
-        nom: string;
-        description: string;
-        type: string;
-        valeur: number;
-        quantite_dispo: number;
-        prix_reel: number;
-        image: string | null;
-        date_modification: string;
-        id_chasse: number | null;
-    }) {
+    constructor(recompense: RecompenseType) {
         this.id_recompense = recompense.id_recompense;
         this.nom = recompense.nom;
         this.description = recompense.description;
