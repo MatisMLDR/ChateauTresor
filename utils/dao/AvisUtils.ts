@@ -11,7 +11,7 @@ dotenv.config();
  * @params id_chasse L'identifiant d'une chasse
  **/
 export async function getAllAvisByChasse(id_chasse: number): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/enigme?id_chasse=${id_chasse}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis');
   }
@@ -62,17 +62,23 @@ export async function createAvis(avis: any): Promise<any> {
  * @throws Error si la modification échoue
  * @example const avisMisAJour = await updateAvis(1, { note: 4, titre: 'Bien' });
  **/
-export async function updateAvis(id_avis: number, updatedData: any): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/${id_avis}`, {
+export async function updateAvis(avis: any): Promise<any> {
+  if (!avis.id_avis) {
+    throw new Error("L'objet avis doit contenir un 'id_avis'");
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/${avis.id_avis}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(updatedData),
+    body: JSON.stringify(avis),
   });
+
   if (!res.ok) {
-    throw new Error(`Erreur lors de la mise à jour de l'avis avec l'ID ${id_avis}`);
+    throw new Error(`Erreur lors de la mise à jour de l'avis avec l'ID ${avis.id_avis}`);
   }
+
   return await res.json();
 }
 

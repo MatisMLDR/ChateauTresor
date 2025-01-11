@@ -1,6 +1,5 @@
 import { RecompenseType } from "@/types";
-
-import { getAllRecompenses, getRecompenseById } from '@/utils/dao/RecompenseUtils';
+import { createRecompense, deleteRecompense, getRecompenseById, updateRecompense } from '@/utils/dao/RecompenseUtils';
 
 class Recompense {
     private id_recompense: number;
@@ -15,7 +14,7 @@ class Recompense {
     private id_chasse: number | null;
 
     constructor(recompense: RecompenseType) {
-        this.id_recompense = recompense.id_recompense;
+        this.id_recompense = recompense.id_recompense ?? -1;
         this.nom = recompense.nom;
         this.description = recompense.description;
         this.type = recompense.type;
@@ -107,7 +106,7 @@ class Recompense {
         this.id_chasse = id_chasse;
     }
 
-    public async read(id_recompense: number): Promise<any> {
+    public static async readId(id_recompense: number): Promise<any> {
         const recompense = await getRecompenseById(id_recompense) as any;
 
         if (!recompense) {
@@ -118,6 +117,79 @@ class Recompense {
 
         return new Recompense(recompense);
     }
+
+    public async read(): Promise<any> {
+                if (!this.id_recompense) {
+                    throw new Error('Recompense ID is required');
+                }
+            
+                const avis = await getRecompenseById(this.id_recompense) as any
+            
+                if (!avis) {
+                    throw new Error('Recompense not found');
+                }
+            
+                return new Recompense(avis);
+              }
+            
+              public async load(): Promise<void> {
+                if (!this.id_recompense) {
+                    throw new Error('Recompense ID is required');
+                }
+            
+                const avis = await getRecompenseById(this.id_recompense) as any
+            
+                if (!avis) {
+                    throw new Error('Recompense not found');
+                }
+            
+                this.id_recompense = avis.id_recompense;
+                this.nom = avis.nom;
+                this.description = avis.description;
+                this.type = avis.type;
+                this.valeur = avis.valeur;
+                this.quantite_dispo = avis.quantite_dispo;
+                this.prix_reel = avis.prix_reel;
+                this.image = avis.image;
+                this.date_modification = avis.date_modification;
+                this.id_chasse = avis.id_chasse;
+              }
+              
+              public async create(): Promise<void> {
+                const avis = await createRecompense(this) as any
+            
+                if (!avis) {
+                    throw new Error('Recompense not created');
+                }
+              }
+            
+              public async deleteId(id_recompense: number): Promise<void> {
+                try {
+                  await deleteRecompense(id_recompense);
+                } catch (error) {
+                    throw new Error('Recompense does not exist');
+                }
+              }
+            
+              public async delete(): Promise<void> {
+                if (!this.id_recompense) {
+                  console.log("Pas d'id Recompense");
+                  throw new Error('id_recompense is required');
+                }
+                try {
+                  await deleteRecompense(this.id_recompense);
+                } catch (error) {
+                    throw new Error('Recompense does not exist');
+                }
+              }
+            
+              public async update(): Promise<void> {
+                try {
+                  await updateRecompense(this);
+                } catch (error) {
+                    throw new Error('Recompense does not exist');
+                }
+              }
 } 
 
 export default Recompense;

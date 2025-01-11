@@ -64,25 +64,30 @@ export async function createChasse(chasse: any): Promise<any> {
   return await res.json();
 }
 
-/*
-* Méthode pour mettre à jour une chasse
-* @param id_chasse L'id de la chasse à mettre à jour
-* @param updatedData Les nouvelles données de la chasse
-* @returns Promise<any> La chasse mise à jour
-* @throws Error si la mise à jour échoue
-* @example const updatedChasse = await updateChasse(1, updatedData);
-*/
-export async function updateChasse(id_chasse: number, updatedData: any): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`, {
+/**
+ * Méthode pour mettre à jour une chasse
+ * @param chasse L'objet chasse contenant les données à mettre à jour
+ * @returns Promise<any> La chasse mise à jour
+ * @throws Error si la mise à jour échoue
+ * @example const updatedChasse = await updateChasse(chasse);
+ */
+export async function updateChasse(chasse: any): Promise<any> {
+  if (!chasse.id_chasse) {
+    throw new Error("L'objet chasse doit contenir un 'id_chasse'");
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${chasse.id_chasse}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(updatedData),
+    body: JSON.stringify(chasse),
   });
+
   if (!res.ok) {
-    throw new Error('Erreur lors de la mise à jour de la chasse');
+    throw new Error(`Erreur lors de la mise à jour de la chasse avec l'ID ${chasse.id_chasse}`);
   }
+
   return await res.json();
 }
 
@@ -94,10 +99,14 @@ export async function updateChasse(id_chasse: number, updatedData: any): Promise
 * @example await deleteChasse(1);
 */
 export async function deleteChasse(id_chasse: number): Promise<void> {
+  console.log("DeleteChasse : ChasseUtils : ", id_chasse);
+  console.log("URL : ",`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`)
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`, {
     method: 'DELETE',
   });
+  console.log("RES : ", res);
   if (!res.ok) {
+    console.log("Erreur lors de la suppression de la chasse");
     throw new Error('Erreur lors de la suppression de la chasse');
   }
 }

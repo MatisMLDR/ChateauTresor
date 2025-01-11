@@ -1,6 +1,6 @@
 import { EnigmeType } from "@/types";
-import { getAllEnigmesParticipants, getEnigmeById } from "@/utils/dao/EnigmeUtils";
-import { getAllParticipations } from '@/utils/dao/ChasseUtils';
+import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, updateEnigme } from "@/utils/dao/EnigmeUtils";
+import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
   id: number;
@@ -105,7 +105,7 @@ export class Enigme {
     * @param id_chasse L'identifiant de la chasse
     * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
-  public async readId(id: number): Promise<any> {
+  public static async readId(id: number): Promise<any> {
     
     const data = getEnigmeById(id) as any;
     
@@ -117,6 +117,11 @@ export class Enigme {
     return new Enigme(data);
   }
 
+  /* 
+   * Méthode pour charger les données de l'objet énigme dans la classe
+    * @param id_chasse L'identifiant de la chasse
+    * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
+   */
   public async read(): Promise<any> {
         if (!this.id) {
             throw new Error('Enigme ID is required');
@@ -226,10 +231,11 @@ export class Enigme {
    * Méthode pour calculer le nombre de fois qu'un indice a été révélé
    * @returns number Le nombre de fois qu'un indice a été révélé
    */
-
   public getNbIndiceRevele(): number {
-    /* A compléter */
-
-    return 0;
+    const data = getAllIndicesParticipants(this.id) as any;
+    if (data.length == 0) {
+      return 0;
+    }
+    return data.reduce((acc: number, curr: any) => acc + curr.est_decouvert, 0);
   }
 }

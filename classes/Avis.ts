@@ -1,5 +1,5 @@
 import { AvisType } from "@/types";
-import { getAllAvis, getAvisById, createAvis, deleteAvis, updateAvis } from '@/utils/dao/AvisUtils';
+import { getAvisById, createAvis, deleteAvis, updateAvis } from '@/utils/dao/AvisUtils';
 
 class Avis {
   private id_avis: number;
@@ -81,7 +81,7 @@ class Avis {
         this.id_participant = id_participant;
     }
 
-    public async readId(id_avis: number): Promise<any> {
+    public static async readId(id_avis: number): Promise<any> {
       
       const avis = await getAvisById(id_avis) as any
 

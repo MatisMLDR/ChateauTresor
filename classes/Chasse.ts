@@ -1,10 +1,7 @@
 import { ChasseType } from "@/types";
-import {
-  getAllParticipations,
-  getAllRecompenses,
-  getAllAvis,
-  getChasseById,
-} from '@/utils/dao/ChasseUtils';
+import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse } from '@/utils/dao/ChasseUtils';
+import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
+import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 
 class Chasse {
   private id_chasse: number;
@@ -26,7 +23,7 @@ class Chasse {
   private id_equipe: number | null;
 
   constructor(chasse: ChasseType) {
-    this.id_chasse = chasse.id_chasse;
+    this.id_chasse = chasse.id_chasse ?? -1;
     this.titre = chasse.titre ?? "Nouvelle Chasse";
     this.capacite = chasse.capacite ?? 0;
     this.description = chasse.description ?? "Pas de description";
@@ -154,17 +151,16 @@ class Chasse {
 
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
+    * @returns Promise<any> L'objet Chasse avec les données chargées à partir de l'id
    */
-  public async readId(id_chasse: number): Promise<any> {
+  public static async readId(id_chasse: number): Promise<any> {
 
       const data = await getChasseById(id_chasse) as any;
 
       if (!data) {
         throw new Error("La chasse n'existe pas");
       }
-      
-      console.log("Chasse après appel API dans read", data); 
-
+    
       return new Chasse(data);
   }
 
@@ -176,7 +172,7 @@ class Chasse {
       const avis = await getChasseById(this.id_chasse) as any
   
       if (!avis) {
-          throw new Error('Avis not found');
+          throw new Error('Chasse not found');
       }
   
       return new Chasse(avis);
@@ -228,9 +224,9 @@ class Chasse {
       }
     }
   
-    public async delete(): Promise<void> {
+  public async delete(): Promise<void> {
+    console.log("Delete : ChasseId : ", this.id_chasse);
       if (!this.id_chasse) {
-        console.log("Pas d'id chasse");
         throw new Error('id_chasse is required');
       }
       try {
@@ -346,7 +342,7 @@ class Chasse {
     // Récupération dans la base des récompenses attribuées avec l'id de la chasse
 
     // On récupère les données
-    const data = await getAllRecompenses(this.id_chasse);
+    const data = await getAllRecompensesByChasse(this.id_chasse);
     return data.length;
   }
 
@@ -358,7 +354,7 @@ class Chasse {
     // Récupération dans la base des notes attribuées de chaques avis avec l'id de la chasse
 
     // On récupère les données
-    const data = await getAllAvis(this.id_chasse);
+    const data = await getAllAvisByChasse(this.id_chasse);
 
     if (data.length === 0) {
       return 0;
@@ -375,7 +371,7 @@ class Chasse {
   */
   public async getNbAvis(): Promise<number> {
     // Récupération dans la base des avis avec l'id de la chasse
-    const data = await getAllAvis(this.id_chasse);
+    const data = await getAllAvisByChasse(this.id_chasse);
     return data.length;
   }
 

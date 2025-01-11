@@ -64,7 +64,7 @@ CREATE TABLE public.Chateau (
     description TEXT DEFAULT 'Pas de description',
     image VARCHAR(255) DEFAULT NULL,
     site_web VARCHAR(255) DEFAULT NULL,
-    id_proprietaire INT DEFAULT NULL REFERENCES Proprietaire_Chateau(id_proprietaire)
+    id_proprietaire INT DEFAULT NULL REFERENCES Proprietaire_Chateau(id_proprietaire) ON DELETE CASCADE
 );
 
 -- Table Equipe_Organisatrice
@@ -95,8 +95,8 @@ CREATE TABLE public.Appartenance_Equipe (
     id_equipe INT,
     date_appartenance DATE DEFAULT CURRENT_DATE,
     PRIMARY KEY (id_membre, id_equipe),
-    FOREIGN KEY (id_membre) REFERENCES Membre_equipe(id_membre),
-    FOREIGN KEY (id_equipe) REFERENCES Equipe_Organisatrice(id_equipe)
+    FOREIGN KEY (id_membre) REFERENCES Membre_equipe(id_membre) ON DELETE CASCADE,
+    FOREIGN KEY (id_equipe) REFERENCES Equipe_Organisatrice(id_equipe) ON DELETE CASCADE
 );
 
 -- Table Participant
@@ -125,8 +125,8 @@ CREATE TABLE public.Chasse (
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
     theme VARCHAR(255) DEFAULT 'Aucun thème',
     statut VARCHAR(50) DEFAULT 'Inactif',
-    id_chateau INT DEFAULT NULL REFERENCES Chateau(id_chateau),
-    id_equipe INT DEFAULT NULL REFERENCES Equipe_Organisatrice(id_equipe)
+    id_chateau INT DEFAULT NULL REFERENCES Chateau(id_chateau) ON DELETE CASCADE,
+    id_equipe INT DEFAULT NULL REFERENCES Equipe_Organisatrice(id_equipe) ON DELETE CASCADE
 );
 
 -- Table Participation
@@ -138,8 +138,8 @@ CREATE TABLE public.Participation (
     nb_enigmes_resolues INT DEFAULT 0,
     est_terminee BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id_participant, id_chasse),
-    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant),
-    FOREIGN KEY (id_chasse) REFERENCES Chasse(id_chasse)
+    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE,
+    FOREIGN KEY (id_chasse) REFERENCES Chasse(id_chasse) ON DELETE CASCADE
 );
 
 -- Table Avis
@@ -150,8 +150,8 @@ CREATE TABLE public.Avis (
     description TEXT DEFAULT 'Pas de description',
     nb_likes INT DEFAULT 0,
     date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    id_participant INT UNIQUE REFERENCES Participant(id_participant),
-    id_chasse INT UNIQUE REFERENCES Chasse(id_chasse)
+    id_participant INT UNIQUE REFERENCES Participant(id_participant) ON DELETE CASCADE,
+    id_chasse INT UNIQUE REFERENCES Chasse(id_chasse) ON DELETE CASCADE
 );
 
 -- Table Recompense
@@ -165,7 +165,7 @@ CREATE TABLE public.Recompense (
     prix_reel NUMERIC(10, 2) DEFAULT 0.00,
     image VARCHAR(255) DEFAULT NULL,
     date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    id_chasse INT REFERENCES Chasse(id_chasse)
+    id_chasse INT REFERENCES Chasse(id_chasse) ON DELETE CASCADE
 );
 
 -- Table Enigme
@@ -180,7 +180,7 @@ CREATE TABLE public.Enigme (
     endroit_qrcode VARCHAR(255) DEFAULT NULL,
     description_reponse TEXT DEFAULT 'Pas de description',
     image_reponse VARCHAR(255) DEFAULT NULL,
-    id_chasse INT REFERENCES Chasse(id_chasse)
+    id_chasse INT REFERENCES Chasse(id_chasse) ON DELETE CASCADE
 );
 
 -- Table Enigme_Participant
@@ -191,8 +191,8 @@ CREATE TABLE public.Enigme_Participant (
     duree REAL DEFAULT 0.00,
     date_resolution TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_enigme, id_participant),
-    FOREIGN KEY (id_enigme) REFERENCES Enigme(id_enigme),
-    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant)
+    FOREIGN KEY (id_enigme) REFERENCES Enigme(id_enigme) ON DELETE CASCADE,
+    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE
 );
 
 -- Table Indice
@@ -204,7 +204,7 @@ CREATE TABLE public.Indice (
         degre_aide BETWEEN 1
         AND 5
     ),
-    id_enigme INT REFERENCES Enigme(id_enigme)
+    id_enigme INT REFERENCES Enigme(id_enigme) ON DELETE CASCADE
 );
 
 -- Table Indice_Participant
@@ -214,29 +214,29 @@ CREATE TABLE public.Indice_Participant (
     est_decouvert BOOLEAN DEFAULT FALSE,
     date_utilisation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_indice, id_participant),
-    FOREIGN KEY (id_indice) REFERENCES Indice(id_indice),
-    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant)
+    FOREIGN KEY (id_indice) REFERENCES Indice(id_indice) ON DELETE CASCADE,
+    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE
 );
 
 -- Table Image_indice
 CREATE TABLE public.Image_indice (
     id_image SERIAL PRIMARY KEY,
     chemin_img VARCHAR(255) DEFAULT NULL,
-    id_indice INT REFERENCES Indice(id_indice)
+    id_indice INT REFERENCES Indice(id_indice) ON DELETE CASCADE
 );
 
 -- Table Son_indice
 CREATE TABLE public.Son_indice (
     id_son SERIAL PRIMARY KEY,
     chemin_son VARCHAR(255) DEFAULT NULL,
-    id_indice INT REFERENCES Indice(id_indice)
+    id_indice INT REFERENCES Indice(id_indice) ON DELETE CASCADE
 );
 
 -- Table Texte
 CREATE TABLE public.Texte (
     id_texte SERIAL PRIMARY KEY,
     contenu TEXT DEFAULT 'Pas de contenu',
-    id_indice INT REFERENCES Indice(id_indice)
+    id_indice INT REFERENCES Indice(id_indice) ON DELETE CASCADE
 );
 
 -- Table Haut_Fait

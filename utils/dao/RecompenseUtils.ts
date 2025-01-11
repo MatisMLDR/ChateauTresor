@@ -60,13 +60,13 @@ export async function createRecompense(recompense: any): Promise<any> {
  * @throws Error si la mise à jour échoue
  * @example const updatedRecompense = await updateRecompense(1, updatedData);
  */
-export async function updateRecompense(id_recompense: number, updatedData: any): Promise<any> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/${id_recompense}`, {
+export async function updateRecompense(recompense: any): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/${recompense.id_recompense}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(recompense),
     });
 
     if (!res.ok) {
