@@ -12,7 +12,7 @@ const Features = () => {
             <div className="p-2 bg-[#e7f0f8] rounded-full">
               <ClipboardList className="h-6 w-6 text-[#2b4e73]" />
             </div>
-            <h3 className="text-xl font-bold text-[#2b4e73]">recherche simplifiée</h3>
+            <h3 className="text-xl font-bold text-[#2b4e73]">Recherche simplifiée</h3>
             <p className="text-muted-foreground text-center text-[#6c757d]">
               Centralisation des chasses sur un seul site, plus besoin de chercher sur le site du château directement.
             </p>
