@@ -1,10 +1,90 @@
-INSERT INTO "public"."chateau" ("id_chateau", "nom", "adresse_postale", "localisation", "capacite", "prix_location", "telephone", "description", "image", "site_web", "id_proprietaire") VALUES ('318', 'Château de Chambord', 'Château, 41250 Chambord, France', '47.616833, 1.516992', '0', '0.00', '+33 2 54 50 40 00', 'Le Château de Chambord est un joyau de la Renaissance française. Construit au XVIᵉ siècle sous François Ier, il est célèbre pour son architecture unique, son escalier à double révolution et ses vastes jardins.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chambord_Castle_Northwest_facade.jpg/2880px-Chambord_Castle_Northwest_facade.jpg', 'https://www.chambord.org/', null), ('319', 'Château de Chenonceau', 'Château de Chenonceau, 37150 Chenonceaux, France', '47.324406, 1.070545', '0', '0.00', '+33 2 47 23 90 07', 'Le Château de Chenonceau, surnommé le Château des Dames, est connu pour son élégance architecturale enjambant la rivière Cher. Son histoire est marquée par des figures féminines telles que Diane de Poitiers et Catherine de Médicis.', 'https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Chenonceau#/media/Fichier:Chenonceau-20050320.jpg', 'https://www.chenonceau.com/', null), ('320', 'Château d’Amboise', 'Montée de l''Émir Abd-el-Kader, 37400 Amboise, France', '47.413780, 0.987703', '0', '0.00', '+33 2 47 57 00 98', 'Le Château d’Amboise est un symbole de la Renaissance française. Résidence royale au XVᵉ et XVIᵉ siècles, il offre une vue imprenable sur la Loire et abrite la tombe présumée de Léonard de Vinci.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg/2560px-Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg', 'https://www.chateau-amboise.com/', null);
-INSERT INTO "public"."equipe_organisatrice" ("id_equipe", "type", "n_siret", "id_taxes", "nb_membres", "site_web", "adresse_postale", "telephone", "id_user") VALUES ('1', 'Entreprise', '33436749700172', 'FR89334367497', '0', 'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ', '01 44 04 70 00', '46af6d22-5576-430f-87df-fcb4eb76e3b4');
-INSERT INTO "public"."membre_equipe" ("id_membre", "carte_identite", "role_equipe", "id_user") VALUES ('1', null, 'Organisateur', 'd566eb81-3bf9-4470-a89c-30ea8da57087');
-INSERT INTO "public"."chasse" ("id_chasse", "titre", "capacite", "description", "age_requis", "image", "date_creation", "date_modification", "date_debut", "date_fin", "prix", "difficulte", "duree_estime", "nb_enigmes", "theme", "statut", "nb_enigmes_resolues", "note_moyenne", "recompenses_attribuees", "reussite_moyenne", "duree_moyenne", "id_chateau", "id_equipe") VALUES ('1', 'Chasse château de Chambord', '300', 'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !', '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp', '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1', '02:00:00', '0', 'Dynastie royale', 'Inactif', '0', '0.00', '0', '0.00', '00:00:00', '318', '1');
-INSERT INTO "public"."enigme" ("id_enigme", "titre", "description", "ordre", "degre_difficulte", "temps_max", "code_reponse", "endroit_qrcode", "description_reponse", "image_reponse", "id_chasse") VALUES ('1', 'Le repos du seigneur', 'Pour être un grand seigneur il ne faut pas être fatigué', '1', 'Facile', '00:30:00', '12345', 'Aux pieds du lit de la chambre du seigneur', 'Pas de description', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Chambre_du_Roi%2C_Ch%C3%A2teau_de_Chambord_20170610_1.jpg/2560px-Chambre_du_Roi%2C_Ch%C3%A2teau_de_Chambord_20170610_1.jpg', '1'), ('2', 'Un chasseur sachant chasser', 'Le chasseur y expose ses trophées à ses invités', '2', 'Facile', '00:30:00', '23456', 'Sur l''une des tables de la salle des chasses', 'Cette vaste salle, ornée de trophées de cerfs, d’animaux naturalisés et tableaux représentant des scènes de chasse, rappelle la longue tradition de chasse de Chambord. Disposant de tapisseries brodées de vert et or, héritage du Président Pompidou, la salle offre une ambiance tamisée et conviviale, idéale pour organiser des cocktails et diners restreints ou pour y installer un salon. La salle des Chasses dispose également d’une cheminée et d’un système de chauffage au sol.', 'https://cdn1.chambord.org/fr/wp-content/uploads/sites/2/2016/11/LudovicLetot4-1180x550.jpg', '1');
-INSERT INTO "public"."indice" ("id_indice", "contenu", "ordre", "degre_difficulte", "est_decouvert", "id_enigme") VALUES ('1', '', '1', '1', 'false', '1');
-INSERT INTO "public"."image_indice" ("id_image", "chemin_img", "id_indice") VALUES ('1', 'https://cdn1.chambord.org/fr/wp-content/uploads/sites/2/2016/11/Chambre-de-Parade-775x550.jpg', '1');
-INSERT INTO "public"."participant" ("id_participant", "nb_participations", "nb_chasses_terminees", "score_moyen", "duree_moyenne", "id_user") VALUES ('1', '0', '0', '0.00', '00:00:00', '16be6621-2b7e-4719-8937-ca30a4b9e3f3'), ('2', '0', '0', '0.00', '00:00:00', '2048a30d-a49d-4669-9647-82db2c4b4bdd');
-INSERT INTO "public"."participation" ("id_participant", "id_chasse", "duree_totale", "score", "nb_enigmes_resolues") VALUES ('1', '1', '00:00:00', '0', '0');
-INSERT INTO "public"."avis" ("id_avis", "note", "titre", "description", "nb_likes", "date_modification", "id_participant", "id_chasse") VALUES ('1', '5', 'Parfait', 'C''était très bien j''ai aimé', '0', '2025-01-07 14:14:00', '1', '1');
+-- Insert data into profiles
+INSERT INTO public.profiles (id, username, email, birthday, nom, prenom, adresse, ville, code_postal, stripe_id, plan)
+VALUES
+    ('550e8400-e29b-41d4-a716-446655440000', 'user1', 'user1@example.com', '1990-01-01', 'Doe', 'John', '123 Rue A', 'Paris', '75000', 'stripe_123', 'premium'),
+    ('550e8400-e29b-41d4-a716-446655440001', 'user2', 'user2@example.com', '1985-06-15', 'Smith', 'Jane', '456 Rue B', 'Lyon', '69000', 'stripe_456', 'standard')
+ON CONFLICT (id) DO NOTHING;
+
+-- Insert data into Proprietaire_Chateau
+INSERT INTO public.Proprietaire_Chateau (id_proprietaire, id_stripe, id_user)
+VALUES
+    (1, 'stripe_owner_001', '550e8400-e29b-41d4-a716-446655440000'),
+    (2, 'stripe_owner_002', '550e8400-e29b-41d4-a716-446655440001')
+ON CONFLICT (id_proprietaire) DO NOTHING;
+
+-- Insert data into Chateau
+INSERT INTO public.Chateau (id_chateau, nom, adresse_postale, localisation, capacite, prix_location, telephone, description, id_proprietaire)
+VALUES
+    (1, 'Château A', '789 Rue C', 'Bordeaux', 100, 500.00, '0123456789', 'Un château historique.', 1),
+    (2, 'Château B', '101 Rue D', 'Toulouse', 150, 750.00, '0987654321', 'Un château moderne.', 2)
+ON CONFLICT (id_chateau) DO NOTHING;
+
+-- Insert data into Equipe_Organisatrice
+INSERT INTO public.Equipe_Organisatrice (id_equipe, type, n_siret, id_user)
+VALUES
+    (1, 'Association', '12345678900012', '550e8400-e29b-41d4-a716-446655440000'),
+    (2, 'Société', '98765432100021', '550e8400-e29b-41d4-a716-446655440001')
+ON CONFLICT (id_equipe) DO NOTHING;
+
+-- Insert data into Membre_equipe
+INSERT INTO public.Membre_equipe (id_membre, carte_identite, est_verifie, role_equipe, id_user)
+VALUES
+    (1, 'ID001', TRUE, 'Chef', '550e8400-e29b-41d4-a716-446655440000'),
+    (2, 'ID002', FALSE, 'Membre', '550e8400-e29b-41d4-a716-446655440001')
+ON CONFLICT (id_membre) DO NOTHING;
+
+-- Insert data into Appartenance_Equipe
+INSERT INTO public.Appartenance_Equipe (id_membre, id_equipe, date_appartenance)
+VALUES
+    (1, 1, '2024-01-01'),
+    (2, 2, '2024-02-01')
+ON CONFLICT (id_membre, id_equipe) DO NOTHING;
+
+-- Insert data into Participant
+INSERT INTO public.Participant (id_participant, id_user)
+VALUES
+    (1, '550e8400-e29b-41d4-a716-446655440000'),
+    (2, '550e8400-e29b-41d4-a716-446655440001')
+ON CONFLICT (id_participant) DO NOTHING;
+
+-- Insert data into Chasse
+INSERT INTO public.Chasse (id_chasse, titre, capacite, description, difficulte, id_chateau, id_equipe)
+VALUES
+    (1, 'Chasse au trésor 1', 50, 'Une chasse excitante.', 2, 1, 1),
+    (2, 'Chasse au trésor 2', 30, 'Une chasse difficile.', 3, 2, 2)
+ON CONFLICT (id_chasse) DO NOTHING;
+
+-- Insert data into Participation
+INSERT INTO public.Participation (id_participant, id_chasse, score, est_terminee)
+VALUES
+    (1, 1, 80, TRUE),
+    (2, 2, 90, FALSE)
+ON CONFLICT (id_participant, id_chasse) DO NOTHING;
+
+-- Insert data into Avis
+INSERT INTO public.Avis (id_avis, note, titre, description, id_participant, id_chasse)
+VALUES
+    (1, 5, 'Super expérience', 'Jai adoré la chasse.', 1, 1),
+    (2, 4, 'Très bien', 'Une chasse bien organisée.', 2, 2)
+ON CONFLICT (id_avis) DO NOTHING;
+
+-- Insert data into Recompense
+INSERT INTO public.Recompense (id_recompense, nom, description, type, valeur, quantite_dispo, id_chasse)
+VALUES
+    (1, 'Trophée d'or', 'Récompense exceptionnelle.', 'Trophée', 100.00, 10, 1),
+    (2, 'Médaille d'argent', 'Récompense pour les finalistes.', 'Médaille', 50.00, 20, 2)
+ON CONFLICT (id_recompense) DO NOTHING;
+
+-- Insert data into Enigme
+INSERT INTO public.Enigme (id_enigme, titre, description, ordre, degre_difficulte, id_chasse)
+VALUES
+    (1, 'Énigme 1', 'Résolvez ce mystère.', 1, 2, 1),
+    (2, 'Énigme 2', 'Une énigme complexe.', 2, 3, 2)
+ON CONFLICT (id_enigme) DO NOTHING;
+
+-- Insert data into Indice
+INSERT INTO public.Indice (id_indice, contenu, ordre, degre_aide, id_enigme)
+VALUES
+    (1, 'Indice pour énigme 1.', 1, 1, 1),
+    (2, 'Indice pour énigme 2.', 1, 2, 2)
+ON CONFLICT (id_indice) DO NOTHING;
