@@ -3,7 +3,7 @@ import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, u
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
-  id_enigme: number;
+  id_enigme: UUID;
   titre: string;
   code_reponse: string;
   description: string;
@@ -156,7 +156,7 @@ export class Enigme {
         }
       }
     
-      public async deleteId(id_enigme: number): Promise<void> {
+      public async deleteId(id_enigme: UUID): Promise<void> {
         try {
           await deleteEnigme(id_enigme);
         } catch (error) {

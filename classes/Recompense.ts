@@ -2,7 +2,7 @@ import { RecompenseType } from "@/types";
 import { createRecompense, deleteRecompense, getRecompenseById, updateRecompense } from '@/utils/dao/RecompenseUtils';
 
 class Recompense {
-    private id_recompense: number;
+    private id_recompense: UUID;
     private nom: string;
     private description: string;
     private type: string;
@@ -11,7 +11,7 @@ class Recompense {
     private prix_reel: number;
     private image: string | null;
     private date_modification: string;
-    private id_chasse: number | null;
+    private id_chasse: UUID | null;
 
     constructor(recompense: RecompenseType) {
         this.id_recompense = recompense.id_recompense ?? -1;
@@ -66,7 +66,7 @@ class Recompense {
         return this.id_chasse;
     }
 
-    public setIdRecompense(id_recompense: number): void {
+    public setIdRecompense(id_recompense: UUID): void {
         this.id_recompense = id_recompense;
     }
 
@@ -102,11 +102,11 @@ class Recompense {
         this.date_modification = date_modification;
     }
 
-    public setIdChasse(id_chasse: number): void {
+    public setIdChasse(id_chasse: UUID): void {
         this.id_chasse = id_chasse;
     }
 
-    public static async readId(id_recompense: number): Promise<any> {
+    public static async readId(id_recompense: UUID): Promise<any> {
         const recompense = await getRecompenseById(id_recompense) as any;
 
         if (!recompense) {
@@ -163,7 +163,7 @@ class Recompense {
                 }
               }
             
-              public async deleteId(id_recompense: number): Promise<void> {
+              public async deleteId(id_recompense: UUID): Promise<void> {
                 try {
                   await deleteRecompense(id_recompense);
                 } catch (error) {

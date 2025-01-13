@@ -6,7 +6,7 @@ dotenv.config();
  * @returns Promise<any> Le tableau du participant
  * @params id_participant L'identifiant du participant 
  */
-export async function getParticipantById(id_participant: number): Promise<any> {
+export async function getParticipantById(id_participant: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération du participant');
@@ -21,7 +21,7 @@ export async function getParticipantById(id_participant: number): Promise<any> {
  * @example const enigmes = await getAllParticipationsEnigmes(1);
  * @params id_participant L'identifiant du participant
  */
-export async function getAllParticipantEnigmes(id_participant: number): Promise<any> {
+export async function getAllParticipantEnigmes(id_participant: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/enigmes/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des participations aux énigmes');
@@ -36,7 +36,7 @@ export async function getAllParticipantEnigmes(id_participant: number): Promise<
  * @example const chasses = await getAllParticipationsChasses(1);
  * @params id_participant L'identifiant du participant
  */
-export async function getAllParticipantChasses(id_participant: number): Promise<any> {
+export async function getAllParticipantChasses(id_participant: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/chasses/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des chasses du participant');
@@ -51,7 +51,7 @@ export async function getAllParticipantChasses(id_participant: number): Promise<
  * @example const avis = await getAllParticipantAvis(1);
  * @params id_participant L'identifiant du participant
  */
-export async function getAllParticipantAvis(id_participant: number): Promise<any> {
+export async function getAllParticipantAvis(id_participant: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/avis/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis du participant');
@@ -66,7 +66,7 @@ export async function getAllParticipantAvis(id_participant: number): Promise<any
  * @example const indices = await getAllParticipantIndices(1);
  * @params id_participant L'identifiant du participant
  */
-export async function getAllParticipantIndice(id_participant: number): Promise<any> {
+export async function getAllParticipantIndice(id_participant: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/indices/${id_participant}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des indices du participant');
@@ -122,7 +122,7 @@ export async function updateParticipant(participant: any): Promise<any> {
  * @throws Error si la suppression échoue
  * @example await deleteParticipant(1);
  */
-export async function deleteParticipant(id_participant: number): Promise<void> {
+export async function deleteParticipant(id_participant: UUID): Promise<void> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/${id_participant}`, {
     method: 'DELETE',
   });

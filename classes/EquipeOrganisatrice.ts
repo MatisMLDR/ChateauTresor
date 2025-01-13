@@ -2,7 +2,7 @@ import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
 import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
 
 class EquipeOrganisatrice {
-  private id_equipe: number;
+  private id_equipe: UUID;
   private type: string;
   private n_siret: string | null;
   private id_taxes: string | null;
@@ -80,7 +80,7 @@ class EquipeOrganisatrice {
   }
 
   // Méthode pour charger les données de l'équipe organisatrice
-  public static async readId(id_equipe: number): Promise<any> {
+  public static async readId(id_equipe: UUID): Promise<any> {
     
     const data = await getEquipeById(id_equipe) as any;
 
@@ -137,7 +137,7 @@ class EquipeOrganisatrice {
           }
         }
       
-        public async deleteId(id_equipe: number): Promise<void> {
+        public async deleteId(id_equipe: UUID): Promise<void> {
           try {
             await deleteEquipe(id_equipe);
           } catch (error) {

@@ -8,7 +8,7 @@ dotenv.config();
  * @throws Error si la récupération échoue
  * @example const equipe = await getEquipeById(1);
  */
-export async function getEquipeById(id_equipe: number): Promise<any> {
+export async function getEquipeById(id_equipe: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/${id_equipe}`);
   if (!res.ok) {
     throw new Error(`Erreur lors de la récupération de l'équipe organisatrice avec l'ID ${id_equipe}`);
@@ -82,7 +82,7 @@ export async function updateEquipe(equipe: any): Promise<any> {
  * @throws Error si la suppression échoue
  * @example await deleteEquipe(1);
  */
-export async function deleteEquipe(id_equipe: number): Promise<void> {
+export async function deleteEquipe(id_equipe: UUID): Promise<void> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/${id_equipe}`, {
     method: 'DELETE',
   });

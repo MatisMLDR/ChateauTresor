@@ -2,7 +2,7 @@ import { ChateauType } from "@/types";
 import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
 
 class Chateau {
-  private id_chateau: number;
+  private id_chateau: UUID;
   private nom: string;
   private adresse_postale: string;
   private localisation: string;
@@ -74,7 +74,7 @@ class Chateau {
   }
 
   // Setters
-  public setIdChateau(id_chateau: number): void {
+  public setIdChateau(id_chateau: UUID): void {
     this.id_chateau = id_chateau;
   }
 
@@ -121,7 +121,7 @@ class Chateau {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public static async readId(id_chateau: number): Promise<any> {
+  public static async readId(id_chateau: UUID): Promise<any> {
 
     const data = await getChateauById(id_chateau) as any;
 
@@ -191,7 +191,7 @@ class Chateau {
         }
       }
     
-      public async deleteId(id_chateau: number): Promise<void> {
+      public async deleteId(id_chateau: UUID): Promise<void> {
         try {
           await deleteChateau(id_chateau);
         } catch (error) {

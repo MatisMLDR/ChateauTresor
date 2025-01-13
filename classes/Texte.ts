@@ -2,9 +2,9 @@ import { TexteType } from "@/types";
 import { getTexteById, createTexte, updateTexte, deleteTexte } from '@/utils/dao/TexteUtils';
 
 class Texte {
-  private id_texte: number;
+  private id_texte: UUID;
   private contenu: string;
-  private id_indice: number | null;
+  private id_indice: UUID | null;
 
   constructor(texte: TexteType) {
     this.id_texte = texte.id_texte ?? -1;
@@ -26,7 +26,7 @@ class Texte {
   }
 
   // Setters
-  public setIdTexte(id_texte: number): void {
+  public setIdTexte(id_texte: UUID): void {
     this.id_texte = id_texte;
   }
 
@@ -34,12 +34,12 @@ class Texte {
     this.contenu = contenu;
   }
 
-  public setIdIndice(id_indice: number | null): void {
+  public setIdIndice(id_indice: UUID | null): void {
     this.id_indice = id_indice;
   }
 
 
-    public static async readId(id_texte: number): Promise<any> {
+    public static async readId(id_texte: UUID): Promise<any> {
         const texte = await getTexteById(id_texte) as any;
 
         if (!texte) {
@@ -89,7 +89,7 @@ class Texte {
                 }
               }
             
-              public async deleteId(id_texte: number): Promise<void> {
+              public async deleteId(id_texte: UUID): Promise<void> {
                 try {
                   await deleteTexte(id_texte);
                 } catch (error) {

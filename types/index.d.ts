@@ -187,7 +187,7 @@ export type ProfilType = {
 
 /* A modifier avec les ? */
 export type MembreEquipeType = {
-  id_membre: number; // Identifiant unique, SERIAL, non null
+  id_membre: UUID; // Identifiant unique, SERIAL, non null
   carte_identite?: string | null; // Peut être null, sinon VARCHAR(255)
   est_verifie?: boolean; // Optionnel, par défaut false
   role_equipe?: string; // Optionnel, par défaut 'Membre'

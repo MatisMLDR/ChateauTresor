@@ -21,7 +21,7 @@ export async function getAllChasses(): Promise<any> {
 * @throws Error si la récupération des chasses échoue
 * @example const chasses = await getAllChassesByChateau();
 */
-export async function getAllChassesByChateau(id_chateau: number): Promise<any> {
+export async function getAllChassesByChateau(id_chateau: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/chateau?id_chateau=${id_chateau}`);
   if (!res.ok) {
       throw new Error('Erreur lors de la récupération des chasses');
@@ -35,7 +35,7 @@ export async function getAllChassesByChateau(id_chateau: number): Promise<any> {
 * @throws Error si la récupération de la chasse échoue
 * @example const chasse = await getChasseById(1);
 */
-export async function getChasseById(id_chasse: number): Promise<any> {
+export async function getChasseById(id_chasse: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de la chasse');
@@ -98,7 +98,7 @@ export async function updateChasse(chasse: any): Promise<any> {
 * @throws Error si la suppression échoue
 * @example await deleteChasse(1);
 */
-export async function deleteChasse(id_chasse: number): Promise<void> {
+export async function deleteChasse(id_chasse: UUID): Promise<void> {
   console.log("DeleteChasse : ChasseUtils : ", id_chasse);
   console.log("URL : ",`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`)
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}`, {
@@ -117,7 +117,7 @@ export async function deleteChasse(id_chasse: number): Promise<void> {
 * @throws Error si la récupération des participations échoue
 * @example const participations = await getAllParticipations();
 */
-export async function getAllParticipations(id_chasse: number): Promise<any> {
+export async function getAllParticipations(id_chasse: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participations/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des participations');

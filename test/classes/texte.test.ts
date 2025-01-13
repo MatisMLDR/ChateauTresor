@@ -74,7 +74,7 @@ describe("Texte Class", () => {
   });
 
   it("should throw an error when deleting a Texte without an ID", async () => {
-    const texte = new Texte({ ...mockTexteData, id_texte: Number.NaN
+    const texte = new Texte({ ...mockTexteData, id_texte: UUID.NaN
      });
 
     await expect(texte.delete()).rejects.toThrow("id_texte is required");

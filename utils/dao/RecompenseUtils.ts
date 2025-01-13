@@ -8,7 +8,7 @@ dotenv.config();
  * @throws Error si la récupération échoue
  * @example const recompense = await getRecompenseById(1);
  */
-export async function getRecompenseById(id_recompense: number): Promise<any> {
+export async function getRecompenseById(id_recompense: UUID): Promise<any> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/${id_recompense}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération de la récompense');
@@ -22,7 +22,7 @@ export async function getRecompenseById(id_recompense: number): Promise<any> {
  * @throws Error si la récupération échoue
  * @example const recompenses = await getAllRecompensesByChasse();
  */
-export async function getAllRecompensesByChasse(id_chasse: number): Promise<any> {
+export async function getAllRecompensesByChasse(id_chasse: UUID): Promise<any> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/chasse?id_chasse=${id_chasse}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération des récompenses de la chasse');
@@ -82,7 +82,7 @@ export async function updateRecompense(recompense: any): Promise<any> {
  * @throws Error si la suppression échoue
  * @example await deleteRecompense(1);
  */
-export async function deleteRecompense(id_recompense: number): Promise<void> {
+export async function deleteRecompense(id_recompense: UUID): Promise<void> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/${id_recompense}`, {
         method: 'DELETE',
     });

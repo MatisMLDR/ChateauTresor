@@ -8,7 +8,7 @@ dotenv.config();
  * @throws Error si la récupération échoue
  * @example const texte = await getTexteById(1);
  */
-export async function getTexteById(id_indice: number): Promise<any> {
+export async function getTexteById(id_indice: UUID): Promise<any> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/textes/${id_indice}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération des textes');
@@ -79,7 +79,7 @@ export async function updateTexte(texte: any): Promise<any> {
  * @throws Error si la suppression échoue
  * @example await deleteTexte(1);
  */
-export async function deleteTexte(id_indice: number): Promise<void> {
+export async function deleteTexte(id_indice: UUID): Promise<void> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/textes/${id_indice}`, {
         method: 'DELETE',
     });

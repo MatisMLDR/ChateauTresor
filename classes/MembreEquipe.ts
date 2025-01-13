@@ -2,7 +2,7 @@ import { MembreEquipeType } from '@/types';
 import { createMembre, deleteMembre, getMembreById, updateMembre } from '@/utils/dao/MembreEquipeUtils';
 
 export class MembreEquipeClass {
-  private id_membre: number;
+  private id_membre: UUID;
   private carte_identite: string | null;
   private est_verifie: boolean;
   private role_equipe: string;
@@ -61,7 +61,7 @@ export class MembreEquipeClass {
     };
   }
 
-  public static async readId(id_membre: number): Promise<any> {
+  public static async readId(id_membre: UUID): Promise<any> {
      const data = await getMembreById(id_membre) as any;
 
      if (!data) {
@@ -113,7 +113,7 @@ export class MembreEquipeClass {
           }
         }
       
-        public async deleteId(id_membre: number): Promise<void> {
+        public async deleteId(id_membre: UUID): Promise<void> {
           try {
             await deleteMembre(id_membre);
           } catch (error) {

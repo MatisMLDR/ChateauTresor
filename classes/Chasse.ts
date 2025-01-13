@@ -4,7 +4,7 @@ import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 
 class Chasse {
-  private id_chasse: number;
+  private id_chasse: UUID;
   private titre: string;
   private capacite: number;
   private description: string;
@@ -19,8 +19,8 @@ class Chasse {
   private duree_estime: string;
   private theme: string;
   private statut: string;
-  private id_chateau: number | null;
-  private id_equipe: number | null;
+  private id_chateau: UUID | null;
+  private id_equipe: UUID | null;
 
   constructor(chasse: ChasseType) {
     this.id_chasse = chasse.id_chasse ?? -1;
@@ -130,10 +130,10 @@ class Chasse {
   public setTheme(theme: string): void {
     this.theme = theme;
   }
-  public setIdChateau(id_chateau: number): void {
+  public setIdChateau(id_chateau: UUID): void {
     this.id_chateau = id_chateau;
   }
-  public setIdEquipe(id_equipe: number): void {
+  public setIdEquipe(id_equipe: UUID): void {
     this.id_equipe = id_equipe;
   }
   public setStatut(statut: string): void {
@@ -142,7 +142,7 @@ class Chasse {
   public setDateModification(date_modification: string): void {
     this.date_modification = date_modification;
   }
-  public setIdChasse(id_chasse: number): void {
+  public setIdChasse(id_chasse: UUID): void {
     this.id_chasse = id_chasse;
   }
   public setDateCreation(date_creation: string): void {
@@ -153,7 +153,7 @@ class Chasse {
    * Méthode pour charger les données de l'objet indice dans la classe
     * @returns Promise<any> L'objet Chasse avec les données chargées à partir de l'id
    */
-  public static async readId(id_chasse: number): Promise<any> {
+  public static async readId(id_chasse: UUID): Promise<any> {
 
       const data = await getChasseById(id_chasse) as any;
 
@@ -216,7 +216,7 @@ class Chasse {
       }
     }
   
-    public async deleteId(id_chasse: number): Promise<void> {
+    public async deleteId(id_chasse: UUID): Promise<void> {
       try {
         await deleteChasse(id_chasse);
       } catch (error) {

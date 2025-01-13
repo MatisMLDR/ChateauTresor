@@ -2,14 +2,14 @@ import { AvisType } from "@/types";
 import { getAvisById, createAvis, deleteAvis, updateAvis } from '@/utils/dao/AvisUtils';
 
 class Avis {
-  private id_avis: number;
+  private id_avis: UUID;
   private note: number;
   private titre: string;
   private description: string;
   private nb_like: number;
   private date_modification: string;
-  private id_chasse: number;
-  private id_participant: number;
+  private id_chasse: UUID;
+  private id_participant: UUID;
 
   constructor(avis: AvisType) {
     this.id_avis = avis.id_avis;
@@ -49,7 +49,7 @@ class Avis {
     return this.id_participant;
   }
 
-    public setIdAvis(id_avis: number): void {
+    public setIdAvis(id_avis: UUID): void {
       this.id_avis = id_avis;
     }
 
@@ -73,15 +73,15 @@ class Avis {
         this.date_modification = date_modification;
     }
 
-    public setIdChasse(id_chasse: number): void {
+    public setIdChasse(id_chasse: UUID): void {
         this.id_chasse = id_chasse;
     }
 
-    public setIdParticipant(id_participant: number): void {
+    public setIdParticipant(id_participant: UUID): void {
         this.id_participant = id_participant;
     }
 
-    public static async readId(id_avis: number): Promise<any> {
+    public static async readId(id_avis: UUID): Promise<any> {
       
       const avis = await getAvisById(id_avis) as any
 
@@ -136,7 +136,7 @@ class Avis {
     }
   }
 
-  public async deleteId(id_avis: number): Promise<void> {
+  public async deleteId(id_avis: UUID): Promise<void> {
     try {
       await deleteAvis(id_avis);
     } catch (error) {
