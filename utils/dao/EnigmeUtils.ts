@@ -23,12 +23,13 @@ export async function getEnigmeById(id_enigme: number): Promise<any> {
  * @example const enigmes = await getAllEnigmesParticipants(1);
  * @params id_enigme L'identifiant d'une énigme
  */
-export async function getAllEnigmesParticipants(id_enigme: number): Promise<any> {
+export async function getAllEnigmesParticipants(id_enigme: number): Promise<any[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/participants/${id_enigme}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des énigmes des participants');
   }
-  return await res.json();
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
 }
 
 /*
