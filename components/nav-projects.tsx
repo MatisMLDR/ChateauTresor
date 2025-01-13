@@ -1,11 +1,14 @@
 "use client"
 
 import {
-  Folder,
-  Forward,
+  Settings,
+  Star,
+  Map,
   MoreHorizontal,
-  Trash2,
-  type LucideIcon,
+  Trash,
+  Search,
+  User,
+  QrCode,
 } from "lucide-react"
 
 import {
@@ -25,66 +28,101 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-export function NavProjects({
-                              projects,
-                            }: {
-  projects: {
+import { SideBarProps } from "@/types";
+import Link from "next/link";
+
+export function NavProjects({ chasse, user }: {
+  chasse: {
     name: string
     url: string
-    icon: LucideIcon
-  }[]
+    id: number
+  }[],
+  user: SideBarProps["user"]
 }) {
   const { isMobile } = useSidebar()
 
   return (
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-        <SidebarGroupLabel>Projects</SidebarGroupLabel>
-        <SidebarMenu>
-          {projects.map((item) => (
-              <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton asChild>
-                  <a href={item.url}>
-                    <item.icon />
-                    <span>{item.name}</span>
-                  </a>
-                </SidebarMenuButton>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuAction showOnHover>
-                      <MoreHorizontal />
-                      <span className="sr-only">More</span>
-                    </SidebarMenuAction>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                      className="w-48 rounded-lg"
-                      side={isMobile ? "bottom" : "right"}
-                      align={isMobile ? "end" : "start"}
-                  >
-                    <DropdownMenuItem>
-                      <Folder className="text-muted-foreground" />
-                      <span>View Project</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Forward className="text-muted-foreground" />
-                      <span>Share Project</span>
-                    </DropdownMenuItem>
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroupLabel>
+        {user === 'organisateur' ? 'Chasses récentes' : 'Chasses inscrites'}
+      </SidebarGroupLabel>
+      <SidebarMenu>
+        {chasse.map((item) => (
+          <SidebarMenuItem key={item.name}>
+            <SidebarMenuButton asChild>
+              <a href={item.url}>
+                <Map />
+                <span>{item.name}</span>
+              </a>
+            </SidebarMenuButton>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuAction showOnHover>
+                  <MoreHorizontal />
+                  <span className="sr-only">More</span>
+                </SidebarMenuAction>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-48 rounded-lg"
+                side={isMobile ? 'bottom' : 'right'}
+                align={isMobile ? 'end' : 'start'}
+              >
+                {user === 'organisateur' ? (
+                  <>
+                    <Link href={`${item.id}/update`}>
+                      <DropdownMenuItem>
+                        <Settings className="text-muted-foreground" />
+                        <span>Modifier</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href={`${item.id}/avis`}>
+                      <DropdownMenuItem>
+                        <Star className="text-muted-foreground" />
+                        <span>Avis</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href={`${item.id}/qr`}>
+                      <DropdownMenuItem>
+                        <QrCode className="text-muted-foreground" />
+                        <span>QR</span>
+                      </DropdownMenuItem>
+                    </Link>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                      <Trash2 className="text-muted-foreground" />
-                      <span>Delete Project</span>
+                      <Trash className="text-muted-foreground" />
+                      <span>Supprimer</span>
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SidebarMenuItem>
-          ))}
-          <SidebarMenuItem>
-            <SidebarMenuButton className="text-sidebar-foreground/70">
-              <MoreHorizontal className="text-sidebar-foreground/70" />
-              <span>More</span>
-            </SidebarMenuButton>
+                  </>
+                ) : (
+                  <>
+                    <Link href={`${item.id}/voir`}>
+                      <DropdownMenuItem>
+                        <Search className="text-muted-foreground" />
+                        <span>Voir</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                    <Link href={`${item.id}/avis`}>
+                      <DropdownMenuItem>
+                        <Star className="text-muted-foreground" />
+                        <span>Avis</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href={`${item.id}/createur`}>
+                      <DropdownMenuItem>
+                        <User className="text-muted-foreground" />
+                        <span>Voir le créateur</span>
+                      </DropdownMenuItem>
+                    </Link>
+                  </>
+                )}
+                <DropdownMenuSeparator />
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarGroup>
-  )
+        ))}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
 }
 

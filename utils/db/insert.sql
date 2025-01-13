@@ -31,10 +31,10 @@ VALUES
 ON CONFLICT (id_chateau) DO NOTHING;
 
 -- Insert data into Equipe_Organisatrice
-INSERT INTO public.Equipe_Organisatrice (id_equipe, nom type, n_siret, id_taxes, nb_membres, site_web, adresse_postale, telephone, id_user)
+INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale, telephone, id_user)
 VALUES
     ('1', 'EquipeTest', 'Association', null, null, '1', null, null, null, '12b02e4a-34a8-4a83-838e-6206b201e948'),
-    ('2', 'Samsung', '33436749700172', 'FR89334367497', '0', 'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ', '01 44 04 70 00', '82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc')
+    ('2', 'Samsung', 'Entreprise', '33436749700172', 'FR89334367497', '0', 'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ', '01 44 04 70 00', '82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc')
 ON CONFLICT (id_equipe) DO NOTHING;
 
 -- Insert data into Membre_equipe
@@ -58,7 +58,6 @@ VALUES
     ('2', '16be6621-2b7e-4719-8937-ca30a4b9e3f3'),
     ('4', '4d7acb04-c25a-4d9f-8759-198d3fc80153'),
     ('5', 'e74e5007-b174-4c89-a439-d59d3d63e926'),
-    ('6', 'a25bc3fb-66e1-4be6-9d54-8ff6d106a552'),
     ('7', '5eae781d-4d1d-4551-8d42-0349fba17678')
 ON CONFLICT (id_participant) DO NOTHING;
 
@@ -66,7 +65,7 @@ ON CONFLICT (id_participant) DO NOTHING;
 INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, image, date_creation, date_modification, date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
 VALUES
     ('1', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg', '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '1'),
-    ('8', 'KIRIKOU', '300', 'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !', '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp', '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1', '02:00:00', 'Dynastie royale', 'Inactif', '318', '2'),
+    ('8', 'KIRIKOU', '300', 'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !', '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp', '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1', '02:00:00', 'Dynastie royale', 'Inactif', '318', '2')
 ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation

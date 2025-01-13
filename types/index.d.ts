@@ -229,3 +229,10 @@ export type RecompenseType = {
   date_modification: string;
   id_chasse: number | null;
 }
+
+//// Props de la sidebar ////
+
+export type SideBarProps = {
+  children?: React.reactNode;
+  user: "joueur" | "organisateur";
+}

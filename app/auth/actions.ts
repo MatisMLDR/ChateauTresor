@@ -66,7 +66,6 @@ export async function signup(currentState: { message: string }, formData: FormDa
         options: {
             emailRedirectTo: `${PUBLIC_URL}/auth/callback`,
             data: {
-                email_confirm: process.env.NODE_ENV !== 'production',
                 username: data.pseudo,
             }
         }
