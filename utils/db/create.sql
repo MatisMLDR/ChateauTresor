@@ -248,3 +248,23 @@ CREATE TABLE public.Haut_Fait (
     image_badge VARCHAR(255) DEFAULT NULL,
     date DATE DEFAULT CURRENT_DATE
 );
+
+-- Indexation des tables
+CREATE INDEX idx_profiles_email ON profiles (email);
+CREATE INDEX idx_chasse_theme ON Chasse (theme);
+CREATE INDEX idx_chasse_statut ON Chasse (statut);
+
+-- Triggers pour les dates de modification
+CREATE OR REPLACE FUNCTION update_modification_date()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.date_modification = CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Exemple : Appliquer aux chasses
+CREATE TRIGGER update_chasse_modification_date
+  BEFORE UPDATE ON Chasse
+  FOR EACH ROW
+  EXECUTE FUNCTION update_modification_date();

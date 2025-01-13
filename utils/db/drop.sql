@@ -15,7 +15,9 @@ DROP TABLE IF EXISTS
     public.Texte,
     public.Haut_fait,
     public.Profiles,
-    public.proprietaire_chateau
+    public.proprietaire_chateau,
+    public.enigme_participant,
+    public.indice_participant
 CASCADE;
 
 DROP TRIGGER IF EXISTS

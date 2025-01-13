@@ -72,9 +72,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 // DELETE: Supprimer une chasse par son ID
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  console.log("API DELETE OK");
   const supabase = createClient();
-  console.log("API DELETE ID : ", await params.id);
   try {
     const resolvedParams = await params;
     const chasseId = parseInt(resolvedParams.id);
