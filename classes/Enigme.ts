@@ -5,8 +5,7 @@ import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 export class Enigme {
   id_enigme: number;
   titre: string;
-  qrCode: string;
-  code: string;
+  code_reponse: string;
   description: string;
   endroit_qrcode: string;
   temps_max: number;
@@ -16,8 +15,7 @@ export class Enigme {
   constructor(enigme: EnigmeType) {
     this.id_enigme = enigme.id_enigme;
     this.titre = enigme.titre;
-    this.qrCode = enigme.qrCode;
-    this.code = enigme.code;
+    this.code_reponse = enigme.code_reponse;
     this.description = enigme.description;
     this.endroit_qrcode = enigme.endroit_qrcode;
     this.temps_max = enigme.temps_max;
@@ -34,12 +32,8 @@ export class Enigme {
     return this.titre;
   }
 
-  public getQrCode(): string {
-    return this.qrCode;
-  }
-
-  public getCode(): string {
-    return this.code;
+  public getCode_reponse(): string {
+    return this.code_reponse;
   }
 
   public getDescription(): string {
@@ -72,12 +66,9 @@ export class Enigme {
     this.titre = titre;
   }
 
-  public setQrCode(qrCode: string): void {
-    this.qrCode = qrCode;
-  }
 
   public setCode(code: string): void {
-    this.code = code;
+    this.code_reponse = code;
   }
 
   public setDescription(description: string): void {
@@ -149,8 +140,7 @@ export class Enigme {
     
         this.id_enigme = avis.id;
         this.titre = avis.titre;
-        this.qrCode = avis.qrCode;
-        this.code = avis.code;
+        this.code_reponse = avis.code;
         this.description = avis.description;
         this.endroit_qrcode = avis.endroit_qrcode;
         this.temps_max = avis.temps_max;

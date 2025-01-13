@@ -92,21 +92,21 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
         {/* Sélecteur pour le niveau de difficulté */}
         <div className="space-y-2">
           <Label htmlFor="difficulte">{contenuTextuel.create.form.difficultyLevel}</Label>
-          <Select
+            <Select
             value={formData.difficulte?.toString() || ""}
-            onValueChange={(value: "easy" | "medium" | "hard") =>
-              setFormData({ ...formData, difficulte: value })
+            onValueChange={(value: string) =>
+              setFormData({ ...formData, difficulte: parseInt(value) })
             }
-          >
+            >
             <SelectTrigger>
               <SelectValue placeholder={contenuTextuel.create.form.selectDifficulty} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="easy">{contenuTextuel.common.difficulty.easy}</SelectItem>
-              <SelectItem value="medium">{contenuTextuel.common.difficulty.medium}</SelectItem>
-              <SelectItem value="hard">{contenuTextuel.common.difficulty.hard}</SelectItem>
+              <SelectItem value="1">{contenuTextuel.common.difficulty.easy}</SelectItem>
+              <SelectItem value="2">{contenuTextuel.common.difficulty.medium}</SelectItem>
+              <SelectItem value="3">{contenuTextuel.common.difficulty.hard}</SelectItem>
             </SelectContent>
-          </Select>
+            </Select>
         </div>
 
 
