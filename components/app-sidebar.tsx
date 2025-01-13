@@ -16,20 +16,17 @@ import {
 
 import {
     AudioWaveform,
-    BookOpen,
-    Bot,
     Command,
     GalleryVerticalEnd,
     Settings2,
-    SquareTerminal,
+    LayoutDashboard,
+    MapPin,
+    Castle,
+    Search,
+    History,
 } from "lucide-react"
 
 const dataUser = {
-    user: {
-        name: "chateautresor",
-        email: "chateautresor@gmail.com",
-        avatar: "/logo.svg",
-    },
     teams: [
         {
             name: "Prestige Heritage",
@@ -49,69 +46,28 @@ const dataUser = {
     ],
     navMain: [
         {
-            title: "Playground",
+            title: "Carte",
             url: "#",
-            icon: SquareTerminal,
+            icon: MapPin,
             isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
         },
         {
-            title: "Models",
+            title: "Châteaux",
             url: "#",
-            icon: Bot,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
+            icon: Castle,
         },
         {
-            title: "Documentation",
+            title: "Chasses",
             url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
+            icon: Search,
         },
         {
-            title: "Settings",
+            title: "Historique",
+            url: "#",
+            icon: History,
+        },
+        {
+            title: "Paramètres",
             url: "#",
             icon: Settings2,
             items: [
@@ -154,11 +110,6 @@ const dataUser = {
 }
 
 const dataOrganisateur = {
-    user: {
-        name: "chateautresororga",
-        email: "chateautresor@gmail.com",
-        avatar: "/logo.svg",
-    },
     teams: [
         {
             name: "Prestige Heritage",
@@ -178,66 +129,19 @@ const dataOrganisateur = {
     ],
     navMain: [
         {
-            title: "Playground",
+            title: "Dashboard",
             url: "#",
-            icon: SquareTerminal,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
+            icon: LayoutDashboard,
         },
         {
-            title: "Models",
+            title: "Châteaux",
             url: "#",
-            icon: Bot,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
+            icon: Castle,
         },
         {
-            title: "Documentation",
+            title: "Chasses",
             url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
+            icon: Search,
         },
         {
             title: "Settings",
@@ -298,7 +202,7 @@ export function AppSidebar({ user, ...props }: SideBarProps){
           <NavProjects user={user} chasse={data.chasses} />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser />
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>

@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import { NoParamCallback } from "fs";
 
 export interface StripeProduct {
   id: string;
@@ -63,14 +64,16 @@ export type IndiceType = {
 // Énigme
 export type EnigmeType = {
   id_enigme: number;
+  id_chasse: number;
   titre: string;
   indices: Indice[];
-  qrCode: string;
-  code: string;
+  code_reponse: string;
+  ordre: number;
   description: string;
   endroit_qrcode: string;
   temps_max: number;
   description_reponse: string;
+  degre_difficulte: number;
   image_reponse: string;
 };
 
@@ -78,7 +81,7 @@ export type EnigmeType = {
 ///////////
 
 export type ChasseType = {
-  id_chasse?: number; // Identifiant unique, SERIAL, non null
+  id_chasse: number; // Identifiant unique, SERIAL, non null
   titre?: string; // Optionnel, par défaut 'Nouvelle Chasse'
   capacite?: number; // Optionnel, par défaut 0
   description?: string; // Optionnel, par défaut 'Pas de description'
