@@ -44,6 +44,10 @@ interface RiddlesCreationProps {
   setFormData: (data: Partial<ChasseType>) => void;
 }
 
+const generateRandomId = () => {
+  return Math.floor(Math.random() * 1_000_000_000); // Génère un nombre entre 0 et 999_999_999
+};
+
 // Create a new SortableItem component
 function SortableClue({ clue, index, updateClue, removeClue }) {
   const {
@@ -58,6 +62,8 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+
 
   const renderContentInput = () => {
     switch (clue.type) {
@@ -234,7 +240,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
       indices: [
         ...(newRiddle.indices || []),
         {
-          id: crypto.randomUUID(),
+          id: generateRandomId(),
           type: clue.type,
           content: clue.content,
           degre_aide: clue.degre_aide || 1,
@@ -265,7 +271,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
         ...formData,
         enigmes: [
           ...(formData.enigmes || []),
-          { ...newRiddle, id: crypto.randomUUID() } as EnigmeType,
+          { ...newRiddle, id: generateRandomId() } as EnigmeType,
         ],
       });
       setNewRiddle({ indices: [] });
@@ -283,8 +289,8 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      const oldIndex = newRiddle.indices.findIndex((clue) => clue.id === active.id);
-      const newIndex = newRiddle.indices.findIndex((clue) => clue.id === over.id);
+      const oldIndex = newRiddle.indices.findIndex((clue) => clue.id_indice === active.id);
+      const newIndex = newRiddle.indices.findIndex((clue) => clue.id_indice === over.id);
 
       const newClues = arrayMove(newRiddle.indices, oldIndex, newIndex);
       setNewRiddle({ ...newRiddle, indices: newClues });
@@ -370,12 +376,12 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={newRiddle.indices.map((clue) => clue.id)}
+                items={newRiddle.indices.map((clue) => clue.id_indice)}
                 strategy={verticalListSortingStrategy}
               >
                 {newRiddle.indices?.map((clue, index) => (
                   <SortableClue
-                    key={clue.id}
+                    key={clue.id_indice}
                     clue={clue}
                     index={index}
                     updateClue={updateClue}
