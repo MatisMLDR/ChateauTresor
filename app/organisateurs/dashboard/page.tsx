@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Euro, Users, Trophy, Star } from "lucide-react";
 import { formatEuro } from "@/lib/utils";
-import { SideBarHuntCreator } from '@/components/ui/SideBarHuntCreator';
-
 
 interface DashboardStats {
   totalRevenue: number;
@@ -183,7 +181,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex">
-      <SideBarHuntCreator />
 
       {/* Contenu de la page */}
       <main className="container mx-auto px-4 py-8">
