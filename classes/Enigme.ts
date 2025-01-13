@@ -3,7 +3,7 @@ import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, u
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
-  id: number;
+  id_enigme: number;
   titre: string;
   qrCode: string;
   code: string;
@@ -14,7 +14,7 @@ export class Enigme {
   image_reponse: string;
 
   constructor(enigme: EnigmeType) {
-    this.id = enigme.id;
+    this.id_enigme = enigme.id_enigme;
     this.titre = enigme.titre;
     this.qrCode = enigme.qrCode;
     this.code = enigme.code;
@@ -27,7 +27,7 @@ export class Enigme {
 
   // Getters
   public getId(): number {
-    return this.id;
+    return this.id_enigme;
   }
 
   public getTitre(): string {
@@ -65,7 +65,7 @@ export class Enigme {
   // Setters
 
   public setId(id: number): void {
-    this.id = id;
+    this.id_enigme = id;
   }
 
   public setTitre(titre: string): void {
@@ -107,7 +107,7 @@ export class Enigme {
    */
   public static async readId(id: number): Promise<any> {
     
-    const data = getEnigmeById(id) as any;
+    const data = await getEnigmeById(id) as any;
     
     if (!data) {
       throw new Error("L'énigme n'existe pas");
@@ -123,11 +123,11 @@ export class Enigme {
     * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
   public async read(): Promise<any> {
-        if (!this.id) {
+        if (!this.id_enigme) {
             throw new Error('Enigme ID is required');
         }
     
-        const avis = await getEnigmeById(this.id) as any
+        const avis = await getEnigmeById(this.id_enigme) as any
     
         if (!avis) {
             throw new Error('Enigme not found');
@@ -137,17 +137,17 @@ export class Enigme {
       }
     
       public async load(): Promise<void> {
-        if (!this.id) {
+        if (!this.id_enigme) {
             throw new Error('Enigme ID is required');
         }
     
-        const avis = await getEnigmeById(this.id) as any
+        const avis = await getEnigmeById(this.id_enigme) as any
     
         if (!avis) {
             throw new Error('Enigme not found');
         }
     
-        this.id = avis.id;
+        this.id_enigme = avis.id;
         this.titre = avis.titre;
         this.qrCode = avis.qrCode;
         this.code = avis.code;
@@ -166,21 +166,21 @@ export class Enigme {
         }
       }
     
-      public async deleteId(id: number): Promise<void> {
+      public async deleteId(id_enigme: number): Promise<void> {
         try {
-          await deleteEnigme(id);
+          await deleteEnigme(id_enigme);
         } catch (error) {
             throw new Error('Chasse does not exist');
         }
       }
     
       public async delete(): Promise<void> {
-        if (!this.id) {
+        if (!this.id_enigme) {
           console.log("Pas d'id Enigme");
           throw new Error('id is required');
         }
         try {
-          await deleteEnigme(this.id);
+          await deleteEnigme(this.id_enigme);
         } catch (error) {
             throw new Error('Enigme does not exist');
         }
@@ -199,9 +199,9 @@ export class Enigme {
   * Méthode pour calculer le temps moyen passé pour résoudre une énigme
   * @returns number Le temps moyen en secondes
   */
-  public getTempsMoyen(): number {
-    const data = getAllEnigmesParticipants(this.id) as any;
-    if (data.length == 0) {
+  public async getTempsMoyen(): Promise<number> {
+    const data = await getAllEnigmesParticipants(this.id_enigme);
+    if (data.length === 0) {
       return 0;
     }
     const total = data.reduce((acc: number, curr: any) => acc + curr.duree, 0);
@@ -216,7 +216,7 @@ export class Enigme {
     // Récupération dans la base de la réussite de chaques participations avec l'id de la chasse
 
     // On récupère les données
-    const data = await getAllEnigmesParticipants(this.id);
+    const data = await getAllEnigmesParticipants(this.id_enigme);
 
     if (data.length === 0) {
       return 0;
@@ -231,9 +231,9 @@ export class Enigme {
    * Méthode pour calculer le nombre de fois qu'un indice a été révélé
    * @returns number Le nombre de fois qu'un indice a été révélé
    */
-  public getNbIndiceRevele(): number {
-    const data = getAllIndicesParticipants(this.id) as any;
-    if (data.length == 0) {
+  public async getNbIndiceRevele(): Promise<number> {
+    const data = await getAllIndicesParticipants(this.id_enigme);
+    if (data.length === 0) {
       return 0;
     }
     return data.reduce((acc: number, curr: any) => acc + curr.est_decouvert, 0);

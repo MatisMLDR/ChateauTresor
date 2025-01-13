@@ -1,4 +1,4 @@
-import { Indice as IndiceType, IndiceType as TypeIndice } from "@/types";
+import {  IndiceType, TypeIndice } from "@/types";
 import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
 
 class Indice {
