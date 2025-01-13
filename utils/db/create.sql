@@ -78,7 +78,7 @@ CREATE TABLE public.Equipe_Organisatrice (
     nb_membres INT DEFAULT 0,
     site_web VARCHAR(255) DEFAULT NULL,
     adresse_postale VARCHAR(255) DEFAULT 'Non spécifiée',
-    telephone VARCHAR(20) DEFAULT NULL,
+    telephone VARCHAR(20) DEFAULT NULL
 );
 
 -- Table Membre_equipe

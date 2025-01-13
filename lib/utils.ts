@@ -11,3 +11,9 @@ export function formatEuro(amount: number): string {
     currency: 'EUR'
   }).format(amount);
 }
+
+export function formatFullName(firstName: string, lastName: string): string {
+  const formattedFirstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+  const formattedLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
+  return `${formattedFirstName} ${formattedLastName}`;
+}
