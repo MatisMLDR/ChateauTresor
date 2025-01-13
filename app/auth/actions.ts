@@ -48,7 +48,6 @@ export async function signup(currentState: { message: string }, formData: FormDa
         password: formData.get('password') as string,
         nom: formData.get('nom') as string,
         prenom: formData.get('prenom') as string,
-        fullname: `${formData.get('nom')} ${formData.get('prenom')}` as string,
         adresse: formData.get('adresse') as string,
         ville: formData.get('ville') as string,
         codePostal: formData.get('code_postal') as string,
@@ -66,10 +65,10 @@ export async function signup(currentState: { message: string }, formData: FormDa
         password: data.password,
         options: {
             emailRedirectTo: `${PUBLIC_URL}/auth/callback`,
-            // data: {
-            //     email_confirm: process.env.NODE_ENV !== 'production',
-            //     full_name: data.fullname,
-            // }
+            data: {
+                email_confirm: process.env.NODE_ENV !== 'production',
+                username: data.pseudo,
+            }
         }
     })
 
@@ -92,11 +91,11 @@ export async function signup(currentState: { message: string }, formData: FormDa
         .from('profiles')
         .update(
             {
-                full_name: data.fullname,
                 adresse: data.adresse,
                 ville: data.ville,
                 code_postal: data.codePostal,
-                username: data.pseudo
+                nom: data.nom,
+                prenom: data.prenom,
             }
         )
         .match({ email: data.email });
