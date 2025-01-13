@@ -107,7 +107,7 @@ export class Enigme {
    */
   public static async readId(id: number): Promise<any> {
     
-    const data = getEnigmeById(id) as any;
+    const data = await getEnigmeById(id) as any;
     
     if (!data) {
       throw new Error("L'énigme n'existe pas");
@@ -199,9 +199,9 @@ export class Enigme {
   * Méthode pour calculer le temps moyen passé pour résoudre une énigme
   * @returns number Le temps moyen en secondes
   */
-  public getTempsMoyen(): number {
-    const data = getAllEnigmesParticipants(this.id_enigme) as any;
-    if (data.length == 0) {
+  public async getTempsMoyen(): Promise<number> {
+    const data = await getAllEnigmesParticipants(this.id_enigme);
+    if (data.length === 0) {
       return 0;
     }
     const total = data.reduce((acc: number, curr: any) => acc + curr.duree, 0);
@@ -231,9 +231,9 @@ export class Enigme {
    * Méthode pour calculer le nombre de fois qu'un indice a été révélé
    * @returns number Le nombre de fois qu'un indice a été révélé
    */
-  public getNbIndiceRevele(): number {
-    const data = getAllIndicesParticipants(this.id_enigme) as any;
-    if (data.length == 0) {
+  public async getNbIndiceRevele(): Promise<number> {
+    const data = await getAllIndicesParticipants(this.id_enigme);
+    if (data.length === 0) {
       return 0;
     }
     return data.reduce((acc: number, curr: any) => acc + curr.est_decouvert, 0);
