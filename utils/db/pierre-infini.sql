@@ -63,8 +63,8 @@ returns trigger
 set search_path = ''
 as $$
 begin
-  insert into public.profiles (id, email)
-  values (new.id, new.email);
+  insert into public.profiles (id, email, username)
+  values (new.id, new.email, new.raw_user_meta_data ->> 'username');
   return new;
 end;
 $$ language plpgsql security definer;
@@ -233,6 +233,9 @@ CREATE TABLE public.Indice (
         degre_aide BETWEEN 1
         AND 5
     ),
+    type text DEFAULT 'Text' CHECK (
+        type IN ('Text', 'Image', 'Son')
+    ),
     id_enigme INT REFERENCES Enigme(id_enigme) ON DELETE CASCADE
 );
 
@@ -303,7 +306,6 @@ CREATE TRIGGER update_chasse_modification_date
   FOR EACH ROW
   EXECUTE FUNCTION update_modification_date();
 
-
 -- Insert data into profiles
 INSERT INTO public.profiles (id, username, updated_at, email, birthday, email_confirm, nom, adresse, ville, code_postal, stripe_id, plan, prenom)
 VALUES
@@ -311,15 +313,14 @@ VALUES
     ('bfdc30a0-7e79-4037-9024-184f814cb57a', 'ProprietaireTest', null, 'tesproprietairechateau@chateautresor.com', null, 'true', 'Test', 'Proprietaire', '2 Pl. Doyen Gosse', 'Grenoble', '38000', 'Standard', 'Proprietaire'),
     ('12b02e4a-34a8-4a83-838e-6206b201e948', 'OrganisateurTest', null, 'testorganisateur@chateautresor.com', null, 'true', 'Test', 'Organisateur', '2 Pl. Doyen Gosse', 'Grenoble', '38000', 'Standard', 'Organisateur'),
     ('a27901fd-3c67-4891-b7ac-55dd04a2f122', 'MembreEquipeTest', null, 'testmembreequipe@chateautresor.com', null, 'true', 'Test', 'MembreEquipe', '2 Pl. Doyen Gosse', 'Grenoble', '38000', 'Standard', 'MembreEquipe'),
-    ('16be6621-2b7e-4719-8937-ca30a4b9e3f3', 'anonyme', null, 'simonzeru08@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('4d7acb04-c25a-4d9f-8759-198d3fc80153', 'anonyme', null, 'rahim.boughendjour@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RXiLEp77Wa0ndo', 'Standard', 'Non spécifié'),
-    ('514e8181-1f82-4f81-8c16-00bf216d3b0a', 'anonyme', null, 'paul.moncenix-larue@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('5eae781d-4d1d-4551-8d42-0349fba17678', 'anonyme', null, 'matismld38@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc', 'anonyme', null, 'chateautresor@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('a25bc3fb-66e1-4be6-9d54-8ff6d106a552', 'anonyme', null, 'mangeurdecaca@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('d07d6711-4a1c-48b6-ab23-a726ae0c5586', 'anonyme', null, 'superadmin@chateautresor.fr', null, 'false', '"Non spécifié"', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('d566eb81-3bf9-4470-a89c-30ea8da57087', 'anonyme', null, 'paul.moncenix@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('e74e5007-b174-4c89-a439-d59d3d63e926', 'anonyme', null, 'yvan.d-ettorre@etu.univ-grenoble-alpes.fr', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RY00lPy1E9anl3', 'Standard', 'Non spécifié')
+    ('16be6621-2b7e-4719-8937-ca30a4b9e3f3', 'Simon', null, 'simonzeru08@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('4d7acb04-c25a-4d9f-8759-198d3fc80153', 'Rahim', null, 'rahim.boughendjour@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RXiLEp77Wa0ndo', 'Standard', 'Non spécifié'),
+    ('514e8181-1f82-4f81-8c16-00bf216d3b0a', 'Paul-ML', null, 'paul.moncenix-larue@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('5eae781d-4d1d-4551-8d42-0349fba17678', 'Matis', null, 'matismld38@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc', 'ChateauTresor', null, 'chateautresor@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('d07d6711-4a1c-48b6-ab23-a726ae0c5586', 'SuperAdmin', null, 'superadmin@chateautresor.fr', null, 'false', '"Non spécifié"', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('d566eb81-3bf9-4470-a89c-30ea8da57087', 'Paul', null, 'paul.moncenix@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('e74e5007-b174-4c89-a439-d59d3d63e926', 'Yvan', null, 'yvan.d-ettorre@etu.univ-grenoble-alpes.fr', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RY00lPy1E9anl3', 'Standard', 'Non spécifié')
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert data into Proprietaire_Chateau
@@ -338,10 +339,10 @@ VALUES
 ON CONFLICT (id_chateau) DO NOTHING;
 
 -- Insert data into Equipe_Organisatrice
-INSERT INTO public.Equipe_Organisatrice (id_equipe, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale, telephone, id_user)
+INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale, telephone, id_user)
 VALUES
-    ('1', 'Association', null, null, '1', null, null, null, '12b02e4a-34a8-4a83-838e-6206b201e948'),
-    ('2', 'Entreprise', '33436749700172', 'FR89334367497', '0', 'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ', '01 44 04 70 00', '82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc')
+    ('1', 'EquipeTest', 'Association', null, null, '1', null, null, null, '12b02e4a-34a8-4a83-838e-6206b201e948'),
+    ('2', 'Samsung', 'Entreprise', '33436749700172', 'FR89334367497', '0', 'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ', '01 44 04 70 00', '82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc')
 ON CONFLICT (id_equipe) DO NOTHING;
 
 -- Insert data into Membre_equipe
@@ -365,20 +366,14 @@ VALUES
     ('2', '16be6621-2b7e-4719-8937-ca30a4b9e3f3'),
     ('4', '4d7acb04-c25a-4d9f-8759-198d3fc80153'),
     ('5', 'e74e5007-b174-4c89-a439-d59d3d63e926'),
-    ('6', 'a25bc3fb-66e1-4be6-9d54-8ff6d106a552'),
     ('7', '5eae781d-4d1d-4551-8d42-0349fba17678')
 ON CONFLICT (id_participant) DO NOTHING;
 
 -- Insert data into Chasse
 INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, image, date_creation, date_modification, date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
 VALUES
-    (1, 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg', '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '1'),
-    (8, 'KIRIKOU', '300', 'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !', '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp', '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1', '02:00:00', 'Dynastie royale', 'Inactif', '318', '2'),
-    (9, 'Chasse created', '10', 'Description de la chasse', '12', 'image.jpg', '2025-01-01 00:00:00', '2025-01-10 15:09:03.725', '2025-01-01 00:00:00', '2025-01-02 00:00:00', '25.00', '3', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '2'),
-    (10, 'Chasse created', '10', 'Description de la chasse', '12', 'logo.svg', '2025-01-01 00:00:00', '2025-01-10 15:14:22.119', '2025-01-01 00:00:00', '2025-01-02 00:00:00', '25.00', '3', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '2'),
-    (11, 'Chasse created', '10', 'Description de la chasse', '12', 'image.jpg', '2025-01-01 00:00:00', '2025-01-12 17:05:58.535', '2025-01-01 00:00:00', '2025-01-02 00:00:00', '25.00', '3', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '2'),
-    (12, 'Chasse created', '10', 'Description de la chasse', '12', 'image.jpg', '2025-01-01 00:00:00', '2025-01-12 17:53:34.228', '2025-01-01 00:00:00', '2025-01-02 00:00:00', '25.00', '3', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '2'),
-    (13, 'Chasse created', '10', 'Description de la chasse', '12', 'image.jpg', '2025-01-01 00:00:00', '2025-01-12 17:55:28.501', '2025-01-01 00:00:00', '2025-01-02 00:00:00', '25.00', '3', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '2')
+    ('1', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg', '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2', '02:00:00', 'Theme de la chasse', 'Inactif', '1', '1'),
+    ('8', 'KIRIKOU', '300', 'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !', '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp', '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1', '02:00:00', 'Dynastie royale', 'Inactif', '318', '2')
 ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation

@@ -36,7 +36,7 @@ set search_path = ''
 as $$
 begin
   insert into public.profiles (id, email, username)
-  values (new.id, new.email, new.user_metadata ->> 'username');
+  values (new.id, new.email, new.raw_user_meta_data ->> 'username');
   return new;
 end;
 $$ language plpgsql security definer;
@@ -204,6 +204,9 @@ CREATE TABLE public.Indice (
     degre_aide INT DEFAULT 1 CHECK (
         degre_aide BETWEEN 1
         AND 5
+    ),
+    type text DEFAULT 'Text' CHECK (
+        type IN ('Text', 'Image', 'Son')
     ),
     id_enigme INT REFERENCES Enigme(id_enigme) ON DELETE CASCADE
 );
