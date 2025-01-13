@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import PopUpChateau from '@/components/participants/PopUpChateau';
 import { ChateauType } from '@/types';
-import { SideBar } from '@/components/ui/SideBar';
 
 // Import dynamique des composants React-Leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
@@ -68,8 +67,7 @@ export default function ParticipantsPage() {
   });
 
   return (
-    <div className="flex">
-      <SideBar />
+    <div className="flex z-0">
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Barre de recherche */}
@@ -84,7 +82,7 @@ export default function ParticipantsPage() {
         </div>
 
         {/* Carte */}
-        <div style={{ height: 'calc(100vh - 74px)', width: '100%' }}>
+        <div className={"w-full min-h-screen"}>
           <MapContainer center={franceCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
