@@ -1,4 +1,5 @@
 import Indice from "@/classes/Indice";
+import { TypeIndice } from "@/types";
 import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
 
 jest.mock('@/utils/dao/IndiceUtils');
@@ -6,7 +7,7 @@ jest.mock('@/utils/dao/IndiceUtils');
 describe("Indice Class", () => {
   const mockIndice = {
     id_indice: 1,
-    type: "texte", // ou le type que vous utilisez dans votre application
+    type: "text" as TypeIndice, // ou le type que vous utilisez dans votre application
     contenu: "Ceci est un indice",
     degre_aide: 3,
     ordre: 2,
@@ -18,9 +19,9 @@ describe("Indice Class", () => {
   });
 
   it("should create an instance of Indice", () => {
-    const indice = new Indice(mockIndice);
+    const indice = new Indice(mockIndice as any);
     expect(indice.getId()).toBe(1);
-    expect(indice.getType()).toBe("texte");
+    expect(indice.getType()).toBe("text");
     expect(indice.getContenu()).toBe("Ceci est un indice");
     expect(indice.getDegreAide()).toBe(3);
     expect(indice.getOrdre()).toBe(2);

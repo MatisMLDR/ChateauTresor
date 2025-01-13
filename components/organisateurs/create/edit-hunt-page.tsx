@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { CreateHuntForm } from '@/components/organisateurs/create/Create-hunt-form';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'
+import { ChasseType } from '@/types';
+import { CreateHuntForm } from '@/components/organisateurs/create/create-hunt-form';
+
 
 const EditHuntPage: React.FC = () => {
   const router = useRouter();
