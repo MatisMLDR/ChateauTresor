@@ -29,7 +29,7 @@ DROP FUNCTION IF EXISTS
 -- Table users in schema public
 CREATE TABLE public.profiles (
     id uuid references auth.users on delete cascade not null primary key,
-    username text default 'anonyme',
+    username text UNIQUE NOT NULL,
     updated_at timestamp with time zone,
     email text UNIQUE NOT NULL,
     birthday date,
@@ -98,6 +98,7 @@ CREATE TABLE public.Chateau (
 -- Table Equipe_Organisatrice
 CREATE TABLE public.Equipe_Organisatrice (
     id_equipe SERIAL PRIMARY KEY,
+    nom VARCHAR(255) UNIQUE NOT NULL,
     type VARCHAR(255) DEFAULT 'Association',
     n_siret VARCHAR(255) DEFAULT NULL,
     id_taxes VARCHAR(255) DEFAULT NULL,
@@ -136,7 +137,7 @@ CREATE TABLE public.Participant (
 -- Table Chasse
 CREATE TABLE public.Chasse (
     id_chasse SERIAL PRIMARY KEY,
-    titre VARCHAR(255) DEFAULT 'Nouvelle Chasse',
+    titre VARCHAR(255) UNIQUE NOT NULL,
     capacite INT DEFAULT 0,
     description TEXT DEFAULT 'Pas de description',
     age_requis INT DEFAULT 0,
@@ -198,7 +199,7 @@ CREATE TABLE public.Recompense (
 
 -- Table Enigme
 CREATE TABLE public.Enigme (
-    id_enigme SERIAL PRIMARY KEY,
+    id_enigme INT PRIMARY KEY,
     titre VARCHAR(255) DEFAULT 'Nouvelle Énigme',
     description TEXT DEFAULT 'Pas de description',
     ordre INT DEFAULT 1,
@@ -279,6 +280,11 @@ CREATE TABLE public.Haut_Fait (
 
 -- Indexation des tables
 CREATE INDEX idx_profiles_email ON profiles (email);
+CREATE INDEX idx_chateau_nom ON Chateau (nom);
+CREATE INDEX idx_chateau_localisation ON Chateau (localisation);
+CREATE INDEX idx_equipe_nom ON Equipe_Organisatrice (nom);
+CREATE INDEX idx_profiles_username ON profiles (username);
+CREATE INDEX idx_chasse_titre ON Chasse (titre);
 CREATE INDEX idx_chasse_theme ON Chasse (theme);
 CREATE INDEX idx_chasse_statut ON Chasse (statut);
 
@@ -296,6 +302,7 @@ CREATE TRIGGER update_chasse_modification_date
   BEFORE UPDATE ON Chasse
   FOR EACH ROW
   EXECUTE FUNCTION update_modification_date();
+
 
 -- Insert data into profiles
 INSERT INTO public.profiles (id, username, updated_at, email, birthday, email_confirm, nom, adresse, ville, code_postal, stripe_id, plan, prenom)
