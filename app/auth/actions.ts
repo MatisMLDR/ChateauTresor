@@ -170,7 +170,7 @@ export async function logout() {
         console.error('Error logging out:', error)
     }
 
-    redirect('/login')
+    redirect('/')
 }
 
 export async function signInWithGoogle() {
