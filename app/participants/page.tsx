@@ -67,7 +67,7 @@ export default function ParticipantsPage() {
   });
 
   return (
-    <div className="flex z-0">
+    <div className="flex z-0 h-full">
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Barre de recherche */}
@@ -82,7 +82,7 @@ export default function ParticipantsPage() {
         </div>
 
         {/* Carte */}
-        <div className={"w-full min-h-screen"}>
+        <div className={"w-full h-full"}>
           <MapContainer center={franceCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
