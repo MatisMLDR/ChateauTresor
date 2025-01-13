@@ -1,5 +1,5 @@
 import { ChateauType } from "@/types";
-import { getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
+import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
 
 class Chateau {
   private id_chateau: number;
@@ -132,6 +132,17 @@ class Chateau {
     console.log("Château après appel API dans read", data); 
 
     return new Chateau(data);
+  }
+
+  // Méthode statique pour récupérer tous les châteaux
+  public static async getAllChateaux(): Promise<Chateau[]> {
+    try {
+      const data = await getAllChateaux(); // Appel du DAO
+      return data.map((chateau: ChateauType) => new Chateau(chateau));
+    } catch (error) {
+      console.error("Erreur lors de la récupération des châteaux:", error);
+      throw new Error("Impossible de récupérer la liste des châteaux");
+    }
   }
 
   public async read(): Promise<any> {
