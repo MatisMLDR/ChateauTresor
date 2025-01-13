@@ -9,6 +9,9 @@ import { ChasseType } from "@/types";
 import { ChateauType} from '@/types';
 import { contenuTextuel } from "@/lib/contenuCreationChasse";
 import toast, { Toaster } from 'react-hot-toast';
+import Chasse from "@/classes/Chasse";
+import { Enigme } from "@/classes/Enigme";
+import Indice from "@/classes/Indice";
 
 
 const steps = [
@@ -66,7 +69,7 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
     };
 
     const enigmesTable = chasse.enigmes?.map((enigme) => ({
-      id_enigme: enigme.id, // Générer un ID si non fourni
+      id_enigme: enigme.id_enigme, // Générer un ID si non fourni
       id_chasse: chasse.id_chasse,
       titre: enigme.titre,
       description: enigme.description,
@@ -82,7 +85,7 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
     const indicesTable = chasse.enigmes?.flatMap((enigme) =>
       enigme.indices.map((indice) => ({
         id_indice: indice.id_indice,
-        id_enigme: enigme.id,
+        id_enigme: enigme.id_enigme,
         contenu: indice.contenu || "Pas de contenu",
         ordre: indice.ordre || 1,
         degre_aide: indice.degre_aide,
@@ -98,37 +101,49 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
   }
 
   const handleSubmit = async () => {
-    // Génération d'un identifiant aléatoire pour la chasse
-    const chasseId = generateRandomId();
-
-    // Transformation des données en tables avec l'ID généré
-    const { chasseTable, enigmesTable, indicesTable } = transformFormDataToTables({
-      ...formData,
-      id_chasse: chasseId, // Assigner l'ID aléatoire
-    } as ChasseType);
-
-    console.log("Final form data submitted:", formData);
-    console.log("Chasse Table:", chasseTable);
-    console.log("Énigmes Table:", enigmesTable);
-    console.log("Indices Table:", indicesTable);
-
-    // Afficher une notification de succès
-    toast.success("Les données ont été transformées et prêtes à être sauvegardées.");
-
-    // Simulation d'envoi des données
     try {
-      await fetch('/api/chasse', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ chasseTable, enigmesTable, indicesTable }),
-      });
-
-      toast.success("Les données ont été sauvegardées avec succès.");
+      // Transformation des données du formulaire en tables
+      const { chasseTable, enigmesTable, indicesTable } = transformFormDataToTables(formData as ChasseType);
+  
+      console.log("Données transformées :");
+      console.log("Chasse :", chasseTable);
+      console.log("Énigmes :", enigmesTable);
+      console.log("Indices :", indicesTable);
+  
+      // Création de la chasse
+      console.log("Création de la chasse...");
+      const chasse = new Chasse(chasseTable);
+      await chasse.create();
+      console.log("Chasse créée avec succès :", chasseTable);
+      toast.success("Chasse créée avec succès.");
+  
+      // Création des énigmes
+      console.log("Création des énigmes...");
+      for (const enigmeData of enigmesTable) {
+        console.log("Création de l'énigme :", enigmeData);
+        const enigme = new Enigme({
+          ...enigmeData,
+          indices: [], // Ajouter une liste vide pour satisfaire le type `EnigmeType`
+        });
+        await enigme.create();
+      }
+      console.log("Énigmes créées avec succès :", enigmesTable);
+      toast.success("Énigmes créées avec succès.");
+  
+      // Création des indices
+      console.log("Création des indices...");
+      for (const indiceData of indicesTable) {
+        console.log("Création de l'indice :", indiceData);
+        const indice = new Indice(indiceData);
+        await indice.create();
+      }
+      console.log("Indices créés avec succès :", indicesTable);
+      toast.success("Indices créés avec succès.");
+  
+      console.log("Données sauvegardées avec succès.");
     } catch (error) {
-      console.error("Erreur lors de la sauvegarde des données :", error);
-      toast.error("Une erreur est survenue lors de la sauvegarde des données.");
+      console.error("Erreur lors de la création :", error);
+      toast.error("Une erreur est survenue lors de la création.");
     }
   };
 
