@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { SideBar } from '@/components/ui/SideBar';
-import { SideBarHuntCreator } from '@/components/ui/SideBarHuntCreator';
 
 const ChasseListPage: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
@@ -31,7 +29,6 @@ const ChasseListPage: React.FC = () => {
 
   return (
     <div className="flex">
-      <SideBar />
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">Liste des Chasses</h1>
 
