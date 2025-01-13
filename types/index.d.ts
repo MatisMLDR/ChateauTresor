@@ -48,15 +48,15 @@ export interface AudioPlayerProps {
 
 
 
-export type IndiceType = 'image' | 'sound' | 'text';
+export type TypeIndice = 'image' | 'sound' | 'text';
 
 // Indice
-export type Indice = {
+export type IndiceType = {
   id_indice: number; // Identifiant unique de l'indice
   contenu: string;   // Contenu de l'indice (par défaut : 'Pas de contenu')
   ordre: number;     // Ordre de l'indice (par défaut : 1)
   degre_aide: number; // Degré d'aide, doit être compris entre 1 et 5
-  type: IndiceType; // Type de l'indice
+  type: TypeIndice; // Type de l'indice
   id_enigme: number; // Identifiant de l'énigme associée
 };
 
