@@ -50,7 +50,6 @@ create OR REPLACE trigger on_auth_user_created
 -- Table Proprietaire_Chateau
 CREATE TABLE public.Proprietaire_Chateau (
     id_proprietaire UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-    id_stripe VARCHAR(255) NOT NULL,
     id_user UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE
 );
 
