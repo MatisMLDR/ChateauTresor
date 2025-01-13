@@ -49,14 +49,18 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
 
   function transformFormDataToTables(chasse: ChasseType) {
     const chasseTable = {
-      id_chasse: chasse.id_chasse,
+      id_chasse: chasse.id_chasse || generateRandomId(),
       titre: chasse.titre || "Nouvelle Chasse",
       capacite: chasse.capacite || 0,
       description: chasse.description || "Pas de description",
       age_requis: chasse.age_requis || 0,
       image: chasse.image,
-      date_creation: chasse.date_creation,
-      date_modification: chasse.date_modification,
+      date_creation: chasse.date_creation
+        ? new Date(chasse.date_creation).toISOString().split('T')[0] // Extraction de la date uniquement
+        : new Date().toISOString().split('T')[0], // Date actuelle au format ISO sans l’heure
+      date_modification: chasse.date_modification
+        ? new Date(chasse.date_modification).toISOString().split('T')[0] // Extraction de la date uniquement
+        : new Date().toISOString().split('T')[0], // Date actuelle au format ISO sans l’heure
       date_debut: chasse.date_debut,
       date_fin: chasse.date_fin,
       prix: chasse.prix || 0.0,
@@ -65,7 +69,7 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
       theme: chasse.theme || "Aucun thème",
       statut: chasse.statut || "Inactif",
       id_chateau: formData.chateau?.id_chateau,
-      id_equipe: chasse.id_equipe,             // Il faut faire attention de récupérer l'id d'équipe de l'organisateur
+      id_equipe: chasse.id_equipe || 2,             // Il faut faire attention de récupérer l'id d'équipe de l'organisateur
     };
 
     const enigmesTable = chasse.enigmes?.map((enigme) => ({
@@ -101,10 +105,25 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
   }
 
   const handleSubmit = async () => {
+
+    // Génération d'un identifiant aléatoire pour la chasse
+    const chasseId = generateRandomId();
+
+    // Transformation des données en tables avec l'ID généré
+    const { chasseTable, enigmesTable, indicesTable } = transformFormDataToTables({
+      ...formData,
+      id_chasse: chasseId, // Assigner l'ID aléatoire
+    } as ChasseType);
+
+    console.log("Données transformées :");
+    console.log("Chasse :", chasseTable);
+    console.log("Énigmes :", enigmesTable);
+    console.log("Indices :", indicesTable);
+
     try {
       // Transformation des données du formulaire en tables
       const { chasseTable, enigmesTable, indicesTable } = transformFormDataToTables(formData as ChasseType);
-  
+
       console.log("Données transformées :");
       console.log("Chasse :", chasseTable);
       console.log("Énigmes :", enigmesTable);

@@ -5,15 +5,14 @@ VALUES
     ('bfdc30a0-7e79-4037-9024-184f814cb57a', 'ProprietaireTest', null, 'tesproprietairechateau@chateautresor.com', null, 'true', 'Test', 'Proprietaire', '2 Pl. Doyen Gosse', 'Grenoble', '38000', 'Standard', 'Proprietaire'),
     ('12b02e4a-34a8-4a83-838e-6206b201e948', 'OrganisateurTest', null, 'testorganisateur@chateautresor.com', null, 'true', 'Test', 'Organisateur', '2 Pl. Doyen Gosse', 'Grenoble', '38000', 'Standard', 'Organisateur'),
     ('a27901fd-3c67-4891-b7ac-55dd04a2f122', 'MembreEquipeTest', null, 'testmembreequipe@chateautresor.com', null, 'true', 'Test', 'MembreEquipe', '2 Pl. Doyen Gosse', 'Grenoble', '38000', 'Standard', 'MembreEquipe'),
-    ('16be6621-2b7e-4719-8937-ca30a4b9e3f3', 'anonyme', null, 'simonzeru08@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('4d7acb04-c25a-4d9f-8759-198d3fc80153', 'anonyme', null, 'rahim.boughendjour@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RXiLEp77Wa0ndo', 'Standard', 'Non spécifié'),
-    ('514e8181-1f82-4f81-8c16-00bf216d3b0a', 'anonyme', null, 'paul.moncenix-larue@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('5eae781d-4d1d-4551-8d42-0349fba17678', 'anonyme', null, 'matismld38@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc', 'anonyme', null, 'chateautresor@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('a25bc3fb-66e1-4be6-9d54-8ff6d106a552', 'anonyme', null, 'mangeurdecaca@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('d07d6711-4a1c-48b6-ab23-a726ae0c5586', 'anonyme', null, 'superadmin@chateautresor.fr', null, 'false', '"Non spécifié"', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('d566eb81-3bf9-4470-a89c-30ea8da57087', 'anonyme', null, 'paul.moncenix@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
-    ('e74e5007-b174-4c89-a439-d59d3d63e926', 'anonyme', null, 'yvan.d-ettorre@etu.univ-grenoble-alpes.fr', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RY00lPy1E9anl3', 'Standard', 'Non spécifié')
+    ('16be6621-2b7e-4719-8937-ca30a4b9e3f3', 'Simon', null, 'simonzeru08@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('4d7acb04-c25a-4d9f-8759-198d3fc80153', 'Rahim', null, 'rahim.boughendjour@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RXiLEp77Wa0ndo', 'Standard', 'Non spécifié'),
+    ('514e8181-1f82-4f81-8c16-00bf216d3b0a', 'Paul-ML', null, 'paul.moncenix-larue@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('5eae781d-4d1d-4551-8d42-0349fba17678', 'Matis', null, 'matismld38@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc', 'ChateauTresor', null, 'chateautresor@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('d07d6711-4a1c-48b6-ab23-a726ae0c5586', 'SuperAdmin', null, 'superadmin@chateautresor.fr', null, 'false', '"Non spécifié"', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('d566eb81-3bf9-4470-a89c-30ea8da57087', 'Paul', null, 'paul.moncenix@gmail.com', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', null, 'Standard', 'Non spécifié'),
+    ('e74e5007-b174-4c89-a439-d59d3d63e926', 'Yvan', null, 'yvan.d-ettorre@etu.univ-grenoble-alpes.fr', null, 'false', 'Jean Neymar', 'Non spécifiée', 'Non spécifiée', 'Non spécifié', 'cus_RY00lPy1E9anl3', 'Standard', 'Non spécifié')
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert data into Proprietaire_Chateau
@@ -32,10 +31,10 @@ VALUES
 ON CONFLICT (id_chateau) DO NOTHING;
 
 -- Insert data into Equipe_Organisatrice
-INSERT INTO public.Equipe_Organisatrice (id_equipe, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale, telephone, id_user)
+INSERT INTO public.Equipe_Organisatrice (id_equipe, nom type, n_siret, id_taxes, nb_membres, site_web, adresse_postale, telephone, id_user)
 VALUES
-    ('1', 'Association', null, null, '1', null, null, null, '12b02e4a-34a8-4a83-838e-6206b201e948'),
-    ('2', 'Entreprise', '33436749700172', 'FR89334367497', '0', 'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ', '01 44 04 70 00', '82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc')
+    ('1', 'EquipeTest', 'Association', null, null, '1', null, null, null, '12b02e4a-34a8-4a83-838e-6206b201e948'),
+    ('2', 'Samsung', '33436749700172', 'FR89334367497', '0', 'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ', '01 44 04 70 00', '82fac1a4-bcb2-4b1b-8f1d-c0d0c04310dc')
 ON CONFLICT (id_equipe) DO NOTHING;
 
 -- Insert data into Membre_equipe
