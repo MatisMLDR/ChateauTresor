@@ -3,6 +3,8 @@
 import { ChevronsUpDown, LogOut, UserPen } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
+import { SideBarProps } from '@/types';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -24,7 +26,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
-export function NavUser() {
+export function NavUser({user} : SideBarProps) {
   const { isMobile } = useSidebar();
   const [firstLetter, setFirstLetter] = useState('');
   const [email, setEmail] = useState('');
@@ -115,10 +117,12 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <UserPen />
-                Profil
-              </DropdownMenuItem>
+              <Link href={`${user === "organisateur" ? "organisateurs" : "participants"}/profil`}>
+                <DropdownMenuItem>
+                  <UserPen />
+                  Profil
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>

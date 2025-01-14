@@ -8,18 +8,17 @@ import {
   getAllParticipantChasses,
   getAllParticipantAvis,
   getAllParticipantIndice,
-  getAllParticipantEnigmes,
 } from "@/utils/dao/ParticipantUtils";
 
 jest.mock("@/utils/dao/ParticipantUtils");
 
 describe("Participant Class", () => {
   const mockParticipantData: ParticipantType = {
-    id_participant: 1,
+    id_participant: "8a5ff2e7-2852-479a-9aa0-abdc505adb88",
     nom: "Doe",
     prenom: "John",
     email: "john.doe@example.com",
-    id_user: "user_123",
+    id_user: "74df808b-48de-4a7b-b26f-e581a06f75b3",
     adresse: "123 Main St",
     ville: "Anytown",
     code_postal: "12345",
@@ -56,10 +55,10 @@ describe("Participant Class", () => {
 
   it("should fetch participant by ID", async () => {
     (getParticipantById as jest.Mock).mockResolvedValue(mockParticipantData);
-    const fetchedParticipant = await Participant.readId(1);
+    const fetchedParticipant = await Participant.readId("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
 
     expect(fetchedParticipant.getNom()).toBe("Doe");
-    expect(getParticipantById).toHaveBeenCalledWith(1);
+    expect(getParticipantById).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
   });
 
   it("should create a new participant", async () => {
@@ -70,8 +69,8 @@ describe("Participant Class", () => {
   });
 
   it("should delete a participant by ID", async () => {
-    await participant.deleteId(1);
-    expect(deleteParticipant).toHaveBeenCalledWith(1);
+    await participant.deleteId("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+    expect(deleteParticipant).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
   });
 
   it("should update a participant", async () => {
@@ -85,7 +84,7 @@ describe("Participant Class", () => {
 
     const chasses = await participant.getAllChasses();
     expect(chasses).toEqual(mockChasses);
-    expect(getAllParticipantChasses).toHaveBeenCalledWith(1);
+    expect(getAllParticipantChasses).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
   });
 
   it("should calculate the best chasse score", async () => {
@@ -118,7 +117,7 @@ describe("Participant Class", () => {
 
     const avis = await participant.getAllAvisDonnes();
     expect(avis).toEqual(mockAvis);
-    expect(getAllParticipantAvis).toHaveBeenCalledWith(1);
+    expect(getAllParticipantAvis).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
   });
 
   it("should calculate average avis note", async () => {

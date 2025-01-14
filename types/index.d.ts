@@ -211,8 +211,7 @@ export type EquipeOrganisatriceType = {
   nb_membres: number;             // INT, avec une valeur par défaut 0
   site_web: string | null;        // VARCHAR(255), peut être null
   adresse_postale: string;        // VARCHAR(255), avec une valeur par défaut 'Non spécifiée'
-  telephone: string | null;       // VARCHAR(20), peut être null
-  id_user: UUID;                // UUID, obligatoire, avec une contrainte de clé étrangère
+  telephone: string | null;       // VARCHAR(20), peut être null              
 }
 
 export type RecompenseType = {

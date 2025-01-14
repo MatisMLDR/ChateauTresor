@@ -1,15 +1,16 @@
 import { MembreEquipeClass } from "@/classes/MembreEquipe";
+import { MembreEquipeType } from "@/types";
 import { createMembre, deleteMembre, getMembreById, updateMembre } from "@/utils/dao/MembreEquipeUtils";
 
 jest.mock("@/utils/dao/MembreEquipeUtils");
 
 describe("MembreEquipeClass", () => {
-  const mockMembre = {
-    id_membre: 1,
+  const mockMembre: MembreEquipeType = {
+    id_membre: "8545523b-af23-4ed0-9be9-b3a09f52aec0",
     carte_identite: "12345ABC",
     est_verifie: true,
     role_equipe: "Admin",
-    id_user: "user123",
+    id_user: "24a83015-32e1-49a5-a6a9-e16fa417c67f",
   };
 
   beforeEach(() => {
@@ -18,23 +19,23 @@ describe("MembreEquipeClass", () => {
 
   it("should create an instance of MembreEquipe", () => {
     const membre = new MembreEquipeClass(mockMembre);
-    expect(membre.getIdMembre()).toBe(1);
+    expect(membre.getIdMembre()).toBe("8545523b-af23-4ed0-9be9-b3a09f52aec0");
     expect(membre.getCarteIdentite()).toBe("12345ABC");
     expect(membre.isVerifie()).toBe(true);
     expect(membre.getRoleEquipe()).toBe("Admin");
-    expect(membre.getIdUser()).toBe("user123");
+    expect(membre.getIdUser()).toBe("24a83015-32e1-49a5-a6a9-e16fa417c67f");
   });
 
   it("should retrieve a MembreEquipe by ID", async () => {
     (getMembreById as jest.Mock).mockResolvedValue(mockMembre);
-    const membre = await MembreEquipeClass.readId(1);
-    expect(membre.getIdMembre()).toBe(1);
-    expect(getMembreById).toHaveBeenCalledWith(1);
+    const membre = await MembreEquipeClass.readId("8545523b-af23-4ed0-9be9-b3a09f52aec0");
+    expect(membre.getIdMembre()).toBe("8545523b-af23-4ed0-9be9-b3a09f52aec0");
+    expect(getMembreById).toHaveBeenCalledWith("8545523b-af23-4ed0-9be9-b3a09f52aec0");
   });
 
   it("should throw an error if MembreEquipe not found", async () => {
     (getMembreById as jest.Mock).mockResolvedValue(null);
-    await expect(MembreEquipeClass.readId(999)).rejects.toThrow("Membre not found");
+    await expect(MembreEquipeClass.readId("8545523b-af23-4ed0-9be9-b3a09f52aec1")).rejects.toThrow("Membre not found");
   });
 
   it("should load data into MembreEquipeClass instance", async () => {
@@ -62,14 +63,14 @@ describe("MembreEquipeClass", () => {
   it("should delete a MembreEquipe by ID", async () => {
     (deleteMembre as jest.Mock).mockResolvedValue(true);
     const membre = new MembreEquipeClass(mockMembre);
-    await membre.deleteId(1);
-    expect(deleteMembre).toHaveBeenCalledWith(1);
+    await membre.deleteId("8545523b-af23-4ed0-9be9-b3a09f52aec0");
+    expect(deleteMembre).toHaveBeenCalledWith("8545523b-af23-4ed0-9be9-b3a09f52aec0");
   });
 
   it("should throw an error when deleting a non-existent MembreEquipe", async () => {
     (deleteMembre as jest.Mock).mockRejectedValue(new Error("Membre does not exist"));
     const membre = new MembreEquipeClass(mockMembre);
-    await expect(membre.deleteId(999)).rejects.toThrow("Membre does not exist");
+    await expect(membre.deleteId("8545523b-af23-4ed0-9be9-b3a09f52aec1")).rejects.toThrow("Membre does not exist");
   });
 
   it("should retrieve all MembreEquipe data as an object", () => {
