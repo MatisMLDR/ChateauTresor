@@ -1,12 +1,13 @@
 import { MembreEquipeType } from '@/types';
 import { createMembre, deleteMembre, getMembreById, updateMembre } from '@/utils/dao/MembreEquipeUtils';
+import { UUID } from "crypto";
 
 export class MembreEquipeClass {
   private id_membre: UUID;
   private carte_identite: string | null;
   private est_verifie: boolean;
   private role_equipe: string;
-  private id_user: string;
+  private id_user: UUID;
 
   constructor(membre: MembreEquipeType) {
     this.id_membre = membre.id_membre;
@@ -17,7 +18,7 @@ export class MembreEquipeClass {
   }
 
   // Getters
-  public getIdMembre(): number {
+  public getIdMembre(): UUID {
     return this.id_membre;
   }
 
@@ -33,7 +34,7 @@ export class MembreEquipeClass {
     return this.role_equipe;
   }
 
-  public getIdUser(): string {
+  public getIdUser(): UUID {
     return this.id_user;
   }
 

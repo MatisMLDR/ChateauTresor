@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -37,8 +38,8 @@ export async function getAllIndicesParticipants(id_indice: UUID): Promise<any> {
  * @throws Error si la récupération des indices échoue
  * @example const indices = await getIndiceById(1);
  */
-export async function getIndiceById(id: number): Promise<any> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/${id}`);
+export async function getIndiceById(id_indice: UUID): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/${id_indice}`);
     if (!res.ok) {
         throw new Error('Erreur lors de la récupération de l\'indice');
     }

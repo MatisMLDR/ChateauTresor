@@ -1,6 +1,7 @@
 import { EnigmeType } from "@/types";
 import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, updateEnigme } from "@/utils/dao/EnigmeUtils";
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
+import { UUID } from "crypto";
 
 export class Enigme {
   id_enigme: UUID;
@@ -24,7 +25,7 @@ export class Enigme {
   }
 
   // Getters
-  public getId(): number {
+  public getId(): UUID {
     return this.id_enigme;
   }
 
@@ -58,7 +59,7 @@ export class Enigme {
 
   // Setters
 
-  public setId(id: number): void {
+  public setId(id: UUID): void {
     this.id_enigme = id;
   }
 

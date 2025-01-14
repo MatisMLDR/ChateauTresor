@@ -1,5 +1,6 @@
 import {  IndiceType, TypeIndice } from "@/types";
 import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
+import { UUID } from "crypto";
 
 class Indice {
   private id_indice: UUID;
@@ -21,7 +22,7 @@ class Indice {
   }
 
   // Getters
-  public getId(): number {
+  public getId(): UUID {
     return this.id_indice;
   }
   public getType(): TypeIndice {
@@ -36,7 +37,7 @@ class Indice {
   public getOrdre(): number {
     return this.ordre;
   }
-  public getIdEnigme(): number {
+  public getIdEnigme(): UUID {
     return this.id_enigme;
   }
 
@@ -53,7 +54,7 @@ class Indice {
   public setOrdre(ordre: number): void {
     this.ordre = ordre;
   }
-  public setId(id: number): void {
+  public setId(id: UUID): void {
     this.id_indice = id;
   }
   public setIdEnigme(id_enigme: UUID): void {

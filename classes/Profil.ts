@@ -1,5 +1,6 @@
 import { ProfilType } from "@/types"; // Assurez-vous que le type Profile est correctement importé
 import { getProfilById, updateProfil, createProfil, deleteProfil } from "@/utils/dao/ProfilUtils";
+import { UUID } from "crypto";
 
 export class Profil {
   private id_profil: UUID;
@@ -17,7 +18,7 @@ export class Profil {
   private plan: string;
 
   constructor(profile: ProfilType) {
-    this.id_profil = profile.id;
+    this.id_profil = profile.id_profil;
     this.username = profile.username ?? "anonyme";
     this.updated_at = profile.updated_at ?? null;
     this.email = profile.email;
@@ -137,7 +138,7 @@ export class Profil {
   // Méthode pour récupérer les données du profil sous forme d'objet
   public getProfile(): ProfilType {
     return {
-      id: this.id_profil,
+      id_profil: this.id_profil,
       username: this.username,
       updated_at: this.updated_at,
       email: this.email,

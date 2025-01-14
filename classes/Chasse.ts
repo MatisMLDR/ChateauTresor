@@ -2,6 +2,7 @@ import { ChasseType } from "@/types";
 import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
+import { UUID } from "crypto";
 
 class Chasse {
   private id_chasse: UUID;
@@ -44,7 +45,7 @@ class Chasse {
 
   // Getters
 
-  public getIdChasse(): number {
+  public getIdChasse(): UUID {
     return this.id_chasse;
   }
   public getImage(): string | null {
@@ -80,10 +81,10 @@ class Chasse {
   public getTheme(): string {
     return this.theme;
   }
-  public getIdChateau(): number | null {
+  public getIdChateau(): UUID | null {
     return this.id_chateau;
   }
-  public getIdEquipe(): number | null {
+  public getIdEquipe(): UUID | null {
     return this.id_equipe;
   }
   public getStatut(): string {

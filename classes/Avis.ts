@@ -1,5 +1,7 @@
 import { AvisType } from "@/types";
 import { getAvisById, createAvis, deleteAvis, updateAvis } from '@/utils/dao/AvisUtils';
+import { UUID } from "crypto";
+
 
 class Avis {
   private id_avis: UUID;
@@ -24,7 +26,7 @@ class Avis {
 
   // Getters
 
-  public getIdAvis(): number {
+  public getIdAvis(): UUID {
     return this.id_avis;
   }
   public getNote(): number {
@@ -42,10 +44,10 @@ class Avis {
   public getDateModification(): string {
     return this.date_modification;
   }
-  public getIdChasse(): number {
+  public getIdChasse(): UUID {
     return this.id_chasse;
   }
-  public getIdParticipant(): number {
+  public getIdParticipant(): UUID {
     return this.id_participant;
   }
 

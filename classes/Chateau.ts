@@ -1,5 +1,6 @@
 import { ChateauType } from "@/types";
 import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
+import { UUID } from "crypto";
 
 class Chateau {
   private id_chateau: UUID;
@@ -12,7 +13,7 @@ class Chateau {
   private description: string;
   private image: string | null;
   private site_web: string | null;
-  private id_proprietaire: number | null;
+  private id_proprietaire: UUID | null;
 
   constructor(chateau: ChateauType) {
     this.id_chateau = chateau.id_chateau;
@@ -29,7 +30,7 @@ class Chateau {
   }
 
   // Getters
-  public getIdChateau(): number {
+  public getIdChateau(): UUID {
     return this.id_chateau;
   }
 
@@ -69,7 +70,7 @@ class Chateau {
     return this.site_web;
   }
 
-  public getIdProprietaire(): number | null {
+  public getIdProprietaire(): UUID | null {
     return this.id_proprietaire;
   }
 
@@ -114,7 +115,7 @@ class Chateau {
     this.site_web = site_web;
   }
 
-  public setIdProprietaire(id_proprietaire: number | null): void {
+  public setIdProprietaire(id_proprietaire: UUID | null): void {
     this.id_proprietaire = id_proprietaire;
   }
 

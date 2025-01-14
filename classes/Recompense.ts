@@ -1,8 +1,9 @@
 import { RecompenseType } from "@/types";
 import { createRecompense, deleteRecompense, getRecompenseById, updateRecompense } from '@/utils/dao/RecompenseUtils';
+import { UUID } from "crypto";
 
 class Recompense {
-    private id_recompense: UUID;
+    private id_recompense: UUID | null;
     private nom: string;
     private description: string;
     private type: string;
@@ -14,7 +15,7 @@ class Recompense {
     private id_chasse: UUID | null;
 
     constructor(recompense: RecompenseType) {
-        this.id_recompense = recompense.id_recompense ?? -1;
+        this.id_recompense = recompense.id_recompense ?? null;
         this.nom = recompense.nom;
         this.description = recompense.description;
         this.type = recompense.type;
@@ -26,7 +27,7 @@ class Recompense {
         this.id_chasse = recompense.id_chasse;
     }
 
-    public getIdRecompense(): number {
+    public getIdRecompense(): UUID | null {
         return this.id_recompense;
     }
 
@@ -62,7 +63,7 @@ class Recompense {
         return this.date_modification;
     }
 
-    public getIdChasse(): number | null {
+    public getIdChasse(): UUID | null {
         return this.id_chasse;
     }
 

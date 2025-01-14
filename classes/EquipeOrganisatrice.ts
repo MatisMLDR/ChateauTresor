@@ -1,5 +1,6 @@
 import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
 import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
+import { UUID } from "crypto";
 
 class EquipeOrganisatrice {
   private id_equipe: UUID;
@@ -25,7 +26,7 @@ class EquipeOrganisatrice {
   }
 
   // Getters
-  public getIdEquipe(): number {
+  public getIdEquipe(): UUID {
     return this.id_equipe;
   }
   public getType(): string {

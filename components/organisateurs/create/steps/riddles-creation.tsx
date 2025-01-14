@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useEffect } from "react";
-import { ChasseType, EnigmeType, Indice, IndiceType } from '@/types';
+import { ChasseType, EnigmeType, IndiceType } from '@/types';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,14 +49,14 @@ const generateRandomId = () => {
 };
 
 // Create a new SortableItem component
-function SortableClue({ clue, index, updateClue, removeClue }) {
+function SortableClue({ clue, index, updateClue, removeClue }: { clue: IndiceType, index: number, updateClue: (index: number, field: string, value: any) => void, removeClue: (index: number) => void }) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: clue.id });
+  } = useSortable({ id: clue.id_enigme });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -73,7 +73,7 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
             type="file"
             accept="image/*"
             onChange={(e) =>
-              updateClue(index, "content", e.target.files[0])
+              updateClue(index, "content", e.target.files ? e.target.files[0] : null)
             }
             className="pt-1"
           />
@@ -84,7 +84,7 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
             type="file"
             accept="audio/*"
             onChange={(e) =>
-              updateClue(index, "content", e.target.files[0])
+              updateClue(index, "content", e.target.files ? e.target.files[0] : null)
             }
             className="pt-1"
           />
@@ -115,7 +115,7 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
       <div className="flex-1 space-y-2">
         <Select
           value={clue.type}
-          onValueChange={(value: IndiceType) =>
+          onValueChange={(value: string) =>
             updateClue(index, "type", value)
           }
         >
@@ -130,11 +130,11 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
         </Select>
         {renderContentInput()}
         <div className="flex items-center gap-2">
-          <Label htmlFor={`degre-aide-${clue.id}`} className="whitespace-nowrap">
+          <Label htmlFor={`degre-aide-${clue.id_enigme}`} className="whitespace-nowrap">
             Degré d'aide
           </Label>
           <Input
-            id={`degre-aide-${clue.id}`}
+            id={`degre-aide-${clue.id_enigme}`}
             type="number"
             min="1"
             max="5"
@@ -158,14 +158,14 @@ function SortableClue({ clue, index, updateClue, removeClue }) {
 }
 
 // Add SortableRiddle component
-function SortableRiddle({ riddle, index, removeRiddle }) {
+function SortableRiddle({ riddle, index, removeRiddle }: { riddle: EnigmeType, index: number, removeRiddle: (index: number) => void }) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: riddle.id });
+  } = useSortable({ id: riddle.id_enigme });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -189,9 +189,9 @@ function SortableRiddle({ riddle, index, removeRiddle }) {
           </Button>
         </CardHeader>
         <CardContent>
-          <p className="font-medium">{riddle.question}</p>
+          <p className="font-medium">{riddle.titre}</p>
           <div className="mt-4 space-y-2">
-            {riddle.indices.map((indice, i) => (
+            {riddle.indices?.map((indice, i) => (
               <div key={`${indice.id}-${i}`} className="text-sm text-muted-foreground">
                 <span>Clue {i + 1}:</span>
                 <span className="ml-2">{indice.contenu}</span>
@@ -285,28 +285,32 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     });
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: any) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      const oldIndex = newRiddle.indices.findIndex((clue) => clue.id_indice === active.id);
-      const newIndex = newRiddle.indices.findIndex((clue) => clue.id_indice === over.id);
+      const oldIndex = newRiddle.indices?.findIndex((clue) => clue.id_indice === active.id);
+      const newIndex = newRiddle.indices?.findIndex((clue) => clue.id_indice === over.id);
 
-      const newClues = arrayMove(newRiddle.indices, oldIndex, newIndex);
-      setNewRiddle({ ...newRiddle, indices: newClues });
+      if (oldIndex !== undefined && newIndex !== undefined) {
+        const newClues = arrayMove(newRiddle.indices!, oldIndex, newIndex);
+        setNewRiddle({ ...newRiddle, indices: newClues });
+      }
     }
   };
 
-  const handleRiddleDragEnd = (event) => {
+  const handleRiddleDragEnd = (event: any) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = formData.enigmes.findIndex((r) => r.id === active.id);
-      const newIndex = formData.enigmes.findIndex((r) => r.id === over.id);
+      const oldIndex = formData.enigmes?.findIndex((r) => r.id_enigme === active.id);
+      const newIndex = formData.enigmes?.findIndex((r) => r.id_enigme === over.id);
 
-      setFormData({
-        ...formData,
-        enigmes: arrayMove(formData.enigmes || [], oldIndex, newIndex),
-      });
+      if (oldIndex !== undefined && newIndex !== undefined) {
+        setFormData({
+          ...formData,
+          enigmes: arrayMove(formData.enigmes || [], oldIndex, newIndex),
+        });
+      }
     }
   };
 
@@ -318,12 +322,13 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
         onDragEnd={handleRiddleDragEnd}
       >
         <SortableContext
-          items={formData.enigmes?.map((riddle) => riddle.id) || []}
+        key={newRiddle.id_enigme}
+          items={formData.enigmes?.map((riddle) => riddle.id_enigme) || []}
           strategy={verticalListSortingStrategy}
         >
           {formData.enigmes?.map((riddle, index) => (
             <SortableRiddle
-              key={riddle.id}
+              key={riddle.id_enigme} // Add unique key prop
               riddle={riddle}
               index={index}
               removeRiddle={removeRiddle}
@@ -343,7 +348,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <Label htmlFor="titre">Titre de l'énigme</Label>
             <Textarea
               id="titre"
-              value={newRiddle.titre || ''}
+              value={newRiddle.titre ?? ''}
               onChange={(e) => setNewRiddle({ ...newRiddle, titre: e.target.value })}
               placeholder="Entrez le titre de l'énigme"
             />
@@ -354,7 +359,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <Label htmlFor="description">Contenu de l'énigme</Label>
             <Textarea
               id="description"
-              value={newRiddle.description || ''}
+              value={newRiddle.description ?? ''}
               onChange={(e) => setNewRiddle({ ...newRiddle, description: e.target.value })}
               placeholder="Entrez le contenu de l'énigme"
             />
@@ -376,12 +381,13 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={newRiddle.indices.map((clue) => clue.id_indice)}
+                key={newRiddle.id_enigme}
+                items={newRiddle.indices?.map((clue) => clue.id_indice) || []}
                 strategy={verticalListSortingStrategy}
               >
                 {newRiddle.indices?.map((clue, index) => (
                   <SortableClue
-                    key={clue.id_indice}
+                    key={clue.id_indice} // Add unique key prop
                     clue={clue}
                     index={index}
                     updateClue={updateClue}
@@ -397,7 +403,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <Label htmlFor="endroit_qrcode">Endroit du QR Code</Label>
             <Input
               id="endroit_qrcode"
-              value={newRiddle.endroit_qrcode || ''}
+              value={newRiddle.endroit_qrcode ?? ''}
               onChange={(e) => setNewRiddle({ ...newRiddle, endroit_qrcode: e.target.value })}
               placeholder="Entrer la localisation exacte du QR Code"
             />
@@ -411,7 +417,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
               type="number"
               min={0}
               step={5}
-              value={newRiddle.temps_max || 0}
+              value={newRiddle.temps_max ?? 0}
               onChange={(e) => setNewRiddle({ ...newRiddle, temps_max: parseInt(e.target.value) })}
             />
           </div>
@@ -421,7 +427,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <Label htmlFor="description_reponse">Description de la réponse de l'énigme</Label>
             <Textarea
               id="description_reponse"
-              value={newRiddle.description_reponse || ''}
+              value={newRiddle.description_reponse ?? ''}
               onChange={(e) => setNewRiddle({ ...newRiddle, description_reponse: e.target.value })}
               placeholder="Entrez la description de la réponse de l'énigme"
             />
@@ -433,7 +439,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <Input
               id="image_reponse"
               type="file"
-              value={newRiddle.image_reponse || ''}
+              value={newRiddle.image_reponse ?? ''}
               onChange={(e) => setNewRiddle({ ...newRiddle, image_reponse: e.target.value })}
               placeholder="Entrez la description de la réponse de l'énigme"
             />
@@ -452,7 +458,10 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           <CreateIndice
             onClose={() => setShowClueModal(false)}
             onSubmit={(clue) => {
-              handleClueSubmit(clue);
+              handleClueSubmit({
+                ...clue,
+                content: clue.contenu,
+              });
               setShowClueModal(false);
             }}
           />

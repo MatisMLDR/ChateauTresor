@@ -1,5 +1,6 @@
 import { Haut_FaitType } from "@/types";
 import { createHaut_Fait, deleteHaut_Fait, getHaut_FaitById, updateHaut_Fait } from '@/utils/dao/Haut_FaitUtils';
+import { UUID } from "crypto";
 
 class Haut_Fait {
     private id_haut_fait: UUID;
@@ -18,7 +19,7 @@ class Haut_Fait {
         this.date = haut_fait.date;
     }
 
-    public getIdHaut_Fait(): number {
+    public getIdHaut_Fait(): UUID {
         return this.id_haut_fait;
     }
 
