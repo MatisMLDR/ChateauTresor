@@ -1,30 +1,19 @@
-'use client';
-
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Chasse from '@/classes/Chasse';
+import { UUID } from 'crypto';
 
-const ChasseDetailsPage: React.FC = () => {
-  const params = useParams(); // Utilisez useParams pour récupérer les paramètres
-  const [chasse, setChasse] = useState<any | null>(null);
+const ChasseDetailsPage = async ({ params }: {params: {id: UUID}}) => {
 
-  useEffect(() => {
-    const fetchChasse = async () => {
-      try {
-        const response = await fetch(`/api/chasses/${params.id}`);
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération de la chasse');
-        }
-        const data = await response.json();
-        setChasse(data);
-      } catch (err) {
-        console.error('Erreur lors de la récupération des détails de la chasse :', err);
-      }
-    };
+  // Récupérer l'id de la chasse depuis les search params
+  const { id } = await params;
+  // Récupérer les informations de la chasse
+  const chasse = await Chasse.readId(id);
 
-    fetchChasse();
-  }, [params.id]);
+  const note = await chasse.getNoteMoyenne();
+
+  const avis = await chasse.getAllAvis();
 
   if (!chasse) {
     return <div>Chargement des informations de la chasse...</div>;
@@ -32,25 +21,40 @@ const ChasseDetailsPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">{chasse.titre}</h1>
+      <h1 className="text-3xl font-bold mb-4">{chasse.getTitre()}</h1>
       <img
-        src={chasse.image}
-        alt={chasse.titre}
+        src={chasse.getImage() || '/default-chasse.jpg'}
+        alt={chasse.getTitre()}
         className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4"
       />
-      <p className="text-lg text-gray-700 mb-4">{chasse.description}</p>
+      <p className="text-lg text-gray-700 mb-4">{chasse.getDescription()}</p>
       <div className="text-md font-medium text-gray-800">
-        <p>Difficulté : {chasse.difficulte} / 3</p>
-        <p>Prix : {chasse.prix} €</p>
+        <p>Nb etoiles : {note} / 5</p>
+        <p>Difficulté : {chasse.getDifficulte()} / 3</p>
+        <p>Prix : {chasse.getPrix()} €</p>
         <p>
-          Date : {new Date(chasse.date_debut).toLocaleDateString()} -{' '}
-          {new Date(chasse.date_fin).toLocaleDateString()}
+          Date : {new Date(chasse.getDateDebut()).toLocaleDateString()} -{' '}
+          {new Date(chasse.getDateFin()).toLocaleDateString()}
         </p>
-        <Button className='text-gray-50'>
-          <Link href={`/participants/chasses/${params.id}/inscription`}>
+        <Button>
+          <Link href={`/participants/chasses/${id}/inscription`}>
             Réserver
           </Link>
         </Button>
+      </div>
+      <div>
+        {avis
+          .sort((a, b) => {
+            if (
+              new Date(a.getDateModification()) > new Date(b.DateModification)
+            ) {
+              return -1;
+            }
+            return 1;
+          })
+          .map((avis) => (
+            <CardAvis key={avis.getIdAvis()} avis={avis} />
+          )}
       </div>
     </div>
   );
