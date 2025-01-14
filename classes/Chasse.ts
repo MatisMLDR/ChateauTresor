@@ -25,7 +25,7 @@ class Chasse {
   private id_equipe: UUID | null;
 
   constructor(chasse: ChasseType) {
-    this.id_chasse = chasse.id_chasse ?? -1;
+    this.id_chasse = chasse.id_chasse as UUID;
     this.titre = chasse.titre ?? "Nouvelle Chasse";
     this.capacite = chasse.capacite ?? 0;
     this.description = chasse.description ?? "Pas de description";
