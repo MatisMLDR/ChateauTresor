@@ -8,9 +8,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
   try {
     const resolvedParams = await params; // Résolution des paramètres
-    const idAvis = parseInt(resolvedParams.id);
+    const idAvis = resolvedParams.id;
 
-    if (!idAvis || isNaN(idAvis)) {
+    if (!idAvis) {
       return NextResponse.json(
         { error: 'Paramètre id manquant ou invalide' },
         { status: 400 }
@@ -54,9 +54,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
   try {
     const resolvedParams = await params;
-    const idAvis = parseInt(resolvedParams.id);
+    const idAvis = resolvedParams.id;
 
-    if (!idAvis || isNaN(idAvis)) {
+    if (!idAvis) {
       return NextResponse.json(
         { error: 'Paramètre id manquant ou invalide' },
         { status: 400 }
@@ -96,9 +96,9 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 
   try {
     const resolvedParams = await params;
-    const idAvis = parseInt(resolvedParams.id);
+    const idAvis = resolvedParams.id;
 
-    if (!idAvis || isNaN(idAvis)) {
+    if (!idAvis) {
       return NextResponse.json(
         { error: 'Paramètre id manquant ou invalide' },
         { status: 400 }

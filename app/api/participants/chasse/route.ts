@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const idChasse = searchParams.get('id_chasse');
 
   // Vérification du paramètre id_chasse
-  if (!idChasse || isNaN(Number(idChasse))) {
+  if (!idChasse) {
     return NextResponse.json(
       { error: 'Paramètre id_chasse invalide ou manquant' },
       { status: 400 }
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const { data: participations, error: participationsError } = await supabase
       .from('participation')
       .select('id_participant')
-      .eq('id_chasse', parseInt(idChasse, 10));
+      .eq('id_chasse', idChasse);
 
     if (participationsError) {
       return NextResponse.json(

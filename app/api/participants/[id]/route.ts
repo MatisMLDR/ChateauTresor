@@ -9,7 +9,7 @@ export async function GET(
   const supabase = createClient();
   const idParticipant = params.id;
 
-  if (!idParticipant || isNaN(Number(idParticipant))) {
+  if (!idParticipant) {
     return NextResponse.json(
       { error: 'Paramètre id_participant invalide ou manquant' },
       { status: 400 }
@@ -20,7 +20,7 @@ export async function GET(
     const { data, error } = await supabase
       .from('participants')
       .select('*')
-      .eq('id_participant', parseInt(idParticipant, 10))
+      .eq('id_participant', idParticipant)
       .single();
 
     if (error) {
@@ -54,7 +54,7 @@ export async function PUT(
   const supabase = createClient();
   const idParticipant = params.id;
 
-  if (!idParticipant || isNaN(Number(idParticipant))) {
+  if (!idParticipant) {
     return NextResponse.json(
       { error: 'Paramètre id_participant invalide ou manquant' },
       { status: 400 }
@@ -67,7 +67,7 @@ export async function PUT(
     const { error } = await supabase
       .from('participants')
       .update(body)
-      .eq('id_participant', parseInt(idParticipant, 10));
+      .eq('id_participant', idParticipant);
 
     if (error) {
       return NextResponse.json(
@@ -93,7 +93,7 @@ export async function DELETE(
   const supabase = createClient();
   const idParticipant = params.id;
 
-  if (!idParticipant || isNaN(Number(idParticipant))) {
+  if (!idParticipant) {
     return NextResponse.json(
       { error: 'Paramètre id_participant invalide ou manquant' },
       { status: 400 }
@@ -104,7 +104,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('participants')
       .delete()
-      .eq('id_participant', parseInt(idParticipant, 10));
+      .eq('id_participant', idParticipant);
 
     if (error) {
       return NextResponse.json(
