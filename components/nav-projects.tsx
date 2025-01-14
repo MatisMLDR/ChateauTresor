@@ -30,20 +30,23 @@ export function NavProjects({
   user,
 }: {
   chasse: {
-    id: number;
+    id: string;
   }[];
   user: SideBarProps['user'];
 }) {
   const { isMobile } = useSidebar();
-  const [chasseNames, setChasseNames] = useState<Record<number, string>>({});
+  const [chasseNames, setChasseNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     // Fonction pour récupérer le nom d'une chasse depuis l'API
-    const fetchChasseName = async (id: number) => {
+    const fetchChasseName = async (id: string) => {
       try {
         const response = await fetch(`/api/chasses/${id}`);
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
         const data = await response.json();
-        return data.name; // Supposons que l'API retourne un objet avec un champ "name"
+        return data.titre; // Supposons que l'API retourne un objet avec un champ "name"
       } catch (error) {
         console.error(`Erreur lors de la récupération de la chasse ${id}`, error);
         return 'Nom indisponible';
@@ -52,11 +55,16 @@ export function NavProjects({
 
     // Récupérer tous les noms des chasses
     const fetchAllChasseNames = async () => {
-      const names: Record<number, string> = {};
-      for (const item of chasse) {
-        names[item.id] = await fetchChasseName(item.id);
+      const names: Record<string, string> = {};
+      try {
+        const namesArray = await Promise.all(chasse.map((item) => fetchChasseName(item.id)));
+        chasse.forEach((item, index) => {
+          names[item.id] = namesArray[index];
+        });
+        setChasseNames(names);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des noms des chasses', error);
       }
-      setChasseNames(names);
     };
 
     fetchAllChasseNames();
@@ -73,7 +81,7 @@ export function NavProjects({
             <SidebarMenuButton asChild>
               {/* Adapte l'URL en fonction du rôle de l'utilisateur */}
               <Link
-                href={`${user === 'organisateur' ? '/participants/play/' : '/organisateurs/modifier_chasse/'}${item.id}`}
+                href={`${user === 'organisateur' ? '/organisateurs/modifier_chasse/' : '/participants/play/'}${item.id}`}
               >
                 <Map />
                 {chasseNames[item.id] || <Skeleton className={'h-full w-full'} />}
@@ -140,7 +148,6 @@ export function NavProjects({
                     </Link>
                   </>
                 )}
-                <DropdownMenuSeparator />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
