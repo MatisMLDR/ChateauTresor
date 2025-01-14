@@ -63,7 +63,7 @@ export type IndiceType = {
 
 // Énigme
 export type EnigmeType = {
-  id_enigme: UUID;
+  id_enigme?: UUID;
   id_chasse: UUID;
   titre: string;
   indices?: Indice[];
@@ -81,7 +81,7 @@ export type EnigmeType = {
 ///////////
 
 export type ChasseType = {
-  id_chasse: UUID; // Identifiant unique, SERIAL, non null
+  id_chasse?: UUID; // Identifiant unique, SERIAL, non null
   titre?: string; // Optionnel, par défaut 'Nouvelle Chasse'
   capacite?: number; // Optionnel, par défaut 0
   description?: string; // Optionnel, par défaut 'Pas de description'
@@ -97,7 +97,7 @@ export type ChasseType = {
   theme?: string; // Optionnel, par défaut 'Aucun thème'
   statut?: string; // Optionnel, par défaut 'Inactif'
   id_chateau?: UUID | null; // Peut être null, clé étrangère vers Chateau(id_chateau)
-  id_equipe?: UUID | null; // Peut être null, clé étrangère vers Equipe_Organisatrice(id_equipe)
+  id_equipe?: UUID;
   chateau?: ChateauType;
   enigmes?: EnigmeType[];
   rewards?: RecompenseType[];
@@ -116,7 +116,7 @@ export type ParticipantType = {
   plan: string;
   updated_at: string;
   stripe_id: string;
-  
+
 }
 
 export type ChateauType = {

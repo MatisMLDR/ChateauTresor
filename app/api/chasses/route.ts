@@ -32,20 +32,15 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
 
-    // Supprimer id_chasse si fourni accidentellement
-    if ('id_chasse' in body) {
-      delete body.id_chasse;
-    }
-
     // Validation de la structure des données
-    if (!body.titre || typeof body.titre !== 'string') {
+    if (!body.titre) {
       return NextResponse.json(
         { error: 'Le champ "titre" est manquant ou invalide (doit être une chaîne de caractères)' },
         { status: 400 }
       );
     }
 
-    if (!body.id_chateau || typeof body.id_chateau !== 'number') {
+    if (!body.id_chateau) {
       return NextResponse.json(
         { error: 'Le champ "id_chateau" est manquant ou invalide (doit être un nombre)' },
         { status: 400 }
