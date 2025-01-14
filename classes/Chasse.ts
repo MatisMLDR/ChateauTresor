@@ -333,6 +333,12 @@ class Chasse {
     return isAvailable;
   }
 
+  public static async getAllDisponibles(): Promise<any> {
+    const chasses = await getAllChassesDisponibles();
+    
+    return chasses.map((chasse: any) => new Chasse(chasse));
+  }
+
   // Méthodes pour calculer des statistiques
   /*
   * Méthode pour calculer la durée moyenne des participations à une chasse

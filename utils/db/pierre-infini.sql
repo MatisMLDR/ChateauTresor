@@ -407,3 +407,29 @@ VALUES
     ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'Seigneur de Chenonceau', 'Pas de description', 'Terminer la chasse aux trésors du châteaux de Chenonceau', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07'),
     ('57be79ad-b153-4122-a0ba-4b60e0ee496b', 'Seigneur d''Amboise', 'Pas de description', 'Terminer la chasse aux trésors du châteaux d''Amboise', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07')
 ON CONFLICT (id_haut_fait) DO NOTHING;
+
+-- Création de la vue pour les chasses non terminées
+CREATE VIEW vue_chasses_non_terminees AS
+SELECT 
+    id_chasse,
+    titre,
+    capacite,
+    description,
+    age_requis,
+    image,
+    date_creation,
+    date_modification,
+    date_debut,
+    date_fin,
+    prix,
+    difficulte,
+    duree_estime,
+    theme,
+    statut,
+    id_chateau,
+    id_equipe
+FROM 
+    public.Chasse
+WHERE 
+    date_fin IS NULL 
+    OR date_fin > CURRENT_TIMESTAMP;
