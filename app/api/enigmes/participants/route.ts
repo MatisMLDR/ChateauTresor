@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const idEnigme = searchParams.get('id_enigme');
 
   // Vérification du paramètre
-  if (!idEnigme || isNaN(Number(idEnigme))) {
+  if (!idEnigme) {
     return NextResponse.json(
       { error: 'Paramètre id_enigme invalide ou manquant' },
       { status: 400 }
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
       .from('enigme_participant')
       .select('*')
-      .eq('id_enigme', parseInt(idEnigme, 10));
+      .eq('id_enigme', idEnigme);
 
     // Vérification des erreurs de la requête
     if (error) {

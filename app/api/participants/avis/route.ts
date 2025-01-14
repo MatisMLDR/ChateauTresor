@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const idParticipant = searchParams.get('id_participant');
 
-  if (!idParticipant || isNaN(Number(idParticipant))) {
+  if (!idParticipant) {
     return NextResponse.json(
       { error: 'Paramètre id_participant invalide ou manquant' },
       { status: 400 }
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
       .from('avis')
       .select('*')
-      .eq('id_participant', parseInt(idParticipant, 10));
+      .eq('id_participant', idParticipant);
 
     if (error) {
       return NextResponse.json(

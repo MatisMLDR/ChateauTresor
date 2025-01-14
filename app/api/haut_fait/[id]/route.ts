@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id = parseInt(params.id, 10);
+  const id = params.id;
 
   try {
     const { data, error } = await supabase.from('haut_fait').select('*').eq('id_haut_fait', id).single();
@@ -18,7 +18,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id = parseInt(params.id, 10);
+  const id = params.id;
 
   try {
     const body = await request.json();
@@ -34,7 +34,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id = parseInt(params.id, 10);
+  const id = params.id;
 
   try {
     const { error } = await supabase.from('haut_fait').delete().eq('id_haut_fait', id);

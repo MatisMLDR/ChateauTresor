@@ -41,7 +41,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
   try {
     const resolvedParams = await params;
-    const chasseId = parseInt(resolvedParams.id);
+    const chasseId = resolvedParams.id;
 
     if (!chasseId) {
       return NextResponse.json({ error: 'Paramètre id manquant ou invalide' }, { status: 400 });
@@ -75,7 +75,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   const supabase = createClient();
   try {
     const resolvedParams = await params;
-    const chasseId = parseInt(resolvedParams.id);
+    const chasseId = resolvedParams.id;
 
     if (!chasseId) {
       return NextResponse.json({ error: 'Paramètre id manquant ou invalide' }, { status: 400 });
