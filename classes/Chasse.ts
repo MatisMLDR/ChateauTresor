@@ -1,5 +1,5 @@
 import { ChasseType } from "@/types";
-import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse } from '@/utils/dao/ChasseUtils';
+import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
@@ -157,107 +157,117 @@ class Chasse {
    */
   public static async readId(id_chasse: UUID): Promise<any> {
 
-      const data = await getChasseById(id_chasse) as any;
+    const data = await getChasseById(id_chasse) as any;
 
-      if (!data) {
-        throw new Error("La chasse n'existe pas");
-      }
-    
-      return new Chasse(data);
+    if (!data) {
+      throw new Error("La chasse n'existe pas");
+    }
+
+    return new Chasse(data);
   }
 
   public async read(): Promise<any> {
-      if (!this.id_chasse) {
-          throw new Error('Avis ID is required');
-      }
-  
-      const avis = await getChasseById(this.id_chasse) as any
-  
-      if (!avis) {
-          throw new Error('Chasse not found');
-      }
-  
-      return new Chasse(avis);
-    }
-  
-    public async load(): Promise<void> {
-      if (!this.id_chasse) {
-          throw new Error('Chasse ID is required');
-      }
-  
-      const avis = await getChasseById(this.id_chasse) as any
-  
-      if (!avis) {
-          throw new Error('Chasse not found');
-      }
-  
-      this.id_chasse = avis.id_chasse;
-      this.titre = avis.titre;
-      this.capacite = avis.capacite;
-      this.description = avis.description;
-      this.age_requis = avis.age_requis;
-      this.image = avis.image;
-      this.date_creation = avis.date_creation;
-      this.date_modification = avis.date_modification;
-      this.date_debut = avis.date_debut;
-      this.date_fin = avis.date_fin;
-      this.prix = avis.prix;
-      this.difficulte = avis.difficulte;
-      this.duree_estime = avis.duree_estime;
-      this.theme = avis.theme;
-      this.statut = avis.statut;
-      this.id_chateau = avis.id_chateau;
-      this.id_equipe = avis.id_equipe;
+    if (!this.id_chasse) {
+      throw new Error('Avis ID is required');
     }
 
-    public async getAllEnigmes(): Promise<any> {
-      // Récupération dans la base des énigmes de chaques participations avec l'id de la chasse
-  
-      // On récupère les données
-      const data = await getAllEnigmesByChasse(this.id_chasse);
+    const avis = await getChasseById(this.id_chasse) as any
 
-      if (data.length === 0) {
-        return [];
-      }
+    if (!avis) {
+      throw new Error('Chasse not found');
+    }
 
-      return data;
+    return new Chasse(avis);
+  }
+
+  public async load(): Promise<void> {
+    if (!this.id_chasse) {
+      throw new Error('Chasse ID is required');
     }
-  
-    public async create(): Promise<void> {
-      const avis = await createChasse(this) as any
-  
-      if (!avis) {
-          throw new Error('Chasse not created');
-      }
+
+    const avis = await getChasseById(this.id_chasse) as any
+
+    if (!avis) {
+      throw new Error('Chasse not found');
     }
-  
-    public async deleteId(id_chasse: UUID): Promise<void> {
-      try {
-        await deleteChasse(id_chasse);
-      } catch (error) {
-          throw new Error('Chasse does not exist');
-      }
+
+    this.id_chasse = avis.id_chasse;
+    this.titre = avis.titre;
+    this.capacite = avis.capacite;
+    this.description = avis.description;
+    this.age_requis = avis.age_requis;
+    this.image = avis.image;
+    this.date_creation = avis.date_creation;
+    this.date_modification = avis.date_modification;
+    this.date_debut = avis.date_debut;
+    this.date_fin = avis.date_fin;
+    this.prix = avis.prix;
+    this.difficulte = avis.difficulte;
+    this.duree_estime = avis.duree_estime;
+    this.theme = avis.theme;
+    this.statut = avis.statut;
+    this.id_chateau = avis.id_chateau;
+    this.id_equipe = avis.id_equipe;
+  }
+
+  public async getAllEnigmes(): Promise<any> {
+    // Récupération dans la base des énigmes de chaques participations avec l'id de la chasse
+
+    // On récupère les données
+    const data = await getAllEnigmesByChasse(this.id_chasse);
+
+    if (data.length === 0) {
+      return [];
     }
-  
+
+    return data;
+  }
+
+  public async create(): Promise<void> {
+    const avis = await createChasse(this) as any
+
+    if (!avis) {
+      throw new Error('Chasse not created');
+    }
+  }
+
+  public static async getAllChasses(): Promise<any> {
+    const data = await getAllChasses() as any;
+
+    if (!data) {
+      throw new Error('Chasses not found');
+    }
+
+    return data.map((chasse: any) => new Chasse(chasse));
+  }
+
+  public async deleteId(id_chasse: UUID): Promise<void> {
+    try {
+      await deleteChasse(id_chasse);
+    } catch (error) {
+      throw new Error('Chasse does not exist');
+    }
+  }
+
   public async delete(): Promise<void> {
     console.log("Delete : ChasseId : ", this.id_chasse);
-      if (!this.id_chasse) {
-        throw new Error('id_chasse is required');
-      }
-      try {
-        await deleteChasse(this.id_chasse);
-      } catch (error) {
-          throw new Error('Chasse does not exist');
-      }
+    if (!this.id_chasse) {
+      throw new Error('id_chasse is required');
     }
-  
-    public async update(): Promise<void> {
-      try {
-        await updateChasse(this);
-      } catch (error) {
-          throw new Error('Chasse does not exist');
-      }
+    try {
+      await deleteChasse(this.id_chasse);
+    } catch (error) {
+      throw new Error('Chasse does not exist');
     }
+  }
+
+  public async update(): Promise<void> {
+    try {
+      await updateChasse(this);
+    } catch (error) {
+      throw new Error('Chasse does not exist');
+    }
+  }
   // Méthodes pour calculer des statistiques
   /*
   * Méthode pour calculer la durée moyenne des participations à une chasse
@@ -310,7 +320,7 @@ class Chasse {
     // On calcule la somme des scores
     const sum = data.reduce((acc: number, participation: any) => acc + participation.score, 0);
     // On retourne la moyenne
-    return (sum / data.length)  * 100;
+    return (sum / data.length) * 100;
   }
 
   /*

@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import CardChasse from '@/components/CardChasse';
+import Chasse from '@/classes/Chasse';
 
 const ChasseListPage: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
@@ -11,9 +13,8 @@ const ChasseListPage: React.FC = () => {
   useEffect(() => {
     const fetchChasses = async () => {
       try {
-        const response = await fetch('/api/chasses'); // API pour récupérer toutes les chasses
-        const data = await response.json();
-        setChasses(data);
+        const everyChasses = await Chasse.getAllChasses();
+        setChasses(everyChasses);
       } catch (err) {
         console.error('Erreur lors de la récupération des chasses :', err);
       }
@@ -46,23 +47,7 @@ const ChasseListPage: React.FC = () => {
         {/* Liste des chasses */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {chassesFiltrees.map((chasse) => (
-            <div key={chasse.id_chasse} className="border rounded-md p-4 shadow-md">
-              <img
-                src={chasse.image || '/default-chasse.jpg'}
-                alt={chasse.titre}
-                className="w-full h-40 object-cover rounded-md mb-4"
-              />
-              <h3 className="font-bold text-lg mb-2">{chasse.titre}</h3>
-              <p className="text-gray-600 text-sm mb-2">{chasse.description}</p>
-              <p className="text-gray-800 font-medium">Difficulté : {chasse.difficulte} / 3</p>
-              <p className="text-gray-800 font-medium">Prix : {chasse.prix} €</p>
-
-              <Link href={`/participants/chasses/${chasse.id_chasse}`}>
-                <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md w-full">
-                  Voir plus
-                </button>
-              </Link>
-            </div>
+            <CardChasse key={chasse.id_chasse} chasse={chasse} />
           ))}
         </div>
       </div>
