@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { SideBarProps } from '@/types';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,7 +97,6 @@ export function NavUser({user} : SideBarProps) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={'aaa'} alt={login} />
                   <AvatarFallback className="rounded-lg">{firstLetter}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -117,7 +116,7 @@ export function NavUser({user} : SideBarProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href={`${user === "organisateur" ? "organisateurs" : "participants"}/profil`}>
+              <Link href={`/${user === "organisateur" ? "organisateurs" : "participants"}/profil`}>
                 <DropdownMenuItem>
                   <UserPen />
                   Profil
