@@ -5,9 +5,7 @@ export async function GET() {
   const supabase = createClient();
 
   try {
-    const { data, error } = await supabase
-      .from('chateau')
-      .select('*');
+    const { data, error } = await supabase.from('chateau').select('*');
 
     if (error) {
       return NextResponse.json(

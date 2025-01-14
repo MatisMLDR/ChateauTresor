@@ -1,9 +1,11 @@
 import { EnigmeType } from "@/types";
 import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, updateEnigme } from "@/utils/dao/EnigmeUtils";
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
+import { UUID } from "crypto";
+import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
-  id_enigme: number;
+  id_enigme: UUID;
   titre: string;
   code_reponse: string;
   description: string;
@@ -24,7 +26,7 @@ export class Enigme {
   }
 
   // Getters
-  public getId(): number {
+  public getId(): UUID {
     return this.id_enigme;
   }
 
@@ -58,7 +60,7 @@ export class Enigme {
 
   // Setters
 
-  public setId(id: number): void {
+  public setId(id: UUID): void {
     this.id_enigme = id;
   }
 
@@ -156,7 +158,7 @@ export class Enigme {
         }
       }
     
-      public async deleteId(id_enigme: number): Promise<void> {
+      public async deleteId(id_enigme: UUID): Promise<void> {
         try {
           await deleteEnigme(id_enigme);
         } catch (error) {
@@ -227,5 +229,13 @@ export class Enigme {
       return 0;
     }
     return data.reduce((acc: number, curr: any) => acc + curr.est_decouvert, 0);
+  }
+
+  public async getAllIndices(): Promise<any> {
+    const data = await getAllIndicesByEnigme(this.id_enigme);
+    if (data.length === 0) {
+      return [];
+    }
+    return data;
   }
 }

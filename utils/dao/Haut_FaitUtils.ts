@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -7,7 +8,7 @@ dotenv.config();
  * @throws Error si la récupération échoue
  * @example const haut_fait = await getHaut_FaitById(1);
  */
-export async function getHaut_FaitById(id_haut_fait: number): Promise<any> {
+export async function getHaut_FaitById(id_haut_fait: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/haut_fait/${id_haut_fait}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération du haut fait');
@@ -75,7 +76,7 @@ export async function updateHaut_Fait(haut_fait: any): Promise<any> {
  * @throws Error si la suppression échoue
  * @example await deleteHaut_Fait(1);
  */
-export async function deleteHaut_Fait(id_haut_fait: number): Promise<void> {
+export async function deleteHaut_Fait(id_haut_fait: UUID): Promise<void> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/haut_fait/${id_haut_fait}`, {
     method: 'DELETE',
   });

@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -7,7 +8,7 @@ dotenv.config();
 * @throws Error si la récupération des données du château échoue
 * @example const chateau = await getChateauDetails();
 */
-export async function getChateauDetails(id_chateau: number): Promise<any> {
+export async function getChateauDetails(id_chateau: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chateaux/?id_chateau=${id_chateau}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des détails du château');
@@ -35,7 +36,7 @@ export async function getAllChateaux(): Promise<any> {
 * @throws Error si la récupération du château échoue
 * @example const chateau = await getChateauById(1);
 */
-export async function getChateauById(id_chateau: number): Promise<any> {
+export async function getChateauById(id_chateau: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chateaux/${id_chateau}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération du château');
@@ -98,7 +99,7 @@ export async function updateChateau(chateau: any): Promise<any> {
 * @throws Error si la suppression échoue
 * @example await deleteChateau(1);
 */
-export async function deleteChateau(id_chateau: number): Promise<void> {
+export async function deleteChateau(id_chateau: UUID): Promise<void> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chateaux/${id_chateau}`, {
     method: 'DELETE',
   });

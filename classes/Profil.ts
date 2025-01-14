@@ -1,8 +1,9 @@
 import { ProfilType } from "@/types"; // Assurez-vous que le type Profile est correctement importé
 import { getProfilById, updateProfil, createProfil, deleteProfil } from "@/utils/dao/ProfilUtils";
+import { UUID } from "crypto";
 
 export class Profil {
-  private id: string;
+  private id_profil: UUID;
   private username: string;
   private updated_at: string | null;
   private email: string;
@@ -17,7 +18,7 @@ export class Profil {
   private plan: string;
 
   constructor(profile: ProfilType) {
-    this.id = profile.id;
+    this.id_profil = profile.id_profil;
     this.username = profile.username ?? "anonyme";
     this.updated_at = profile.updated_at ?? null;
     this.email = profile.email;
@@ -34,7 +35,7 @@ export class Profil {
 
   // Getters
   public getId(): string {
-    return this.id;
+    return this.id_profil;
   }
 
   public getUsername(): string {
@@ -137,7 +138,7 @@ export class Profil {
   // Méthode pour récupérer les données du profil sous forme d'objet
   public getProfile(): ProfilType {
     return {
-      id: this.id,
+      id_profil: this.id_profil,
       username: this.username,
       updated_at: this.updated_at,
       email: this.email,
@@ -166,11 +167,11 @@ export class Profil {
   }
 
   public async read(): Promise<any> {
-              if (!this.id) {
+              if (!this.id_profil) {
                   throw new Error('ID is required');
               }
           
-              const avis = await getProfilById(this.id) as any
+              const avis = await getProfilById(this.id_profil) as any
           
               if (!avis) {
                   throw new Error('Profil not found');
@@ -180,17 +181,17 @@ export class Profil {
             }
           
             public async load(): Promise<void> {
-              if (!this.id) {
+              if (!this.id_profil) {
                   throw new Error('Profil ID is required');
               }
           
-              const avis = await getProfilById(this.id) as any
+              const avis = await getProfilById(this.id_profil) as any
           
               if (!avis) {
                   throw new Error('Profil not found');
               }
           
-              this.id = avis.id;
+              this.id_profil = avis.id;
               this.username = avis.username;
               this.updated_at = avis.updated_at;
               this.email = avis.email;
@@ -222,12 +223,12 @@ export class Profil {
             }
           
             public async delete(): Promise<void> {
-              if (!this.id) {
+              if (!this.id_profil) {
                 console.log("Pas d'id");
                 throw new Error('id is required');
               }
               try {
-                await deleteProfil(this.id);
+                await deleteProfil(this.id_profil);
               } catch (error) {
                   throw new Error('Profil does not exist');
               }

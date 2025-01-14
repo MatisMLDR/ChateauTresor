@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation"
 import { revalidatePath } from 'next/cache'
 import { createStripeCustomer } from '@/utils/stripe/api'
+import { formatFullName } from '@/lib/utils'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
 
@@ -104,8 +105,10 @@ export async function signup(currentState: { message: string }, formData: FormDa
         return { message: "Erreur lors de la mise à jour du profil" }
     }
 
+    const fullname = formatFullName(data.prenom, data.nom)
+
     // create Stripe Customer Record using signup response data
-    const stripeID = await createStripeCustomer(signUpData.user.id, signUpData.user.email!, data.fullname)
+    const stripeID = await createStripeCustomer(signUpData.user.id, signUpData.user.email!, fullname)
 
     // Update user's stripe_id in the database
 

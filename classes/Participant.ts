@@ -1,12 +1,13 @@
 import { ParticipantType } from "@/types";
 import { getAllParticipantAvis, getAllParticipantChasses, getAllParticipantEnigmes, getAllParticipantIndice, getParticipantById, createParticipant, deleteParticipant, updateParticipant } from "@/utils/dao/ParticipantUtils";
+import { UUID } from "crypto";
 
 export class Participant {
-  private id_participant: number;
+  private id_participant: UUID;
   private nom: string;
   private prenom: string;
   private email: string;
-  private id_user: string;
+  private id_user: UUID;
   private adresse: string;
   private ville: string;
   private code_postal: string;
@@ -31,7 +32,7 @@ export class Participant {
   }
 
   // Getters
-  public getIdParticipant(): number {
+  public getIdParticipant(): UUID {
     return this.id_participant;
   }
 
@@ -47,7 +48,7 @@ export class Participant {
     return this.email;
   }
 
-  public getIdUser(): string {
+  public getIdUser(): UUID {
     return this.id_user;
   }
 
@@ -81,7 +82,7 @@ export class Participant {
 
   // Setters
 
-  public setIdParticipant(id_participant: number): void {
+  public setIdParticipant(id_participant: UUID): void {
     this.id_participant = id_participant;
   }
 
@@ -97,7 +98,7 @@ export class Participant {
     this.email = email;
   }
 
-  public setIdUser(id_user: string): void {
+  public setIdUser(id_user: UUID): void {
     this.id_user = id_user;
   }
 
@@ -151,7 +152,7 @@ export class Participant {
    * Méthode pour charger les données de l'objet participant dans la classe
    * @param id_user L'identifiant de l'utilisateur
    */
-  public static async readId(id_participant: number): Promise<any> {
+  public static async readId(id_participant: UUID): Promise<any> {
     const data = await getParticipantById(id_participant) as any;
     
     if (!data) {
@@ -210,7 +211,7 @@ export class Participant {
             }
           }
         
-          public async deleteId(id_participant: number): Promise<void> {
+          public async deleteId(id_participant: UUID): Promise<void> {
             try {
               await deleteParticipant(id_participant);
             } catch (error) {

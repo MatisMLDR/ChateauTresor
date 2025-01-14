@@ -1,8 +1,9 @@
 import { ChateauType } from "@/types";
-import { getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
+import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
+import { UUID } from "crypto";
 
 class Chateau {
-  private id_chateau: number;
+  private id_chateau: UUID;
   private nom: string;
   private adresse_postale: string;
   private localisation: string;
@@ -12,7 +13,7 @@ class Chateau {
   private description: string;
   private image: string | null;
   private site_web: string | null;
-  private id_proprietaire: number | null;
+  private id_proprietaire: UUID | null;
 
   constructor(chateau: ChateauType) {
     this.id_chateau = chateau.id_chateau;
@@ -29,7 +30,7 @@ class Chateau {
   }
 
   // Getters
-  public getIdChateau(): number {
+  public getIdChateau(): UUID {
     return this.id_chateau;
   }
 
@@ -69,12 +70,12 @@ class Chateau {
     return this.site_web;
   }
 
-  public getIdProprietaire(): number | null {
+  public getIdProprietaire(): UUID | null {
     return this.id_proprietaire;
   }
 
   // Setters
-  public setIdChateau(id_chateau: number): void {
+  public setIdChateau(id_chateau: UUID): void {
     this.id_chateau = id_chateau;
   }
 
@@ -114,14 +115,14 @@ class Chateau {
     this.site_web = site_web;
   }
 
-  public setIdProprietaire(id_proprietaire: number | null): void {
+  public setIdProprietaire(id_proprietaire: UUID | null): void {
     this.id_proprietaire = id_proprietaire;
   }
 
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public static async readId(id_chateau: number): Promise<any> {
+  public static async readId(id_chateau: UUID): Promise<any> {
 
     const data = await getChateauById(id_chateau) as any;
 
@@ -132,6 +133,17 @@ class Chateau {
     console.log("Château après appel API dans read", data); 
 
     return new Chateau(data);
+  }
+
+  // Méthode statique pour récupérer tous les châteaux
+  public static async getAllChateaux(): Promise<Chateau[]> {
+    try {
+      const data = await getAllChateaux(); // Appel du DAO
+      return data.map((chateau: ChateauType) => new Chateau(chateau));
+    } catch (error) {
+      console.error("Erreur lors de la récupération des châteaux:", error);
+      throw new Error("Impossible de récupérer la liste des châteaux");
+    }
   }
 
   public async read(): Promise<any> {
@@ -180,7 +192,7 @@ class Chateau {
         }
       }
     
-      public async deleteId(id_chateau: number): Promise<void> {
+      public async deleteId(id_chateau: UUID): Promise<void> {
         try {
           await deleteChateau(id_chateau);
         } catch (error) {

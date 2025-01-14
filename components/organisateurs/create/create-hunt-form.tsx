@@ -43,7 +43,7 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
 
   const transformFormDataToTables = (chasse: ChasseType) => {
     const chasseTable = {
-      id_chasse: chasse.id_chasse || generateRandomId(),
+      id_chasse: chasse.id_chasse || null,
       titre: chasse.titre || "Nouvelle Chasse",
       capacite: chasse.capacite || 0,
       description: chasse.description || "Pas de description",

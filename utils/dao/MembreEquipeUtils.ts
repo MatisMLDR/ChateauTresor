@@ -12,7 +12,7 @@ const BASE_URL = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/membres`; // URL de
  * @returns Promise<MembreEquipeClass> Une instance de MembreEquipeClass
  * @throws Error si la récupération échoue
  */
-export async function getMembreById(id_membre: number): Promise<MembreEquipeClass> {
+export async function getMembreById(id_membre: UUID): Promise<MembreEquipeClass> {
   const res = await fetch(`${BASE_URL}/${id_membre}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération du membre');
@@ -27,7 +27,7 @@ export async function getMembreById(id_membre: number): Promise<MembreEquipeClas
  * @returns Promise<MembreEquipeClass[]> Une liste des membres de l'équipe
  * @throws Error si la récupération échoue
  */
-export async function getAllMembresByEquipe(id_equipe: number): Promise<MembreEquipeClass[]> {
+export async function getAllMembresByEquipe(id_equipe: UUID): Promise<MembreEquipeClass[]> {
   const res = await fetch(`${BASE_URL}/equipe/${id_equipe}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des membres de l\'équipe');
@@ -65,7 +65,7 @@ export async function updateMembre(membre: any): Promise<MembreEquipeClass> {
  * @returns Promise<void>
  * @throws Error si la suppression échoue
  */
-export async function deleteMembre(id_membre: number): Promise<void> {
+export async function deleteMembre(id_membre: UUID): Promise<void> {
   const res = await fetch(`${BASE_URL}/${id_membre}`, {
     method: 'DELETE',
   });

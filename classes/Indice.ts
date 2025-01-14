@@ -1,13 +1,14 @@
 import {  IndiceType, TypeIndice } from "@/types";
 import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
+import { UUID } from "crypto";
 
 class Indice {
-  private id_indice: number;
+  private id_indice: UUID;
   private type: TypeIndice;
   private contenu: string;
   private degre_aide: number;
   private ordre: number;
-  private id_enigme: number;
+  private id_enigme: UUID;
 
 
   constructor(indice: IndiceType) {
@@ -21,7 +22,7 @@ class Indice {
   }
 
   // Getters
-  public getId(): number {
+  public getId(): UUID {
     return this.id_indice;
   }
   public getType(): TypeIndice {
@@ -36,7 +37,7 @@ class Indice {
   public getOrdre(): number {
     return this.ordre;
   }
-  public getIdEnigme(): number {
+  public getIdEnigme(): UUID {
     return this.id_enigme;
   }
 
@@ -53,10 +54,10 @@ class Indice {
   public setOrdre(ordre: number): void {
     this.ordre = ordre;
   }
-  public setId(id: number): void {
+  public setId(id: UUID): void {
     this.id_indice = id;
   }
-  public setIdEnigme(id_enigme: number): void {
+  public setIdEnigme(id_enigme: UUID): void {
     this.id_enigme = id_enigme;
   }
 
@@ -64,7 +65,7 @@ class Indice {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public static async readId(id_indice: number): Promise<any> {
+  public static async readId(id_indice: UUID): Promise<any> {
 
     const data = await getIndiceById(id_indice) as any;
 
@@ -118,7 +119,7 @@ class Indice {
           }
         }
       
-        public async deleteId(id_indice: number): Promise<void> {
+        public async deleteId(id_indice: UUID): Promise<void> {
           try {
             await deleteIndice(id_indice);
           } catch (error) {

@@ -10,7 +10,7 @@ dotenv.config();
  * @example const avis = await getAllAvisByChasse(1);
  * @params id_chasse L'identifiant d'une chasse
  **/
-export async function getAllAvisByChasse(id_chasse: number): Promise<any> {
+export async function getAllAvisByChasse(id_chasse: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des avis');
@@ -25,7 +25,7 @@ export async function getAllAvisByChasse(id_chasse: number): Promise<any> {
  * @example const avis = await getAvisById(1);
  * @params id_avis L'identifiant d'un avis
  **/
-export async function getAvisById(id_avis: number): Promise<any> {
+export async function getAvisById(id_avis: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/${id_avis}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de l\'avis');
@@ -89,7 +89,7 @@ export async function updateAvis(avis: any): Promise<any> {
  * @throws Error si la suppression échoue
  * @example await deleteAvis(1);
  **/
-export async function deleteAvis(id_avis: number): Promise<void> {
+export async function deleteAvis(id_avis: UUID): Promise<void> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/${id_avis}`, {
     method: 'DELETE',
   });

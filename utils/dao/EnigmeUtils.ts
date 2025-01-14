@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -8,7 +9,7 @@ dotenv.config();
  * @example const enigme = await getEnigmeById(1);
  * @params id_enigme L'identifiant d'une énigme
  */
-export async function getEnigmeById(id_enigme: number): Promise<any> {
+export async function getEnigmeById(id_enigme: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${id_enigme}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de l\'énigme');
@@ -23,7 +24,7 @@ export async function getEnigmeById(id_enigme: number): Promise<any> {
  * @example const enigmes = await getAllEnigmesParticipants(1);
  * @params id_enigme L'identifiant d'une énigme
  */
-export async function getAllEnigmesParticipants(id_enigme: number): Promise<any[]> {
+export async function getAllEnigmesParticipants(id_enigme: UUID): Promise<any[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/participants/${id_enigme}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des énigmes des participants');
@@ -39,7 +40,7 @@ export async function getAllEnigmesParticipants(id_enigme: number): Promise<any[
  * @example const enigmes = await getAllEnigmesByChasse(1);
  * @params id_chasse L'identifiant de la chasse
  */
-export async function getAllEnigmesByChasse(id_chasse: number): Promise<any> {
+export async function getAllEnigmesByChasse(id_chasse: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/chasse?id_chasse=${id_chasse}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des énigmes');
@@ -97,7 +98,7 @@ export async function updateEnigme(enigme: any): Promise<any> {
  * @throws Error si la suppression échoue
  * @example await deleteEnigme(1);
  */
-export async function deleteEnigme(id_enigme: number): Promise<void> {
+export async function deleteEnigme(id_enigme: UUID): Promise<void> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/enigmes/${id_enigme}`, {
     method: 'DELETE',
   });

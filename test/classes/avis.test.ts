@@ -11,14 +11,14 @@ jest.mock('@/utils/dao/AvisUtils', () => ({
 
 describe('Avis', () => {
   const mockAvisData: AvisType = {
-    id_avis: 1,
+    id_avis: "8f5f429d-724d-4eae-b4cc-0ff5ac8f71ad",
     note: 5,
     titre: "Great experience",
     description: "It was fantastic!",
     nb_like: 10,
     date_modification: "2025-01-01",
-    id_chasse: 2,
-    id_participant: 3
+    id_chasse: "f764ff5d-426f-4c6e-818f-46bfe510f544",
+    id_participant: "e94f0bed-26e9-4bf4-a7a5-5da550ea6e9b"
   };
 
   afterEach(() => {
@@ -41,9 +41,9 @@ describe('Avis', () => {
   test('readId should fetch and return a new Avis instance', async () => {
     (getAvisById as jest.Mock).mockResolvedValue(mockAvisData);
 
-    const avis = await Avis.readId(1);
+    const avis = await Avis.readId("8f5f429d-724d-4eae-b4cc-0ff5ac8f71ad");
 
-    expect(getAvisById).toHaveBeenCalledWith(1);
+    expect(getAvisById).toHaveBeenCalledWith("8f5f429d-724d-4eae-b4cc-0ff5ac8f71ad");
     expect(avis).toBeInstanceOf(Avis);
     expect(avis.getIdAvis()).toBe(mockAvisData.id_avis);
   });

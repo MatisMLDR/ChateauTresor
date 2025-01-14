@@ -1,8 +1,9 @@
 import { Haut_FaitType } from "@/types";
 import { createHaut_Fait, deleteHaut_Fait, getHaut_FaitById, updateHaut_Fait } from '@/utils/dao/Haut_FaitUtils';
+import { UUID } from "crypto";
 
 class Haut_Fait {
-    private id_haut_fait: number;
+    private id_haut_fait: UUID;
     private titre: string;
     private description: string;
     private condition: string;
@@ -18,7 +19,7 @@ class Haut_Fait {
         this.date = haut_fait.date;
     }
 
-    public getIdHaut_Fait(): number {
+    public getIdHaut_Fait(): UUID {
         return this.id_haut_fait;
     }
 
@@ -42,7 +43,7 @@ class Haut_Fait {
         return this.date;
     }
 
-    public setIdHaut_Fait(id_haut_fait: number): void {
+    public setIdHaut_Fait(id_haut_fait: UUID): void {
         this.id_haut_fait = id_haut_fait;
     }
 
@@ -66,7 +67,7 @@ class Haut_Fait {
         this.date = date;
     }
 
-    public static async readId(id_haut_fait: number): Promise<any> {
+    public static async readId(id_haut_fait: UUID): Promise<any> {
         const haut_fait = await getHaut_FaitById(id_haut_fait) as any;
 
         if (!haut_fait) {
@@ -119,7 +120,7 @@ class Haut_Fait {
             }
           }
         
-          public async deleteId(id_haut_fait: number): Promise<void> {
+          public async deleteId(id_haut_fait: UUID): Promise<void> {
             try {
               await deleteHaut_Fait(id_haut_fait);
             } catch (error) {
