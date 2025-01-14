@@ -23,15 +23,17 @@ jest.mock("@/utils/dao/IndiceUtils", () => ({
 
 describe("Enigme", () => {
   const mockEnigmeData: EnigmeType = {
-    id_enigme: 1,
+    id_enigme: "15da4f27-e009-40a9-9a65-bcf31de85640",
+    id_chasse: "f764ff5d-426f-4c6e-818f-46bfe510f544",
     titre: "Une énigme intéressante",
     indices: [],
-    qrCode: "qrcode1",
-    code: "code123",
+    code_reponse: "Code secret",
+    ordre: 1,
     description: "Description de l'énigme",
     endroit_qrcode: "Endroit secret",
     temps_max: 300,
     description_reponse: "Réponse détaillée",
+    degre_difficulte: 3,
     image_reponse: "image_url",
   };
 
@@ -43,22 +45,24 @@ describe("Enigme", () => {
     const enigme = new Enigme(mockEnigmeData);
 
     expect(enigme.getId()).toBe(mockEnigmeData.id_enigme);
+    expect(enigme.getIdChasse()).toBe(mockEnigmeData.id_chasse);
     expect(enigme.getTitre()).toBe(mockEnigmeData.titre);
-    expect(enigme.getQrCode()).toBe(mockEnigmeData.qrCode);
-    expect(enigme.getCode()).toBe(mockEnigmeData.code);
+    expect(enigme.getCode_reponse()).toBe(mockEnigmeData.code_reponse);
+    expect(enigme.getOrdre()).toBe(mockEnigmeData.ordre);
     expect(enigme.getDescription()).toBe(mockEnigmeData.description);
     expect(enigme.getEndroitQrCode()).toBe(mockEnigmeData.endroit_qrcode);
     expect(enigme.getTempsMax()).toBe(mockEnigmeData.temps_max);
     expect(enigme.getDescriptionReponse()).toBe(mockEnigmeData.description_reponse);
+    expect(enigme.getDegreDifficulte()).toBe(mockEnigmeData.degre_difficulte);
     expect(enigme.getImageReponse()).toBe(mockEnigmeData.image_reponse);
   });
 
   test("readId should fetch and return a new Enigme instance", async () => {
     (getEnigmeById as jest.Mock).mockResolvedValue(mockEnigmeData);
 
-    const enigme = await Enigme.readId(1);
+    const enigme = await Enigme.readId("15da4f27-e009-40a9-9a65-bcf31de85640");
 
-    expect(getEnigmeById).toHaveBeenCalledWith(1);
+    expect(getEnigmeById).toHaveBeenCalledWith("15da4f27-e009-40a9-9a65-bcf31de85640");
     expect(enigme).toBeInstanceOf(Enigme);
     expect(enigme.getId()).toBe(mockEnigmeData.id_enigme);
   });

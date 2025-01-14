@@ -3,25 +3,32 @@ import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, u
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 import { UUID } from "crypto";
 import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils";
+import Indice from "./Indice";
 
 export class Enigme {
   id_enigme: UUID;
+  id_chasse: UUID;
   titre: string;
   code_reponse: string;
+  ordre: number;
   description: string;
   endroit_qrcode: string;
   temps_max: number;
   description_reponse: string;
+  degre_difficulte: number;
   image_reponse: string;
 
   constructor(enigme: EnigmeType) {
     this.id_enigme = enigme.id_enigme;
+    this.id_chasse = enigme.id_chasse;
     this.titre = enigme.titre;
     this.code_reponse = enigme.code_reponse;
+    this.ordre = enigme.ordre;
     this.description = enigme.description;
     this.endroit_qrcode = enigme.endroit_qrcode;
     this.temps_max = enigme.temps_max;
     this.description_reponse = enigme.description_reponse;
+    this.degre_difficulte = enigme.degre_difficulte;
     this.image_reponse = enigme.image_reponse;
   }
 
@@ -30,12 +37,20 @@ export class Enigme {
     return this.id_enigme;
   }
 
+  public getIdChasse(): UUID {
+    return this.id_chasse;
+  }
+
   public getTitre(): string {
     return this.titre;
   }
 
   public getCode_reponse(): string {
     return this.code_reponse;
+  }
+
+  public getOrdre(): number {
+    return this.ordre;
   }
 
   public getDescription(): string {
@@ -54,6 +69,10 @@ export class Enigme {
     return this.description_reponse;
   }
 
+  public getDegreDifficulte(): number {
+    return this.degre_difficulte;
+  }
+
   public getImageReponse(): string {
     return this.image_reponse;
   }
@@ -64,6 +83,10 @@ export class Enigme {
     this.id_enigme = id;
   }
 
+  public setIdChasse(id_chasse: UUID): void {
+    this.id_chasse = id_chasse;
+  }
+
   public setTitre(titre: string): void {
     this.titre = titre;
   }
@@ -71,6 +94,10 @@ export class Enigme {
 
   public setCode(code: string): void {
     this.code_reponse = code;
+  }
+
+  public setOrdre(ordre: number): void {
+    this.ordre = ordre;
   }
 
   public setDescription(description: string): void {
@@ -89,6 +116,10 @@ export class Enigme {
     this.description_reponse = description_reponse;
   }
 
+  public setDegreDifficulte(degre_difficulte: number): void {
+    this.degre_difficulte = degre_difficulte;
+  }
+
   public setImageReponse(image_reponse: string): void {
     this.image_reponse = image_reponse;
   }
@@ -98,7 +129,7 @@ export class Enigme {
     * @param id_chasse L'identifiant de la chasse
     * @throws Error si l'énigme n'existe pas ou si plusieurs énigmes sont trouvés
    */
-  public static async readId(id: number): Promise<any> {
+  public static async readId(id: UUID): Promise<any> {
     
     const data = await getEnigmeById(id) as any;
     

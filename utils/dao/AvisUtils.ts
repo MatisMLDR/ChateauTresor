@@ -1,5 +1,6 @@
 import { AvisType } from '@/types';
 import dotenv from 'dotenv';
+import { UUID } from 'crypto';
 
 dotenv.config();
 

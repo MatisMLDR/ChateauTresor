@@ -3,6 +3,7 @@
  */
 import { MembreEquipeType } from '@/types';
 import { MembreEquipeClass } from '@/classes/MembreEquipe';
+import { UUID } from 'crypto';
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/membres`; // URL de base pour les requêtes
 

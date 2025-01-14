@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface ChasseCardProps {
@@ -19,14 +21,21 @@ const ChasseCard: React.FC<ChasseCardProps> = ({ chasse, isAchetee, onJouer }) =
       <p className="text-gray-800 font-medium">Difficulté : {chasse.difficulte} / 3</p>
       <p className="text-gray-800 font-medium">Prix : {chasse.prix} €</p>
 
-
+      {isAchetee ? (
         <button
           onClick={onJouer}
           className="mt-4 bg-green-500 text-white px-4 py-2 rounded-md w-full"
         >
           Jouer
         </button>
-
+      ) : (
+        <button
+          disabled
+          className="mt-4 bg-gray-300 text-gray-600 px-4 py-2 rounded-md w-full cursor-not-allowed"
+        >
+          Non achetée
+        </button>
+      )}
     </div>
   );
 };
