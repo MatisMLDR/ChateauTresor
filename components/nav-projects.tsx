@@ -46,10 +46,9 @@ export function NavProjects({
           throw new Error(`Erreur HTTP: ${response.status}`);
         }
         const data = await response.json();
-        return data.titre; // Supposons que l'API retourne un objet avec un champ "name"
+        return data.titre;
       } catch (error) {
         console.error(`Erreur lors de la récupération de la chasse ${id}`, error);
-        return 'Nom indisponible';
       }
     };
 
