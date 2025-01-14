@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // Récupérer un indice par ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const indiceId = parseInt(params.id);
+  const indiceId = params.id;
 
   try {
     const { data, error } = await supabase.from('indice').select('*').eq('id_indice', indiceId).single();
@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 // Mettre à jour un indice par ID
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const indiceId = parseInt(params.id);
+  const indiceId = params.id;
   const body = await request.json();
 
   try {
@@ -37,7 +37,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 // Supprimer un indice par ID
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const indiceId = parseInt(params.id);
+  const indiceId = params.id;
 
   try {
     const { error } = await supabase.from('indice').delete().eq('id_indice', indiceId);

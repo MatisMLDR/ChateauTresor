@@ -20,7 +20,7 @@ import {
   LayoutDashboard,
   MapPin,
   Search,
-  Settings2,
+  User,
 } from 'lucide-react';
 import { SideBarProps } from '@/types';
 
@@ -62,17 +62,17 @@ const dataUser = {
       icon: History,
     },
     {
-      title: 'Paramètres',
+      title: 'Profil',
       url: '#',
-      icon: Settings2,
+      icon: User,
       items: [
         {
           title: 'Informations',
-          url: '/profil',
+          url: '/participants/profil',
         },
         {
           title: 'Statistiques',
-          url: '#',
+          url: '/participants/statistiques',
         },
       ],
     },
@@ -119,17 +119,17 @@ const dataOrganisateur = {
       icon: Search,
     },
     {
-      title: 'Settings',
+      title: 'Profil',
       url: '#',
-      icon: Settings2,
+      icon: User,
       items: [
         {
           title: 'Informations',
-          url: '/profil',
+          url: '/organisateurs/profil',
         },
         {
           title: 'Statistiques',
-          url: '#',
+          url: '/organisateurs/statistiques',
         },
       ],
     },

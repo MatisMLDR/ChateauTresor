@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // Récupérer une énigme par ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const enigmeId = parseInt(params.id);
+  const enigmeId = params.id;
 
   try {
     const { data, error } = await supabase.from('enigme').select('*').eq('id_enigme', enigmeId).single();
@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 // Mettre à jour une énigme par ID
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const enigmeId = parseInt(params.id);
+  const enigmeId = params.id;
   const body = await request.json();
 
   try {
@@ -37,7 +37,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 // Supprimer une énigme par ID
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const enigmeId = parseInt(params.id);
+  const enigmeId = params.id;
 
   try {
     const { error } = await supabase.from('enigme').delete().eq('id_enigme', enigmeId);
