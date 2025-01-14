@@ -13,7 +13,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
         alt={chasse.titre}
         className="w-full h-40 object-cover rounded-md mb-4"
       />
-      <h3 className="font-bold text-lg mb-2">{chasse.titre}</h3>
+      <h3 className="font-bold text-lg mb-2">{chasse.getTitre()}</h3>
       <p>{chasse.note}</p>
       <p className="text-gray-600 text-sm mb-2">{chasse.description}</p>
       <p className="text-gray-800 font-medium">Difficulté : {chasse.difficulte} / 3</p>
