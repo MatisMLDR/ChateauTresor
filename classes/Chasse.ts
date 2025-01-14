@@ -268,6 +268,42 @@ class Chasse {
       throw new Error('Chasse does not exist');
     }
   }
+
+  // Méthodes pour vérifier si une chasse est familiale
+  /*
+  * Méthode pour vérifier si une chasse est familiale (pour les enfants)
+  * @returns boolean true si la chasse est familiale, false sinon
+  */
+  public isFamilyFriendly(): boolean {
+    return this.age_requis <= 16;
+  }
+
+  /*
+   * Checks if the current date is within the range of `date_debut` and `date_fin`.
+   *
+   * @returns {boolean} `true` if the current date is between `date_debut` and `date_fin`, inclusive; otherwise, `false`.
+   */
+  public isAvailable(): boolean {
+    const now = new Date();
+    const dateDebut = new Date(this.date_debut as string);
+    const dateFin = new Date(this.date_fin as string);
+
+    return now >= dateDebut && now <= dateFin;
+  }
+
+
+  /**
+   * Determines if the current instance is finished based on the `date_fin` property.
+   *
+   * @returns {boolean} - Returns `true` if the current date and time is later than `date_fin`, otherwise `false`.
+   */
+  public isFinished(): boolean {
+    const now = new Date();
+    const dateFin = new Date(this.date_fin as string);
+
+    return now > dateFin;
+  }
+
   // Méthodes pour calculer des statistiques
   /*
   * Méthode pour calculer la durée moyenne des participations à une chasse
