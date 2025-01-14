@@ -5,6 +5,7 @@ import {
   deleteChasse,
   updateChasse,
   getAllParticipations,
+  getAllChassesDisponibles
 } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
@@ -17,6 +18,7 @@ jest.mock('@/utils/dao/ChasseUtils', () => ({
   updateChasse: jest.fn(),
   getAllChasses: jest.fn(),
   getAllParticipations: jest.fn(),
+  getAllChassesDisponibles: jest.fn(),
 }));
 
 jest.mock('@/utils/dao/RecompenseUtils', () => ({
@@ -45,7 +47,7 @@ describe('Chasse', () => {
     theme: "Adventure",
     statut: "Active",
     id_chateau: null,
-    id_equipe: null,
+    id_equipe: "556aaa16-5483-4d2f-8dd2-5e2e7e2a3169",
   };
 
   afterEach(() => {
@@ -153,5 +155,22 @@ describe('Chasse', () => {
     const avgNote = await chasse.getNoteMoyenne();
 
     expect(avgNote).toBe(4.5);
+  });
+
+  test('getAllDisponibles should return a list of Chasse instances', async () => {
+    const mockAvailableChasses = [
+      mockChasseData,
+      { ...mockChasseData, id_chasse: "1234-5678-9012-3456", titre: "Another Hunt" },
+    ];
+
+    (getAllChassesDisponibles as jest.Mock).mockResolvedValue(mockAvailableChasses);
+
+    const chasses = await Chasse.getAllDisponibles();
+
+    expect(getAllChassesDisponibles).toHaveBeenCalled();
+    expect(chasses).toHaveLength(2);
+    expect(chasses[0]).toBeInstanceOf(Chasse);
+    expect(chasses[0].getTitre()).toBe(mockChasseData.titre);
+    expect(chasses[1].getTitre()).toBe("Another Hunt");
   });
 });

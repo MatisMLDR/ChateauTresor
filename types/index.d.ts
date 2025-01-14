@@ -233,3 +233,10 @@ export type SideBarProps = {
   children?: React.reactNode;
   user: "joueur" | "organisateur";
 }
+
+//// Props de la page de profile ////
+
+export type DatePickerProps = {
+  defaultDate?: Date;
+  className?: string;
+}
