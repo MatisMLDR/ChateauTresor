@@ -45,6 +45,7 @@ export function NavUser() {
         try {
           const response = await fetch(`/api/profils/${user.id}`);
           const data = await response.json();
+          console.log(data);
           setLogin(data.username);
         } catch (err) {
           console.error('Erreur lors de la récupération des détails du château :', err);
@@ -70,20 +71,17 @@ export function NavUser() {
                 <AvatarFallback className="rounded-lg">{firstLetter}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
+                {login ? (
+                  <span className="truncate font-semibold">{login}</span>
+                ) : (
+                  <Skeleton className="h-4 w-full" />
+                )}
 
-                {login ?
-                    <span className="truncate font-semibold">{login}</span>
-                    :
-                    <Skeleton className="h-4 w-full"/>
-                }
-
-
-                {email ?
-                    <span className="truncate text-xs">{email}</span>
-                    :
-                    <Skeleton className="h-4 w-full"/>
-                }
-
+                {email ? (
+                  <span className="truncate text-xs">{email}</span>
+                ) : (
+                  <Skeleton className="h-4 w-full" />
+                )}
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -101,18 +99,17 @@ export function NavUser() {
                   <AvatarFallback className="rounded-lg">{firstLetter}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  {login ?
-                      <span className="truncate font-semibold">{login}</span>
-                      :
-                      <Skeleton className="h-4 w-full"/>
-                  }
+                  {login ? (
+                    <span className="truncate font-semibold">{login}</span>
+                  ) : (
+                    <Skeleton className="h-4 w-full" />
+                  )}
 
-
-                  {email ?
-                      <span className="truncate text-xs">{email}</span>
-                      :
-                      <Skeleton className="h-4 w-full"/>
-                  }
+                  {email ? (
+                    <span className="truncate text-xs">{email}</span>
+                  ) : (
+                    <Skeleton className="h-4 w-full" />
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>
