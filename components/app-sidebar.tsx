@@ -15,10 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 
 import {
-  AudioWaveform,
   Castle,
-  Command,
-  GalleryVerticalEnd,
   History,
   LayoutDashboard,
   MapPin,
