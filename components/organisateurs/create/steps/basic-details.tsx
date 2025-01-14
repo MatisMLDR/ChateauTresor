@@ -67,7 +67,7 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
             step={15}
             value={formData.duree_estime || 0}
             onChange={(e) =>
-              setFormData({ ...formData, duree_estime: parseInt(e.target.value) })
+              setFormData({ ...formData, duree_estime: e.target.value })
             }
           />
         </div>
