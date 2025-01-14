@@ -11,7 +11,6 @@ class EquipeOrganisatrice {
   private site_web: string | null;
   private adresse_postale: string;
   private telephone: string | null;
-  private id_user: string;
 
   constructor(equipe: EquipeOrganisatriceType) {
     this.id_equipe = equipe.id_equipe;
@@ -22,7 +21,6 @@ class EquipeOrganisatrice {
     this.site_web = equipe.site_web;
     this.adresse_postale = equipe.adresse_postale;
     this.telephone = equipe.telephone;
-    this.id_user = equipe.id_user;
   }
 
   // Getters
@@ -50,9 +48,7 @@ class EquipeOrganisatrice {
   public getTelephone(): string | null {
     return this.telephone;
   }
-  public getIdUser(): string {
-    return this.id_user;
-  }
+  
 
   // Setters
   public setType(type: string): void {
@@ -75,9 +71,6 @@ class EquipeOrganisatrice {
   }
   public setTelephone(telephone: string | null): void {
     this.telephone = telephone;
-  }
-  public setIdUser(id_user: string): void {
-    this.id_user = id_user;
   }
 
   // Méthode pour charger les données de l'équipe organisatrice
@@ -127,7 +120,6 @@ class EquipeOrganisatrice {
           this.site_web = avis.site_web;
           this.adresse_postale = avis.adresse_postale;
           this.telephone = avis.telephone;
-          this.id_user = avis.id_user;
         }
       
         public async create(): Promise<void> {

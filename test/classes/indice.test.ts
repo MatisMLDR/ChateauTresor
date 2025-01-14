@@ -1,17 +1,17 @@
 import Indice from "@/classes/Indice";
-import { TypeIndice } from "@/types";
+import { IndiceType, TypeIndice } from "@/types";
 import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
 
 jest.mock('@/utils/dao/IndiceUtils');
 
 describe("Indice Class", () => {
-  const mockIndice = {
-    id_indice: 1,
+  const mockIndice: IndiceType = {
+    id_indice: "ab5f8b98-1544-402a-b333-d06bfe6f9465",
     type: "text" as TypeIndice, // ou le type que vous utilisez dans votre application
     contenu: "Ceci est un indice",
     degre_aide: 3,
     ordre: 2,
-    id_enigme: 10,
+    id_enigme: "9d987c89-e37e-4ff6-ac93-ed498721d319",
   };
 
   beforeEach(() => {
@@ -20,24 +20,24 @@ describe("Indice Class", () => {
 
   it("should create an instance of Indice", () => {
     const indice = new Indice(mockIndice as any);
-    expect(indice.getId()).toBe(1);
+    expect(indice.getId()).toBe("ab5f8b98-1544-402a-b333-d06bfe6f9465");
     expect(indice.getType()).toBe("text");
     expect(indice.getContenu()).toBe("Ceci est un indice");
     expect(indice.getDegreAide()).toBe(3);
     expect(indice.getOrdre()).toBe(2);
-    expect(indice.getIdEnigme()).toBe(10);
+    expect(indice.getIdEnigme()).toBe("9d987c89-e37e-4ff6-ac93-ed498721d319");
   });
 
   it("should read an Indice by ID", async () => {
     (getIndiceById as jest.Mock).mockResolvedValue(mockIndice);
-    const indice = await Indice.readId(1);
-    expect(indice.getId()).toBe(1);
-    expect(getIndiceById).toHaveBeenCalledWith(1);
+    const indice = await Indice.readId("ab5f8b98-1544-402a-b333-d06bfe6f9465");
+    expect(indice.getId()).toBe("ab5f8b98-1544-402a-b333-d06bfe6f9465");
+    expect(getIndiceById).toHaveBeenCalledWith("ab5f8b98-1544-402a-b333-d06bfe6f9465");
   });
 
   it("should throw an error if Indice not found", async () => {
     (getIndiceById as jest.Mock).mockResolvedValue(null);
-    await expect(Indice.readId(999)).rejects.toThrow("La chasse n'existe pas");
+    await expect(Indice.readId("ab5f8b98-1544-402a-b333-d06bfe6f9464")).rejects.toThrow("La chasse n'existe pas");
   });
 
   it("should load Indice data", async () => {
@@ -64,8 +64,8 @@ describe("Indice Class", () => {
 
   it("should delete an Indice by ID", async () => {
     (deleteIndice as jest.Mock).mockResolvedValue(true);
-    await new Indice(mockIndice).deleteId(1);
-    expect(deleteIndice).toHaveBeenCalledWith(1);
+    await new Indice(mockIndice).deleteId("ab5f8b98-1544-402a-b333-d06bfe6f9465");
+    expect(deleteIndice).toHaveBeenCalledWith("ab5f8b98-1544-402a-b333-d06bfe6f9465");
   });
 
   it("should throw an error when trying to delete a non-existent Indice", async () => {
