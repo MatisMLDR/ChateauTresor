@@ -3,6 +3,7 @@ import { getAllParticipations, getChasseById, createChasse, deleteChasse, update
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
+import { getAllEnigmesByChasse } from "@/utils/dao/EnigmeUtils";
 
 class Chasse {
   private id_chasse: UUID;
@@ -207,6 +208,19 @@ class Chasse {
       this.statut = avis.statut;
       this.id_chateau = avis.id_chateau;
       this.id_equipe = avis.id_equipe;
+    }
+
+    public async getAllEnigmes(): Promise<any> {
+      // Récupération dans la base des énigmes de chaques participations avec l'id de la chasse
+  
+      // On récupère les données
+      const data = await getAllEnigmesByChasse(this.id_chasse);
+
+      if (data.length === 0) {
+        return [];
+      }
+
+      return data;
     }
   
     public async create(): Promise<void> {
