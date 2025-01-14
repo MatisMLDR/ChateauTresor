@@ -159,6 +159,8 @@ CREATE TABLE public.Participation (
     id_chasse UUID NOT NULL,
     duree_totale INTERVAL DEFAULT INTERVAL '00:00:00',
     score INT DEFAULT 0,
+    jour DATE NOT NULL,
+    date_achat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     nb_enigmes_resolues INT DEFAULT 0,
     est_terminee BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id_participant, id_chasse),
