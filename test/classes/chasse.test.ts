@@ -173,4 +173,30 @@ describe('Chasse', () => {
     expect(chasses[0].getTitre()).toBe(mockChasseData.titre);
     expect(chasses[1].getTitre()).toBe("Another Hunt");
   });
+
+  test('getIndicesMoyens should calculate the correct average', async () => {
+    const mockParticipations = [
+      { nb_indices_utilises: 2 },
+      { nb_indices_utilises: 4 },
+      { nb_indices_utilises: 6 },
+    ];
+
+    (getAllParticipations as jest.Mock).mockResolvedValue(mockParticipations);
+
+    const chasse = new Chasse(mockChasseData);
+    const averageIndices = await chasse.getIndicesMoyens();
+
+    expect(getAllParticipations).toHaveBeenCalledWith(chasse.getIdChasse());
+    expect(averageIndices).toBeCloseTo((2 + 4 + 6) / 3);
+  });
+
+  test('getIndicesMoyens should return 0 if there are no participations', async () => {
+    (getAllParticipations as jest.Mock).mockResolvedValue([]);
+
+    const chasse = new Chasse(mockChasseData);
+    const averageIndices = await chasse.getIndicesMoyens();
+
+    expect(getAllParticipations).toHaveBeenCalledWith(chasse.getIdChasse());
+    expect(averageIndices).toBe(0);
+  });
 });

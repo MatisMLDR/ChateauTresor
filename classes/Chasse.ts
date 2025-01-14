@@ -398,18 +398,20 @@ class Chasse {
   * Méthode pour calculer le nombre moyen d'indices utilisés par les participants
   * @returns number Le nombre moyen d'indices utilisés
   */
-  // public async getIndicesMoyens(): Promise<number> {
-  //   // Récupération dans la base des indices utilisés par chaques participations avec l'id de la chasse
+    public async getIndicesMoyens(): Promise<number> {
+  //  // Récupération dans la base des participations avec l'id de la chasse
+    const data = await getAllParticipations(this.id_chasse);
 
-  //   // On récupère les données
-  //   const data = await getAllIndices();
-  //   if (data.length === 0) {
-  //     return 0;
-  //   }
+    if (data.length === 0) {
+      return 0;
+    }
 
+    // Calcul de la somme des indices utilisés
+    const sum = data.reduce((acc: number, participation: any) => acc + (participation.nb_indices_utilises || 0), 0);
 
-  //   return 0;
-  // }
+    // Calcul de la moyenne
+    return sum / data.length;
+  }
 
   /*
   * Méthode pour calculer le nombre moyen d'énigmes résolues par les participants

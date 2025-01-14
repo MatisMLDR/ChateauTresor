@@ -90,7 +90,7 @@ describe("Enigme", () => {
     (deleteEnigme as jest.Mock).mockResolvedValue(undefined);
 
     const enigme = new Enigme(mockEnigmeData);
-    await enigme.deleteId(mockEnigmeData.id_enigme);
+    await enigme.deleteId(mockEnigmeData.id_enigme!);
 
     expect(deleteEnigme).toHaveBeenCalledWith(mockEnigmeData.id_enigme);
   });
