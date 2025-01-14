@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { DatePicker } from "@/components/ui/date-picker";
 
 const mockData = {
     tasks: [
@@ -32,6 +33,12 @@ export default function ProfilePage() {
     const [firstLetter, setFirstLetter] = useState('');
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [address, setAddress] = useState('');
+    const [postalCode, setPostalCode] = useState('');
+    const [city, setCity] = useState('');
+    const [birthDate, setBirthDate] = useState<Date | undefined>(undefined); // Utilisation de Date pour le DatePicker
     const [userId, setUserId] = useState('');
     const [activeTab, setActiveTab] = useState("profile");
     const router = useRouter();
@@ -51,6 +58,12 @@ export default function ProfilePage() {
                     const response = await fetch(`/api/profils/${user.id}`);
                     const data = await response.json();
                     setUsername(data.username);
+                    setFirstName(data.prenom || '');
+                    setLastName(data.nom || '');
+                    setAddress(data.adresse || '');
+                    setPostalCode(data.postalCode || '');
+                    setCity(data.ville || '');
+                    setBirthDate(data.birthday ? new Date(data.birthday) : undefined); // Conversion en Date pour le DatePicker
                 } catch (err) {
                     console.error('Erreur lors de la récupération du profil :', err);
                 }
@@ -70,17 +83,25 @@ export default function ProfilePage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username }),
+                body: JSON.stringify({
+                    username,
+                    firstName,
+                    lastName,
+                    address,
+                    postalCode,
+                    city,
+                    birthDate: birthDate?.toISOString().split('T')[0] // Formatage de la date pour l'API
+                }),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update profile');
+                throw new Error('Failed to update profile' + response);
             }
 
-            // Optionally show a success message
+            alert('Profil mis à jour avec succès !');
         } catch (error) {
             console.error('Error updating profile:', error);
-            // Optionally show an error message
+            alert('Erreur lors de la mise à jour du profil.');
         }
     };
 
@@ -92,7 +113,7 @@ export default function ProfilePage() {
         const confirmPassword = formData.get('confirmPassword') as string;
 
         if (newPassword !== confirmPassword) {
-            // Show error message
+            alert('Les mots de passe ne correspondent pas.');
             return;
         }
 
@@ -103,10 +124,10 @@ export default function ProfilePage() {
             });
 
             if (error) throw error;
-            // Show success message
+            alert('Mot de passe mis à jour avec succès !');
         } catch (error) {
             console.error('Error updating password:', error);
-            // Show error message
+            alert('Erreur lors de la mise à jour du mot de passe.');
         }
     };
 
@@ -115,7 +136,7 @@ export default function ProfilePage() {
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Header Section */}
                 <div className="flex items-center space-x-4">
-                    {(isLoading || !username ) ? (
+                    {(isLoading || !username) ? (
                         <>
                             <Skeleton className="h-20 w-20 rounded-full" />
                             <div className="space-y-2">
@@ -186,9 +207,62 @@ export default function ProfilePage() {
                                                     <Input
                                                         className="pl-9"
                                                         value={username}
+                                                        placeholder={`${username || 'marilyn.monroe'}`}
                                                         onChange={(e) => setUsername(e.target.value)}
                                                     />
                                                 </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Prénom</label>
+                                                <div className="relative">
+                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                    <Input
+                                                        className="pl-9"
+                                                        value={firstName}
+                                                        placeholder={`${firstName || 'Marilyn'}`}
+                                                        onChange={(e) => setFirstName(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Nom</label>
+                                                <div className="relative">
+                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                    <Input
+                                                        className="pl-9"
+                                                        value={lastName}
+                                                        placeholder={`${lastName || 'MONROE'}`}
+                                                        onChange={(e) => setLastName(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Adresse</label>
+                                                <div className="relative">
+                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                    <Input
+                                                        className="pl-9"
+                                                        value={address}
+                                                        placeholder={`${address || '12305 5th Brentwood'}`}
+                                                        onChange={(e) => setAddress(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Ville</label>
+                                                <div className="relative">
+                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                    <Input
+                                                        className="pl-9"
+                                                        value={city}
+                                                        placeholder={`${city || 'Los Angeles'}`}
+                                                        onChange={(e) => setCity(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Date de naissance</label>
+                                                <DatePicker className={"w-full"} defaultDate={birthDate}/>
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium">Email</label>
@@ -241,7 +315,7 @@ export default function ProfilePage() {
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-sm font-medium">Nouveau mot de passed</label>
+                                                <label className="text-sm font-medium">Nouveau mot de passe</label>
                                                 <div className="relative">
                                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                                     <Input className="pl-9" type="password" name="newPassword" />
