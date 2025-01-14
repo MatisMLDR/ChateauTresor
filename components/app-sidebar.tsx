@@ -31,18 +31,15 @@ const dataUser = {
   teams: [
     {
       name: 'Prestige Heritage',
-      logo: GalleryVerticalEnd,
-      plan: 'School',
+      plan: 'Creator',
     },
     {
       name: 'Dream Maker',
-      logo: AudioWaveform,
       plan: 'Organisator',
     },
     {
       name: 'Historical Life',
-      logo: Command,
-      plan: 'Client',
+      plan: 'CEO',
     },
   ],
   navMain: [
@@ -73,19 +70,11 @@ const dataUser = {
       icon: Settings2,
       items: [
         {
-          title: 'General',
-          url: '#',
+          title: 'Informations',
+          url: '/profil',
         },
         {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
+          title: 'Statistiques',
           url: '#',
         },
       ],
@@ -114,17 +103,14 @@ const dataOrganisateur = {
   teams: [
     {
       name: 'Prestige Heritage',
-      logo: GalleryVerticalEnd,
       plan: 'School',
     },
     {
       name: 'Dream Maker',
-      logo: AudioWaveform,
       plan: 'Organisator',
     },
     {
       name: 'Historical Life',
-      logo: Command,
       plan: 'Client',
     },
   ],
@@ -150,19 +136,11 @@ const dataOrganisateur = {
       icon: Settings2,
       items: [
         {
-          title: 'General',
-          url: '#',
+          title: 'Informations',
+          url: '/profil',
         },
         {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
+          title: 'Statistiques',
           url: '#',
         },
       ],
@@ -190,7 +168,7 @@ export function AppSidebar({ user, ...props }: SideBarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher user={user} teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
