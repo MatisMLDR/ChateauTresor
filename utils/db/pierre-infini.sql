@@ -364,12 +364,12 @@ VALUES
 ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation
-INSERT INTO public.Participation (id_participant, id_chasse, score, est_terminee)
+INSERT INTO public.Participation (id_participant, id_chasse, score, jour, est_terminee)
 VALUES
-    ('d2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 80, TRUE),
-    ('e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', '550e8400-e29b-41d4-a716-446655440000', 80, FALSE),
-    ('5dafc8db-7ca3-48f8-b6ef-8305c70e1987', '550e8400-e29b-41d4-a716-446655440000', 80, FALSE),
-    ('0a56d11b-224c-4017-ab6c-b0cf5eef2470', '550e8400-e29b-41d4-a716-446655440000', 80, FALSE)
+    ('d2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 80, '01/07/2025',TRUE),
+    ('e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', '550e8400-e29b-41d4-a716-446655440000', 80,  '05/07/2025', FALSE),
+    ('5dafc8db-7ca3-48f8-b6ef-8305c70e1987', '550e8400-e29b-41d4-a716-446655440000', 80,  '01/01/2025',FALSE),
+    ('0a56d11b-224c-4017-ab6c-b0cf5eef2470', '550e8400-e29b-41d4-a716-446655440000', 80,  '01/05/2025',FALSE)
 ON CONFLICT (id_participant, id_chasse) DO NOTHING;
 
 -- Insert data into Avis

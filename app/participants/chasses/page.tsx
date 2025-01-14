@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import CardChasse from '@/components/CardChasse';
 import Chasse from '@/classes/Chasse';
@@ -10,6 +10,16 @@ import { Button } from '@/components/ui/button';
 const ChasseListPage: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+
+
+  // Filtrer les chasses en fonction de la recherche
+  const filteredHunts = useMemo(() => {
+    if (!searchQuery) return chasses;
+
+    return chasses.filter(chasse => {
+      return chasse.getTitle().toLowerCase().includes(searchQuery.toLowerCase());
+    })
+  }, [chasses, searchQuery])
 
   // Récupérer toutes les chasses
   useEffect(() => {
@@ -70,8 +80,6 @@ const ChasseListPage: React.FC = () => {
     if (available) {
       chasses.filter((chasse) => chasse.isAvailable());
     }
-
-    setChasses(chasses);
 
     console.log('Filtrer les chasses');
   };
@@ -143,6 +151,7 @@ const ChasseListPage: React.FC = () => {
               <Input type="checkbox" name='input-available' />
             </div>
             <Button type='submit'>Filtrer</Button>
+            <Button type='reset' onClick={() => setChasses(chasses)}>Réinitialiser</Button>
           </form>
         </div>
 

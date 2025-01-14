@@ -138,7 +138,6 @@ CREATE TABLE public.Participation (
     score INT DEFAULT 0,
     jour DATE NOT NULL,
     date_achat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    nb_enigmes_resolues INT DEFAULT 0,
     est_terminee BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id_participant, id_chasse),
     FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE,
