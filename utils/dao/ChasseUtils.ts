@@ -131,8 +131,8 @@ export async function getAllParticipations(id_chasse: UUID): Promise<any> {
  * @returns Promise<boolean> True si la chasse n'est pas complète pour le jour donné, false sinon
  * @throws Error si la récupération de la disponibilité échoue
  */
-export async function isChasseAvailableForDay(id_chasse: UUID, date: Date): Promise<boolean> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}/available?date=${date}`);
+export async function isChasseAvailableForDay(id_chasse: UUID, day: Date): Promise<boolean> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/${id_chasse}/available?day=${day}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de la disponibilité de la chasse');
   }
