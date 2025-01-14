@@ -197,7 +197,7 @@ export function AppSidebar({ user, ...props }: SideBarProps) {
         <NavProjects user={user} chasse={data.chasses} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <NavUser user={user}/>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
