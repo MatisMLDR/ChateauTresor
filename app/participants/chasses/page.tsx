@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import CardChasse from '@/components/CardChasse';
 import Chasse from '@/classes/Chasse';
@@ -10,6 +10,16 @@ import { Button } from '@/components/ui/button';
 const ChasseListPage: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+
+
+  // Filtrer les chasses en fonction de la recherche
+  const filteredHunts = useMemo(() => {
+    if (!searchQuery) return chasses;
+
+    return chasses.filter(chasse => {
+      return chasse.getTitle().toLowerCase().includes(searchQuery.toLowerCase());
+    })
+  }, [chasses, searchQuery])
 
   // Récupérer toutes les chasses
   useEffect(() => {
@@ -51,6 +61,11 @@ const ChasseListPage: React.FC = () => {
       chasses.filter((chasse) => chasse.getDifficulte() <= parseInt(difficulty));
     }
 
+    const noteMin = formData.get('input-stars') as string;
+    if (noteMin) {
+      chasses.filter((chasse) => chasse.getNoteMoyenne() >= parseInt(noteMin));
+    }
+
     const capacity = formData.get('input-capacity') as string;
     if (capacity) {
       chasses.filter((chasse) => chasse.getNbParticipants() <= parseInt(capacity));
@@ -66,14 +81,13 @@ const ChasseListPage: React.FC = () => {
       chasses.filter((chasse) => chasse.isAvailable());
     }
 
-    setChasses(chasses);
-
     console.log('Filtrer les chasses');
   };
 
   // Filtrer les chasses en fonction de la recherche
   const chassesFiltrees = chasses.filter((chasse) =>
     chasse.getTitre().toLowerCase().includes(searchQuery.toLowerCase())
+   && !chasse.isTer
   );
 
   return (
@@ -137,6 +151,7 @@ const ChasseListPage: React.FC = () => {
               <Input type="checkbox" name='input-available' />
             </div>
             <Button type='submit'>Filtrer</Button>
+            <Button type='reset' onClick={() => setChasses(chasses)}>Réinitialiser</Button>
           </form>
         </div>
 

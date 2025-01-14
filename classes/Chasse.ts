@@ -1,5 +1,5 @@
 import { ChasseType } from "@/types";
-import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses } from '@/utils/dao/ChasseUtils';
+import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
@@ -25,7 +25,7 @@ class Chasse {
   private id_equipe: UUID | null;
 
   constructor(chasse: ChasseType) {
-    this.id_chasse = chasse.id_chasse ?? -1;
+    this.id_chasse = chasse.id_chasse as UUID;
     this.titre = chasse.titre ?? "Nouvelle Chasse";
     this.capacite = chasse.capacite ?? 0;
     this.description = chasse.description ?? "Pas de description";
@@ -241,6 +241,20 @@ class Chasse {
     return data.map((chasse: any) => new Chasse(chasse));
   }
 
+  /*
+  * Méthode pour récupérer le nombre de participants à une chasse
+  * @returns number Le nombre de participants
+  * @throws Error si la récupération échoue
+  * @example const nbParticipants = await getNbParticipants();
+  */
+  public async getNbParticipants(): Promise<number> {
+    // Récupération dans la base du nombre de participants avec l'id de la chasse
+
+    // On récupère les données
+    const data = await getAllParticipations(this.id_chasse);
+    return data.length;
+  }
+
   public async deleteId(id_chasse: UUID): Promise<void> {
     try {
       await deleteChasse(id_chasse);
@@ -279,18 +293,12 @@ class Chasse {
   }
 
   /*
-   * Checks if the current date is within the range of `date_debut` and `date_fin`.
-   *
-   * @returns {boolean} `true` if the current date is between `date_debut` and `date_fin`, inclusive; otherwise, `false`.
-   */
+   * Méthode pour vérifier si une chasse est disponible
+    * @returns boolean true si la chasse est disponible, false sinon
+    */
   public isAvailable(): boolean {
-    const now = new Date();
-    const dateDebut = new Date(this.date_debut as string);
-    const dateFin = new Date(this.date_fin as string);
-
-    return now >= dateDebut && now <= dateFin;
+    return this.isStarted() && !this.isFinished();
   }
-
 
   /**
    * Determines if the current instance is finished based on the `date_fin` property.
@@ -301,7 +309,34 @@ class Chasse {
     const now = new Date();
     const dateFin = new Date(this.date_fin as string);
 
-    return now > dateFin;
+    return now >= dateFin;
+  }
+
+  public isStarted(): boolean {
+    const now = new Date();
+    const dateDebut = new Date(this.date_debut as string);
+
+    return now >= dateDebut;
+  }
+
+  /*
+  * Méthode pour vérifier si une chasse est pleine
+  * @returns boolean true si la chasse est pleine, false sinon
+  */
+  public async isFull(): Promise<boolean> {
+    return await this.getNbParticipants() >= this.capacite;
+  }
+
+  public async isAvailableForDay(day: Date): Promise<boolean> {
+    const isAvailable = isChasseAvailableForDay(this.id_chasse, day);
+
+    return isAvailable;
+  }
+
+  public static async getAllDisponibles(): Promise<any> {
+    const chasses = await getAllChassesDisponibles();
+    
+    return chasses.map((chasse: any) => new Chasse(chasse));
   }
 
   // Méthodes pour calculer des statistiques

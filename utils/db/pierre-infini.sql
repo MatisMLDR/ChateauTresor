@@ -159,7 +159,8 @@ CREATE TABLE public.Participation (
     id_chasse UUID NOT NULL,
     duree_totale INTERVAL DEFAULT INTERVAL '00:00:00',
     score INT DEFAULT 0,
-    nb_enigmes_resolues INT DEFAULT 0,
+    jour DATE NOT NULL,
+    date_achat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     est_terminee BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id_participant, id_chasse),
     FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE,
@@ -362,12 +363,12 @@ VALUES
 ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation
-INSERT INTO public.Participation (id_participant, id_chasse, score, est_terminee)
+INSERT INTO public.Participation (id_participant, id_chasse, score, jour, est_terminee)
 VALUES
-    ('d2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 80, TRUE),
-    ('e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', '550e8400-e29b-41d4-a716-446655440000', 80, FALSE),
-    ('5dafc8db-7ca3-48f8-b6ef-8305c70e1987', '550e8400-e29b-41d4-a716-446655440000', 80, FALSE),
-    ('0a56d11b-224c-4017-ab6c-b0cf5eef2470', '550e8400-e29b-41d4-a716-446655440000', 80, FALSE)
+    ('d2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 80, '01/07/2025',TRUE),
+    ('e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', '550e8400-e29b-41d4-a716-446655440000', 80,  '05/07/2025', FALSE),
+    ('5dafc8db-7ca3-48f8-b6ef-8305c70e1987', '550e8400-e29b-41d4-a716-446655440000', 80,  '01/01/2025',FALSE),
+    ('0a56d11b-224c-4017-ab6c-b0cf5eef2470', '550e8400-e29b-41d4-a716-446655440000', 80,  '01/05/2025',FALSE)
 ON CONFLICT (id_participant, id_chasse) DO NOTHING;
 
 -- Insert data into Avis
@@ -406,3 +407,29 @@ VALUES
     ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'Seigneur de Chenonceau', 'Pas de description', 'Terminer la chasse aux trésors du châteaux de Chenonceau', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07'),
     ('57be79ad-b153-4122-a0ba-4b60e0ee496b', 'Seigneur d''Amboise', 'Pas de description', 'Terminer la chasse aux trésors du châteaux d''Amboise', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07')
 ON CONFLICT (id_haut_fait) DO NOTHING;
+
+-- Création de la vue pour les chasses non terminées
+CREATE VIEW vue_chasses_non_terminees AS
+SELECT 
+    id_chasse,
+    titre,
+    capacite,
+    description,
+    age_requis,
+    image,
+    date_creation,
+    date_modification,
+    date_debut,
+    date_fin,
+    prix,
+    difficulte,
+    duree_estime,
+    theme,
+    statut,
+    id_chateau,
+    id_equipe
+FROM 
+    public.Chasse
+WHERE 
+    date_fin IS NULL 
+    OR date_fin > CURRENT_TIMESTAMP;

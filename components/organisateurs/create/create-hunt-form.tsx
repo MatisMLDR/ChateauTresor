@@ -6,16 +6,18 @@ import { ReviewSubmit } from "./steps/review-submit";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ChasseType } from "@/types";
+import { contenuTextuel } from "@/lib/contenuCreationChasse";
 import toast, { Toaster } from "react-hot-toast";
 import Chasse from "@/classes/Chasse";
 import { Enigme } from "@/classes/Enigme";
 import Indice from "@/classes/Indice";
+import { UUID } from "crypto";
 
 const steps = [
-  { title: "Informations de base", component: BasicDetails },
-  { title: "Sélection du château", component: CastleSelection },
-  { title: "Création des énigmes", component: RiddlesCreation },
-  { title: "Revue et validation", component: ReviewSubmit },
+  { title: contenuTextuel.create.steps.basicDetails, component: BasicDetails },
+  { title: contenuTextuel.create.steps.castleSelection, component: CastleSelection },
+  { title: contenuTextuel.create.steps.riddlesClues, component: RiddlesCreation },
+  { title: contenuTextuel.create.steps.reviewSubmit, component: ReviewSubmit },
 ];
 
 export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseType> }) {
@@ -39,11 +41,10 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
     }
   };
 
-  const generateRandomId = () => Math.floor(Math.random() * 1_000_000_000);
-
-  const transformFormDataToTables = (chasse: ChasseType) => {
+  function transformFormDataToTables(chasse: ChasseType) {
+    const chasseId = crypto.randomUUID();
     const chasseTable = {
-      id_chasse: chasse.id_chasse || null,
+      id_chasse: chasseId as UUID,
       titre: chasse.titre || "Nouvelle Chasse",
       capacite: chasse.capacite || 0,
       description: chasse.description || "Pas de description",
@@ -59,99 +60,84 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
       theme: chasse.theme || "Aucun thème",
       statut: chasse.statut || "Inactif",
       id_chateau: chasse.chateau?.id_chateau,
-      id_equipe: chasse.id_equipe || 1, // Ajustez selon vos besoins
+      id_equipe: chasse.id_equipe || "42fdbebf-d919-4bc2-a7b7-f00688f706af",
     };
-
-    const enigmesTable = chasse.enigmes?.map((enigme) => ({
-      id_enigme: enigme.id_enigme || generateRandomId(), // ID unique pour l'énigme
-      id_chasse: chasseTable.id_chasse, // Correspond à la clé étrangère vers `chasse`
-      titre: enigme.titre || "Nouvelle Énigme", // Défaut défini dans votre structure SQL
-      description: enigme.description || "Pas de description", // Défaut défini dans votre structure SQL
-      ordre: enigme.ordre ?? 1, // Assure un ordre par défaut à 1
-      degre_difficulte: enigme.degre_difficulte ?? 1, // Assure un degré de difficulté par défaut à 1
-      temps_max: enigme.temps_max ?? "00:30:00", // Définit un temps maximum par défaut
-      code_reponse: enigme.code_reponse || "", // Valeur par défaut pour éviter `null`
-      endroit_qrcode: enigme.endroit_qrcode || "", // Valeur par défaut vide pour `endroit_qrcode`
-      description_reponse: enigme.description_reponse || "Pas de description", // Défaut défini
-      image_reponse: enigme.image_reponse || "", // Valeur par défaut vide pour `image_reponse`
-      indices: enigme.indices || [], // Définit un tableau vide pour les indices par défaut
-    })) || [];
-
-    const indicesTable = chasse.enigmes?.flatMap((enigme) =>
-      enigme.indices?.map((indice) => ({
-        id_indice: indice.id_indice || generateRandomId(),
-        id_enigme: enigme.id_enigme, // Lien vers l'énigme
+  
+    // Générer un id_enigme unique pour chaque énigme
+    const enigmesTable = (chasse.enigmes || []).map((enigme) => {
+      const enigmeId = crypto.randomUUID() as UUID; // Générer un UUID unique pour chaque énigme
+      return {
+        id_enigme: enigmeId,
+        id_chasse: chasseId as UUID,
+        titre: enigme.titre || "Nouvelle Énigme",
+        description: enigme.description || "Pas de description",
+        ordre: enigme.ordre || 1,
+        code_reponse: enigme.code_reponse || "",
+        endroit_qrcode: enigme.endroit_qrcode || "",
+        temps_max: Number(enigme.temps_max || 30), // En secondes
+        description_reponse: enigme.description_reponse || "",
+        image_reponse: enigme.image_reponse || "",
+        degre_difficulte: enigme.degre_difficulte || 1,
+      };
+    });
+  
+    // Associer les indices à l'id_enigme correspondant
+    const indicesTable = (chasse.enigmes || []).flatMap((enigme, index) =>
+      (enigme.indices || []).map((indice) => ({
+        id_indice: crypto.randomUUID() as UUID,
+        id_enigme: enigmesTable[index].id_enigme, // Utiliser l'id_enigme généré pour cette énigme
         contenu: indice.contenu || "Pas de contenu",
-        ordre: indice.ordre || 1,
-        degre_aide: indice.degre_aide || 1,
-        type: indice.type || "Text",
+        ordre: Number(indice.ordre || 1),
+        degre_aide: Number(indice.degre_aide || 1),
+        type: indice.type || "text",
       }))
-    ) || [];
-
+    );
+  
     return { chasseTable, enigmesTable, indicesTable };
-  };
+  }
 
   const handleSubmit = async () => {
     try {
-      // Génération d'un ID unique pour la chasse
-      const chasseId = generateRandomId();
-
-      // Transformation des données du formulaire avec des IDs explicitement liés
-      const finalFormData: ChasseType = {
-        ...formData,
-        id_chasse: chasseId, // Attribuer l'ID généré à la chasse
-        enigmes: formData.enigmes?.map((enigme) => {
-          const enigmeId = enigme.id_enigme || generateRandomId(); // Générer un ID pour chaque énigme
-          return {
-            ...enigme,
-            id_enigme: enigmeId,
-            id_chasse: chasseId, // Relier l'énigme à la chasse
-            indices: enigme.indices?.map((indice) => ({
-              ...indice,
-              id_indice: indice.id_indice || generateRandomId(), // Générer un ID pour chaque indice
-              id_enigme: enigmeId, // Relier chaque indice à son énigme
-              id_chasse: chasseId, // Relier chaque indice à la chasse
-            })) || [],
-          };
-        }) || [],
-      };
-
-      // Extraction des données en tables pour insertion
-      const { chasseTable, enigmesTable, indicesTable } = transformFormDataToTables(finalFormData);
-
-      // Vérification explicite que l'ID de la chasse est défini
-      if (!chasseTable.id_chasse) {
-        throw new Error("ID de la chasse manquant après génération");
-      }
-
-      console.log("Données transformées :");
-      console.log("Chasse :", chasseTable);
-      console.log("Énigmes :", enigmesTable);
-      console.log("Indices :", indicesTable);
-
-      // Création de la chasse
-      console.log("Création de la chasse...");
+      // Transformation des données en tables
+      const { chasseTable, enigmesTable, indicesTable } = transformFormDataToTables(
+        formData as ChasseType
+      );
+  
+      console.log("ChasseTable :", chasseTable);
+      console.log("ÉnigmesTable :", enigmesTable);
+      console.log("IndicesTable :", indicesTable);
+  
+      // Étape 1 : Création de la chasse
       const chasse = new Chasse(chasseTable);
+      console.log("Création de la chasse...");
       await chasse.create();
       toast.success("Chasse créée avec succès.");
-
-      // Création des énigmes
-      console.log("Création des énigmes...");
-      for (const enigmeData of enigmesTable) {
-        const enigme = new Enigme(enigmeData);
-        await enigme.create();
+  
+      // Récupération de l'ID de la chasse créée
+      const chasseId = chasse.getIdChasse();
+      console.log("UUID de la chasse :", chasseId);
+  
+      // Étape 2 : Création des énigmes et indices
+      for (let enigmeData of enigmesTable) {
+        const enigmeInstance = new Enigme(enigmeData);
+        console.log("Création de l'énigme :", enigmeInstance);
+        await enigmeInstance.create();
+        toast.success(`Énigme "${enigmeData.titre}" créée avec succès.`);
+  
+        // Étape 3 : Création des indices associés à cette énigme
+        const indicesForEnigme = indicesTable.filter(
+          (indice) => indice.id_enigme === enigmeData.id_enigme
+        );
+  
+        for (const indiceData of indicesForEnigme) {
+          const indiceInstance = new Indice(indiceData);
+          console.log("Création de l'indice :", indiceInstance);
+          await indiceInstance.create();
+        }
+        console.log("Indices de l'énigme créés avec succès.");
       }
-      toast.success("Énigmes créées avec succès.");
-
-      // Création des indices
-      console.log("Création des indices...");
-      for (const indiceData of indicesTable) {
-        const indice = new Indice(indiceData);
-        await indice.create();
-      }
-      toast.success("Indices créés avec succès.");
-
-      console.log("Tous les éléments ont été créés avec succès.");
+  
+      toast.success("Toutes les données ont été sauvegardées avec succès.");
     } catch (error) {
       console.error("Erreur lors de la création :", error);
       toast.error("Une erreur est survenue lors de la création.");
@@ -172,10 +158,7 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
         </div>
       </div>
       <div className="bg-card p-6 rounded-lg border">
-        <CurrentStepComponent
-          formData={formData}
-          setFormData={handleFormDataUpdate}
-        />
+        <CurrentStepComponent formData={formData} setFormData={handleFormDataUpdate} />
       </div>
       <div className="flex justify-between">
         <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0}>
@@ -189,7 +172,4 @@ export function CreateHuntForm({ initialData }: { initialData?: Partial<ChasseTy
       </div>
     </div>
   );
-
 }
-
-

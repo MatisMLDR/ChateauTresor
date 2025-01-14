@@ -19,8 +19,8 @@ export class Enigme {
   image_reponse: string;
 
   constructor(enigme: EnigmeType) {
-    this.id_enigme = enigme.id_enigme;
-    this.id_chasse = enigme.id_chasse;
+    this.id_enigme = enigme.id_enigme as UUID;
+    this.id_chasse = enigme.id_chasse as UUID; 
     this.titre = enigme.titre;
     this.code_reponse = enigme.code_reponse;
     this.ordre = enigme.ordre;

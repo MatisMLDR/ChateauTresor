@@ -126,3 +126,31 @@ export async function getAllParticipations(id_chasse: UUID): Promise<any> {
   return await res.json();
 }
 
+/*
+ * Méthode pour récupérer une participation par son id
+ * @returns Promise<boolean> True si la chasse n'est pas complète pour le jour donné, false sinon
+ * @throws Error si la récupération de la disponibilité échoue
+ */
+export async function isChasseAvailableForDay(id_chasse: UUID, day: Date): Promise<boolean> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participations/disponibilte?id_chasse=${id_chasse}&jour=${day.toISOString()}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération de la disponibilité de la chasse');
+  }
+
+  return await res.json();
+}
+
+/*
+ * Méthode pour récupérer toutes les chasses disponibles à partir de la vue
+ * @returns Promise<any> Un tableau de chasses disponibles
+ * @throws Error si la récupération des chasses disponibles échoue
+ * @example const chassesDisponibles = await getAllChassesDisponibles();
+*/
+export async function getAllChassesDisponibles(): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/disponibles`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des chasses disponibles');
+  }
+  return await res.json();
+}
+

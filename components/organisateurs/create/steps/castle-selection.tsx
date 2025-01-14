@@ -62,9 +62,9 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           value={formData.id_chateau?.toString()}
           onValueChange={(valeur) => {
             const chateauSelectionne = chateaux.find(
-              (chateau) => chateau.id_chateau === parseInt(valeur)
+              (chateau) => chateau.id_chateau.toString() === valeur
             );
-            setFormData({ ...formData, id_chateau: parseInt(valeur), chateau: chateauSelectionne });
+            setFormData({ ...formData, id_chateau: valeur as `${string}-${string}-${string}-${string}-${string}`, chateau: chateauSelectionne });
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
