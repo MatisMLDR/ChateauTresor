@@ -51,6 +51,11 @@ const ChasseListPage: React.FC = () => {
       chasses.filter((chasse) => chasse.getDifficulte() <= parseInt(difficulty));
     }
 
+    const noteMin = formData.get('input-stars') as string;
+    if (noteMin) {
+      chasses.filter((chasse) => chasse.getNoteMoyenne() >= parseInt(noteMin));
+    }
+
     const capacity = formData.get('input-capacity') as string;
     if (capacity) {
       chasses.filter((chasse) => chasse.getNbParticipants() <= parseInt(capacity));
@@ -74,6 +79,7 @@ const ChasseListPage: React.FC = () => {
   // Filtrer les chasses en fonction de la recherche
   const chassesFiltrees = chasses.filter((chasse) =>
     chasse.getTitre().toLowerCase().includes(searchQuery.toLowerCase())
+   && !chasse.isTer
   );
 
   return (
