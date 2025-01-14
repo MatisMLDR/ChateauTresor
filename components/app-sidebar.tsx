@@ -143,20 +143,20 @@ const dataOrganisateur = {
       ],
     },
   ],
-  chasses: [
-    {
-      name: 'Design Engineering',
-      id: 1,
-    },
-    {
-      name: 'Sales & Marketing',
-      id: 2,
-    },
-    {
-      name: 'Travel',
-      id: 3,
-    },
-  ],
+//   chasses: [
+//     {
+//       name: 'Design Engineering',
+//       id: 1,
+//     },
+//     {
+//       name: 'Sales & Marketing',
+//       id: 2,
+//     },
+//     {
+//       name: 'Travel',
+//       id: 3,
+//     },
+//   ],
 };
 
 export function AppSidebar({ user, ...props }: SideBarProps) {
