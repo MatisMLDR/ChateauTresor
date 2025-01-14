@@ -11,7 +11,7 @@ jest.mock('@/utils/dao/ChateauUtils', () => ({
 
 describe('Chateau', () => {
   const mockChateauData: ChateauType = {
-    id_chateau: 1,
+    id_chateau: "a29f3988-18b8-47fc-aa7f-44682e83f3c0",
     nom: "Château Mystique",
     adresse_postale: "123 Rue du Château",
     localisation: "France",
@@ -21,7 +21,7 @@ describe('Chateau', () => {
     description: "Un château magnifique pour vos événements",
     image: "image_url",
     site_web: "https://chateau.com",
-    id_proprietaire: 42
+    id_proprietaire: "7a735edc-89fa-4fcf-846a-ea9f7d65b8aa"
   };
 
   afterEach(() => {
@@ -47,9 +47,9 @@ describe('Chateau', () => {
   test('readId should fetch and return a new Chateau instance', async () => {
     (getChateauById as jest.Mock).mockResolvedValue(mockChateauData);
 
-    const chateau = await Chateau.readId(1);
+    const chateau = await Chateau.readId("a29f3988-18b8-47fc-aa7f-44682e83f3c0");
 
-    expect(getChateauById).toHaveBeenCalledWith(1);
+    expect(getChateauById).toHaveBeenCalledWith("a29f3988-18b8-47fc-aa7f-44682e83f3c0");
     expect(chateau).toBeInstanceOf(Chateau);
     expect(chateau.getNom()).toBe(mockChateauData.nom);
   });
@@ -76,7 +76,7 @@ describe('Chateau', () => {
   test('deleteId should call deleteChateau with correct id', async () => {
     (deleteChateau as jest.Mock).mockResolvedValue(undefined);
 
-    await Chateau.readId(1).then(async (chateau) => {
+    await Chateau.readId("a29f3988-18b8-47fc-aa7f-44682e83f3c0").then(async (chateau) => {
       await chateau.deleteId(chateau.getIdChateau());
       expect(deleteChateau).toHaveBeenCalledWith(chateau.getIdChateau());
     });

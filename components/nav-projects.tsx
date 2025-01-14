@@ -1,15 +1,6 @@
-"use client"
+'use client';
 
-import {
-  Settings,
-  Star,
-  Map,
-  MoreHorizontal,
-  Trash,
-  Search,
-  User,
-  QrCode,
-} from "lucide-react"
+import { Map, MoreHorizontal, QrCode, Search, Settings, Star, Trash, User } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -17,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -26,20 +17,50 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
-import { SideBarProps } from "@/types";
-import Link from "next/link";
+import { Skeleton } from '@/components/ui/skeleton';
 
-export function NavProjects({ chasse, user }: {
+import { SideBarProps } from '@/types';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+export function NavProjects({
+  chasse,
+  user,
+}: {
   chasse: {
-    name: string
-    url: string
-    id: number
-  }[],
-  user: SideBarProps["user"]
+    id: number;
+  }[];
+  user: SideBarProps['user'];
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
+  const [chasseNames, setChasseNames] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    // Fonction pour récupérer le nom d'une chasse depuis l'API
+    const fetchChasseName = async (id: number) => {
+      try {
+        const response = await fetch(`/api/chasses/${id}`);
+        const data = await response.json();
+        return data.name; // Supposons que l'API retourne un objet avec un champ "name"
+      } catch (error) {
+        console.error(`Erreur lors de la récupération de la chasse ${id}`, error);
+        return 'Nom indisponible';
+      }
+    };
+
+    // Récupérer tous les noms des chasses
+    const fetchAllChasseNames = async () => {
+      const names: Record<number, string> = {};
+      for (const item of chasse) {
+        names[item.id] = await fetchChasseName(item.id);
+      }
+      setChasseNames(names);
+    };
+
+    fetchAllChasseNames();
+  }, [chasse]);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -48,12 +69,15 @@ export function NavProjects({ chasse, user }: {
       </SidebarGroupLabel>
       <SidebarMenu>
         {chasse.map((item) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
+              {/* Adapte l'URL en fonction du rôle de l'utilisateur */}
+              <Link
+                href={`${user === 'organisateur' ? '/participants/play/' : '/organisateurs/modifier_chasse/'}${item.id}`}
+              >
                 <Map />
-                <span>{item.name}</span>
-              </a>
+                {chasseNames[item.id] || <Skeleton className={'h-full w-full'} />}
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -125,4 +149,3 @@ export function NavProjects({ chasse, user }: {
     </SidebarGroup>
   );
 }
-
