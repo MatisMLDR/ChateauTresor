@@ -328,7 +328,7 @@ class Chasse {
   }
 
   public async isAvailableForDay(day: Date): Promise<boolean> {
-    // const isAvailable = isChasseAvailableForDay(this.id_chasse, day);
+    const isAvailable = isChasseAvailableForDay(this.id_chasse, day);
 
     return isAvailable;
   }
