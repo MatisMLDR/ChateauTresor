@@ -17,3 +17,17 @@ export function formatFullName(firstName: string, lastName: string): string {
   const formattedLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
   return `${formattedFirstName} ${formattedLastName}`;
 }
+
+export function convertTimeToMinutesAndHours(timeString: string) {
+  // Split the time string into parts
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
+  
+  // Convert to total minutes
+  const totalMinutes = hours * 60 + minutes;
+  
+  // Format the output
+  const hoursFormatted = `${hours}h`;
+  const minutesFormatted = `${totalMinutes}min`;
+  
+  return { totalMinutes, hoursFormatted, minutesFormatted };
+}
