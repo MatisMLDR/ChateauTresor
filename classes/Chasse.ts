@@ -450,15 +450,22 @@ class Chasse {
     // Récupération dans la base des notes attribuées de chaques avis avec l'id de la chasse
 
     // On récupère les données
-    const data = await getAllAvisByChasse(this.id_chasse);
+    try {
+      const data = await getAllAvisByChasse(this.id_chasse);
 
-    if (data.length === 0) {
+      if (!data.ok || data.length === 0 ) {
+        return 0;
+      }
+      // On calcule la somme des notes
+      const sum = data.reduce((acc: number, avis: any) => acc + avis.note, 0);
+      // On retourne la moyenne
+      return sum / data.length;
+    } catch (error) {
+      console.log("Erreur lors de la récupération des avis : ", error);
       return 0;
     }
-    // On calcule la somme des notes
-    const sum = data.reduce((acc: number, avis: any) => acc + avis.note, 0);
-    // On retourne la moyenne
-    return sum / data.length;
+
+
   }
 
   /*

@@ -41,9 +41,8 @@ const ChasseListPage: React.FC = () => {
   }
 
   // Appliquer les filtres
-  const applyFilters = () => {
+  const applyFilters = async () => {
 
-    console.log("GetNoteMoyenne : ", chasses[0].getNoteMoyenne());
 
     let filtered = [...chasses];
 
@@ -60,10 +59,20 @@ const ChasseListPage: React.FC = () => {
       filtered = filtered.filter((chasse) => chasse.getDifficulte() <= parseInt(filters.difficulty));
     }
     if (filters.noteMin) {
-      filtered = filtered.filter((chasse) => chasse.getNoteMoyenne() >= parseInt(filters.noteMin));
+      // Utiliser Promise.all pour gérer l'asynchronisme
+      const filteredWithNotes = await Promise.all(
+        filtered.map(async (chasse) => ({
+          chasse,
+          noteMoyenne: await chasse.getNoteMoyenne(),
+        }))
+      );
+  
+      filtered = filteredWithNotes
+        .filter(({ noteMoyenne }) => noteMoyenne >= parseInt(filters.noteMin))
+        .map(({ chasse }) => chasse);
     }
     if (filters.capacity) {
-      filtered = filtered.filter((chasse) => chasse.getNbParticipants() <= parseInt(filters.capacity));
+      filtered = filtered.filter((chasse) => chasse.getCapacite() <= parseInt(filters.capacity));
     }
     if (filters.family) {
       filtered = filtered.filter((chasse) => chasse.isFamilyFriendly());
@@ -206,7 +215,7 @@ const ChasseListPage: React.FC = () => {
         {/* Liste des chasses */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredHunts.map((chasse) => (
-            <CardChasse key={chasse.id_chasse} chasse={chasse} />
+            <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
           ))}
         </div>
       </div>
