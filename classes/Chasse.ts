@@ -1,10 +1,12 @@
-import { ChasseType } from "@/types";
+import { ChasseType, ProfilType } from "@/types";
 import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
 import { getAllEnigmesByChasse } from "@/utils/dao/EnigmeUtils";
 import Avis from "./Avis";
+import { getProfilById } from "@/utils/dao/ProfilUtils";
+import { addParticipation } from "@/utils/dao/ParticipantUtils";
 
 class Chasse {
   private id_chasse: UUID;
@@ -485,6 +487,18 @@ class Chasse {
     // Récupération dans la base des avis avec l'id de la chasse
     const data = await getAllAvisByChasse(this.id_chasse);
     return data.map((avis: any) => new Avis(avis));
+  }
+
+  public async addParticipant(id_participant: UUID, jour: any): Promise<void> {
+    
+    const participation = {
+      id_participant: id_participant,
+      id_chasse: this.id_chasse,
+      jour: jour,
+    }
+
+    await addParticipation(participation);
+    
   }
 
 }
