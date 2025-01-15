@@ -126,7 +126,7 @@ export function NavProjects({
                   </>
                 ) : (
                   <>
-                    <Link href={`${item.id}/voir`}>
+                    <Link href={`/participants/chasses/${item.id}`}>
                       <DropdownMenuItem>
                         <Search className="text-muted-foreground" />
                         <span>Voir</span>
