@@ -1,15 +1,16 @@
+// /app/participants/chassesAchete/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import ChasseCard from '@/components/participants/jouer/chasseCard';
-import GameInterface from '@/components/participants/jouer/gameInterface';
+import { useRouter } from 'next/navigation';
 
 const ChasseList: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
   const [chassesAchetees, setChassesAchetees] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedChasse, setSelectedChasse] = useState<any>(null);
   const participantId = '1'; // Remplacez par une gestion dynamique si nécessaire.
+  const router = useRouter();
 
   // Récupération des chasses et des chasses achetées
   useEffect(() => {
@@ -37,24 +38,15 @@ const ChasseList: React.FC = () => {
     fetchChassesAchetees();
   }, [participantId]);
 
-  // Fonction pour vérifier si une chasse est achetée
-  // const isChasseAchetee = (id_chasse: number) =>
-  //   Array.isArray(chassesAchetees) && chassesAchetees.some((chasse) => chasse.id_chasse === id_chasse);
-
   // Filtrage des chasses en fonction de la recherche
   const chassesFiltrees = chasses.filter((chasse) =>
     chasse.titre.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Gestion de l'affichage
-  if (selectedChasse) {
-    return (
-      <GameInterface
-        chasse={selectedChasse}
-        onBack={() => setSelectedChasse(null)} // Réinitialise la sélection
-      />
-    );
-  }
+  // Fonction pour rediriger vers la page de jeu
+  const handleJouer = (chasseId: string) => {
+    router.push(`/participants/jouer?chasseId=${chasseId}`);
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -75,9 +67,8 @@ const ChasseList: React.FC = () => {
           <ChasseCard
             key={chasse.id_chasse}
             chasse={chasse}
-            // isAchetee={isChasseAchetee(chasse.id_chasse)} // Commenté pour désactiver la vérification
             isAchetee={true} // On force la valeur à true pour permettre de jouer à toutes les chasses
-            onJouer={() => setSelectedChasse(chasse)}
+            onJouer={() => handleJouer(chasse.id_chasse)} // Passe la fonction de redirection
           />
         ))}
       </div>
