@@ -13,7 +13,8 @@ public.Haut_fait,
 public.Profiles,
 public.proprietaire_chateau,
 public.enigme_participant,
-public.indice_participant CASCADE;
+public.indice_participant,
+public.haut_fait_participant CASCADE;
 
 -- Supprimer les triggers
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
@@ -257,6 +258,17 @@ CREATE TABLE public.Haut_Fait (
     date DATE DEFAULT CURRENT_DATE
 );
 
+-- Table Haut_Fait_Participant
+CREATE TABLE public.Haut_Fait_Participant (
+    id_haut_fait UUID NOT NULL,
+    id_participant UUID NOT NULL,
+    est_acquis BOOLEAN DEFAULT FALSE,
+    date_acquisition TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_haut_fait, id_participant),
+    FOREIGN KEY (id_haut_fait) REFERENCES Haut_Fait(id_haut_fait) ON DELETE CASCADE,
+    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE
+);
+
 -- Indexation des tables
 CREATE INDEX idx_profiles_email ON profiles (email);
 CREATE INDEX idx_chateau_nom ON Chateau (nom);
@@ -408,6 +420,14 @@ VALUES
     ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'Seigneur de Chenonceau', 'Pas de description', 'Terminer la chasse aux trésors du châteaux de Chenonceau', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07'),
     ('57be79ad-b153-4122-a0ba-4b60e0ee496b', 'Seigneur d''Amboise', 'Pas de description', 'Terminer la chasse aux trésors du châteaux d''Amboise', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07')
 ON CONFLICT (id_haut_fait) DO NOTHING;
+
+-- Insert data into Haut_Fait_Participant
+INSERT INTO public.Haut_Fait_Participant (id_haut_fait, id_participant, est_acquis, date_acquisition) 
+VALUES
+    ('f35a1787-d883-4ba7-8e9b-d8dc2dd6c84d', 'd2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', TRUE, '2025-01-07'),
+    ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', TRUE, '2025-01-07'),
+    ('57be79ad-b153-4122-a0ba-4b60e0ee496b', '5dafc8db-7ca3-48f8-b6ef-8305c70e1987', TRUE, '2025-01-07')
+ON CONFLICT (id_haut_fait, id_participant) DO NOTHING;
 
 -- Création de la vue pour les chasses non terminées
 CREATE VIEW vue_chasses_non_terminees AS

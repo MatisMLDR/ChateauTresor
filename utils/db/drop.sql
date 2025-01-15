@@ -13,7 +13,8 @@ public.Haut_fait,
 public.Profiles,
 public.proprietaire_chateau,
 public.enigme_participant,
-public.indice_participant CASCADE;
+public.indice_participant,
+public.haut_fait_participant CASCADE;
 
 -- Supprimer les triggers
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
