@@ -24,7 +24,7 @@ ON CONFLICT (id_proprietaire) DO NOTHING;
 -- Insert data into Chateau
 INSERT INTO public.Chateau (id_chateau, nom, adresse_postale, localisation, capacite, prix_location, telephone, description, image, site_web, id_proprietaire)
 VALUES
-    ('63e923ce-db26-4024-90cb-ff43eccfdbcb','IUT 2', '2 Place du Doyen Gosse', '45.191841, 5.716785', '1000', '1.00', '04 76 28 45 09', 'Pour apprendre à créer Château Trésor','https://cdn-s-www.ledauphine.com/images/6BD74FC8-7546-4962-A9D4-F0B5D539A191/FB1200/photo-1580471774.jpg', 'https://iut2.univ-grenoble-alpes.fr/', '530a3302-4d03-49c0-a262-a72b3d434da9'),
+    ('63e923ce-db26-4024-90cb-ff43eccfdbcb','IUT 2', ' 2 Place du Doyen Gosse', '45.191841, 5.716785', '1000', '1.00', '04 76 28 45 09', 'L''IUT2 pour les jobbeurs qui jobbent alors qu''ils sont jobless','https://cdn-s-www.ledauphine.com/images/6BD74FC8-7546-4962-A9D4-F0B5D539A191/FB1200/photo-1580471774.jpg', 'https://iut2.univ-grenoble-alpes.fr/', '530a3302-4d03-49c0-a262-a72b3d434da9'),
     ('2aab1306-2875-426c-b0d3-f440f05fa8b8','Château de Chambord', 'Château, 41250 Chambord, France', '47.616833, 1.516992', '1000', '10000.00','+33 2 54 50 40 00', 'Le Château de Chambord est un joyau de la Renaissance française. Construit au XVIᵉ siècle sous François Ier,il est célèbre pour son architecture unique, son escalier à double révolution et ses vastes jardins.','https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chambord_Castle_Northwest_facade.jpg/2880px-Chambord_Castle_Northwest_facade.jpg','https://www.chambord.org/', '530a3302-4d03-49c0-a262-a72b3d434da9'),
     ('909c1f3e-19cf-4ddc-a26b-f0c7dde8b9cd','Château de Chenonceau', 'Château de Chenonceau, 37150 Chenonceaux, France', '47.324406, 1.070545', '0', '0.00', '+33 2 47 23 90 07','Le Château de Chenonceau, surnommé le Château des Dames, est connu pour son élégance architecturale enjambant la rivière Cher. Son histoire est marquée par des figures féminines telles que Diane de Poitiers et Catherine de Médicis.','https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Chenonceau#/media/Fichier:Chenonceau-20050320.jpg', 'https://www.chenonceau.com/', '530a3302-4d03-49c0-a262-a72b3d434da9'),
     ('509a1015-d989-4382-8d27-ff391c5367d9', 'Château d’Amboise', 'Montée de l''Émir Abd-el-Kader, 37400 Amboise, France', '47.413780, 0.987703', '0', '0.00', '+33 2 47 57 00 98','Le Château d’Amboise est un symbole de la Renaissance française. Résidence royale au XVᵉ et XVIᵉ siècles, il offre une vue imprenable sur la Loire et abrite la tombe présumée de Léonard de Vinci.','https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg/2560px-Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg','https://www.chateau-amboise.com/', '530a3302-4d03-49c0-a262-a72b3d434da9')
@@ -64,7 +64,7 @@ ON CONFLICT (id_participant) DO NOTHING;
 INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, image, date_creation, date_modification, date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
 VALUES
     ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg', '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2', '02:00:00', 'Theme de la chasse', 'Inactif', '63e923ce-db26-4024-90cb-ff43eccfdbcb', '5da884fa-d39c-4e99-8644-a18e2bf34a60'),
-    ('550e8400-e29b-41d4-a716-446655440000', 'Chasse à Chambord', '300', 'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !', '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp', '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1', '02:00:00', 'Dynastie royale', 'Inactif', '2aab1306-2875-426c-b0d3-f440f05fa8b8', '42fdbebf-d919-4bc2-a7b7-f00688f706af')
+    ('550e8400-e29b-41d4-a716-446655440000', 'KIRIKOU', '300', 'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !', '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp', '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1', '02:00:00', 'Dynastie royale', 'Inactif', '2aab1306-2875-426c-b0d3-f440f05fa8b8', '42fdbebf-d919-4bc2-a7b7-f00688f706af')
 ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation
@@ -92,10 +92,12 @@ VALUES
 ON CONFLICT (id_recompense) DO NOTHING;
 
 -- Insert data into Enigme
-INSERT INTO public.Enigme (id_enigme, titre, description, ordre, degre_difficulte, id_chasse)
+INSERT INTO public.Enigme (id_enigme, titre, description, ordre, degre_difficulte, id_chasse, code_reponse)
 VALUES
-    ('b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba', 'Énigme 1', 'Résolvez ce mystère.', 1, 2, 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
-    ('09709c49-8fbf-ffd1-cfd0-baba35e20970', 'Énigme 5', 'Une énigme complexe.', 5, 3, 'f47ac10b-58cc-4372-a567-0e02b2c3d479')
+    ('b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba', 'Énigme 1', 'Résolvez ce mystère.', 1, &, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '111111'),
+    ('09709c49-8fbf-ffd1-cfd0-baba35e20970', 'Énigme 2', 'Une énigme complexe.', 2, 3, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '222222'),
+    ('b36a35e2-095c-49f9-8fbf-3bfrd1cfd0ba', 'Énigme 3', 'Résolvez ce mystère.', 3, 2, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '333333'),
+    ('04709c49-8fdf-ffd1-cfd0-bcba35e20970', 'Énigme 4', 'Une énigme complexe.', 4, 3, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '444444')
 ON CONFLICT (id_enigme) DO NOTHING;
 
 -- Insert data into Indice
@@ -103,8 +105,11 @@ INSERT INTO public.Indice (id_indice, contenu, ordre, degre_aide, id_enigme)
 VALUES
     ('75f4e5c2-f44b-45a5-879a-45d5d20cb51d', 'Indice pour énigme 1.', 1, 1, 'b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba'),
     ('4b75a5a7-9a45-d5d0-cb51-d75f4e5c2f44', 'Indice pour énigme 5.', 1, 5, '09709c49-8fbf-ffd1-cfd0-baba35e20970'),
-    ('b75a5a79-a45d-5d0c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, 'b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba')
-ON CONFLICT (id_indice) DO NOTHING;
+    ('b75a5a79-a45d-5d0c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, 'b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba'),
+    ('b75b5a79-a45d-5d1c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, 'b36a35e2-095c-49f9-8fbf-3bfrd1cfd0ba'),
+    ('b75a5b79-a45d-5d2c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, '04709c49-8fdf-ffd1-cfd0-bcba35e20970'),
+    ('b75c5a79-a45d-5d3c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, '04709c49-8fdf-ffd1-cfd0-bcba35e20970')
+    ON CONFLICT (id_indice) DO NOTHING;
 
 INSERT INTO public.haut_fait (id_haut_fait, titre, description, conditions, image_badge, date)
 VALUES
@@ -112,3 +117,11 @@ VALUES
     ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'Seigneur de Chenonceau', 'Pas de description', 'Terminer au moins une chasse aux trésors dans le château de Chenonceau', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07'),
     ('57be79ad-b153-4122-a0ba-4b60e0ee496b', 'Seigneur d''Amboise', 'Pas de description', 'Terminer au moins une chasse aux trésors dans le château d''Amboise', 'https://us-tuna-sounds-images.voicemod.net/742f87e9-77b0-48fc-8cdc-7db10472cf16-1692130617115.png', '2025-01-07')
 ON CONFLICT (id_haut_fait) DO NOTHING;
+
+-- Insert data into Haut_Fait_Participant
+INSERT INTO public.Haut_Fait_Participant (id_haut_fait, id_participant, est_acquis, date_acquisition)
+VALUES
+    ('f35a1787-d883-4ba7-8e9b-d8dc2dd6c84d', 'd2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', TRUE, '2025-01-07'),
+    ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', TRUE, '2025-01-07'),
+    ('57be79ad-b153-4122-a0ba-4b60e0ee496b', '5dafc8db-7ca3-48f8-b6ef-8305c70e1987', TRUE, '2025-01-07')
+ON CONFLICT (id_haut_fait, id_participant) DO NOTHING;
