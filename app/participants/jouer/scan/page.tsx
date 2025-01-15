@@ -1,4 +1,3 @@
-// /app/participants/jouer/scan/page.tsx
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -21,44 +20,36 @@ const ScanQRCodePage: React.FC = () => {
   const [scanError, setScanError] = useState<string | null>(null);
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const [showValidationPopup, setShowValidationPopup] = useState(false);
-  const [showCompletionPopup, setShowCompletionPopup] = useState(false); // Nouvel état pour la notification de fin
+  const [showCompletionPopup, setShowCompletionPopup] = useState(false);
   const [codeSaisi, setCodeSaisi] = useState('');
-  const [useScanner, setUseScanner] = useState(true); // Par défaut, on utilise le scanner
-  const [enigmeTitle, setEnigmeTitle] = useState<string>(''); // Nouvel état pour le titre de l'énigme
-
+  const [useScanner, setUseScanner] = useState(true);
+  const [enigmeTitle, setEnigmeTitle] = useState<string>('');
 
   const qrScannerRef = useRef<Html5QrcodeScanner | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const chasseId = searchParams.get('chasseId'); // Récupère l'ID de la chasse
+  const chasseId = searchParams.get('chasseId');
   const enigmeId = searchParams.get('enigmeId');
 
-
-
-  // Fonction pour récupérer le titre de l'énigme
   const fetchEnigmeTitle = async () => {
     try {
       const chasseInstance = await Chasse.readId(chasseId);
       const enigmes = await chasseInstance.getAllEnigmes();
       const currentEnigme = enigmes.find((enigme) => enigme.id_enigme === enigmeId);
       if (currentEnigme) {
-        setEnigmeTitle(currentEnigme.titre); // Mettre à jour le titre de l'énigme
+        setEnigmeTitle(currentEnigme.titre);
       }
     } catch (error) {
       console.error('Erreur lors de la récupération du titre de l\'énigme :', error);
     }
   };
 
-  // Récupérer le titre de l'énigme au chargement de la page
   useEffect(() => {
     if (chasseId && enigmeId) {
       fetchEnigmeTitle();
     }
   }, [chasseId, enigmeId]);
 
-
-
-  /// Fonction pour valider le code
   const handleCodeValidation = async (code: string) => {
     try {
       const chasseInstance = await Chasse.readId(chasseId);
@@ -70,15 +61,12 @@ const ScanQRCodePage: React.FC = () => {
         setValidationMessage('Code correct !');
         setShowValidationPopup(true);
 
-        // Trouver l'index de l'énigme actuelle
         const currentIndex = enigmesTriees.findIndex((enigme) => enigme.id_enigme === enigmeId);
 
-        // Vérifier s'il y a une énigme suivante
         if (currentIndex < enigmesTriees.length - 1) {
           const nextEnigme = enigmesTriees[currentIndex + 1];
           router.push(`/participants/jouer?chasseId=${chasseId}&enigmeId=${nextEnigme.id_enigme}`);
         } else {
-          // Si c'est la dernière énigme, rediriger vers la page de récompense
           router.push(`/participants/jouer/recompenses?chasseId=${chasseId}`);
         }
       } else {
@@ -90,13 +78,11 @@ const ScanQRCodePage: React.FC = () => {
     }
   };
 
-  // Fonction pour rediriger vers la page de succès après la notification de fin
   const handleCompletionConfirmation = () => {
     setShowCompletionPopup(false);
     router.push(`/participants/jouer/success?chasseId=${chasseId}`);
   };
 
-  // Fonction pour gérer le scan du QR code
   const handleScan = (data: string) => {
     setCodeSaisi(data);
     handleCodeValidation(data);
@@ -109,7 +95,6 @@ const ScanQRCodePage: React.FC = () => {
     setUseScanner(false);
   };
 
-  // Demander la permission d'accéder à la caméra
   const requestCameraPermission = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ video: true });
@@ -121,7 +106,6 @@ const ScanQRCodePage: React.FC = () => {
     }
   };
 
-  // Vérifier la disponibilité de la caméra
   const checkCameraAvailability = async () => {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -139,10 +123,8 @@ const ScanQRCodePage: React.FC = () => {
     }
   };
 
-  // Fonction pour gérer les erreurs du scanner
   const handleError = (err: string) => {
     if (!err.includes('NotFoundException')) {
-      console.error('Erreur du scanner de QR code :', err);
       setScanError('En attente de QR code...');
       setTimeout(() => {
         setScanError(null);
@@ -150,12 +132,10 @@ const ScanQRCodePage: React.FC = () => {
     }
   };
 
-  // Fonction pour revenir à l'énigme actuelle
   const handleBackToEnigme = () => {
     router.push(`/participants/jouer?chasseId=${chasseId}&enigmeId=${enigmeId}`);
   };
 
-  // Désactiver le scanner
   const disableScanner = () => {
     if (qrScannerRef.current) {
       qrScannerRef.current.clear();
@@ -164,7 +144,6 @@ const ScanQRCodePage: React.FC = () => {
     setUseScanner(false);
   };
 
-  // Initialiser le scanner de QR code
   useEffect(() => {
     if (useScanner) {
       const qrScannerElement = document.getElementById('qr-scanner');
@@ -189,21 +168,30 @@ const ScanQRCodePage: React.FC = () => {
     };
   }, [useScanner]);
 
-  // Vérifier la disponibilité de la caméra au chargement de la page
   useEffect(() => {
     checkCameraAvailability();
   }, []);
 
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && !useScanner) {
+        handleCodeValidation(codeSaisi);
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyPress);
+    return () => {
+      window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [codeSaisi, useScanner]);
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 p-6">
-      <div className="w-full max-w-4xl rounded-xl bg-white p-8 shadow-2xl">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Valider le code</h1>
+        {enigmeTitle && <h2 className="text-xl font-semibold text-gray-700 mb-4">Énigme : {enigmeTitle}</h2>}
 
-        <h1 className="mb-8 text-3xl font-bold text-gray-800">Valider le code</h1>
-        {enigmeTitle && <h2 className="mb-6 text-xl font-semibold text-gray-700">Énigme : {enigmeTitle}</h2>}
-
-
-        {/* Choix entre saisie manuelle et scan de QR code */}
-        <div className="mb-6 flex gap-4">
+        <div className="mb-6 flex flex-col gap-4">
           <button
             onClick={() => setUseScanner(false)}
             className={`rounded-lg px-6 py-3 shadow-lg transition duration-300 ${
@@ -229,7 +217,6 @@ const ScanQRCodePage: React.FC = () => {
           </button>
         </div>
 
-        {/* Saisie manuelle */}
         {!useScanner && (
           <div className="rounded-lg bg-gray-50 p-6 shadow-inner">
             <input
@@ -241,25 +228,24 @@ const ScanQRCodePage: React.FC = () => {
             />
             <button
               onClick={() => handleCodeValidation(codeSaisi)}
-              className="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-blue-600 hover:to-purple-700"
+              className="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-blue-600 hover:to-purple-700 w-full"
             >
               Valider
             </button>
             <button
               onClick={handleBackToEnigme}
-              className="rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-gray-600 hover:to-gray-700"
+              className="rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-gray-600 hover:to-gray-700 w-full mt-4"
             >
               Revenir à l'énigme
             </button>
           </div>
         )}
 
-        {/* Scanner de QR code */}
         {useScanner && (
           <div>
             <div id="qr-scanner" className="w-full overflow-hidden rounded-lg shadow-lg"></div>
             {scanError && <p className="mt-6 text-lg font-semibold text-red-600">{scanError}</p>}
-            <div className="mt-6 flex gap-4">
+            <div className="mt-6 flex flex-col gap-4">
               <button
                 onClick={disableScanner}
                 className="rounded-lg bg-gradient-to-r from-red-500 to-pink-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-red-600 hover:to-pink-700"
@@ -276,7 +262,6 @@ const ScanQRCodePage: React.FC = () => {
           </div>
         )}
 
-        {/* Message de validation */}
         {validationMessage && (
           <p
             className={`mt-6 text-lg font-semibold ${
@@ -287,7 +272,6 @@ const ScanQRCodePage: React.FC = () => {
           </p>
         )}
 
-        {/* Popup de validation */}
         <AlertDialog open={showValidationPopup} onOpenChange={setShowValidationPopup}>
           <AlertDialogContent className="rounded-xl bg-white shadow-2xl">
             <AlertDialogHeader>
@@ -309,7 +293,6 @@ const ScanQRCodePage: React.FC = () => {
           </AlertDialogContent>
         </AlertDialog>
 
-        {/* Popup de fin d'énigme */}
         <AlertDialog open={showCompletionPopup} onOpenChange={setShowCompletionPopup}>
           <AlertDialogContent className="rounded-xl bg-white shadow-2xl">
             <AlertDialogHeader>

@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 
 interface Indice {
   id_indice: UUID;
-  contenu: string; // Contenu de l'indice
+  contenu: string;
   degre_aide: number;
   id_enigme: string;
   ordre: number;
@@ -10,21 +10,20 @@ interface Indice {
 }
 
 const IndiceDetails: React.FC<{ indice: Indice | undefined }> = ({ indice }) => {
-  // Vérifier si l'indice est défini
   if (!indice) {
     return (
-      <div className="p-4 bg-gray-100 rounded-lg">
+      <div className="p-4 bg-gray-100 rounded-lg text-center">
         <p className="text-red-500">Aucun indice disponible.</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg">
-      <h2 className="text-xl font-bold mb-2">Indice {indice.ordre}</h2>
-      <p><strong>Contenu :</strong> {indice.contenu}</p>
-      <p><strong>Degré d'aide :</strong> {indice.degre_aide}</p>
-      <p><strong>Type :</strong> {indice.type}</p>
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold text-center">Indice {indice.ordre}</h2>
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <p><strong>Contenu :</strong> {indice.contenu}</p>
+      </div>
     </div>
   );
 };

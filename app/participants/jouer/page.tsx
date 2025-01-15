@@ -1,4 +1,3 @@
-// /app/participants/jouer/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -17,8 +16,8 @@ const GameInterface: React.FC = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const chasseId = searchParams.get('chasseId'); // Récupère l'ID de la chasse
-  const enigmeIdFromUrl = searchParams.get('enigmeId'); // Récupère l'ID de l'énigme depuis l'URL
+  const chasseId = searchParams.get('chasseId');
+  const enigmeIdFromUrl = searchParams.get('enigmeId');
 
   useEffect(() => {
     const fetchEnigmes = async () => {
@@ -28,7 +27,6 @@ const GameInterface: React.FC = () => {
         const enigmesTriees = enigmes.sort((a, b) => a.ordre - b.ordre);
         setEnigmes(enigmesTriees);
 
-        // Si un ID d'énigme est présent dans l'URL, on définit l'index de l'énigme actuelle
         if (enigmeIdFromUrl) {
           const index = enigmesTriees.findIndex((enigme) => enigme.id_enigme === enigmeIdFromUrl);
           if (index !== -1) {
@@ -56,7 +54,6 @@ const GameInterface: React.FC = () => {
     router.push('/participants/chassesAchete');
   };
 
-  // Mettre à jour l'URL avec l'ID de l'énigme actuelle
   useEffect(() => {
     if (enigmes.length > 0) {
       const currentEnigmeId = enigmes[currentEnigmeIndex].id_enigme;
@@ -66,9 +63,9 @@ const GameInterface: React.FC = () => {
 
   if (showSuccessPage) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-        <h1 className="text-5xl font-bold mb-6 animate-bounce">Félicitations !</h1>
-        <p className="text-xl mb-8">Vous avez résolu toutes les énigmes de cette chasse.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+        <h1 className="text-4xl font-bold mb-6 animate-bounce">Félicitations !</h1>
+        <p className="text-lg mb-8 text-center">Vous avez résolu toutes les énigmes de cette chasse.</p>
         <button
           onClick={handleBackAfterSuccess}
           className="bg-white text-blue-600 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300"
@@ -81,37 +78,35 @@ const GameInterface: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-red-500 to-pink-600 text-white">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-red-500 to-pink-600 text-white p-4">
         <button onClick={handleBack} className="mb-6 bg-white text-red-600 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
           Retour à la liste des chasses
         </button>
-        <p className="text-xl">{error}</p>
+        <p className="text-lg text-center">{error}</p>
       </div>
     );
   }
 
   if (enigmes.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
         <button onClick={handleBack} className="mb-6 bg-white text-blue-600 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
           Retour à la liste des chasses
         </button>
-        <p className="text-xl">Chargement des énigmes...</p>
+        <p className="text-lg">Chargement des énigmes...</p>
       </div>
     );
   }
 
   const currentEnigme = enigmes[currentEnigmeIndex];
-
-  // Calcul de la progression
   const progress = ((currentEnigmeIndex + 1) / enigmes.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-6">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-8">
+    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6">
         <button
           onClick={handleBack}
-          className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300"
+          className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 w-full"
         >
           Retour à la liste des chasses
         </button>
@@ -132,13 +127,13 @@ const GameInterface: React.FC = () => {
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold text-gray-800 mb-6">{currentEnigme.titre}</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">{currentEnigme.titre}</h1>
         <p className="text-lg text-gray-600 mb-8">{currentEnigme.description}</p>
 
         <div className="mb-8">
           <button
             onClick={() => setShowIndices(!showIndices)}
-            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 w-full"
           >
             {showIndices ? 'Masquer les indices' : 'Afficher les indices'}
           </button>
@@ -154,7 +149,7 @@ const GameInterface: React.FC = () => {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Valider le code</h2>
           <Link href={`/participants/jouer/scan?chasseId=${chasseId}&enigmeId=${currentEnigme.id_enigme}`}>
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300">
+            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 w-full">
               Valider le code
             </button>
           </Link>
