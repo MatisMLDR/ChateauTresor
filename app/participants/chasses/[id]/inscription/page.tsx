@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { createClient } from '@/utils/supabase/client';
 import { UUID } from 'crypto';
 import Link from 'next/link';
-import { redirect, useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -17,6 +17,7 @@ const Page = () => {
   const [idParticipant, setIdParticipant] = useState<UUID | null>(null);
 
   const params = useParams();
+  const router = useRouter();
 
   // Récupération des données utilisateur et de la chasse
   useEffect(() => {
@@ -27,7 +28,7 @@ const Page = () => {
 
         if (error || !data) {
           toast.error('Vous devez être connecté pour accéder à cette page');
-          redirect('/login');
+          router.push('/login');
         }
 
         setIdUser(data.user.id as UUID);
@@ -63,7 +64,7 @@ const Page = () => {
     try {
       await chasse?.addParticipant(idParticipant, day);
       toast.success('Inscription à la chasse effectuée avec succès !');
-      redirect('/participants/chassesAchete');
+      router.push('/participants/chassesAchete');
     } catch (err) {
       console.error("Erreur lors de l'inscription à la chasse :", err);
       toast.error("Erreur lors de l'inscription. Veuillez réessayer.");
