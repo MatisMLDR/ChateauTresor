@@ -126,6 +126,25 @@ export async function getAllParticipations(id_chasse: UUID): Promise<any> {
   return await res.json();
 }
 
+/**
+ * Méthode pour récupérer toutes les énigmes d'une chasse
+ * @param id_chasse
+ */
+export const getAllEnigmesByChasse = async (id_chasse: UUID): Promise<any[]> => {
+  try {
+    // Exemple avec une API
+    const response = await fetch(`/api/enigmes/chasse?id_chasse=${id_chasse}`);
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des énigmes');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erreur dans getAllEnigmesByChasse:', error);
+    throw error;
+  }
+};
+
 /*
  * Méthode pour récupérer une participation par son id
  * @returns Promise<boolean> True si la chasse n'est pas complète pour le jour donné, false sinon

@@ -117,3 +117,17 @@ export async function deleteIndice(id_indice: UUID): Promise<void> {
         throw new Error(`Erreur lors de la suppression de l'indice avec l'ID ${id_indice}`);
     }
 }
+
+/*
+ * Méthode pour récupérer le contenu d'un indice à partir de son id
+ * @returns Promise<any> Le contenu de l'indice
+ * @throws Error si la récupération du contenu échoue
+ * @example const content = await getIndiceContentById('4b75a5a7-9a45-d5d0-cb51-d75f4e5c2f44');
+ */
+export async function getIndiceContentById(id_indice: UUID): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/${id_indice}/content`);
+    if (!res.ok) {
+        throw new Error('Erreur lors de la récupération du contenu de l\'indice');
+    }
+    return await res.json();
+}
