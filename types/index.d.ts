@@ -240,3 +240,12 @@ export type DatePickerProps = {
   defaultDate?: Date;
   className?: string;
 }
+
+//// Props du badge d'information pour les chasses ////
+
+export type InfoBadgeProps = {
+  children: React.reactNode;
+  buttonClassName?: string;
+  popupClassName?: string;
+  hoverText: string;
+}
