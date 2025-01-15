@@ -1,25 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router'
+import { useParams, useRouter } from 'next/navigation';
 import { ChasseType } from '@/types';
-import { CreateHuntForm } from '@/components/organisateurs/create/create-hunt-form';
+import dynamic from 'next/dynamic';
+import Chasse from '@/classes/Chasse';
 
+// Import dynamique avec SSR désactivé
+const CreateHuntForm = dynamic(
+  () => import('@/components/organisateurs/create/create-hunt-form').then((mod) => mod.CreateHuntForm), // Accéder à l'export nommé
+  { ssr: false }
+);
 
 const EditHuntPage: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query; // ID de la chasse
+  const params = useParams();
+  const id = params as any; // ID de la chasse
   const [initialData, setInitialData] = useState<Partial<ChasseType> | null>(null);
 
   useEffect(() => {
     const fetchHuntData = async () => {
       try {
-        const response = await fetch(`/api/chasses/${id}`); // API pour récupérer une chasse par ID
-        const data = await response.json();
-        setInitialData(data);
+        const chasse = await Chasse.readId(id);
+        if (chasse) {
+          setInitialData(chasse);
+        }
       } catch (err) {
         console.error('Erreur lors de la récupération des données de la chasse :', err);
       }
     };
-
+  
     if (id) {
       fetchHuntData();
     }
@@ -32,7 +39,7 @@ const EditHuntPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Modifier la chasse</h1>
-      <CreateHuntForm initialData={initialData} />
+      <CreateHuntForm initialData={initialData} isEditMode={true} />
     </div>
   );
 };

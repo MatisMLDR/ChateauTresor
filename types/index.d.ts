@@ -100,7 +100,7 @@ export type ChasseType = {
   id_equipe?: UUID;
   chateau?: ChateauType;
   enigmes?: EnigmeType[];
-  rewards?: RecompenseType[];
+  recompenses?: RecompenseType[];
 };
 
 export type ParticipantType = {
@@ -131,7 +131,6 @@ export type ChateauType = {
   image?: string | null; // URL de l'image, par défaut null
   site_web?: string | null; // URL du site web, par défaut null
   id_proprietaire?: UUID | null; // Clé étrangère vers Proprietaire_Chateau, par défaut null
-
   chasses?: ChasseType[]; // Liste des chasses liées au château
 };
 
