@@ -47,3 +47,30 @@ export async function GET(request: Request) {
     );
   }
 }
+
+export async function POST(request: Request) {
+  const supabase = createClient();
+
+  try {
+    const body = await request.json();
+
+    // Vérification des paramètres
+    if (!body.id_participant || !body.id_chasse) {
+      return NextResponse.json(
+        { error: 'Paramètre id_participant ou id_chasse invalide ou manquant' },
+        { status: 400 }
+      ); 
+    }
+
+    // Création de la participation
+    await supabase
+      .from('participation')
+      .insert(body);
+
+  } catch (err) {
+    return NextResponse.json(
+      { error: 'Une erreur est survenue lors de la récupération des données', details: String(err) },
+      { status: 500 }
+    );
+  }
+}

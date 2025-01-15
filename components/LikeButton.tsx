@@ -46,9 +46,9 @@ const LikeButton = ({ avisObject }: LikeButtonProps) => {
   }
 
   return (
-    <button onClick={handleLikeClick}>
+    <button onClick={handleLikeClick} className='flex items-center gap-2'>
       <ThumbsUp size={24} />
-      <span>{nbLike}</span>
+      <span className=''>{nbLike}</span>
     </button>
   )
 }

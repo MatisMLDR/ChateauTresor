@@ -7,6 +7,7 @@ import {
   getAllParticipations,
   getAllChassesDisponibles
 } from '@/utils/dao/ChasseUtils';
+import { addParticipation } from "@/utils/dao/ParticipantUtils";
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { ChasseType } from "@/types";
@@ -27,6 +28,10 @@ jest.mock('@/utils/dao/RecompenseUtils', () => ({
 
 jest.mock('@/utils/dao/AvisUtils', () => ({
   getAllAvisByChasse: jest.fn(),
+}));
+
+jest.mock('@/utils/dao/ParticipantUtils', () => ({
+  addParticipation: jest.fn(),
 }));
 
 describe('Chasse', () => {
@@ -198,5 +203,39 @@ describe('Chasse', () => {
 
     expect(getAllParticipations).toHaveBeenCalledWith(chasse.getIdChasse());
     expect(averageIndices).toBe(0);
+  });
+
+  test('should add a participant to a chasse', async () => {
+    const chasse = new Chasse(mockChasseData);
+    const mockParticipantId = "b91280f9-dc78-4f0a-a5f5-fbb17d2f64ae";
+    const mockJour = "2025-01-15";
+
+    await chasse.addParticipant(mockParticipantId, mockJour);
+
+    expect(addParticipation).toHaveBeenCalledWith({
+      id_participant: mockParticipantId,
+      id_chasse: mockChasseData.id_chasse,
+      jour: mockJour,
+    });
+
+    expect(addParticipation).toHaveBeenCalledTimes(1);
+  });
+
+  test('should throw an error if addParticipant fails', async () => {
+    const chasse = new Chasse(mockChasseData);
+    const mockParticipantId = "b91280f9-dc78-4f0a-a5f5-fbb17d2f64ae";
+    const mockJour = "2025-01-15";
+
+    (addParticipation as jest.Mock).mockRejectedValueOnce(new Error("Failed to add participant"));
+
+    await expect(chasse.addParticipant(mockParticipantId, mockJour)).rejects.toThrow("Failed to add participant");
+
+    expect(addParticipation).toHaveBeenCalledWith({
+      id_participant: mockParticipantId,
+      id_chasse: mockChasseData.id_chasse,
+      jour: mockJour,
+    });
+
+    expect(addParticipation).toHaveBeenCalledTimes(1);
   });
 });

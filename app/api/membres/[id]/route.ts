@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // GET : Récupérer un membre spécifique
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_membre = params.id;
+  const id_membre = await params.id;
 
   try {
     const { data, error } = await supabase.from('membre_equipe').select('*').eq('id_membre', id_membre).single();

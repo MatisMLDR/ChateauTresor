@@ -1,5 +1,5 @@
 import { ParticipantType } from "@/types";
-import { getAllParticipantAvis, getAllParticipantChasses, getAllParticipantEnigmes, getAllParticipantIndice, getParticipantById, createParticipant, deleteParticipant, updateParticipant } from "@/utils/dao/ParticipantUtils";
+import { getAllParticipantAvis, getAllParticipantChasses, getAllParticipantEnigmes, getAllParticipantIndice, getParticipantById, createParticipant, deleteParticipant, updateParticipant, getParticipantByUserId } from "@/utils/dao/ParticipantUtils";
 import { UUID } from "crypto";
 
 export class Participant {
@@ -156,11 +156,19 @@ export class Participant {
     const data = await getParticipantById(id_participant) as any;
     
     if (!data) {
-      throw new Error("L'énigme n'existe pas");
+      throw new Error("Le participant n'a pas été trouvé");
     }
     
-    console.log("Participants après appel API dans read", data); 
+    return new Participant(data);
+  }
 
+  public static async readByIdUser(id_user: UUID): Promise<any> {
+    const data = await getParticipantByUserId(id_user) as any;
+    
+    if (!data) {
+      throw new Error("Le participant n'a pas été trouvé");
+    }
+    
     return new Participant(data);
   }
 

@@ -19,7 +19,7 @@ class Avis {
     this.note = avis.note;
     this.titre = avis.titre;
     this.description = avis.description;
-    this.nb_like = avis.nb_like;
+    this.nb_like = avis.nb_like ?? 0;
     this.date_modification = avis.date_modification;
     this.id_chasse = avis.id_chasse;
     this.id_participant = avis.id_participant;

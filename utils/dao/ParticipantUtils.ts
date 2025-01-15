@@ -15,6 +15,14 @@ export async function getParticipantById(id_participant: UUID): Promise<any> {
   return await res.json();
 } 
 
+export async function getParticipantByUserId(id_user: UUID): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/user/${id_user}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération du participant');
+  }
+  return await res.json();
+}
+
 /*
  * Méthode pour récupérer toutes les participations aux énigmes
  * @returns Promise<any> Un tableau des participations aux énigmes
@@ -129,5 +137,24 @@ export async function deleteParticipant(id_participant: UUID): Promise<void> {
   });
   if (!res.ok) {
     throw new Error(`Erreur lors de la suppression du participant avec l'ID ${id_participant}`);
+  }
+}
+
+
+/*
+ * Méthode pour récupérer une participation par son id
+ * @returns Promise<any> Le tableau de la participation
+ * @params id_participation L'identifiant de la participation 
+ */
+export async function addParticipation(participation: any): Promise<void> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participations/participant`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(participation),
+  });
+  if (!res.ok) {
+    throw new Error('Erreur lors de la création de la participation');
   }
 }
