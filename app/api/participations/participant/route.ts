@@ -47,3 +47,42 @@ export async function GET(request: Request) {
     );
   }
 }
+
+export async function POST(request: Request) {
+  const supabase = createClient();
+
+  try {
+
+    const body = await request.json();
+    console.log(body);
+    // Vérification des paramètres
+    if (!body.id_participant || !body.id_chasse || !body.jour) {
+      return NextResponse.json(
+        { error: 'Paramètre id_participant, jour ou id_chasse invalide ou manquant' },
+        { status: 400 }
+      ); 
+    }
+
+    // Création de la participation
+    const {error} = await supabase
+      .from('participation')
+      .insert(body);
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Erreur lors de la création de la participation', details: error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ message: 'Participation créée avec succès' }, {
+      status: 200
+    });
+
+  } catch (err) {
+    return NextResponse.json(
+      { error: 'Une erreur est survenue lors de la récupération des données', details: String(err) },
+      { status: 500 }
+    );
+  }
+}

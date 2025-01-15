@@ -1,6 +1,7 @@
+import { UUID } from 'crypto';
 
 interface Indice {
-  id_indice: string;
+  id_indice: UUID;
   contenu: string; // Contenu de l'indice
   degre_aide: number;
   id_enigme: string;

@@ -4,8 +4,7 @@ import { NextResponse } from 'next/server';
 // Récupérer un indice par ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const indiceId = params.id;
-  const indiceId = params.id; // Utilisation directe du paramètre dynamique [id]
+  const indiceId = await params.id;
 
   console.log('Récupération de l\'indice avec ID:', indiceId); // Log pour déboguer
 

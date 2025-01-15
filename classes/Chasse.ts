@@ -1,10 +1,12 @@
-import { ChasseType } from "@/types";
+import { ChasseType, ProfilType } from "@/types";
 import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
 import { getAllEnigmesByChasse } from "@/utils/dao/EnigmeUtils";
 import Avis from "./Avis";
+import { getProfilById } from "@/utils/dao/ProfilUtils";
+import { addParticipation } from "@/utils/dao/ParticipantUtils";
 
 class Chasse {
   private id_chasse: UUID;
@@ -450,25 +452,20 @@ class Chasse {
   * @returns number La note moyenne des participants
   */
   public async getNoteMoyenne(): Promise<number> {
-    // Récupération dans la base des notes attribuées de chaques avis avec l'id de la chasse
-
-    // On récupère les données
-    try {
-      const data = await getAllAvisByChasse(this.id_chasse);
-
-      if (!data.ok || data.length === 0 ) {
-        return 0;
-      }
-      // On calcule la somme des notes
-      const sum = data.reduce((acc: number, avis: any) => acc + avis.note, 0);
-      // On retourne la moyenne
-      return sum / data.length;
-    } catch (error) {
-      console.log("Erreur lors de la récupération des avis : ", error);
-      return 0;
+    // Récupération dans la base des avis avec l'id de la chasse
+    const avis = await getAllAvisByChasse(this.id_chasse);
+  
+    if (avis.length === 0) {
+      return 0; // Si aucun avis n'est trouvé, retourner 0
     }
-
-
+  
+    // Calcul de la somme des notes
+    const sommeNotes = avis.reduce((acc: number, avis: any) => acc + avis.note, 0);
+  
+    // Calcul de la moyenne
+    const moyenne = sommeNotes / avis.length;
+  
+    return moyenne;
   }
 
   /*
@@ -485,6 +482,20 @@ class Chasse {
     // Récupération dans la base des avis avec l'id de la chasse
     const data = await getAllAvisByChasse(this.id_chasse);
     return data.map((avis: any) => new Avis(avis));
+  }
+
+  public async addParticipant(id_participant: UUID, jour: string): Promise<void> {
+    
+    const participation = {
+      id_participant: id_participant,
+      id_chasse: this.id_chasse,
+      jour: jour,
+    }
+
+    console.log("jour dans addParticipant : ", jour);
+
+    await addParticipation(participation);
+    
   }
 
 }
