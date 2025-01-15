@@ -84,6 +84,19 @@ class Avis {
     this.id_participant = id_participant;
   }
 
+  public toObject(): AvisType {
+    return {
+      id_avis: this.id_avis,
+      note: this.note,
+      titre: this.titre,
+      description: this.description,
+      nb_like: this.nb_like,
+      date_modification: this.date_modification,
+      id_chasse: this.id_chasse,
+      id_participant: this.id_participant
+    };
+  }
+
   public static async readId(id_avis: UUID): Promise<any> {
 
     const avis = await getAvisById(id_avis) as any

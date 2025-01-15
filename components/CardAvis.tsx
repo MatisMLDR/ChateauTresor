@@ -1,18 +1,12 @@
 import React from 'react'
+import LikeButton from './LikeButton';
+import Avis from '@/classes/Avis';
 
 interface CardAvisProps {
-  avis: any;
+  avis: Avis;
 }
 
 const CardAvis = async ({ avis }: CardAvisProps) => {
-
-  const handleLikeClick = async () => {
-    try {
-      await avis.like();
-    } catch (err) {
-      console.error('Erreur lors du like :', err);
-    }
-  }
 
   return (
     <div className='border rounded-md p-4 shadow-md'>
@@ -21,12 +15,8 @@ const CardAvis = async ({ avis }: CardAvisProps) => {
       <p className='text-gray-800'>{avis.getDescription()}</p>
       <p className='text-gray-800'>Note : {avis.getNote()} / 5</p>
       <div className="flex gap-2">
-        <button onClick={handleLikeClick}>
-          <img src='/thumbsUp.svg' alt='like' />
-          <span>{avis.getNbLike()}</span>
-        </button>
+        <LikeButton avisObject={avis.toObject()} />
       </div>
-
     </div>
   )
 }
