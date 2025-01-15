@@ -92,10 +92,12 @@ VALUES
 ON CONFLICT (id_recompense) DO NOTHING;
 
 -- Insert data into Enigme
-INSERT INTO public.Enigme (id_enigme, titre, description, ordre, degre_difficulte, id_chasse)
+INSERT INTO public.Enigme (id_enigme, titre, description, ordre, degre_difficulte, id_chasse, code_reponse)
 VALUES
-    ('b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba', 'Énigme 1', 'Résolvez ce mystère.', 1, 2, 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
-    ('09709c49-8fbf-ffd1-cfd0-baba35e20970', 'Énigme 5', 'Une énigme complexe.', 5, 3, 'f47ac10b-58cc-4372-a567-0e02b2c3d479')
+    ('b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba', 'Énigme 1', 'Résolvez ce mystère.', 1, &, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '111111'),
+    ('09709c49-8fbf-ffd1-cfd0-baba35e20970', 'Énigme 2', 'Une énigme complexe.', 2, 3, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '222222'),
+    ('b36a35e2-095c-49f9-8fbf-3bfrd1cfd0ba', 'Énigme 3', 'Résolvez ce mystère.', 3, 2, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '333333'),
+    ('04709c49-8fdf-ffd1-cfd0-bcba35e20970', 'Énigme 4', 'Une énigme complexe.', 4, 3, 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '444444')
 ON CONFLICT (id_enigme) DO NOTHING;
 
 -- Insert data into Indice
@@ -103,8 +105,11 @@ INSERT INTO public.Indice (id_indice, contenu, ordre, degre_aide, id_enigme)
 VALUES
     ('75f4e5c2-f44b-45a5-879a-45d5d20cb51d', 'Indice pour énigme 1.', 1, 1, 'b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba'),
     ('4b75a5a7-9a45-d5d0-cb51-d75f4e5c2f44', 'Indice pour énigme 5.', 1, 5, '09709c49-8fbf-ffd1-cfd0-baba35e20970'),
-    ('b75a5a79-a45d-5d0c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, 'b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba')
-ON CONFLICT (id_indice) DO NOTHING;
+    ('b75a5a79-a45d-5d0c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, 'b56a35e2-097c-49f9-8fbf-3bffd1cfd0ba'),
+    ('b75b5a79-a45d-5d1c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, 'b36a35e2-095c-49f9-8fbf-3bfrd1cfd0ba'),
+    ('b75a5b79-a45d-5d2c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, '04709c49-8fdf-ffd1-cfd0-bcba35e20970'),
+    ('b75c5a79-a45d-5d3c-b51d-75f4e5c2f44b', 'Indice pour énigme 1.', 2, 1, '04709c49-8fdf-ffd1-cfd0-bcba35e20970')
+    ON CONFLICT (id_indice) DO NOTHING;
 
 INSERT INTO public.haut_fait (id_haut_fait, titre, description, conditions, image_badge, date)
 VALUES
