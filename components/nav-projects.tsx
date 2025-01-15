@@ -80,7 +80,7 @@ export function NavProjects({
             <SidebarMenuButton asChild>
               {/* Adapte l'URL en fonction du rôle de l'utilisateur */}
               <Link
-                href={`${user === 'organisateur' ? '/organisateurs/modifier_chasse/' : '/participants/play/'}${item.id}`}
+                href={`${user === 'organisateur' ? '/organisateurs/modifier_chasse/' : '/participants/chasses/'}${item.id}`}
               >
                 <Map />
                 {chasseNames[item.id] || <Skeleton className={'h-full w-full'} />}
