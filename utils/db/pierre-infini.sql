@@ -257,6 +257,17 @@ CREATE TABLE public.Haut_Fait (
     date DATE DEFAULT CURRENT_DATE
 );
 
+-- Table Haut_Fait_Participant
+CREATE TABLE public.Haut_Fait_Participant (
+    id_haut_fait UUID NOT NULL,
+    id_participant UUID NOT NULL,
+    est_acquis BOOLEAN DEFAULT FALSE,
+    date_acquisition TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_haut_fait, id_participant),
+    FOREIGN KEY (id_haut_fait) REFERENCES Haut_Fait(id_haut_fait) ON DELETE CASCADE,
+    FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE
+);
+
 -- Indexation des tables
 CREATE INDEX idx_profiles_email ON profiles (email);
 CREATE INDEX idx_chateau_nom ON Chateau (nom);
