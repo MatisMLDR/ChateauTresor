@@ -8,6 +8,7 @@ import {
   getAllParticipantChasses,
   getAllParticipantAvis,
   getAllParticipantIndice,
+  getParticipantByUserId,
 } from "@/utils/dao/ParticipantUtils";
 
 jest.mock("@/utils/dao/ParticipantUtils");
@@ -126,5 +127,21 @@ describe("Participant Class", () => {
 
     const avgNote = await participant.getNoteMoyenneDonnee();
     expect(avgNote).toBe(4);
+  });
+
+  it("should fetch participant by user ID", async () => {
+    // Simuler la réponse de getParticipantByUserId
+    (getParticipantByUserId as jest.Mock).mockResolvedValue(mockParticipantData);
+  
+    // Appeler la méthode readByIdUser
+    const fetchedParticipant = await Participant.readByIdUser("74df808b-48de-4a7b-b26f-e581a06f75b3");
+  
+    // Vérifier que les données retournées sont correctes
+    expect(fetchedParticipant.getNom()).toBe("Doe");
+    expect(fetchedParticipant.getPrenom()).toBe("John");
+    expect(fetchedParticipant.getEmail()).toBe("john.doe@example.com");
+  
+    // Vérifier que la fonction getParticipantByUserId a été appelée avec le bon ID utilisateur
+    expect(getParticipantByUserId).toHaveBeenCalledWith("74df808b-48de-4a7b-b26f-e581a06f75b3");
   });
 });
