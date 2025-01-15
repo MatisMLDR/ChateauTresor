@@ -91,6 +91,14 @@ export default function StatisticsPage() {
                     )}
                 </div>
 
+                <div className={"flex flex-wrap gap-2"}>
+                    {badgesData.map((badge) => (
+                        <InformationBadge key={badge.id} hoverText={badge.hoverText}>
+                            {badge.text}
+                        </InformationBadge>
+                    ))}
+                </div>
+
                 <div className="space-y-6">
                     {/* Statistics Content */}
                     <div className="grid gap-6 md:grid-cols-2">
