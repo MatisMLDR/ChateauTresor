@@ -50,7 +50,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
 // PUT: Mettre à jour un avis par son ID
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  console.log("PUT API Avis OK");
 
   try {
     const resolvedParams = await params;
@@ -64,6 +63,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const body = await request.json();
+
+    console.log("PUT API Avis body", body);
 
     const { error } = await supabase
       .from('avis')
