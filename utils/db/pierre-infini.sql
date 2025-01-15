@@ -178,7 +178,6 @@ CREATE TABLE public.Participation
     id_chasse           UUID NOT NULL,
     duree_totale INTERVAL DEFAULT INTERVAL '00:00:00',
     score               INT       DEFAULT 0,
-    nb_enigmes_resolues INT       DEFAULT 0,
     jour                DATE NOT NULL,
     nb_enigmes_resolues INT       DEFAULT 0,
     date_achat          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
