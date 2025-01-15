@@ -46,7 +46,9 @@ export const contenuTextuel = {
       basicDetails: "Informations de Base",
       castleSelection: "Sélection du Château",
       riddlesClues: "Énigmes & Indices",
-      reviewSubmit: "Révision & Envoi"
+      reviewSubmit: "Révision & Envoi",
+      rewards : "Récompenses"
+
     },
     form: {
       huntTitle: "Titre de la Chasse",
