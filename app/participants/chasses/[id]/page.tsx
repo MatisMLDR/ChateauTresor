@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Chasse from '@/classes/Chasse';
 import { UUID } from 'crypto';
+import CardAvis from '@/components/CardAvis';
 
 const ChasseDetailsPage = async ({ params }: {params: {id: UUID}}) => {
 
@@ -44,7 +45,7 @@ const ChasseDetailsPage = async ({ params }: {params: {id: UUID}}) => {
       </div>
       <div>
         {avis
-          .sort((a, b) => {
+          .sort((a: any, b: any) => {
             if (
               new Date(a.getDateModification()) > new Date(b.DateModification)
             ) {
@@ -52,9 +53,10 @@ const ChasseDetailsPage = async ({ params }: {params: {id: UUID}}) => {
             }
             return 1;
           })
-          .map((avis) => (
+          .map((avis: any) => (
             <CardAvis key={avis.getIdAvis()} avis={avis} />
-          )}
+          ))
+        }
       </div>
     </div>
   );
