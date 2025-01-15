@@ -155,6 +155,7 @@ export async function addParticipation(participation: any): Promise<void> {
     body: JSON.stringify(participation),
   });
   if (!res.ok) {
+    console.log(res)
     throw new Error('Erreur lors de la création de la participation');
   }
 }

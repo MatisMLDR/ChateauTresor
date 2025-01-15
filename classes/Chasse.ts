@@ -489,13 +489,15 @@ class Chasse {
     return data.map((avis: any) => new Avis(avis));
   }
 
-  public async addParticipant(id_participant: UUID, jour: any): Promise<void> {
+  public async addParticipant(id_participant: UUID, jour: string): Promise<void> {
     
     const participation = {
       id_participant: id_participant,
       id_chasse: this.id_chasse,
       jour: jour,
     }
+
+    console.log("jour dans addParticipant : ", jour);
 
     await addParticipation(participation);
     

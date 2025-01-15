@@ -1,15 +1,16 @@
 import { createClient } from '@/utils/supabase/server';
+import { UUID } from 'crypto';
 import { NextResponse } from 'next/server';
 
 // GET: Récupérer un participant par ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: UUID }> }
 ) {
   const supabase = createClient();
-  const idUser = await params.id;
+  const { id } = await params;
 
-  if (!idUser) {
+  if (!id) {
     return NextResponse.json(
       { error: 'Paramètre id_user invalide ou manquant' },
       { status: 400 }
@@ -20,7 +21,7 @@ export async function GET(
     const { data, error } = await supabase
       .from('participant')
       .select('*')
-      .eq('id_user', idUser)
+      .eq('id_user', id)
       .single();
 
     if (error) {
@@ -32,7 +33,7 @@ export async function GET(
 
     if (!data) {
       return NextResponse.json(
-        { message: `Aucun participant trouvé avec l'ID ${idUser}` },
+        { message: `Aucun participant trouvé avec l'ID ${id}` },
         { status: 404 }
       );
     }

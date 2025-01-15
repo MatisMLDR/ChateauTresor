@@ -163,7 +163,7 @@ CREATE TABLE public.Participation (
     jour DATE NOT NULL,
     date_achat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     est_terminee BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY (id_participant, id_chasse),
+    PRIMARY KEY (id_participant, id_chasse, jour),
     FOREIGN KEY (id_participant) REFERENCES Participant(id_participant) ON DELETE CASCADE,
     FOREIGN KEY (id_chasse) REFERENCES Chasse(id_chasse) ON DELETE CASCADE
 );
@@ -370,7 +370,7 @@ VALUES
     ('e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', '550e8400-e29b-41d4-a716-446655440000', 80,  '05/07/2025', FALSE),
     ('5dafc8db-7ca3-48f8-b6ef-8305c70e1987', '550e8400-e29b-41d4-a716-446655440000', 80,  '01/01/2025',FALSE),
     ('0a56d11b-224c-4017-ab6c-b0cf5eef2470', '550e8400-e29b-41d4-a716-446655440000', 80,  '01/05/2025',FALSE)
-ON CONFLICT (id_participant, id_chasse) DO NOTHING;
+ON CONFLICT (id_participant, id_chasse, jour) DO NOTHING;
 
 -- Insert data into Avis
 INSERT INTO public.Avis (id_avis, note, titre, description, id_participant, id_chasse)
