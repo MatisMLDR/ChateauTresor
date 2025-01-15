@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { InformationBadge } from "@/components/ui/information-badge";
 
 const mockData = {
     tasks: [
@@ -58,6 +59,12 @@ export default function StatisticsPage() {
         fetchUser();
     }, [router]);
 
+    const badgesData = [
+        { id: 1, text: "Champion", hoverText: "Être le 1er à avoir fini une chasse" },
+        { id: 2, text: "Speedy Gonzales", hoverText: "Etre le gagnant le plus rapide" },
+        { id: 3, text: "Inspecteur Gadget", hoverText: "Avoir fini une chasse sans utiliser d'indice" },
+    ];
+
     return (
         <div className="container mx-auto py-8 px-4">
             <div className="max-w-6xl mx-auto space-y-8">
@@ -82,6 +89,14 @@ export default function StatisticsPage() {
                             </div>
                         </>
                     )}
+                </div>
+
+                <div className={"flex flex-wrap gap-2"}>
+                    {badgesData.map((badge) => (
+                        <InformationBadge key={badge.id} hoverText={badge.hoverText}>
+                            {badge.text}
+                        </InformationBadge>
+                    ))}
                 </div>
 
                 <div className="space-y-6">
