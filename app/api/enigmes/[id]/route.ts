@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // Récupérer une énigme par ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const enigmeId = params.id;
+  const enigmeId = await params.id;
 
   try {
     const { data, error } = await supabase.from('enigme').select('*').eq('id_enigme', enigmeId).single();
