@@ -262,6 +262,9 @@ export class Enigme {
     return data.reduce((acc: number, curr: any) => acc + curr.est_decouvert, 0);
   }
 
+  /**
+   * Méthode pour récupérer tous les indices d'une énigme
+   */
   public async getAllIndices(): Promise<any> {
     const data = await getAllIndicesByEnigme(this.id_enigme);
     if (data.length === 0) {
@@ -269,4 +272,6 @@ export class Enigme {
     }
     return data;
   }
+
+
 }

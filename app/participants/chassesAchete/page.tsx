@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import ChasseCard from '@/components/participants/jouer/chasseCard';
-import GameInterface from '@/components/participants/jouer/gameInterface'; 
+import GameInterface from '@/components/participants/jouer/gameInterface';
 
 const ChasseList: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
@@ -37,9 +37,11 @@ const ChasseList: React.FC = () => {
     fetchChassesAchetees();
   }, [participantId]);
 
-  const isChasseAchetee = (id_chasse: number) =>
-    Array.isArray(chassesAchetees) && chassesAchetees.some((chasse) => chasse.id_chasse === id_chasse);
+  // Fonction pour vérifier si une chasse est achetée
+  // const isChasseAchetee = (id_chasse: number) =>
+  //   Array.isArray(chassesAchetees) && chassesAchetees.some((chasse) => chasse.id_chasse === id_chasse);
 
+  // Filtrage des chasses en fonction de la recherche
   const chassesFiltrees = chasses.filter((chasse) =>
     chasse.titre.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -73,7 +75,8 @@ const ChasseList: React.FC = () => {
           <ChasseCard
             key={chasse.id_chasse}
             chasse={chasse}
-            isAchetee={isChasseAchetee(chasse.id_chasse)}
+            // isAchetee={isChasseAchetee(chasse.id_chasse)} // Commenté pour désactiver la vérification
+            isAchetee={true} // On force la valeur à true pour permettre de jouer à toutes les chasses
             onJouer={() => setSelectedChasse(chasse)}
           />
         ))}

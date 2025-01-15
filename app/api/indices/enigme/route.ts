@@ -9,17 +9,21 @@ export async function GET(request: Request) {
   // Vérification du paramètre
   if (!idEnigme) {
     return NextResponse.json(
-      { error: "Paramètre id_enigme invalide ou manquant" },
+      { error: "Paramètre id_enigme manquant" },
       { status: 400 }
     );
   }
 
+  console.log('idEnigme:', idEnigme); // Log pour déboguer
+
   try {
     // Requête pour récupérer les indices associés à une énigme
     const { data, error } = await supabase
-      .from("indice")
+      .from("indice") // Assurez-vous que c'est le bon nom de table
       .select("*")
-      .eq("id_enigme", idEnigme);
+      .eq("id_enigme", idEnigme); // Pas besoin de parseInt pour un UUID
+
+    console.log('Réponse Supabase:', { data, error }); // Log pour déboguer
 
     // Gestion des erreurs Supabase
     if (error) {
@@ -40,6 +44,7 @@ export async function GET(request: Request) {
     // Réponse avec les données des indices
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
+    console.error('Erreur dans l\'API:', err); // Log pour déboguer
     // Gestion des erreurs inattendues
     return NextResponse.json(
       { error: "Une erreur est survenue lors du traitement de la requête", details: String(err) },
