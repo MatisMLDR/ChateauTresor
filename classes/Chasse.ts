@@ -4,6 +4,7 @@ import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
 import { getAllEnigmesByChasse } from "@/utils/dao/EnigmeUtils";
+import Avis from "./Avis";
 
 class Chasse {
   private id_chasse: UUID;
@@ -478,6 +479,12 @@ class Chasse {
     // Récupération dans la base des avis avec l'id de la chasse
     const data = await getAllAvisByChasse(this.id_chasse);
     return data.length;
+  }
+
+  public async getAllAvis(): Promise<any> {
+    // Récupération dans la base des avis avec l'id de la chasse
+    const data = await getAllAvisByChasse(this.id_chasse);
+    return data.map((avis: any) => new Avis(avis));
   }
 
 }
