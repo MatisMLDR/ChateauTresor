@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { data, error } = await supabase
-      .from('participants')
+      .from('participant')
       .insert(body)
       .select('*')
       .single();

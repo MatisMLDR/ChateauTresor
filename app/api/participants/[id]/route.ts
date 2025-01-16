@@ -18,7 +18,7 @@ export async function GET(
 
   try {
     const { data, error } = await supabase
-      .from('participants')
+      .from('participant')
       .select('*')
       .eq('id_participant', idParticipant)
       .single();
@@ -49,10 +49,10 @@ export async function GET(
 // PUT: Mettre à jour un participant par ID
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id_participant: string } }
 ) {
   const supabase = createClient();
-  const idParticipant = params.id;
+  const idParticipant = params.id_participant;
 
   if (!idParticipant) {
     return NextResponse.json(
@@ -65,7 +65,7 @@ export async function PUT(
     const body = await request.json();
 
     const { error } = await supabase
-      .from('participants')
+      .from('participant')
       .update(body)
       .eq('id_participant', idParticipant);
 
@@ -88,10 +88,10 @@ export async function PUT(
 // DELETE: Supprimer un participant par ID
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id_participant: string } }
 ) {
   const supabase = createClient();
-  const idParticipant = params.id;
+  const idParticipant = params.id_participant;
 
   if (!idParticipant) {
     return NextResponse.json(
@@ -102,7 +102,7 @@ export async function DELETE(
 
   try {
     const { error } = await supabase
-      .from('participants')
+      .from('participant')
       .delete()
       .eq('id_participant', idParticipant);
 
