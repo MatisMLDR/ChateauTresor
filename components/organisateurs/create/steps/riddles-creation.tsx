@@ -40,16 +40,14 @@ export interface RiddlesCreationProps {
   setFormData: (data: Partial<ChasseType>) => void;
 }
 
-function IndiceTriable({
+function IndiceCompacte({
   indice,
-  index,
-  mettreAJourIndice,
-  supprimerIndice,
+  onEditIndice,
+  onDeleteIndice,
 }: {
   indice: IndiceType;
-  index: number;
-  mettreAJourIndice: (index: number, champ: string, valeur: any) => void;
-  supprimerIndice: (index: number) => void;
+  onEditIndice: (indice: IndiceType) => void;
+  onDeleteIndice: (id_indice: UUID) => void;
 }) {
   const {
     attributes,
@@ -64,98 +62,52 @@ function IndiceTriable({
     transition,
   };
 
-  const renderContenuInput = () => {
-    switch (indice.type) {
-      case "image":
-        return (
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              mettreAJourIndice(
-                index,
-                "contenu",
-                e.target.files ? e.target.files[0] : null
-              )
-            }
-            className="pt-1"
-          />
-        );
-      case "sound":
-        return (
-          <Input
-            type="file"
-            accept="audio/*"
-            onChange={(e) =>
-              mettreAJourIndice(
-                index,
-                "contenu",
-                e.target.files ? e.target.files[0] : null
-              )
-            }
-            className="pt-1"
-          />
-        );
-      default:
-        return (
-          <Input
-            value={indice.contenu || ""}
-            onChange={(e) => mettreAJourIndice(index, "contenu", e.target.value)}
-            placeholder="Entrez le contenu texte"
-          />
-        );
-    }
-  };
-
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="flex items-start gap-4 p-4 bg-muted rounded-lg mb-2"
+      className="cursor-pointer"
     >
-      <div {...listeners}>
-        <GripVertical className="h-5 w-5 text-muted-foreground mt-1 cursor-grab" />
-      </div>
-      <div className="flex-1 space-y-2">
-        <Select
-          value={indice.type || "text"}
-          onValueChange={(value: string) => mettreAJourIndice(index, "type", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionner le type d'indice" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="text">Texte</SelectItem>
-            <SelectItem value="image">Image</SelectItem>
-            <SelectItem value="sound">Son</SelectItem>
-          </SelectContent>
-        </Select>
-        {renderContenuInput()}
-        <div className="flex items-center gap-2">
-          <Label htmlFor={`degre-aide-${indice.id_indice}`} className="whitespace-nowrap">
-            Degré d'aide
-          </Label>
-          <Input
-            id={`degre-aide-${indice.id_indice}`}
-            type="number"
-            min="1"
-            max="5"
-            value={indice.degre_aide || 1}
-            onChange={(e) =>
-              mettreAJourIndice(index, "degre_aide", parseInt(e.target.value))
-            }
-            className="w-20"
-          />
-        </div>
-      </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => supprimerIndice(index)}
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <div {...listeners} className="cursor-grab">
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold">{indice.type}</h3>
+              <p className="text-sm text-muted-foreground">{indice.contenu}</p>
+              <div className="text-sm text-muted-foreground">
+                Degré d'aide: {indice.degre_aide}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Ordre: {indice.ordre} {/* Affichage de l'ordre */}
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditIndice(indice);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteIndice(indice.id_indice);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -174,6 +126,9 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
     transition,
   };
 
+  // Affiche directement l'ordre stocké (qui commence à 1)
+  const ordre = enigme.ordre || 0;
+
   return (
     <div
       ref={setNodeRef}
@@ -186,6 +141,9 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
           <div className="flex items-center gap-4">
             <div {...listeners} className="cursor-grab">
               <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex items-center justify-center w-8 h-8 bg-muted rounded-full">
+              <span className="text-sm font-medium">{ordre}</span> {/* Affiche l'ordre stocké */}
             </div>
             {enigme.image_reponse && (
               <img
@@ -244,6 +202,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
   });
 
   const [enigmeEnCoursEdition, setEnigmeEnCoursEdition] = useState<EnigmeType | null>(null);
+  const [indiceEnCoursEdition, setIndiceEnCoursEdition] = useState<IndiceType | null>(null);
   const [afficherModalIndice, setAfficherModalIndice] = useState(false);
 
   const sensors = useSensors(
@@ -258,38 +217,42 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
   };
 
   const traiterSoumissionIndice = (indice: {
-    type: "text" | "image" | "sound";
+    type: "text" | "image" | "son";
     contenu: string;
     degre_aide?: number;
   }) => {
-    if (enigmeEnCoursEdition) {
-      const updatedEnigme = {
-        ...enigmeEnCoursEdition,
-        indices: [
-          ...(enigmeEnCoursEdition.indices || []),
-          {
-            id_indice: crypto.randomUUID(),
-            type: indice.type,
-            contenu: indice.contenu,
-            degre_aide: indice.degre_aide || 1,
-          },
-        ],
-      };
-      setEnigmeEnCoursEdition(updatedEnigme);
+    if (indiceEnCoursEdition) {
+      const updatedIndices = (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map((i) =>
+        i.id_indice === indiceEnCoursEdition.id_indice ? { ...i, ...indice } : i
+      );
+
+      if (enigmeEnCoursEdition) {
+        setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: updatedIndices });
+      } else {
+        setNouvelleEnigme({ ...nouvelleEnigme, indices: updatedIndices });
+      }
     } else {
-      setNouvelleEnigme((prevEnigme) => ({
-        ...prevEnigme,
-        indices: [
-          ...(prevEnigme.indices || []),
-          {
-            id_indice: crypto.randomUUID(),
-            type: indice.type,
-            contenu: indice.contenu,
-            degre_aide: indice.degre_aide || 1,
-          },
-        ],
-      }));
+      const newIndice = {
+        id_indice: crypto.randomUUID(),
+        type: indice.type,
+        contenu: indice.contenu,
+        degre_aide: indice.degre_aide || 1,
+        ordre: (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).length + 1, // Commence à 1
+      };
+
+      if (enigmeEnCoursEdition) {
+        setEnigmeEnCoursEdition({
+          ...enigmeEnCoursEdition,
+          indices: [...(enigmeEnCoursEdition.indices || []), newIndice],
+        });
+      } else {
+        setNouvelleEnigme({
+          ...nouvelleEnigme,
+          indices: [...(nouvelleEnigme.indices || []), newIndice],
+        });
+      }
     }
+    setIndiceEnCoursEdition(null);
     setAfficherModalIndice(false);
   };
 
@@ -303,47 +266,39 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     });
   };
 
-  const supprimerIndice = (index: number) => {
+  const supprimerIndice = (id_indice: UUID) => {
     if (enigmeEnCoursEdition) {
       const updatedEnigme = {
         ...enigmeEnCoursEdition,
-        indices: enigmeEnCoursEdition.indices?.filter((_, i) => i !== index),
+        indices: enigmeEnCoursEdition.indices?.filter((i) => i.id_indice !== id_indice),
       };
       setEnigmeEnCoursEdition(updatedEnigme);
     } else {
       setNouvelleEnigme((prevEnigme) => ({
         ...prevEnigme,
-        indices: prevEnigme.indices?.filter((_, i) => i !== index),
+        indices: prevEnigme.indices?.filter((i) => i.id_indice !== id_indice),
       }));
     }
   };
 
-  const mettreAJourIndice = (index: number, champ: string, valeur: string) => {
-    if (enigmeEnCoursEdition) {
-      const updatedEnigme = {
-        ...enigmeEnCoursEdition,
-        indices: enigmeEnCoursEdition.indices?.map((indice, i) =>
-          i === index ? { ...indice, [champ]: valeur } : indice
-        ),
-      };
-      setEnigmeEnCoursEdition(updatedEnigme);
-    } else {
-      setNouvelleEnigme((prevEnigme) => ({
-        ...prevEnigme,
-        indices: prevEnigme.indices?.map((indice, i) =>
-          i === index ? { ...indice, [champ]: valeur } : indice
-        ),
-      }));
-    }
+  const editerIndice = (indice: IndiceType) => {
+    setIndiceEnCoursEdition(indice);
+    setAfficherModalIndice(true);
   };
 
   const ajouterEnigme = () => {
     if (nouvelleEnigme.titre && nouvelleEnigme.indices?.length) {
-      const enigmeComplete = { ...nouvelleEnigme, id_enigme: crypto.randomUUID() } as EnigmeType;
+      const enigmeComplete = {
+        ...nouvelleEnigme,
+        id_enigme: crypto.randomUUID(),
+        ordre: (formData.enigmes?.length || 0) + 1, // Commence à 1
+      } as EnigmeType;
+
       setFormData({
         ...formData,
         enigmes: [...(formData.enigmes || []), enigmeComplete],
       });
+
       setNouvelleEnigme({
         id_enigme: crypto.randomUUID() as UUID,
         titre: "",
@@ -359,9 +314,13 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
   };
 
   const supprimerEnigme = (id_enigme: UUID) => {
+    const updatedEnigmes = formData.enigmes?.filter((e) => e.id_enigme !== id_enigme) || [];
     setFormData({
       ...formData,
-      enigmes: formData.enigmes?.filter((e) => e.id_enigme !== id_enigme),
+      enigmes: updatedEnigmes.map((enigme, index) => ({
+        ...enigme,
+        ordre: index + 1, // Commence à 1
+      })),
     });
   };
 
@@ -374,7 +333,13 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
 
       if (oldIndex !== undefined && newIndex !== undefined) {
         const updatedEnigmes = arrayMove(formData.enigmes || [], oldIndex, newIndex);
-        setFormData({ ...formData, enigmes: updatedEnigmes });
+        setFormData({
+          ...formData,
+          enigmes: updatedEnigmes.map((enigme, index) => ({
+            ...enigme,
+            ordre: index + 1, // Commence à 1
+          })),
+        });
       }
     }
   };
@@ -397,10 +362,16 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           newIndex
         );
 
+        // Réorganiser l'ordre des indices après déplacement
+        const reorderedIndices = updatedIndices.map((indice, index) => ({
+          ...indice,
+          ordre: index + 1, // Commence à 1
+        }));
+
         if (enigmeEnCoursEdition) {
-          setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: updatedIndices });
+          setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: reorderedIndices });
         } else {
-          setNouvelleEnigme({ ...nouvelleEnigme, indices: updatedIndices });
+          setNouvelleEnigme({ ...nouvelleEnigme, indices: reorderedIndices });
         }
       }
     }
@@ -506,12 +477,11 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
               >
                 {(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(
                   (indice, index) => (
-                    <IndiceTriable
+                    <IndiceCompacte
                       key={indice.id_indice}
                       indice={indice}
-                      index={index}
-                      mettreAJourIndice={mettreAJourIndice}
-                      supprimerIndice={supprimerIndice}
+                      onEditIndice={editerIndice}
+                      onDeleteIndice={supprimerIndice}
                     />
                   )
                 )}
@@ -636,6 +606,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           <CreateIndice
             onClose={() => setAfficherModalIndice(false)}
             onSubmit={traiterSoumissionIndice}
+            indice={indiceEnCoursEdition} // Cette prop est maintenant acceptée
           />
         </div>
       )}

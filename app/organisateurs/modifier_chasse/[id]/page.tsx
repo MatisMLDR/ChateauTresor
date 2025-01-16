@@ -3,18 +3,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { CreateHuntForm } from '@/components/organisateurs/create/create-hunt-form';
+import Chasse from '@/classes/Chasse';
+import { ChasseType } from '@/types';
+import { UUID } from 'crypto';
 
 const EditHuntPage: React.FC = () => {
   const params = useParams(); // Récupère les paramètres de l'URL
-  const [huntData, setHuntData] = useState<any | null>(null); // Stocke les données de la chasse
+  const [huntData, setHuntData] = useState<Partial<ChasseType> | null>(null); // Stocke les données de la chasse
 
   // Charge les données de la chasse
   useEffect(() => {
     const fetchHuntData = async () => {
       try {
-        const response = await fetch(`/api/chasses/${params.id}`); // API pour récupérer une chasse spécifique
-        const data = await response.json();
-        setHuntData(data); // Met à jour l'état avec les données récupérées
+        const chasse = await Chasse.readId(params.id as UUID);
+        if (chasse) {
+          console.log("Données de la chasse récupérées :", chasse); // Log des données récupérées
+          setHuntData(chasse);
+        }
       } catch (err) {
         console.error('Erreur lors de la récupération des données de la chasse :', err);
       }
@@ -34,7 +39,7 @@ const EditHuntPage: React.FC = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Modifier la chasse</h1>
       {/* Formulaire de modification, prérempli avec les données existantes */}
-      <CreateHuntForm initialData={huntData} />
+      <CreateHuntForm initialData={huntData} isEditMode={true} />
     </div>
   );
 };

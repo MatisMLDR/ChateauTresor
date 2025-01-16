@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea"; // Ajout d'un Textarea
 import { UUID } from "crypto";
 import { ChasseType, RecompenseType } from "@/types";
 import { Label } from "@radix-ui/react-label";
@@ -30,12 +31,12 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     id_chasse: null,
   });
 
-  // Synchronize rewards with formData
+  // Synchroniser les récompenses avec formData
   useEffect(() => {
     setRewards(formData.recompenses || []);
   }, [formData.recompenses]);
 
-  // Update reward in formData
+  // Mettre à jour une récompense dans formData
   const updateRewardInFormData = (reward: RecompenseType) => {
     const updatedRewards = formData.recompenses?.map((r) =>
       r.id_recompense === reward.id_recompense ? reward : r
@@ -46,7 +47,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     });
   };
 
-  // Add a new reward
+  // Ajouter une nouvelle récompense
   const addReward = (reward: RecompenseType) => {
     const updatedRewards = [...rewards, reward];
     setRewards(updatedRewards);
@@ -54,7 +55,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     resetForm();
   };
 
-  // Update an existing reward
+  // Mettre à jour une récompense existante
   const updateReward = (reward: RecompenseType) => {
     const updatedRewards = rewards.map((r) =>
       r.id_recompense === reward.id_recompense ? reward : r
@@ -64,14 +65,14 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     setEditingReward(null);
   };
 
-  // Delete a reward
+  // Supprimer une récompense
   const deleteReward = (id_recompense: UUID) => {
     const updatedRewards = rewards.filter((r) => r.id_recompense !== id_recompense);
     setRewards(updatedRewards);
     setFormData({ ...formData, recompenses: updatedRewards });
   };
 
-  // Reset the form
+  // Réinitialiser le formulaire
   const resetForm = () => {
     setNewReward({
       id_recompense: crypto.randomUUID() as UUID,
@@ -90,11 +91,11 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
 
   return (
     <div className="space-y-8">
-      {/* Display added rewards */}
+      {/* Afficher les récompenses ajoutées */}
       {rewards.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Added Rewards</CardTitle>
+            <CardTitle>Récompenses ajoutées</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -120,7 +121,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                         <h3 className="font-semibold">{reward.nom}</h3>
                         <p className="text-sm text-muted-foreground">{reward.description}</p>
                         <div className="text-sm text-muted-foreground">
-                          Type: {reward.type} | Value: {reward.valeur} | Quantity: {reward.quantite_dispo}
+                          Type: {reward.type} | Valeur: {reward.valeur} | Quantité: {reward.quantite_dispo}
                         </div>
                       </div>
                       <Button
@@ -128,7 +129,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setEditingReward(reward); // Switch to edit mode
+                          setEditingReward(reward); // Passer en mode édition
                         }}
                       >
                         <Pencil className="h-4 w-4" />
@@ -154,20 +155,20 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
         </Card>
       )}
 
-      {/* Reward creation/modification form */}
+      {/* Formulaire de création/modification de récompense */}
       <Card>
         <CardHeader>
           <CardTitle>
-            {editingReward ? "Edit Reward" : "Add a Reward"}
+            {editingReward ? "Modifier la récompense" : "Ajouter une récompense"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Reward Name</Label>
+              <Label htmlFor="name">Nom de la récompense</Label>
               <Input
                 id="name"
-                placeholder="Reward Name"
+                placeholder="Nom de la récompense"
                 value={editingReward ? editingReward.nom : newReward.nom}
                 onChange={(e) => {
                   if (editingReward) {
@@ -179,10 +180,10 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Reward Description</Label>
-              <Input
+              <Label htmlFor="description">Description de la récompense</Label>
+              <Textarea
                 id="description"
-                placeholder="Reward Description"
+                placeholder="Description de la récompense"
                 value={editingReward ? editingReward.description : newReward.description}
                 onChange={(e) => {
                   if (editingReward) {
@@ -194,10 +195,10 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type">Reward Type</Label>
+              <Label htmlFor="type">Type de récompense</Label>
               <Input
                 id="type"
-                placeholder="Reward Type"
+                placeholder="Type de récompense"
                 value={editingReward ? editingReward.type : newReward.type}
                 onChange={(e) => {
                   if (editingReward) {
@@ -208,59 +209,61 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                 }}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="value">Reward Value</Label>
-              <Input
-                id="value"
-                type="number"
-                placeholder="Reward Value"
-                value={editingReward ? editingReward.valeur : newReward.valeur}
-                onChange={(e) => {
-                  if (editingReward) {
-                    setEditingReward({ ...editingReward, valeur: parseFloat(e.target.value) });
-                  } else {
-                    setNewReward({ ...newReward, valeur: parseFloat(e.target.value) });
-                  }
-                }}
-              />
+            <div className="grid grid-cols-3 gap-4"> {/* Grille pour les champs Valeur, Quantité et Prix */}
+              <div className="space-y-2">
+                <Label htmlFor="value">Valeur</Label>
+                <Input
+                  id="value"
+                  type="number"
+                  placeholder="Valeur"
+                  value={editingReward ? editingReward.valeur : newReward.valeur}
+                  onChange={(e) => {
+                    if (editingReward) {
+                      setEditingReward({ ...editingReward, valeur: parseFloat(e.target.value) });
+                    } else {
+                      setNewReward({ ...newReward, valeur: parseFloat(e.target.value) });
+                    }
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="quantity">Quantité disponible</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  placeholder="Quantité"
+                  value={editingReward ? editingReward.quantite_dispo : newReward.quantite_dispo}
+                  onChange={(e) => {
+                    if (editingReward) {
+                      setEditingReward({ ...editingReward, quantite_dispo: parseInt(e.target.value) });
+                    } else {
+                      setNewReward({ ...newReward, quantite_dispo: parseInt(e.target.value) });
+                    }
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="price">Prix réel</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  placeholder="Prix"
+                  value={editingReward ? editingReward.prix_reel : newReward.prix_reel}
+                  onChange={(e) => {
+                    if (editingReward) {
+                      setEditingReward({ ...editingReward, prix_reel: parseFloat(e.target.value) });
+                    } else {
+                      setNewReward({ ...newReward, prix_reel: parseFloat(e.target.value) });
+                    }
+                  }}
+                />
+              </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="quantity">Available Quantity</Label>
-              <Input
-                id="quantity"
-                type="number"
-                placeholder="Available Quantity"
-                value={editingReward ? editingReward.quantite_dispo : newReward.quantite_dispo}
-                onChange={(e) => {
-                  if (editingReward) {
-                    setEditingReward({ ...editingReward, quantite_dispo: parseInt(e.target.value) });
-                  } else {
-                    setNewReward({ ...newReward, quantite_dispo: parseInt(e.target.value) });
-                  }
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price">Real Price</Label>
-              <Input
-                id="price"
-                type="number"
-                placeholder="Real Price"
-                value={editingReward ? editingReward.prix_reel : newReward.prix_reel}
-                onChange={(e) => {
-                  if (editingReward) {
-                    setEditingReward({ ...editingReward, prix_reel: parseFloat(e.target.value) });
-                  } else {
-                    setNewReward({ ...newReward, prix_reel: parseFloat(e.target.value) });
-                  }
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="image">Image URL (optional)</Label>
+              <Label htmlFor="image">URL de l'image (optionnel)</Label>
               <Input
                 id="image"
-                placeholder="Image URL (optional)"
+                placeholder="URL de l'image (optionnel)"
                 value={editingReward ? editingReward.image ?? "" : newReward.image ?? ""}
                 onChange={(e) => {
                   if (editingReward) {
@@ -274,7 +277,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
             <div className="flex justify-end space-x-2">
               {editingReward && (
                 <Button variant="outline" onClick={resetForm}>
-                  Cancel
+                  Annuler
                 </Button>
               )}
               <Button
@@ -294,7 +297,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                   (editingReward ? editingReward.quantite_dispo <= 0 : newReward.quantite_dispo <= 0)
                 }
               >
-                {editingReward ? "Save" : "Add"}
+                {editingReward ? "Enregistrer" : "Ajouter"}
               </Button>
             </div>
           </div>
