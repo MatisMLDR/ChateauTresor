@@ -5,6 +5,19 @@ import CardChasse from '@/components/global/CardChasse';
 import Chasse from '@/classes/Chasse';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { RatingStars } from '@/components/RatingStars';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
 const ChasseListPage: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
@@ -20,30 +33,31 @@ const ChasseListPage: React.FC = () => {
     family: false,
     available: false,
   });
+  const [loading, setLoading] = useState(true);
 
-  // Récupérer toutes les chasses
+  const difficultyOptions = [
+    { value: '1', label: 'Facile' },
+    { value: '2', label: 'Moyen' },
+    { value: '3', label: 'Difficile' },
+  ];
+
   useEffect(() => {
     const fetchChasses = async () => {
+      setLoading(true);
       try {
         const everyChasses = await Chasse.getAllDisponibles();
         setChasses(everyChasses);
-        setFilteredChasses(everyChasses); // Initialement, toutes les chasses sont affichées
+        setFilteredChasses(everyChasses);
       } catch (err) {
         console.error('Erreur lors de la récupération des chasses :', err);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchChasses();
   }, []);
 
-  if (!filteredChasses) {
-    return <p>Chargement...</p>;
-  }
-
-  // Appliquer les filtres
   const applyFilters = async () => {
-
-
     let filtered = [...chasses];
 
     if (filters.minPrice) {
@@ -53,22 +67,22 @@ const ChasseListPage: React.FC = () => {
       filtered = filtered.filter((chasse) => chasse.getPrix() <= parseInt(filters.maxPrice));
     }
     if (filters.duration) {
-      filtered = filtered.filter((chasse) => chasse.getDureeEstimee() <= parseInt(filters.duration));
+      filtered = filtered.filter((chasse) => chasse.getDureeEstime() <= parseInt(filters.duration));
     }
     if (filters.difficulty) {
-      filtered = filtered.filter((chasse) => chasse.getDifficulte() <= parseInt(filters.difficulty));
+      filtered = filtered.filter(
+        (chasse) => chasse.getDifficulte() <= parseInt(filters.difficulty)
+      );
     }
     if (filters.noteMin) {
-      // Utiliser Promise.all pour gérer l'asynchronisme
       const filteredWithNotes = await Promise.all(
         filtered.map(async (chasse) => ({
           chasse,
           noteMoyenne: await chasse.getNoteMoyenne(),
         }))
       );
-  
       filtered = filteredWithNotes
-        .filter(({ noteMoyenne }) => noteMoyenne >= parseInt(filters.noteMin))
+        .filter(({ noteMoyenne }) => noteMoyenne >= parseFloat(filters.noteMin))
         .map(({ chasse }) => chasse);
     }
     if (filters.capacity) {
@@ -84,13 +98,11 @@ const ChasseListPage: React.FC = () => {
     setFilteredChasses(filtered);
   };
 
-  // Gérer la soumission du formulaire de filtre
   const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     applyFilters();
   };
 
-  // Réinitialiser les filtres
   const handleResetFilters = () => {
     setFilters({
       minPrice: '',
@@ -105,21 +117,123 @@ const ChasseListPage: React.FC = () => {
     setFilteredChasses(chasses);
   };
 
-  // Filtrer les chasses par recherche textuelle
   const filteredHunts = useMemo(() => {
     if (!searchQuery) return filteredChasses;
-
     return filteredChasses.filter((chasse) =>
       chasse.getTitre().toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [filteredChasses, searchQuery]);
 
   return (
-    <div className="flex">
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">Liste des Chasses</h1>
-
-        {/* Barre de recherche */}
+    <div className="flex flex-col gap-6 p-6 lg:flex-row">
+      <Card className="h-fit w-full lg:w-1/4">
+        <CardHeader>
+          <CardTitle>Filtres</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleFilterSubmit} className="space-y-4">
+            {/* Min Price */}
+            <div>
+              <Label htmlFor="minPrice">Prix min</Label>
+              <Input
+                type="number"
+                name="minPrice"
+                max={filters.maxPrice}
+                min={0}
+                value={filters.minPrice}
+                onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
+              />
+            </div>
+            {/* Max Price */}
+            <div>
+              <Label htmlFor="maxPrice">Prix max</Label>
+              <Input
+                type="number"
+                name="maxPrice"
+                min={filters.minPrice || 0}
+                value={filters.maxPrice}
+                onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+              />
+            </div>
+            {/* Duration */}
+            <div>
+              <Label htmlFor="duration">Durée max (en minutes)</Label>
+              <Input
+                type="number"
+                name="duration"
+                min={0}
+                value={filters.duration}
+                onChange={(e) => setFilters({ ...filters, duration: e.target.value })}
+              />
+            </div>
+            {/* Difficulty */}
+            <div>
+              <Label htmlFor="difficulty">Difficulté max</Label>
+              <Select
+                name="difficulty"
+                value={filters.difficulty}
+                onValueChange={(value) => setFilters({ ...filters, difficulty: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez une difficulté" />
+                </SelectTrigger>
+                <SelectContent>
+                  {difficultyOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Minimal Note */}
+            <div>
+              <Label htmlFor="noteMin">Note minimum</Label>
+              <RatingStars
+                value={filters.noteMin ? parseFloat(filters.noteMin) : 0}
+                onChange={(value) => setFilters({ ...filters, noteMin: value.toString() })}
+              />
+            </div>
+            {/* Capacity */}
+            <div>
+              <Label htmlFor="capacity">Capacité max</Label>
+              <Input
+                type="number"
+                name="capacity"
+                value={filters.capacity}
+                onChange={(e) => setFilters({ ...filters, capacity: e.target.value })}
+              />
+            </div>
+            {/* Family Friendly */}
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="family"
+                checked={filters.family}
+                onCheckedChange={(checked) => setFilters({ ...filters, family: !!checked })}
+              />
+              <Label htmlFor="family">Pensé pour les familles</Label>
+            </div>
+            {/* Available Now */}
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="available"
+                checked={filters.available}
+                onCheckedChange={(checked) => setFilters({ ...filters, available: !!checked })}
+              />
+              <Label htmlFor="available">Disponible Maintenant</Label>
+            </div>
+            {/* Buttons */}
+            <Button type="submit" className="w-full">
+              Filtrer
+            </Button>
+            <Button type="reset" onClick={handleResetFilters} className="w-full" variant="outline">
+              Réinitialiser
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      {/* Hunts List */}
+      <div className="w-full">
         <div className="mb-6">
           <Input
             type="text"
@@ -128,95 +242,22 @@ const ChasseListPage: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-
-        {/* Filtre des chasses */}
-        <div className="border p-4 rounded-md shadow-md">
-          <h2 className="text-2xl mb-3">Filtre</h2>
-          <form onSubmit={handleFilterSubmit}>
-            <div className="mb-3">
-              <label htmlFor="minPrice">Prix min</label>
-              <Input
-                type="number"
-                name="minPrice"
-                value={filters.minPrice}
-                onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="maxPrice">Prix max</label>
-              <Input
-                type="number"
-                name="maxPrice"
-                value={filters.maxPrice}
-                onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="duration">Durée max</label>
-              <Input
-                type="number"
-                name="duration"
-                value={filters.duration}
-                onChange={(e) => setFilters({ ...filters, duration: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="difficulty">Difficulté max</label>
-              <Input
-                type="number"
-                name="difficulty"
-                value={filters.difficulty}
-                onChange={(e) => setFilters({ ...filters, difficulty: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="noteMin">Note minimum</label>
-              <Input
-                type="number"
-                name="noteMin"
-                value={filters.noteMin}
-                onChange={(e) => setFilters({ ...filters, noteMin: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="capacity">Capacité max</label>
-              <Input
-                type="number"
-                name="capacity"
-                value={filters.capacity}
-                onChange={(e) => setFilters({ ...filters, capacity: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="family">Pensé pour les familles</label>
-              <Input
-                type="checkbox"
-                name="family"
-                checked={filters.family}
-                onChange={(e) => setFilters({ ...filters, family: e.target.checked })}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="available">Disponible Maintenant</label>
-              <Input
-                type="checkbox"
-                name="available"
-                checked={filters.available}
-                onChange={(e) => setFilters({ ...filters, available: e.target.checked })}
-              />
-            </div>
-            <Button type="submit">Filtrer</Button>
-            <Button type="reset" onClick={handleResetFilters}>
-              Réinitialiser
-            </Button>
-          </form>
-        </div>
-
-        {/* Liste des chasses */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredHunts.map((chasse) => (
-            <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
-          ))}
+        <Separator className="my-6" />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {loading ? (
+                // Affichages de 6 fausses chasses pour le chargement
+                Array.from({ length: 6 }, (_, index) => (
+                    <Skeleton
+                        key={index}
+                        className="h-[350px] rounded-md"
+                    />
+                ))
+            ) : (
+                // Affichage des vraies chasses
+                filteredHunts.map((chasse) => (
+                  <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
+                ))
+            )}
         </div>
       </div>
     </div>
