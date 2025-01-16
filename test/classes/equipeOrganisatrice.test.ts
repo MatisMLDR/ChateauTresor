@@ -127,4 +127,16 @@ describe('EquipeOrganisatrice', () => {
 
     await expect(equipe.read()).rejects.toThrow('Equipe ID is required');
   });
+
+  test('getNbMembresParMoyenneEquipe should calculate the average number of members', () => {
+    const equipe = new EquipeOrganisatrice(mockEquipeData);
+  
+    // Valid case
+    const average = equipe.getNbMembresParMoyenneEquipe(3);
+    expect(average).toBeCloseTo(5); // 15 / 3 = 5
+  
+    // Edge case: totalEquipes is 0
+    const averageZero = equipe.getNbMembresParMoyenneEquipe(0);
+    expect(averageZero).toBe(0); // Avoid division by zero
+  });
 });
