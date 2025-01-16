@@ -43,7 +43,31 @@ export async function forgotPassword(currentState: { message: string }, formData
     redirect(`/forgot-password/success`)
 
 }
-export async function signup(currentState: { message: string }, formData: FormData) {
+
+
+export async function signupOrganisateur(currentState: { message: string }, formData: FormData) {
+    const result = await signUpUser(currentState, formData, "organisateur");
+    if (result?.message) {
+        return result;
+    }
+    // Revalider le chemin pour mettre à jour les données de l'utilisateur
+    revalidatePath('/', 'layout')
+    // Rediriger vers la page d'accueil de l'organisateur
+    redirect('/auth-organisateurs/onboarding')
+}
+
+export async function signupParticipant(currentState: { message: string }, formData: FormData) {
+    const result = await signUpUser(currentState, formData, "participant");
+    if (result?.message) {
+        return result;
+    }
+    // Revalider le chemin pour mettre à jour les données de l'utilisateur
+    revalidatePath('/', 'layout')
+    // Rediriger vers la page d'accueil du participant
+    redirect('/participants')
+}
+
+export async function signUpUser(currentState: { message: string }, formData: FormData, type: "participant" | "organisateur") {
     const data = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
@@ -77,7 +101,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
         if (signUpError.message.includes("already registered")) {
             message = "Un compte avec cet email existe déjà. Veuillez vous connecter à la place."
         }
-        console.log("ERREUR A LIRE IMPORTANT:",signUpError.message)
+        console.log("ERREUR A LIRE IMPORTANT:", signUpError.message)
         return { message: message }
     }
 
@@ -122,23 +146,19 @@ export async function signup(currentState: { message: string }, formData: FormDa
         return { message: "Impossible de mettre à jour le profil avec le stripeID" }
     }
 
-    // Créer un profil participant
+    // Créer un profil participant ou organisateur
     const { error: errorProfile } = await supabase
-        .from('participant')
+        .from(type === "participant" ? 'participant' : 'membre_equipe')
         .insert([{
             id_user: signUpData.user.id,
         }])
 
     if (errorProfile) {
-        console.log('Cannot create participant profile:', errorProfile)
-        return { message: "Erreur lors de la création du profil participant" }
+        console.log(`Cannot create ${type} profile:`, errorProfile)
+        return { message: `Erreur lors de la création du profil ${type}` }
     }
-    console.log("User created successfully:", signUpData)
-    // Revalider le chemin pour mettre à jour les données de l'utilisateur
-    revalidatePath('/', 'layout')
-    // Rediriger vers la page d'accueil du participant
-    redirect('/participants')
 
+    console.log("User created successfully:", signUpData)
 }
 
 export async function loginUser(currentState: { message: string }, formData: FormData) {

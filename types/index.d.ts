@@ -49,16 +49,15 @@ export interface AudioPlayerProps {
 
 
 
-export type TypeIndice = 'image' | 'sound' | 'text';
+export type TypeIndice = 'image' | 'son' | 'text'; // Modifié ici
 
-// Indice
 export type IndiceType = {
-  id_indice: UUID; // Identifiant unique de l'indice
-  contenu: string;   // Contenu de l'indice (par défaut : 'Pas de contenu')
-  ordre: number;     // Ordre de l'indice (par défaut : 1)
-  degre_aide: number; // Degré d'aide, doit être compris entre 1 et 5
-  type: TypeIndice; // Type de l'indice
-  id_enigme: UUID; // Identifiant de l'énigme associée
+  id_indice: UUID;
+  contenu: string;
+  ordre?: number;
+  degre_aide: number;
+  type: TypeIndice; // Utilise le nouveau TypeIndice
+  id_enigme: UUID;
 };
 
 // Indice Participant
@@ -77,7 +76,7 @@ export type EnigmeType = {
   titre: string;
   indices?: Indice[];
   code_reponse: string;
-  ordre: number;
+  ordre?: number;
   description: string;
   endroit_qrcode: string;
   temps_max: number;

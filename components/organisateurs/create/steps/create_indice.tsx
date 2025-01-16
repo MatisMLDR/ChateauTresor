@@ -1,4 +1,5 @@
-// Fenetre Pop Up pour créer un indice et renvoie les paramètres de l'indice dans le riddle-creation.tsx
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,21 +14,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload } from "lucide-react";
+import { IndiceType } from "@/types"; // Assurez-vous que ce type est importé
 
 interface CreateIndiceProps {
   onClose: () => void;
   onSubmit: (indice: {
-    type: "text" | "image" | "sound";
+    type: "text" | "image" | "son";
     contenu: string;
     degre_aide?: number;
-    ordre?: number;
+    ordre?: number; // L'ordre est toujours présent dans l'interface, mais il n'est plus saisi manuellement
   }) => void;
+  indice?: IndiceType | null; // Ajoutez cette prop
 }
 
-export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
-  const [type, setType] = useState<"text" | "image" | "sound">("text");
-  const [content, setContent] = useState("");
-  const [degre_aide, setAide] = useState(1);
+export function CreateIndice({ onClose, onSubmit, indice }: CreateIndiceProps) {
+  const [type, setType] = useState<"text" | "image" | "son">(indice?.type || "text");
+  const [content, setContent] = useState(indice?.contenu || "");
+  const [degre_aide, setAide] = useState(indice?.degre_aide || 1);
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +40,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
         alert("Please select an image file");
         return;
       }
-      if (type === "sound" && !selectedFile.type.startsWith("audio/")) {
+      if (type === "son" && !selectedFile.type.startsWith("audio/")) {
         alert("Please select an audio file");
         return;
       }
@@ -51,6 +54,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
       type,
       contenu: type === "text" ? content : file?.name || "",
       degre_aide,
+      ordre: indice?.ordre, // L'ordre est géré automatiquement, pas besoin de le saisir manuellement
     });
     onClose();
   };
@@ -58,7 +62,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
-        <CardTitle>Créer un indice</CardTitle>
+        <CardTitle>{indice ? "Modifier l'indice" : "Créer un indice"}</CardTitle>
       </CardHeader>
       
       <CardContent className="space-y-4">
@@ -66,7 +70,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
           <Label htmlFor="type">Type</Label>
           <Select
             value={type}
-            onValueChange={(value: "text" | "image" | "sound") => setType(value)}
+            onValueChange={(value: "text" | "image" | "son") => setType(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select type" />
@@ -74,7 +78,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
             <SelectContent>
               <SelectItem value="text">Text</SelectItem>
               <SelectItem value="image">Image</SelectItem>
-              <SelectItem value="sound">Son</SelectItem>
+              <SelectItem value="son">Son</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -116,7 +120,7 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
             onValueChange={(value) => setAide(parseInt(value))}
           >
             <SelectTrigger>
-              <SelectValue placeholder="CHoisir le degré d'aide" />
+              <SelectValue placeholder="Choisir le degré d'aide" />
             </SelectTrigger>
             <SelectContent>
               {[1, 2, 3, 4, 5].map((level) => (
@@ -133,7 +137,9 @@ export function CreateIndice({ onClose, onSubmit }: CreateIndiceProps) {
         <Button variant="outline" onClick={onClose}>
           Quitter
         </Button>
-        <Button onClick={handleSubmit}>Create Clue</Button>
+        <Button onClick={handleSubmit}>
+          {indice ? "Enregistrer" : "Créer un indice"}
+        </Button>
       </CardFooter>
     </Card>
   );

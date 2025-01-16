@@ -30,13 +30,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
       );
     }
 
-    if (!data) {
-      return NextResponse.json(
-        { message: `Aucun avis trouvé avec l'id ${idAvis}` },
-        { status: 404 }
-      );
-    }
-
     console.log("Données récupérées : ", data);
     return NextResponse.json(data, { status: 200 });
   } catch (err) {

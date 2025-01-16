@@ -1,4 +1,4 @@
-import StripePricingTable from "@/components/StripePricingTable";
+import StripePricingTable from "@/components/stripe/StripePricingTable";
 import Image from "next/image"
 import { createClient } from '@/utils/supabase/server'
 import { createStripeCheckoutSession } from "@/utils/stripe/api";

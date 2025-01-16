@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { contenuTextuel } from "@/lib/contenuCreationChasse";
+import { contenuTextuel } from "@/constants";
 
 interface BasicDetailsProps{
   formData: Partial<ChasseType>;

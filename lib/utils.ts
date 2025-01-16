@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -21,13 +21,13 @@ export function formatFullName(firstName: string, lastName: string): string {
 export function convertTimeToMinutesAndHours(timeString: string) {
   // Split the time string into parts
   const [hours, minutes, seconds] = timeString.split(':').map(Number);
-  
+
   // Convert to total minutes
   const totalMinutes = hours * 60 + minutes;
-  
+
   // Format the output
   const hoursFormatted = `${hours}h`;
   const minutesFormatted = `${totalMinutes}min`;
-  
+
   return { totalMinutes, hoursFormatted, minutesFormatted };
 }

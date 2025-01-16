@@ -1,5 +1,5 @@
 import React from 'react'
-import LikeButton from './LikeButton';
+import LikeButton from '../ui/LikeButton';
 import Avis from '@/classes/Avis';
 
 interface CardAvisProps {

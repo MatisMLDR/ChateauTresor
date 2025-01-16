@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BasicDetails } from "./steps/basic-details";
 import { CastleSelection } from "./steps/castle-selection";
 import { RiddlesCreation } from "./steps/riddles-creation";
@@ -6,7 +6,7 @@ import { ReviewSubmit } from "./steps/review-submit";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ChasseType, RecompenseType } from "@/types";
-import { contenuTextuel } from "@/lib/contenuCreationChasse";
+import { contenuTextuel } from "@/constants";
 import toast, { Toaster } from "react-hot-toast";
 import Chasse from "@/classes/Chasse";
 import { Enigme } from "@/classes/Enigme";

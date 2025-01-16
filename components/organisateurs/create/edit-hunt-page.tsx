@@ -3,6 +3,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ChasseType } from '@/types';
 import dynamic from 'next/dynamic';
 import Chasse from '@/classes/Chasse';
+import { UUID } from 'crypto';
 
 // Import dynamique avec SSR désactivé
 const CreateHuntForm = dynamic(
@@ -12,7 +13,7 @@ const CreateHuntForm = dynamic(
 
 const EditHuntPage: React.FC = () => {
   const params = useParams();
-  const id = params as any; // ID de la chasse
+  const id = params.id as UUID; // ID de la chasse
   const [initialData, setInitialData] = useState<Partial<ChasseType> | null>(null);
 
   useEffect(() => {
@@ -20,6 +21,7 @@ const EditHuntPage: React.FC = () => {
       try {
         const chasse = await Chasse.readId(id);
         if (chasse) {
+          console.log("Données de la chasse récupérées :", chasse); // Log des données récupérées
           setInitialData(chasse);
         }
       } catch (err) {

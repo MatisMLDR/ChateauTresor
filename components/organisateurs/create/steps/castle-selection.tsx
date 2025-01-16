@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { MapPin } from "lucide-react";
-import { contenuTextuel } from "@/lib/contenuCreationChasse";
+import { contenuTextuel } from "@/constants";
 import { Input } from "@/components/ui/input";
 import Chateau from "@/classes/Chateau";
 
