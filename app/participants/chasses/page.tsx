@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { RatingStars } from '@/components/RatingStars';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
 const ChasseListPage: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
@@ -32,6 +33,7 @@ const ChasseListPage: React.FC = () => {
     family: false,
     available: false,
   });
+  const [loading, setLoading] = useState(true);
 
   const difficultyOptions = [
     { value: '1', label: 'Facile' },
@@ -41,12 +43,15 @@ const ChasseListPage: React.FC = () => {
 
   useEffect(() => {
     const fetchChasses = async () => {
+      setLoading(true);
       try {
         const everyChasses = await Chasse.getAllDisponibles();
         setChasses(everyChasses);
         setFilteredChasses(everyChasses);
       } catch (err) {
         console.error('Erreur lors de la récupération des chasses :', err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchChasses();
@@ -239,9 +244,20 @@ const ChasseListPage: React.FC = () => {
         </div>
         <Separator className="my-6" />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredHunts.map((chasse) => (
-            <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
-          ))}
+            {loading ? (
+                // Affichages de 6 fausses chasses pour le chargement
+                Array.from({ length: 6 }, (_, index) => (
+                    <Skeleton
+                        key={index}
+                        className="h-[350px] rounded-md"
+                    />
+                ))
+            ) : (
+                // Affichage des vraies chasses
+                filteredHunts.map((chasse) => (
+                  <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
+                ))
+            )}
         </div>
       </div>
     </div>
