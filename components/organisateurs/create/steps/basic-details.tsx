@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { contenuTextuel } from "@/lib/contenuCreationChasse";
+import { contenuTextuel } from "@/constants";
 
 /**
  * Ce code définit un composant React appelé BasicDetails qui fait partie d'un formulaire multi-étapes

@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Chasse from '@/classes/Chasse';
 import { UUID } from 'crypto';
-import AddAvisForm from '@/components/AddAvisForm';
+import AddAvisForm from '@/components/participants/AddAvisForm';
 
 export default async function ChassePage({ params }: { params: { id: UUID } }) {
     const chasse = await Chasse.readId(params.id);

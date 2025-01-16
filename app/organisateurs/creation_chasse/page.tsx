@@ -1,7 +1,7 @@
 "use client";
 
 import { CreateHuntForm } from "@/components/organisateurs/create/create-hunt-form";
-import { contenuTextuel } from "@/lib/contenuCreationChasse";
+import { contenuTextuel } from "@/constants";
 
 export default function CreateHuntPage() {
   

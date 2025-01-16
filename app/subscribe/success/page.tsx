@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from 'next/link'
 import Image from 'next/image'
 
-import ProviderSigninBlock from '@/components/ProviderSigninBlock'
-import LoginForm from "@/components/LoginForm"
+import ProviderSigninBlock from '@/components/auth/ProviderSigninBlock'
+import LoginForm from "@/components/auth/LoginForm"
 import { Button } from "@/components/ui/button"
 export default function SubscribeSuccess() {
     return (

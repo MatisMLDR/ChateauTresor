@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from 'next/link'
 import Image from 'next/image'
 
-import ProviderSigninBlock from '@/components/ProviderSigninBlock'
-import LoginForm from "@/components/LoginForm"
+import ProviderSigninBlock from '@/components/auth/ProviderSigninBlock'
+import LoginForm from "@/components/auth/LoginForm"
 export default function Login() {
     return (
         <div className="flex items-center justify-center bg-muted min-h-screen">
@@ -38,7 +38,7 @@ export default function Login() {
                     <Link className="w-full text-sm text-muted-foreground" href="/signup">
                         Vous n&apos;avez pas de compte? Créer un compte
                     </Link>
-                    <Link className="w-full text-sm text-muted-foreground" href="/organisateurs">
+                    <Link className="w-full text-sm text-muted-foreground" href="/landing-organisateur">
                         Vous êtes un organisateur? Connectez-vous ici
                     </Link>
                 </CardFooter>

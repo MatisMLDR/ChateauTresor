@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import CardChasse from '@/components/CardChasse';
+import CardChasse from '@/components/global/CardChasse';
 import Chasse from '@/classes/Chasse';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

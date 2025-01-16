@@ -33,7 +33,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { CreateIndice } from "./create_indice";
-import { contenuTextuel } from '@/lib/contenuCreationChasse';
+import { contenuTextuel } from '@/constants';
 
 /**
  * Ce code définit un composant React appelé RiddlesCreation qui gère la création et l'organisation
