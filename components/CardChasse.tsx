@@ -1,13 +1,20 @@
+'use client';
+
 import { convertTimeToMinutesAndHours } from '@/lib/utils';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Clock, Euro, MapPin, Users } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { RatingStars } from '@/components/RatingStars';
+import Chasse from '@/classes/Chasse';
 
 interface CardChasseProps {
-  chasse: any;
+  chasse: Chasse;
 }
 
 const CardChasse = ({ chasse }: CardChasseProps) => {
-
   const [nbAvis, setNbAvis] = useState<number>(0);
   const [note, setNote] = useState<number>(0);
 
@@ -17,9 +24,9 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
         const nbAvis = await chasse.getNbAvis();
         setNbAvis(nbAvis);
       } catch (err) {
-        console.error('Erreur lors de la récupération du nombre d\'avis :', err);
+        console.error("Erreur lors de la récupération du nombre d'avis :", err);
       }
-    }
+    };
     const fetchNote = async () => {
       try {
         const noteMoyenne = await chasse.getNoteMoyenne();
@@ -27,41 +34,106 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
       } catch (err) {
         console.error('Erreur lors de la récupération de la note :', err);
       }
-    }
+    };
     fetchNbAvis();
     fetchNote();
-  }, [nbAvis, note]);
+  }, [chasse]);
+
+  const getDifficultyText = (difficulty: number) => {
+    switch (difficulty) {
+      case 1:
+        return 'Facile';
+      case 2:
+        return 'Moyen';
+      case 3:
+        return 'Difficile';
+      default:
+        return 'Inconnu';
+    }
+  };
+
+  const getDifficultyColor = (difficulty: number) => {
+    switch (difficulty) {
+      case 1:
+        return 'bg-green-500 hover:bg-green-700 text-secondary';
+      case 2:
+        return 'bg-orange-500 hover:bg-orange-700 text-secondary';
+      case 3:
+        return 'bg-red-500 hover:bg-red-700 text-secondary';
+      default:
+        return 'bg-gray-500 hover:bg-gray-700 text-secondary';
+    }
+  };
+
+  const formattedNote = note.toFixed(1);
 
   return (
-    <div key={chasse.id_chasse} className="border rounded-md p-4 shadow-md">
-      <img
-        src={chasse.getImage() || '/default-chasse.jpg'}
-        alt={chasse.getTitre()}
-        className="w-full h-40 object-cover rounded-md mb-4"
-      />
-      <h3 className="font-bold text-lg mb-2">{chasse.getTitre()}</h3>
-      <p className="text-gray-600 text-sm mb-2">{chasse.getDescription()}</p>
-      <p className="text-gray-800 mb-2 bg-yellow-400">Nb étoiles : {note}</p>
-      <p className="text-gray-800 font-medium">Difficulté : {chasse.getDifficulte()} / 3</p>
-      <p className="text-gray-800 font-medium">Durée : {convertTimeToMinutesAndHours(chasse.getDureeEstime()).minutesFormatted}</p>
-      <p className="text-gray-800 font-medium">Nombre d'avis : {nbAvis}</p>
-      {/* <p className="text-gray-800 font-medium">
-        <span>
-          Icone localisation
-        </span>
-        {
-          chasse.chateau
-        }
-      </p> */}
-      <p className="text-gray-800 font-medium">Capacité : {chasse.getCapacite()}</p>
-      <p className="text-gray-800 font-medium">Prix : {chasse.getPrix()} €</p>
-      <Link href={`/participants/chasses/${chasse.getIdChasse()}`}>
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md w-full">
-          Voir plus
-        </button>
-      </Link>
-    </div>
-  )
-}
+    <Card className="transition-shadow duration-200 hover:shadow-lg">
+      <CardHeader className="relative p-0">
+        <div className="relative">
+          <img
+            src={chasse.getImage() || '/default-chasse.jpg'}
+            alt={chasse.getTitre()}
+            className="h-48 w-full rounded-t-md object-cover"
+          />
+          <Badge
+            className={`${getDifficultyColor(chasse.getDifficulte())} absolute right-2 top-2 cursor-default select-none px-2 py-1 text-xs font-bold`}
+          >
+            {getDifficultyText(chasse.getDifficulte())}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4">
+        <CardTitle className="mb-2 truncate text-xl font-bold">{chasse.getTitre()}</CardTitle>
+        <p
+          className="mb-4 text-sm text-gray-600"
+          style={{
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: 'vertical',
+            display: '-webkit-box',
+            overflow: 'hidden',
+          }}
+        >
+          {chasse.getDescription()}
+        </p>
+        <div className="mb-4 flex items-center space-x-2">
+          <RatingStars value={note} maxStars={5} />
+          <span className="text-sm text-gray-600">
+            {formattedNote} ({nbAvis} avis)
+          </span>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Clock className="h-4 w-4 text-gray-600" />
+            <span className="text-sm text-gray-800">
+              Durée : {convertTimeToMinutesAndHours(chasse.getDureeEstime()).minutesFormatted}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Users className="h-4 w-4 text-gray-600" />
+            <span className="text-sm text-gray-800">
+              Capacité : {chasse.getCapacite()} personnes
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Euro className="h-4 w-4 text-gray-600" />
+            <span className="text-sm text-gray-800">Prix : {chasse.getPrix()} €</span>
+          </div>
+          {chasse.getIdChateau() && (
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4 text-gray-600" />
+              <span className="text-sm text-gray-800">{chasse.getIdChateau()}</span>
+            </div>
+          )}
+        </div>
+      </CardContent>
+      <CardFooter className="p-4">
+        <Link href={`/participants/chasses/${chasse.getIdChasse()}`} className="w-full">
+          <Button className="w-full">Voir plus</Button>
+        </Link>
+      </CardFooter>
+    </Card>
+  );
+};
 
-export default CardChasse
+export default CardChasse;

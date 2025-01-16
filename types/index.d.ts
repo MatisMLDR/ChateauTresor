@@ -257,3 +257,11 @@ export type InfoBadgeProps = {
   popupClassName?: string;
   hoverText: string;
 }
+
+//// Props pour le système d'affichage des notations ////
+
+export type RatingStarsProps = {
+  value: number;
+  onChange?: (value: number) => void;
+  maxStars?: number;
+}
