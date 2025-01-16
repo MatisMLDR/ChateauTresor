@@ -61,6 +61,15 @@ export type IndiceType = {
   id_enigme: UUID; // Identifiant de l'énigme associée
 };
 
+// Indice Participant
+
+export type IndiceParticipantType = {
+  id_indice: UUID;
+  id_participant: UUID;
+  est_decouvert?: boolean; // Optionnel avec valeur par défaut `false`
+  date_utilisation?: Date; // Optionnel avec valeur par défaut `CURRENT_TIMESTAMP`
+}
+
 // Énigme
 export type EnigmeType = {
   id_enigme?: UUID;
