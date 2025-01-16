@@ -69,8 +69,26 @@ returns trigger
 set search_path = ''
 as $$
 begin
-insert into public.profiles (id, email, username)
-values (new.id, new.email, new.raw_user_meta_data ->> 'username');
+insert into public.profiles (
+  id, 
+  email, 
+  username,
+  nom,
+  prenom,
+  adresse,
+  ville,
+  code_postal
+)
+values (
+  new.id, 
+  new.email, 
+  new.raw_user_meta_data ->> 'username', 
+  new.raw_user_meta_data ->> 'nom', 
+  new.raw_user_meta_data ->> 'prenom', 
+  new.raw_user_meta_data ->> 'adresse', 
+  new.raw_user_meta_data ->> 'ville', 
+  new.raw_user_meta_data ->> 'code_postal'
+);
 return new;
 end;
 $$
@@ -166,7 +184,9 @@ CREATE TABLE public.Chasse
         ),
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
     theme             VARCHAR(255)                 DEFAULT 'Aucun thème',
-    statut            VARCHAR(50)                  DEFAULT 'Inactif',
+    statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
+        statut IN ('En attente de validation', 'Valide', 'En cours', 'Finie')
+        ),
     id_chateau        UUID                NOT NULL REFERENCES Chateau (id_chateau) ON DELETE CASCADE,
     id_equipe         UUID                NOT NULL REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE
 );
@@ -429,16 +449,16 @@ VALUES ('d2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', 'b302ddb0-c4b4-42d8-8956-00bcb2c
 
 -- Insert data into Chasse
 INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, image, date_creation, date_modification,
-                           date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
+                           date_debut, date_fin, prix, difficulte, duree_estime, theme, id_chateau, id_equipe)
 VALUES ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg',
         '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2',
-        '02:00:00', 'Theme de la chasse', 'Inactif', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
+        '02:00:00', 'Theme de la chasse', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
         '5da884fa-d39c-4e99-8644-a18e2bf34a60'),
        ('550e8400-e29b-41d4-a716-446655440000', 'Chasse de Chambord', '300',
         'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !',
         '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp',
         '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1',
-        '02:00:00', 'Dynastie royale', 'Inactif', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
+        '02:00:00', 'Dynastie royale', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
         '42fdbebf-d919-4bc2-a7b7-f00688f706af') ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation
@@ -530,3 +550,24 @@ SELECT id_chasse,
 FROM public.Chasse
 WHERE date_fin IS NULL
    OR date_fin > CURRENT_TIMESTAMP;
+
+CREATE VIEW vue_chasse_en_attente_de_validation AS
+SELECT id_chasse,
+       titre,
+       capacite,
+       description,
+       age_requis,
+       image,
+       date_creation,
+       date_modification,
+       date_debut,
+       date_fin,
+       prix,
+       difficulte,
+       duree_estime,
+       theme,
+       statut,
+       id_chateau,
+       id_equipe
+FROM public.Chasse
+WHERE statut = 'En attente de validation';

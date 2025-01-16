@@ -124,7 +124,8 @@ export function NavUser({user} : SideBarProps) {
               </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>
+            {/* TODO : Modifier le lien pour qu'il redirige vers la landing page correspondante */}
+            <DropdownMenuItem onClick={() => logout("participant")}> 
               <LogOut />
               Déconnexion
             </DropdownMenuItem>

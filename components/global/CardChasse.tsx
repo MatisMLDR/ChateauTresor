@@ -55,7 +55,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
       </p> */}
       <p className="text-gray-800 font-medium">Capacité : {chasse.getCapacite()}</p>
       <p className="text-gray-800 font-medium">Prix : {chasse.getPrix()} €</p>
-      <Link href={`/participants/chasses/${chasse.getIdChasse()}`}>
+      <Link href={`/participants/dashboard/chasses/${chasse.getIdChasse()}`}>
         <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md w-full">
           Voir plus
         </button>

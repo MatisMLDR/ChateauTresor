@@ -1,5 +1,7 @@
 
+import { Participant } from '@/classes/Participant'
 import { createServerClient } from '@supabase/ssr'
+import { UUID } from 'crypto'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
@@ -35,6 +37,7 @@ export async function updateSession(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser()
     const url = request.nextUrl.clone()
+    const isParticipant = url.pathname.startsWith('/participants')
 
     if (request.nextUrl.pathname.startsWith('/webhook')) {
         return supabaseResponse
@@ -42,21 +45,23 @@ export async function updateSession(request: NextRequest) {
 
     if (
         !user &&
-        !request.nextUrl.pathname.startsWith('/login') &&
-        !request.nextUrl.pathname.startsWith('/auth') &&
-        !request.nextUrl.pathname.startsWith('/signup') &&
-        !request.nextUrl.pathname.startsWith('/forgot-password') &&
-        !request.nextUrl.pathname.startsWith('/organisateurs/creation_chasse') &&
-        !request.nextUrl.pathname.startsWith('/organisateurs') &&
-        !(request.nextUrl.pathname === '/')
+        (request.nextUrl.pathname.startsWith('/organisateurs/') ||
+        request.nextUrl.pathname.startsWith('/participants/'))
+
     ) {
         // no user, potentially respond by redirecting the user to the login page
-        url.pathname = '/login'
+        url.pathname = `/authentication/login?redirect=${isParticipant ? 'participant' : 'organisateur'}`
         return NextResponse.redirect(url)
     }
-    // // If user is logged in, redirect to dashboard
-    if (user && request.nextUrl.pathname === '/') {
-        url.pathname = '/participants'
+    // If user is logged in, redirect to dashboard
+    if (user && (request.nextUrl.pathname === '/' || request.nextUrl.pathname === '/authentication/login' || request.nextUrl.pathname === '/organisateurs')) {
+        let participant;
+        try {
+            participant = await Participant.readByIdUser(user.id as UUID);
+        } catch (error) {
+            // Optionally log the error, but no need to handle it further
+        }
+        url.pathname = participant ? '/participants/dashboard' : '/organisateurs/dashboard';
         return NextResponse.redirect(url)
     }
     // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

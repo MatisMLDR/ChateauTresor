@@ -40,7 +40,7 @@ const PopUpChateau: React.FC<{ chateau: any }> = ({ chateau }) => {
 
       {/* Bouton pour accéder à la page du château */}
       <div style={{ marginBottom: '16px' }}>
-        <Link href={`/participants/chateaux/${chateau.id_chateau}`}>
+        <Link href={`/participants/dashboard/chateaux/${chateau.id_chateau}`}>
           <button
             style={{
               padding: '8px 16px',
@@ -101,7 +101,7 @@ const PopUpChateau: React.FC<{ chateau: any }> = ({ chateau }) => {
                   <p style={{ fontSize: '14px', marginBottom: '4px' }}>
                     Difficulté : {chasse.difficulte} / 3 | Prix : {chasse.prix} €
                   </p>
-                  <Link href={`/participants/chasses/${chasse.id_chasse}`}>
+                  <Link href={`/participants/dashboard/chasses/${chasse.id_chasse}`}>
                     <button
                       style={{
                         padding: '8px 16px',

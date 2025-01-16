@@ -13,8 +13,9 @@ import { } from "@supabase/supabase-js"
 import { createClient } from '@/utils/supabase/server'
 import { logout } from '@/app/auth/actions'
 import { generateStripeBillingPortalLink } from "@/utils/stripe/api"
+import { AuthProps } from "@/types"
 
-export default async function DashboardHeaderProfileDropdown() {
+export default async function DashboardHeaderProfileDropdown({ redirect }: AuthProps) {
     const supabase = createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
     const billingPortalURL = await generateStripeBillingPortalLink(user!.email!)
@@ -60,7 +61,9 @@ export default async function DashboardHeaderProfileDropdown() {
                     </Link>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                        <form action={logout} className="w-full">
+                        <form action={async () => {
+                            await logout(redirect)
+                        }} className="w-full">
                             <button type="submit" className="w-full flex" >
                                 <LogOut className="mr-2 h-4 w-4" />
                                 <span >Se Déconnecter</span>

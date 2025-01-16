@@ -6,16 +6,13 @@ import { useFormStatus } from 'react-dom'
 import { signupOrganisateur, signupParticipant } from '@/app/auth/actions'
 import { useActionState } from "react"
 import { useState } from "react"
+import { AuthProps } from "@/types"
 
-type SignupFormProps = {
-    type: 'participant' | 'organisateur';
-}
-
-export default function SignupForm({ type = 'participant' }: SignupFormProps) {
+export default function SignupForm({ redirect }: AuthProps) {
     const initialState = {
         message: ''
     }
-    const [formState, formAction] = useActionState(type === "participant" ? signupParticipant : signupOrganisateur, initialState)
+    const [formState, formAction] = useActionState(redirect === "participant" ? signupParticipant : signupOrganisateur, initialState)
     const { pending } = useFormStatus()
     const [step, setStep] = useState(1)
     const [password, setPassword] = useState("")

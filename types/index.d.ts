@@ -9,6 +9,10 @@ export interface StripeProduct {
   price: Stripe.Price;
 }
 
+export interface AuthProps {
+  redirect: "participant" | "organisateur";
+}
+
 export interface InputWithLabelProps {
   label: string;
   inputType: string;

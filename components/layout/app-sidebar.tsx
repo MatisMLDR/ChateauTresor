@@ -42,23 +42,23 @@ const dataUser = {
   navMain: [
     {
       title: 'Carte',
-      url: '/participants',
+      url: '/participants/dashboard/carte',
       icon: MapPin,
       isActive: true,
     },
     {
       title: 'Châteaux',
-      url: '/participants/chateaux',
+      url: '/participants/dashboard/chateaux',
       icon: Castle,
     },
     {
       title: 'Chasses',
-      url: '/participants/chasses',
+      url: '/participants/dashboard/chasses',
       icon: Search,
     },
     {
       title: 'Historique',
-      url: '/participants/historique',
+      url: '/participants/dashboard/historique',
       icon: History,
     },
     {
@@ -68,11 +68,11 @@ const dataUser = {
       items: [
         {
           title: 'Informations',
-          url: '/participants/profil',
+          url: '/participants/dashboard/profil',
         },
         {
           title: 'Statistiques',
-          url: '/participants/statistiques',
+          url: '/participants/dashboard/statistiques',
         },
       ],
     },
@@ -110,7 +110,7 @@ const dataOrganisateur = {
     },
     {
       title: 'Châteaux',
-      url: '/organisateurs/chateaux',
+      url: '/organisateurs/dashboard/chateaux',
       icon: Castle,
     },
     {
@@ -125,11 +125,11 @@ const dataOrganisateur = {
       items: [
         {
           title: 'Informations',
-          url: '/organisateurs/profil',
+          url: '/organisateurs/dashboard/profil',
         },
         {
           title: 'Statistiques',
-          url: '/organisateurs/statistiques',
+          url: '/organisateurs/dashboard/statistiques',
         },
       ],
     },

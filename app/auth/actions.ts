@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { revalidatePath } from 'next/cache'
 import { createStripeCustomer } from '@/utils/stripe/api'
 import { formatFullName } from '@/lib/utils'
+import toast from 'react-hot-toast'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
 
@@ -44,27 +45,18 @@ export async function forgotPassword(currentState: { message: string }, formData
 
 }
 
-
-export async function signupOrganisateur(currentState: { message: string }, formData: FormData) {
+export async function signupOrganisateur(currentState: { message: string }, formData: FormData): Promise<any> {
     const result = await signUpUser(currentState, formData, "organisateur");
     if (result?.message) {
         return result;
     }
-    // Revalider le chemin pour mettre à jour les données de l'utilisateur
-    revalidatePath('/', 'layout')
-    // Rediriger vers la page d'accueil de l'organisateur
-    redirect('/auth-organisateurs/onboarding')
 }
 
-export async function signupParticipant(currentState: { message: string }, formData: FormData) {
+export async function signupParticipant(currentState: { message: string }, formData: FormData): Promise<any> {
     const result = await signUpUser(currentState, formData, "participant");
     if (result?.message) {
         return result;
     }
-    // Revalider le chemin pour mettre à jour les données de l'utilisateur
-    revalidatePath('/', 'layout')
-    // Rediriger vers la page d'accueil du participant
-    redirect('/participants')
 }
 
 export async function signUpUser(currentState: { message: string }, formData: FormData, type: "participant" | "organisateur") {
@@ -92,6 +84,11 @@ export async function signUpUser(currentState: { message: string }, formData: Fo
             emailRedirectTo: `${PUBLIC_URL}/auth/callback`,
             data: {
                 username: data.pseudo,
+                nom: data.nom,
+                prenom: data.prenom,
+                adresse: data.adresse,
+                ville: data.ville,
+                code_postal: data.codePostal,
             }
         }
     })
@@ -108,25 +105,6 @@ export async function signUpUser(currentState: { message: string }, formData: Fo
     if (!signUpData.user) {
         console.log('User data is empty or undefined')
         return { message: "L'utilisateur n'a pas été trouvé" }
-    }
-
-    // Update profile data in public.profiles table
-    const { error: errorUpdate } = await supabase
-        .from('profiles')
-        .update(
-            {
-                adresse: data.adresse,
-                ville: data.ville,
-                code_postal: data.codePostal,
-                nom: data.nom,
-                prenom: data.prenom,
-            }
-        )
-        .match({ email: data.email });
-
-    if (errorUpdate) {
-        console.log('Error updating profile:', errorUpdate)
-        return { message: "Erreur lors de la mise à jour du profil" }
     }
 
     const fullname = formatFullName(data.prenom, data.nom)
@@ -159,9 +137,34 @@ export async function signUpUser(currentState: { message: string }, formData: Fo
     }
 
     console.log("User created successfully:", signUpData)
+    // Revalider le chemin pour mettre à jour les données de l'utilisateur
+    revalidatePath('/', 'layout')
+    // Notifier l'utilisateur que son compte a été créé avec succès
+    // Et lui demander de vérifier sa boîte mail pour activer son compte
+    toast.success('Votre compte a été créé avec succès. Veuillez vérifier votre boîte mail pour activer votre compte.')
+    // Rediriger l'utilisateur vers la page de connexion
+    redirect(`/login?redirect=${type}`)
 }
 
-export async function loginUser(currentState: { message: string }, formData: FormData) {
+export async function loginOrganisateur(currentState: { message: string }, formData: FormData): Promise<any> {
+
+
+    const result = await loginUser(currentState, formData, "organisateur")
+    if (result?.message) {
+        return result;
+    }
+}
+
+export async function loginParticipant(currentState: { message: string }, formData: FormData): Promise<any> {
+    
+    const result = await loginUser(currentState, formData, "participant");
+
+    if (result?.message) {
+        return result;
+    }
+}
+
+export async function loginUser(currentState: { message: string }, formData: FormData, type: "participant" | "organisateur") {
     const supabase = createClient()
 
     const data = {
@@ -178,20 +181,20 @@ export async function loginUser(currentState: { message: string }, formData: For
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
     revalidatePath('/', 'layout')
     // Rediriger vers la page d'accueil du participant
-    redirect('/participants')
+    redirect(`/${type}s/dashboard`)
 }
 
-
-
-export async function logout() {
+export async function logout(userType: "participant" | "organisateur") {
     const supabase = createClient()
     const { error } = await supabase.auth.signOut()
 
     if (error) {
         console.error('Error logging out:', error)
     }
+    // Redireger vers la landing page correspondante
+    const redirectPath = `/${userType}`
 
-    redirect('/')
+    redirect(redirectPath)
 }
 
 export async function signInWithGoogle() {

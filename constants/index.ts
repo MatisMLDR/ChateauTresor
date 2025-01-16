@@ -1,11 +1,11 @@
 export const participantMenuLinks = [
   {
     label: 'Profil',
-    href: '/participants/profil',
+    href: '/participants/dashboard/profil',
   },
   {
     label: 'Paramètres',
-    href: '/participants/chasses',
+    href: '/participants/dashboard/chasses',
   },
 ]
 

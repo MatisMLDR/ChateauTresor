@@ -6,13 +6,14 @@ import { Label } from "@/components/ui/label"
 import { resetPassword } from '@/app/auth/actions'
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState } from "react"
+import { AuthProps } from "@/types"
 
 function GetCodeHiddenInput() {
     const searchParams = useSearchParams();
     return <Input type="hidden" name="code" value={searchParams.get('code')!} />
 }
 
-export default function ResetPasswordForm() {
+export default function ResetPasswordForm({ redirect }: AuthProps) {
     const initialState = {
         message: ''
     }

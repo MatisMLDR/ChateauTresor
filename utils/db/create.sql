@@ -45,8 +45,26 @@ returns trigger
 set search_path = ''
 as $$
 begin
-insert into public.profiles (id, email, username)
-values (new.id, new.email, new.raw_user_meta_data ->> 'username');
+insert into public.profiles (
+  id, 
+  email, 
+  username,
+  nom,
+  prenom,
+  adresse,
+  ville,
+  code_postal
+)
+values (
+  new.id, 
+  new.email, 
+  new.raw_user_meta_data ->> 'username', 
+  new.raw_user_meta_data ->> 'nom', 
+  new.raw_user_meta_data ->> 'prenom', 
+  new.raw_user_meta_data ->> 'adresse', 
+  new.raw_user_meta_data ->> 'ville', 
+  new.raw_user_meta_data ->> 'code_postal'
+);
 return new;
 end;
 $$
@@ -142,7 +160,9 @@ CREATE TABLE public.Chasse
         ),
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
     theme             VARCHAR(255)                 DEFAULT 'Aucun thème',
-    statut            VARCHAR(50)                  DEFAULT 'Inactif',
+    statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
+        statut IN ('En attente de validation', 'Valide', 'En cours', 'Finie')
+        ),
     id_chateau        UUID                NOT NULL REFERENCES Chateau (id_chateau) ON DELETE CASCADE,
     id_equipe         UUID                NOT NULL REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE
 );
