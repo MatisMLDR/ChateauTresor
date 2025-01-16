@@ -9,6 +9,7 @@ import {
   getAllParticipantAvis,
   getAllParticipantIndice,
   getParticipantByUserId,
+  getAllParticipantEnigmes,
 } from "@/utils/dao/ParticipantUtils";
 
 jest.mock("@/utils/dao/ParticipantUtils");
@@ -143,5 +144,119 @@ describe("Participant Class", () => {
   
     // Vérifier que la fonction getParticipantByUserId a été appelée avec le bon ID utilisateur
     expect(getParticipantByUserId).toHaveBeenCalledWith("74df808b-48de-4a7b-b26f-e581a06f75b3");
+  });
+
+  it("should read a participant using read()", async () => {
+    (getParticipantById as jest.Mock).mockResolvedValue(mockParticipantData);
+
+    const fetchedParticipant = await participant.read();
+
+    expect(fetchedParticipant.getNom()).toBe("Doe");
+    expect(getParticipantById).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should load data into the participant instance using load()", async () => {
+    const updatedData = { ...mockParticipantData, nom: "Smith" };
+    (getParticipantById as jest.Mock).mockResolvedValue(updatedData);
+
+    await participant.load();
+
+    expect(participant.getNom()).toBe("Smith");
+    expect(getParticipantById).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should calculate average success rate of chasses", async () => {
+    const mockChasses = [
+      { est_terminee: 1 },
+      { est_terminee: 0 },
+      { est_terminee: 1 },
+    ];
+    (getAllParticipantChasses as jest.Mock).mockResolvedValue(mockChasses);
+
+    const successRate = await participant.getReussiteMoyenneChasse();
+
+    expect(successRate).toBe(0.6666666666666666);
+    expect(getAllParticipantChasses).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should calculate average score of chasses", async () => {
+    const mockChasses = [
+      { score: 10 },
+      { score: 20 },
+      { score: 15 },
+    ];
+    (getAllParticipantChasses as jest.Mock).mockResolvedValue(mockChasses);
+
+    const averageScore = await participant.getScoreMoyenChasse();
+
+    expect(averageScore).toBe(15);
+    expect(getAllParticipantChasses).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should calculate total number of chasse participations", async () => {
+    const mockChasses = [
+      { score: 10 },
+      { score: 20 },
+      { score: 15 },
+    ];
+    (getAllParticipantChasses as jest.Mock).mockResolvedValue(mockChasses);
+
+    const totalParticipations = await participant.getNbParticipationsChasse();
+
+    expect(totalParticipations).toBe(3);
+    expect(getAllParticipantChasses).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should calculate average time for solving enigmas", async () => {
+    const mockEnigmas = [
+      { duree: 100 },
+      { duree: 200 },
+    ];
+    (getAllParticipantEnigmes as jest.Mock).mockResolvedValue(mockEnigmas);
+
+    const averageTime = await participant.getTempsMoyenResolutionEnigme();
+
+    expect(averageTime).toBe(150);
+    expect(getAllParticipantEnigmes).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should calculate total number of enigmas resolved", async () => {
+    const mockEnigmas = [
+      { duree: 100 },
+      { duree: 200 },
+    ];
+    (getAllParticipantEnigmes as jest.Mock).mockResolvedValue(mockEnigmas);
+
+    const totalResolved = await participant.getNbEnigmesResolues();
+
+    expect(totalResolved).toBe(2);
+    expect(getAllParticipantEnigmes).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should calculate total number of completed chasses", async () => {
+    const mockChasses = [
+      { est_terminee: true },
+      { est_terminee: false },
+      { est_terminee: true },
+    ];
+    (getAllParticipantChasses as jest.Mock).mockResolvedValue(mockChasses);
+
+    const completedChasses = await participant.getNbChassesTerminees();
+
+    expect(completedChasses).toBe(2);
+    expect(getAllParticipantChasses).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+  });
+
+  it("should calculate total number of given avis", async () => {
+    const mockAvis = [
+      { note: 5 },
+      { note: 4 },
+    ];
+    (getAllParticipantAvis as jest.Mock).mockResolvedValue(mockAvis);
+
+    const totalAvis = await participant.getNbAvisDonnes();
+
+    expect(totalAvis).toBe(2);
+    expect(getAllParticipantAvis).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
   });
 });

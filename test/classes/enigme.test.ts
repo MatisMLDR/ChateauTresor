@@ -6,7 +6,7 @@ import {
   updateEnigme, 
   getAllEnigmesParticipants, 
 } from "@/utils/dao/EnigmeUtils";
-import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
+import { getAllIndicesByEnigme, getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 import { EnigmeType } from "@/types";
 
 jest.mock("@/utils/dao/EnigmeUtils", () => ({
@@ -19,6 +19,7 @@ jest.mock("@/utils/dao/EnigmeUtils", () => ({
 
 jest.mock("@/utils/dao/IndiceUtils", () => ({
   getAllIndicesParticipants: jest.fn(),
+  getAllIndicesByEnigme: jest.fn(),
 }));
 
 describe("Enigme", () => {
@@ -169,5 +170,30 @@ describe("Enigme", () => {
   
     expect(getAllIndicesParticipants).toHaveBeenCalledWith(mockEnigmeData.id_enigme);
     expect(nbIndiceRevele).toBe(2);
+  });
+
+  test("getAllIndices should return all indices for the Enigme", async () => {
+    const mockIndicesData = [
+      { id_indice: "123", description: "Indice 1", est_decouvert: 1 },
+      { id_indice: "456", description: "Indice 2", est_decouvert: 0 },
+    ];
+  
+    (getAllIndicesByEnigme as jest.Mock).mockResolvedValue(mockIndicesData);
+  
+    const enigme = new Enigme(mockEnigmeData);
+    const indices = await enigme.getAllIndices();
+  
+    expect(getAllIndicesByEnigme).toHaveBeenCalledWith(mockEnigmeData.id_enigme);
+    expect(indices).toEqual(mockIndicesData);
+  });
+  
+  test("getAllIndices should return an empty array if no indices are found", async () => {
+    (getAllIndicesByEnigme as jest.Mock).mockResolvedValue([]);
+  
+    const enigme = new Enigme(mockEnigmeData);
+    const indices = await enigme.getAllIndices();
+  
+    expect(getAllIndicesByEnigme).toHaveBeenCalledWith(mockEnigmeData.id_enigme);
+    expect(indices).toEqual([]);
   });
 });
