@@ -34,93 +34,93 @@ ALTER TABLE public.Texte DROP CONSTRAINT Texte_id_indice_fkey;
 
 -- Recréation des clés étrangères avec ON DELETE CASCADE
 ALTER TABLE public.Proprietaire_Chateau
-ADD CONSTRAINT Proprietaire_Chateau_id_user_fkey
-FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
+    ADD CONSTRAINT Proprietaire_Chateau_id_user_fkey
+        FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
 
 ALTER TABLE public.Chateau
-ADD CONSTRAINT Chateau_id_proprietaire_fkey
-FOREIGN KEY (id_proprietaire) REFERENCES public.Proprietaire_Chateau (id_proprietaire) ON DELETE CASCADE;
+    ADD CONSTRAINT Chateau_id_proprietaire_fkey
+        FOREIGN KEY (id_proprietaire) REFERENCES public.Proprietaire_Chateau (id_proprietaire) ON DELETE CASCADE;
 
 ALTER TABLE public.Equipe_Organisatrice
-ADD CONSTRAINT Equipe_Organisatrice_id_user_fkey
-FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
+    ADD CONSTRAINT Equipe_Organisatrice_id_user_fkey
+        FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
 
 ALTER TABLE public.Membre_equipe
-ADD CONSTRAINT Membre_equipe_id_user_fkey
-FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
+    ADD CONSTRAINT Membre_equipe_id_user_fkey
+        FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
 
 ALTER TABLE public.Appartenance_Equipe
-ADD CONSTRAINT Appartenance_Equipe_id_membre_fkey
-FOREIGN KEY (id_membre) REFERENCES public.Membre_equipe (id_membre) ON DELETE CASCADE;
+    ADD CONSTRAINT Appartenance_Equipe_id_membre_fkey
+        FOREIGN KEY (id_membre) REFERENCES public.Membre_equipe (id_membre) ON DELETE CASCADE;
 
 ALTER TABLE public.Appartenance_Equipe
-ADD CONSTRAINT Appartenance_Equipe_id_equipe_fkey
-FOREIGN KEY (id_equipe) REFERENCES public.Equipe_Organisatrice (id_equipe) ON DELETE CASCADE;
+    ADD CONSTRAINT Appartenance_Equipe_id_equipe_fkey
+        FOREIGN KEY (id_equipe) REFERENCES public.Equipe_Organisatrice (id_equipe) ON DELETE CASCADE;
 
 ALTER TABLE public.Participant
-ADD CONSTRAINT Participant_id_user_fkey
-FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
+    ADD CONSTRAINT Participant_id_user_fkey
+        FOREIGN KEY (id_user) REFERENCES auth.users (id) ON DELETE CASCADE;
 
 ALTER TABLE public.Chasse
-ADD CONSTRAINT Chasse_id_chateau_fkey
-FOREIGN KEY (id_chateau) REFERENCES public.Chateau (id_chateau) ON DELETE CASCADE;
+    ADD CONSTRAINT Chasse_id_chateau_fkey
+        FOREIGN KEY (id_chateau) REFERENCES public.Chateau (id_chateau) ON DELETE CASCADE;
 
 ALTER TABLE public.Chasse
-ADD CONSTRAINT Chasse_id_equipe_fkey
-FOREIGN KEY (id_equipe) REFERENCES public.Equipe_Organisatrice (id_equipe) ON DELETE CASCADE;
+    ADD CONSTRAINT Chasse_id_equipe_fkey
+        FOREIGN KEY (id_equipe) REFERENCES public.Equipe_Organisatrice (id_equipe) ON DELETE CASCADE;
 
 ALTER TABLE public.Participation
-ADD CONSTRAINT Participation_id_participant_fkey
-FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
+    ADD CONSTRAINT Participation_id_participant_fkey
+        FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
 
 ALTER TABLE public.Participation
-ADD CONSTRAINT Participation_id_chasse_fkey
-FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
+    ADD CONSTRAINT Participation_id_chasse_fkey
+        FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
 
 ALTER TABLE public.Avis
-ADD CONSTRAINT Avis_id_participant_fkey
-FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
+    ADD CONSTRAINT Avis_id_participant_fkey
+        FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
 
 ALTER TABLE public.Avis
-ADD CONSTRAINT Avis_id_chasse_fkey
-FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
+    ADD CONSTRAINT Avis_id_chasse_fkey
+        FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
 
 ALTER TABLE public.Recompense
-ADD CONSTRAINT Recompense_id_chasse_fkey
-FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
+    ADD CONSTRAINT Recompense_id_chasse_fkey
+        FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
 
 ALTER TABLE public.Enigme
-ADD CONSTRAINT Enigme_id_chasse_fkey
-FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
+    ADD CONSTRAINT Enigme_id_chasse_fkey
+        FOREIGN KEY (id_chasse) REFERENCES public.Chasse (id_chasse) ON DELETE CASCADE;
 
 ALTER TABLE public.Enigme_Participant
-ADD CONSTRAINT Enigme_Participant_id_enigme_fkey
-FOREIGN KEY (id_enigme) REFERENCES public.Enigme (id_enigme) ON DELETE CASCADE;
+    ADD CONSTRAINT Enigme_Participant_id_enigme_fkey
+        FOREIGN KEY (id_enigme) REFERENCES public.Enigme (id_enigme) ON DELETE CASCADE;
 
 ALTER TABLE public.Enigme_Participant
-ADD CONSTRAINT Enigme_Participant_id_participant_fkey
-FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
+    ADD CONSTRAINT Enigme_Participant_id_participant_fkey
+        FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
 
 ALTER TABLE public.Indice
-ADD CONSTRAINT Indice_id_enigme_fkey
-FOREIGN KEY (id_enigme) REFERENCES public.Enigme (id_enigme) ON DELETE CASCADE;
+    ADD CONSTRAINT Indice_id_enigme_fkey
+        FOREIGN KEY (id_enigme) REFERENCES public.Enigme (id_enigme) ON DELETE CASCADE;
 
 ALTER TABLE public.Indice_Participant
-ADD CONSTRAINT Indice_Participant_id_indice_fkey
-FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;
+    ADD CONSTRAINT Indice_Participant_id_indice_fkey
+        FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;
 
 ALTER TABLE public.Indice_Participant
-ADD CONSTRAINT Indice_Participant_id_participant_fkey
-FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
+    ADD CONSTRAINT Indice_Participant_id_participant_fkey
+        FOREIGN KEY (id_participant) REFERENCES public.Participant (id_participant) ON DELETE CASCADE;
 
 ALTER TABLE public.Image_indice
-ADD CONSTRAINT Image_indice_id_indice_fkey
-FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;
+    ADD CONSTRAINT Image_indice_id_indice_fkey
+        FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;
 
 ALTER TABLE public.Son_indice
-ADD CONSTRAINT Son_indice_id_indice_fkey
-FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;
+    ADD CONSTRAINT Son_indice_id_indice_fkey
+        FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;
 
 ALTER TABLE public.Texte
-ADD CONSTRAINT Texte_id_indice_fkey
-FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;
+    ADD CONSTRAINT Texte_id_indice_fkey
+        FOREIGN KEY (id_indice) REFERENCES public.Indice (id_indice) ON DELETE CASCADE;

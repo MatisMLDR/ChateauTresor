@@ -13,19 +13,11 @@ import {
 } from "@/components/ui/select";
 import { contenuTextuel } from "@/constants";
 
-/**
- * Ce code définit un composant React appelé BasicDetails qui fait partie d'un formulaire multi-étapes
- * pour créer une chasse au trésor. Le composant est responsable de la collecte des détails de base de
- * la chasse au trésor, tels que le titre, la description, la durée, le prix et le niveau de difficulté.
- */
-
-// Définition des props pour le composant BasicDetails
-interface BasicDetailsProps {
-  formData: Partial<ChasseType>; // Les données actuelles du formulaire
-  setFormData: (data: Partial<ChasseType>) => void; // Fonction pour mettre à jour les données du formulaire
+interface BasicDetailsProps{
+  formData: Partial<ChasseType>;
+  setFormData: (data: Partial<ChasseType>) => void;
 }
 
-// Définition du composant BasicDetails
 export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
   return (
     <div className="space-y-6">
@@ -53,6 +45,19 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
           }
           placeholder={contenuTextuel.create.form.descriptionPlaceholder}
           rows={4}
+        />
+      </div>
+
+      {/* Champ pour télécharger une image */}
+      <div className="space-y-2">
+        <Label htmlFor="image">Image de la chasse</Label>
+        <Input
+          id="image"
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            setFormData({ ...formData, image: e.target.files?.[0]?.name || "" })
+          }
         />
       </div>
 
@@ -88,28 +93,6 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        {/* Sélecteur pour le niveau de difficulté */}
-        <div className="space-y-2">
-          <Label htmlFor="difficulte">{contenuTextuel.create.form.difficultyLevel}</Label>
-            <Select
-            value={formData.difficulte?.toString() || ""}
-            onValueChange={(value: string) =>
-              setFormData({ ...formData, difficulte: parseInt(value) })
-            }
-            >
-            <SelectTrigger>
-              <SelectValue placeholder={contenuTextuel.create.form.selectDifficulty} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">{contenuTextuel.common.difficulty.easy}</SelectItem>
-              <SelectItem value="2">{contenuTextuel.common.difficulty.medium}</SelectItem>
-              <SelectItem value="3">{contenuTextuel.common.difficulty.hard}</SelectItem>
-            </SelectContent>
-            </Select>
-        </div>
-
-
         <div className="space-y-2">
           <Label htmlFor="Age_requis">{contenuTextuel.create.form.age}</Label>
           <Input
@@ -139,10 +122,6 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
           />
         </div>
       </div>
-
-
-
-</div>)
-  ;
-
+    </div>
+  );
 }

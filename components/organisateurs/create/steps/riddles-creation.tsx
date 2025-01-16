@@ -1,8 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { useEffect } from "react";
-import { ChasseType, EnigmeType, IndiceType } from '@/types';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,77 +29,69 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, GripVertical } from "lucide-react";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { Plus, Trash2, GripVertical, Pencil } from "lucide-react";
 import { CreateIndice } from "./create_indice";
 import { contenuTextuel } from '@/constants';
+import { ChasseType, EnigmeType, IndiceType } from "@/types";
+import { UUID } from "crypto";
 
-/**
- * Ce code définit un composant React appelé RiddlesCreation qui gère la création et l'organisation
- * des énigmes dans un formulaire multi-étapes pour créer une chasse au trésor.
- */
-interface RiddlesCreationProps {
+export interface RiddlesCreationProps {
   formData: Partial<ChasseType>;
   setFormData: (data: Partial<ChasseType>) => void;
 }
 
-const generateRandomId = () => {
-  return Math.floor(Math.random() * 1_000_000_000); // Génère un nombre entre 0 et 999_999_999
-};
-
-// Create a new SortableItem component
-function SortableClue({ clue, index, updateClue, removeClue }: { clue: IndiceType, index: number, updateClue: (index: number, field: string, value: any) => void, removeClue: (index: number) => void }) {
+function IndiceTriable({
+  indice,
+  index,
+  mettreAJourIndice,
+  supprimerIndice,
+}: {
+  indice: IndiceType;
+  index: number;
+  mettreAJourIndice: (index: number, champ: string, valeur: any) => void;
+  supprimerIndice: (index: number) => void;
+}) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: clue.id_enigme });
+  } = useSortable({ id: indice.id_indice });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-
-
-  const renderContentInput = () => {
-    switch (clue.type) {
-      case 'image':
+  const renderContenuInput = () => {
+    switch (indice.type) {
+      case "image":
         return (
           <Input
             type="file"
             accept="image/*"
             onChange={(e) =>
-              updateClue(index, "content", e.target.files ? e.target.files[0] : null)
+              mettreAJourIndice(
+                index,
+                "contenu",
+                e.target.files ? e.target.files[0] : null
+              )
             }
             className="pt-1"
           />
         );
-      case 'sound':
+      case "sound":
         return (
           <Input
             type="file"
             accept="audio/*"
             onChange={(e) =>
-              updateClue(index, "content", e.target.files ? e.target.files[0] : null)
+              mettreAJourIndice(
+                index,
+                "contenu",
+                e.target.files ? e.target.files[0] : null
+              )
             }
             className="pt-1"
           />
@@ -92,11 +99,9 @@ function SortableClue({ clue, index, updateClue, removeClue }: { clue: IndiceTyp
       default:
         return (
           <Input
-            value={clue.contenu}
-            onChange={(e) =>
-              updateClue(index, "contenu", e.target.value)
-            }
-            placeholder="Enter text content"
+            value={indice.contenu || ""}
+            onChange={(e) => mettreAJourIndice(index, "contenu", e.target.value)}
+            placeholder="Entrez le contenu texte"
           />
         );
     }
@@ -114,33 +119,31 @@ function SortableClue({ clue, index, updateClue, removeClue }: { clue: IndiceTyp
       </div>
       <div className="flex-1 space-y-2">
         <Select
-          value={clue.type}
-          onValueChange={(value: string) =>
-            updateClue(index, "type", value)
-          }
+          value={indice.type || "text"}
+          onValueChange={(value: string) => mettreAJourIndice(index, "type", value)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Selectionner le type d'indice" />
+            <SelectValue placeholder="Sélectionner le type d'indice" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="text">Text</SelectItem>
+            <SelectItem value="text">Texte</SelectItem>
             <SelectItem value="image">Image</SelectItem>
             <SelectItem value="sound">Son</SelectItem>
           </SelectContent>
         </Select>
-        {renderContentInput()}
+        {renderContenuInput()}
         <div className="flex items-center gap-2">
-          <Label htmlFor={`degre-aide-${clue.id_enigme}`} className="whitespace-nowrap">
+          <Label htmlFor={`degre-aide-${indice.id_indice}`} className="whitespace-nowrap">
             Degré d'aide
           </Label>
           <Input
-            id={`degre-aide-${clue.id_enigme}`}
+            id={`degre-aide-${indice.id_indice}`}
             type="number"
             min="1"
             max="5"
-            value={clue.degre_aide || 1}
+            value={indice.degre_aide || 1}
             onChange={(e) =>
-              updateClue(index, "degre_aide", parseInt(e.target.value))
+              mettreAJourIndice(index, "degre_aide", parseInt(e.target.value))
             }
             className="w-20"
           />
@@ -149,7 +152,7 @@ function SortableClue({ clue, index, updateClue, removeClue }: { clue: IndiceTyp
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => removeClue(index)}
+        onClick={() => supprimerIndice(index)}
       >
         <Trash2 className="h-4 w-4" />
       </Button>
@@ -157,15 +160,14 @@ function SortableClue({ clue, index, updateClue, removeClue }: { clue: IndiceTyp
   );
 }
 
-// Add SortableRiddle component
-function SortableRiddle({ riddle, index, removeRiddle }: { riddle: EnigmeType, index: number, removeRiddle: (index: number) => void }) {
+function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }: { enigme: EnigmeType; onSelectEnigme: (enigme: EnigmeType) => void; onEditEnigme: (enigme: EnigmeType) => void; onDeleteEnigme: (id_enigme: UUID) => void }) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: riddle.id_enigme });
+  } = useSortable({ id: enigme.id_enigme || "" });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -173,34 +175,54 @@ function SortableRiddle({ riddle, index, removeRiddle }: { riddle: EnigmeType, i
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div {...listeners} className="cursor-grab">
-            <GripVertical className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <CardTitle className="text-lg">Riddle {index + 1}</CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => removeRiddle(index)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <p className="font-medium">{riddle.titre}</p>
-          <div className="mt-4 space-y-2">
-            {riddle.indices?.map((indice, i) => (
-              <div key={`${indice.id}-${i}`} className="text-sm text-muted-foreground">
-                <span>Clue {i + 1}:</span>
-                <span className="ml-2">{indice.contenu}</span>
-                <span className="ml-2 text-xs bg-muted px-2 py-1 rounded-full">
-                Aide niveau {indice.degre_aide || 1}
-                </span>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className="cursor-pointer"
+    >
+      <Card onClick={() => onSelectEnigme(enigme)}>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <div {...listeners} className="cursor-grab">
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
+            {enigme.image_reponse && (
+              <img
+                src={enigme.image_reponse}
+                alt={enigme.titre}
+                className="h-16 w-16 object-cover rounded-lg"
+              />
+            )}
+            <div className="flex-1">
+              <h3 className="font-semibold">{enigme.titre}</h3>
+              <p className="text-sm text-muted-foreground">{enigme.description}</p>
+              <div className="text-sm text-muted-foreground">
+                {enigme.indices?.length || 0} indices
               </div>
-            ))}
-
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditEnigme(enigme);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (enigme.id_enigme) {
+                  onDeleteEnigme(enigme.id_enigme);
+                }
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -209,9 +231,20 @@ function SortableRiddle({ riddle, index, removeRiddle }: { riddle: EnigmeType, i
 }
 
 export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps) {
-  const [newRiddle, setNewRiddle] = useState<Partial<EnigmeType>>({
+  const [nouvelleEnigme, setNouvelleEnigme] = useState<Partial<EnigmeType>>({
+    id_enigme: crypto.randomUUID() as UUID,
+    titre: "",
+    description: "",
     indices: [],
+    endroit_qrcode: "",
+    temps_max: 0,
+    description_reponse: "",
+    image_reponse: "",
+    degre_difficulte: 1,
   });
+
+  const [enigmeEnCoursEdition, setEnigmeEnCoursEdition] = useState<EnigmeType | null>(null);
+  const [afficherModalIndice, setAfficherModalIndice] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -220,98 +253,161 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     })
   );
 
-  // Add new state for modal
-  const [showClueModal, setShowClueModal] = useState(false);
-
-  // Update addClue function
-  const addClue = () => {
-    setShowClueModal(true);
+  const ajouterIndice = () => {
+    setAfficherModalIndice(true);
   };
 
-  // Add handler for new clue submission
-  const handleClueSubmit = (clue: {
+  const traiterSoumissionIndice = (indice: {
     type: "text" | "image" | "sound";
-    content: string;
+    contenu: string;
     degre_aide?: number;
-    order?: number;
   }) => {
-    setNewRiddle({
-      ...newRiddle,
-      indices: [
-        ...(newRiddle.indices || []),
-        {
-          id: generateRandomId(),
-          type: clue.type,
-          content: clue.content,
-          degre_aide: clue.degre_aide || 1,
-        },
-      ],
-    });
-  };
-
-  const removeClue = (index: number) => {
-    setNewRiddle({
-      ...newRiddle,
-      indices: newRiddle.indices?.filter((_, i) => i !== index),
-    });
-  };
-
-  const updateClue = (index: number, field: string, value: string) => {
-    setNewRiddle({
-      ...newRiddle,
-      indices: newRiddle.indices?.map((clue, i) =>
-        i === index ? { ...clue, [field]: value } : clue
-      ),
-    });
-  };
-
-  const addRiddle = () => {
-    if (newRiddle.titre && newRiddle.indices?.length) {
-      setFormData({
-        ...formData,
-        enigmes: [
-          ...(formData.enigmes || []),
-          { ...newRiddle, id: generateRandomId() } as EnigmeType,
+    if (enigmeEnCoursEdition) {
+      const updatedEnigme = {
+        ...enigmeEnCoursEdition,
+        indices: [
+          ...(enigmeEnCoursEdition.indices || []),
+          {
+            id_indice: crypto.randomUUID(),
+            type: indice.type,
+            contenu: indice.contenu,
+            degre_aide: indice.degre_aide || 1,
+          },
         ],
-      });
-      setNewRiddle({ indices: [] });
+      };
+      setEnigmeEnCoursEdition(updatedEnigme);
+    } else {
+      setNouvelleEnigme((prevEnigme) => ({
+        ...prevEnigme,
+        indices: [
+          ...(prevEnigme.indices || []),
+          {
+            id_indice: crypto.randomUUID(),
+            type: indice.type,
+            contenu: indice.contenu,
+            degre_aide: indice.degre_aide || 1,
+          },
+        ],
+      }));
     }
+    setAfficherModalIndice(false);
   };
 
-  const removeRiddle = (index: number) => {
+  const mettreAJourEnigme = (enigme: EnigmeType) => {
+    const updatedEnigmes = formData.enigmes?.map((e) =>
+      e.id_enigme === enigme.id_enigme ? enigme : e
+    );
     setFormData({
       ...formData,
-      enigmes: formData.enigmes?.filter((_, i) => i !== index),
+      enigmes: updatedEnigmes,
     });
   };
 
-  const handleDragEnd = (event: any) => {
+  const supprimerIndice = (index: number) => {
+    if (enigmeEnCoursEdition) {
+      const updatedEnigme = {
+        ...enigmeEnCoursEdition,
+        indices: enigmeEnCoursEdition.indices?.filter((_, i) => i !== index),
+      };
+      setEnigmeEnCoursEdition(updatedEnigme);
+    } else {
+      setNouvelleEnigme((prevEnigme) => ({
+        ...prevEnigme,
+        indices: prevEnigme.indices?.filter((_, i) => i !== index),
+      }));
+    }
+  };
+
+  const mettreAJourIndice = (index: number, champ: string, valeur: string) => {
+    if (enigmeEnCoursEdition) {
+      const updatedEnigme = {
+        ...enigmeEnCoursEdition,
+        indices: enigmeEnCoursEdition.indices?.map((indice, i) =>
+          i === index ? { ...indice, [champ]: valeur } : indice
+        ),
+      };
+      setEnigmeEnCoursEdition(updatedEnigme);
+    } else {
+      setNouvelleEnigme((prevEnigme) => ({
+        ...prevEnigme,
+        indices: prevEnigme.indices?.map((indice, i) =>
+          i === index ? { ...indice, [champ]: valeur } : indice
+        ),
+      }));
+    }
+  };
+
+  const ajouterEnigme = () => {
+    if (nouvelleEnigme.titre && nouvelleEnigme.indices?.length) {
+      const enigmeComplete = { ...nouvelleEnigme, id_enigme: crypto.randomUUID() } as EnigmeType;
+      setFormData({
+        ...formData,
+        enigmes: [...(formData.enigmes || []), enigmeComplete],
+      });
+      setNouvelleEnigme({
+        id_enigme: crypto.randomUUID() as UUID,
+        titre: "",
+        description: "",
+        indices: [],
+        endroit_qrcode: "",
+        temps_max: 0,
+        description_reponse: "",
+        image_reponse: "",
+        degre_difficulte: 1,
+      });
+    }
+  };
+
+  const supprimerEnigme = (id_enigme: UUID) => {
+    setFormData({
+      ...formData,
+      enigmes: formData.enigmes?.filter((e) => e.id_enigme !== id_enigme),
+    });
+  };
+
+  const handleDragEndEnigmes = (event: any) => {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
-      const oldIndex = newRiddle.indices?.findIndex((clue) => clue.id_indice === active.id);
-      const newIndex = newRiddle.indices?.findIndex((clue) => clue.id_indice === over.id);
+    if (active.id !== over?.id) {
+      const oldIndex = formData.enigmes?.findIndex((e) => e.id_enigme === active.id);
+      const newIndex = formData.enigmes?.findIndex((e) => e.id_enigme === over.id);
 
       if (oldIndex !== undefined && newIndex !== undefined) {
-        const newClues = arrayMove(newRiddle.indices!, oldIndex, newIndex);
-        setNewRiddle({ ...newRiddle, indices: newClues });
+        const updatedEnigmes = arrayMove(formData.enigmes || [], oldIndex, newIndex);
+        setFormData({ ...formData, enigmes: updatedEnigmes });
       }
     }
   };
 
-  const handleRiddleDragEnd = (event: any) => {
+  const handleDragEndIndices = (event: any) => {
     const { active, over } = event;
+
     if (active.id !== over?.id) {
-      const oldIndex = formData.enigmes?.findIndex((r) => r.id_enigme === active.id);
-      const newIndex = formData.enigmes?.findIndex((r) => r.id_enigme === over.id);
+      const oldIndex = (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).findIndex(
+        (indice) => indice.id_indice === active.id
+      );
+      const newIndex = (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).findIndex(
+        (indice) => indice.id_indice === over.id
+      );
 
       if (oldIndex !== undefined && newIndex !== undefined) {
-        setFormData({
-          ...formData,
-          enigmes: arrayMove(formData.enigmes || [], oldIndex, newIndex),
-        });
+        const updatedIndices = arrayMove(
+          enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || [],
+          oldIndex,
+          newIndex
+        );
+
+        if (enigmeEnCoursEdition) {
+          setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: updatedIndices });
+        } else {
+          setNouvelleEnigme({ ...nouvelleEnigme, indices: updatedIndices });
+        }
       }
     }
+  };
+
+  const editerEnigme = (enigme: EnigmeType) => {
+    setEnigmeEnCoursEdition(enigme);
   };
 
   return (
@@ -319,57 +415,77 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
-        onDragEnd={handleRiddleDragEnd}
+        onDragEnd={handleDragEndEnigmes}
       >
-        <SortableContext
-        key={newRiddle.id_enigme}
-          items={formData.enigmes?.map((riddle) => riddle.id_enigme) || []}
-          strategy={verticalListSortingStrategy}
-        >
-          {formData.enigmes?.map((riddle, index) => (
-            <SortableRiddle
-              key={riddle.id_enigme} // Add unique key prop
-              riddle={riddle}
-              index={index}
-              removeRiddle={removeRiddle}
-            />
-          ))}
-        </SortableContext>
+        {formData.enigmes && formData.enigmes.length > 0 && ( // Afficher uniquement si des énigmes existent
+          <Card>
+            <CardHeader>
+              <CardTitle>Énigmes ajoutées</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <SortableContext
+                  items={formData.enigmes
+                    ?.filter((enigme) => enigme.id_enigme !== undefined)
+                    .map((enigme) => enigme.id_enigme as string) || []}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {formData.enigmes?.map((enigme, index) => (
+                    <EnigmeCompacte
+                      key={enigme.id_enigme}
+                      enigme={enigme}
+                      onSelectEnigme={setEnigmeEnCoursEdition}
+                      onEditEnigme={editerEnigme}
+                      onDeleteEnigme={supprimerEnigme}
+                    />
+                  ))}
+                </SortableContext>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </DndContext>
 
-      {/* Formulaire de création d'une nouvelle énigme */}
+      {/* Formulaire de création/modification */}
       <Card>
         <CardHeader>
-          <CardTitle>Add New Riddle</CardTitle>
+          <CardTitle>
+            {enigmeEnCoursEdition ? "Modifier l'énigme" : "Ajouter une nouvelle énigme"}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Titre de l'énigme */}
           <div className="space-y-2">
             <Label htmlFor="titre">Titre de l'énigme</Label>
             <Textarea
               id="titre"
-              value={newRiddle.titre ?? ''}
-              onChange={(e) => setNewRiddle({ ...newRiddle, titre: e.target.value })}
+              value={enigmeEnCoursEdition?.titre || nouvelleEnigme.titre || ""} // Toujours fournir une valeur par défaut
+              onChange={(e) =>
+                enigmeEnCoursEdition
+                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, titre: e.target.value })
+                  : setNouvelleEnigme({ ...nouvelleEnigme, titre: e.target.value })
+              }
               placeholder="Entrez le titre de l'énigme"
             />
           </div>
 
-          {/* Description de l'énigme (la question) */}
           <div className="space-y-2">
             <Label htmlFor="description">Contenu de l'énigme</Label>
             <Textarea
               id="description"
-              value={newRiddle.description ?? ''}
-              onChange={(e) => setNewRiddle({ ...newRiddle, description: e.target.value })}
+              value={enigmeEnCoursEdition?.description || nouvelleEnigme.description || ""} // Toujours fournir une valeur par défaut
+              onChange={(e) =>
+                enigmeEnCoursEdition
+                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description: e.target.value })
+                  : setNouvelleEnigme({ ...nouvelleEnigme, description: e.target.value })
+              }
               placeholder="Entrez le contenu de l'énigme"
             />
           </div>
 
-          {/* Div des indices  */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Clues</Label>
-              <Button variant="outline" size="sm" onClick={addClue}>
+              <Label>Indices</Label>
+              <Button variant="outline" size="sm" onClick={ajouterIndice}>
                 <Plus className="mr-2 h-4 w-4" />
                 Ajouter un indice
               </Button>
@@ -378,92 +494,148 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
+              onDragEnd={handleDragEndIndices}
             >
               <SortableContext
-                key={newRiddle.id_enigme}
-                items={newRiddle.indices?.map((clue) => clue.id_indice) || []}
+                items={
+                  (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(
+                    (indice) => indice.id_indice
+                  )
+                }
                 strategy={verticalListSortingStrategy}
               >
-                {newRiddle.indices?.map((clue, index) => (
-                  <SortableClue
-                    key={clue.id_indice} // Add unique key prop
-                    clue={clue}
-                    index={index}
-                    updateClue={updateClue}
-                    removeClue={removeClue}
-                  />
-                ))}
+                {(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(
+                  (indice, index) => (
+                    <IndiceTriable
+                      key={indice.id_indice}
+                      indice={indice}
+                      index={index}
+                      mettreAJourIndice={mettreAJourIndice}
+                      supprimerIndice={supprimerIndice}
+                    />
+                  )
+                )}
               </SortableContext>
             </DndContext>
           </div>
 
-          {/* Endroit du QR Code */}
           <div className="space-y-2">
             <Label htmlFor="endroit_qrcode">Endroit du QR Code</Label>
             <Input
               id="endroit_qrcode"
-              value={newRiddle.endroit_qrcode ?? ''}
-              onChange={(e) => setNewRiddle({ ...newRiddle, endroit_qrcode: e.target.value })}
+              value={enigmeEnCoursEdition?.endroit_qrcode || nouvelleEnigme.endroit_qrcode || ""} // Toujours fournir une valeur par défaut
+              onChange={(e) =>
+                enigmeEnCoursEdition
+                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, endroit_qrcode: e.target.value })
+                  : setNouvelleEnigme({ ...nouvelleEnigme, endroit_qrcode: e.target.value })
+              }
               placeholder="Entrer la localisation exacte du QR Code"
             />
           </div>
 
-          {/* Temps Max estimé de l'énigme */}
           <div className="space-y-2">
-            <Label htmlFor="temps_max"> Durée maximale pour résoudre l'énigme (en minute) </Label>
+            <Label htmlFor="temps_max">
+              Durée maximale pour résoudre l'énigme (en minutes)
+            </Label>
             <Input
               id="temps_max"
               type="number"
               min={0}
               step={5}
-              value={newRiddle.temps_max ?? 0}
-              onChange={(e) => setNewRiddle({ ...newRiddle, temps_max: parseInt(e.target.value) })}
+              value={enigmeEnCoursEdition?.temps_max || nouvelleEnigme.temps_max || 0} // Toujours fournir une valeur par défaut
+              onChange={(e) =>
+                enigmeEnCoursEdition
+                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, temps_max: parseInt(e.target.value) })
+                  : setNouvelleEnigme({ ...nouvelleEnigme, temps_max: parseInt(e.target.value) })
+              }
             />
           </div>
 
-          {/* description_reponse */}
           <div className="space-y-2">
-            <Label htmlFor="description_reponse">Description de la réponse de l'énigme</Label>
+            <Label htmlFor="description_reponse">
+              Description de la réponse de l'énigme
+            </Label>
             <Textarea
               id="description_reponse"
-              value={newRiddle.description_reponse ?? ''}
-              onChange={(e) => setNewRiddle({ ...newRiddle, description_reponse: e.target.value })}
+              value={enigmeEnCoursEdition?.description_reponse || nouvelleEnigme.description_reponse || ""} // Toujours fournir une valeur par défaut
+              onChange={(e) =>
+                enigmeEnCoursEdition
+                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description_reponse: e.target.value })
+                  : setNouvelleEnigme({ ...nouvelleEnigme, description_reponse: e.target.value })
+              }
               placeholder="Entrez la description de la réponse de l'énigme"
             />
           </div>
 
-          {/* image_reponse */}
           <div className="space-y-2">
             <Label htmlFor="image_reponse">Image de la réponse</Label>
             <Input
               id="image_reponse"
               type="file"
-              value={newRiddle.image_reponse ?? ''}
-              onChange={(e) => setNewRiddle({ ...newRiddle, image_reponse: e.target.value })}
-              placeholder="Entrez la description de la réponse de l'énigme"
+              accept="image/*"
+              onChange={(e) =>
+                enigmeEnCoursEdition
+                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, image_reponse: e.target.value })
+                  : setNouvelleEnigme({ ...nouvelleEnigme, image_reponse: e.target.value })
+              }
             />
           </div>
 
-          {/* Bouton pour ajouter une énigme */}
-          <Button onClick={addRiddle} disabled={!newRiddle.titre || !newRiddle.indices?.length}>
-            Ajouter une énigme
-          </Button>
+          <div className="space-y-2">
+            <Label htmlFor="degre_difficulte">Degré de difficulté</Label>
+            <Select
+              value={
+                (enigmeEnCoursEdition?.degre_difficulte || nouvelleEnigme.degre_difficulte || 1).toString()
+              }
+              onValueChange={(value: string) =>
+                enigmeEnCoursEdition
+                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, degre_difficulte: parseInt(value) })
+                  : setNouvelleEnigme({ ...nouvelleEnigme, degre_difficulte: parseInt(value) })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner le degré de difficulté" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">Facile</SelectItem>
+                <SelectItem value="2">Moyen</SelectItem>
+                <SelectItem value="3">Difficile</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex justify-end space-x-2">
+            {enigmeEnCoursEdition && (
+              <Button variant="outline" onClick={() => setEnigmeEnCoursEdition(null)}>
+                Annuler
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                if (enigmeEnCoursEdition) {
+                  mettreAJourEnigme(enigmeEnCoursEdition); // Mettre à jour l'énigme dans formData
+                  setEnigmeEnCoursEdition(null); // Réinitialiser l'énigme en cours d'édition
+                } else {
+                  ajouterEnigme(); // Ajouter une nouvelle énigme
+                }
+              }}
+              disabled={
+                (enigmeEnCoursEdition
+                  ? !enigmeEnCoursEdition.titre || !enigmeEnCoursEdition.indices?.length
+                  : !nouvelleEnigme.titre || !nouvelleEnigme.indices?.length)
+              }
+            >
+              {enigmeEnCoursEdition ? "Enregistrer" : "Ajouter une énigme"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Ajouter un indice via le component de création d'indice */}
-      {showClueModal && (
+      {afficherModalIndice && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <CreateIndice
-            onClose={() => setShowClueModal(false)}
-            onSubmit={(clue) => {
-              handleClueSubmit({
-                ...clue,
-                content: clue.contenu,
-              });
-              setShowClueModal(false);
-            }}
+            onClose={() => setAfficherModalIndice(false)}
+            onSubmit={traiterSoumissionIndice}
           />
         </div>
       )}

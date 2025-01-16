@@ -109,4 +109,28 @@ describe('Avis', () => {
 
     await expect(avis.read()).rejects.toThrow('Avis ID is required');
   });
+
+  test('addLike should increment nb_like and call update', async () => {
+    (updateAvis as jest.Mock).mockResolvedValue(undefined);
+
+    const avis = new Avis(mockAvisData);
+    const initialLikes = avis.getNbLike();
+
+    await avis.addLike();
+
+    expect(avis.getNbLike()).toBe(initialLikes + 1);
+    expect(updateAvis).toHaveBeenCalledWith(avis);
+  });
+
+  test('removeLike should decrement nb_like and call update', async () => {
+    (updateAvis as jest.Mock).mockResolvedValue(undefined);
+
+    const avis = new Avis(mockAvisData);
+    const initialLikes = avis.getNbLike();
+
+    await avis.removeLike();
+
+    expect(avis.getNbLike()).toBe(initialLikes - 1);
+    expect(updateAvis).toHaveBeenCalledWith(avis);
+  });
 });

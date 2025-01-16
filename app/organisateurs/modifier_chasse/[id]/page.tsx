@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { CreateHuntForm } from '@/components/organisateurs/create/Create-hunt-form';
+import { CreateHuntForm } from '@/components/organisateurs/create/create-hunt-form';
 
 const EditHuntPage: React.FC = () => {
   const params = useParams(); // Récupère les paramètres de l'URL

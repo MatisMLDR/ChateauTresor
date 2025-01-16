@@ -61,6 +61,15 @@ export type IndiceType = {
   id_enigme: UUID; // Identifiant de l'énigme associée
 };
 
+// Indice Participant
+
+export type IndiceParticipantType = {
+  id_indice: UUID;
+  id_participant: UUID;
+  est_decouvert?: boolean; // Optionnel avec valeur par défaut `false`
+  date_utilisation?: Date; // Optionnel avec valeur par défaut `CURRENT_TIMESTAMP`
+}
+
 // Énigme
 export type EnigmeType = {
   id_enigme?: UUID;
@@ -100,7 +109,7 @@ export type ChasseType = {
   id_equipe?: UUID;
   chateau?: ChateauType;
   enigmes?: EnigmeType[];
-  rewards?: RecompenseType[];
+  recompenses?: RecompenseType[];
 };
 
 export type ParticipantType = {
@@ -131,7 +140,6 @@ export type ChateauType = {
   image?: string | null; // URL de l'image, par défaut null
   site_web?: string | null; // URL du site web, par défaut null
   id_proprietaire?: UUID | null; // Clé étrangère vers Proprietaire_Chateau, par défaut null
-
   chasses?: ChasseType[]; // Liste des chasses liées au château
 };
 
