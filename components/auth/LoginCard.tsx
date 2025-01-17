@@ -31,8 +31,8 @@ const LoginCard = ({ redirect }: AuthProps) => {
           Vous n&apos;avez pas de compte? Créer un compte
         </Link>
 
-        <Link className="w-full text-sm text-muted-foreground" href={`/login?redirect=${redirect}`}>
-          {`Vous êtes un ${redirect}? Connectez-vous ici`}
+        <Link className="w-full text-sm text-muted-foreground" href={`/authentication/login?redirect=${redirect === "participant" ? "organisateur" : "participant"}`}>
+          {`Vous êtes un ${redirect === "participant" ? "organisateur" : "participant"} ? Connectez-vous ici`}
         </Link>
       </CardFooter>
     </Card>
