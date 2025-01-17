@@ -1,7 +1,7 @@
-"use client";
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { getAllIndicesByEnigme } from '@/utils/dao/IndiceUtils';
-import IndiceDetails from '@/components/participants/jouer/indiceDetails';
 import { UUID } from 'crypto';
 import {
   AlertDialog,
@@ -14,23 +14,34 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 interface Indice {
   id_indice: UUID;
   contenu: string;
   degre_aide: number;
-  id_enigme: string;
+  id_enigme: UUID;
   ordre: number;
   type: string;
 }
 
-const IndiceList: React.FC<{ idEnigme: string }> = ({ idEnigme }) => {
+// Définir l'interface pour les props
+interface IndiceComponentProps {
+  idEnigme: string; // ou UUID si vous utilisez un type spécifique
+}
+
+const IndiceComponent: React.FC<IndiceComponentProps> = ({ idEnigme }) => {
   const [indices, setIndices] = useState<Indice[]>([]);
-  const [currentIndiceIndex, setCurrentIndiceIndex] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [nextIndiceIndex, setNextIndiceIndex] = useState<number | null>(null);
-  const [discoveredIndices, setDiscoveredIndices] = useState<UUID[]>([]); // Pour suivre les indices déjà découverts
+  const [selectedIndice, setSelectedIndice] = useState<Indice | null>(null);
+  const [discoveredIndices, setDiscoveredIndices] = useState<UUID[]>([]);
+
+  // Récupérer les paramètres de l'URL
+  const searchParams = useSearchParams();
+  const chasseId = searchParams.get('chasseId');
+  const enigmeId = searchParams.get('enigmeId');
 
   useEffect(() => {
     const fetchIndices = async () => {
@@ -44,7 +55,6 @@ const IndiceList: React.FC<{ idEnigme: string }> = ({ idEnigme }) => {
           setDiscoveredIndices([sortedIndices[0].id_indice]);
         }
 
-        setCurrentIndiceIndex(0);
         setError(null);
       } catch (error) {
         console.error('Erreur lors de la récupération des indices :', error);
@@ -55,33 +65,27 @@ const IndiceList: React.FC<{ idEnigme: string }> = ({ idEnigme }) => {
     fetchIndices();
   }, [idEnigme]);
 
-  const handleNextIndice = (index: number) => {
-    const nextIndice = indices[index];
-
-    // Si l'indice est le premier ou a déjà été découvert, passez directement à l'indice
-    if (index === 0 || discoveredIndices.includes(nextIndice.id_indice)) {
-      setCurrentIndiceIndex(index);
+  const handleIndiceClick = (indice: Indice) => {
+    if (discoveredIndices.includes(indice.id_indice)) {
+      // Si l'indice a déjà été découvert, rediriger directement vers la page de détails
+      return; // La redirection est gérée par le composant Link
     } else {
-      // Sinon, affichez la popup de confirmation
-      setNextIndiceIndex(index);
+      // Sinon, afficher la pop-up de confirmation
+      setSelectedIndice(indice);
       setShowConfirmation(true);
     }
   };
 
   const handleConfirmation = (confirmed: boolean) => {
-    if (confirmed && nextIndiceIndex !== null) {
-      // Soustraire le degre_aide de l'indice actuel au score de l'utilisateur
-      const pointsLost = indices[currentIndiceIndex].degre_aide;
+    if (confirmed && selectedIndice) {
+      // Soustraire le degre_aide de l'indice au score de l'utilisateur
+      const pointsLost = selectedIndice.degre_aide;
       console.log(`Vous avez perdu ${pointsLost} points.`); // À remplacer par la logique de mise à jour du score
 
       // Ajouter l'indice à la liste des indices découverts
-      setDiscoveredIndices((prev) => [...prev, indices[nextIndiceIndex].id_indice]);
-
-      // Passer à l'indice suivant
-      setCurrentIndiceIndex(nextIndiceIndex);
+      setDiscoveredIndices((prev) => [...prev, selectedIndice.id_indice]);
     }
     setShowConfirmation(false);
-    setNextIndiceIndex(null);
   };
 
   if (error) {
@@ -92,42 +96,40 @@ const IndiceList: React.FC<{ idEnigme: string }> = ({ idEnigme }) => {
     return <p className="text-center">Aucun indice disponible pour cette énigme.</p>;
   }
 
-  const currentIndice = indices[currentIndiceIndex];
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6 text-center">Indices disponibles</h1>
 
-      {/* Carte de l'indice actuel */}
-      <div className="flex justify-center">
-        <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
-          <IndiceDetails indice={currentIndice} />
-        </div>
-      </div>
-
-      {/* Boutons de navigation */}
-      <div className="flex justify-between mt-6">
-        <button
-          onClick={() => handleNextIndice(currentIndiceIndex - 1)}
-          disabled={currentIndiceIndex === 0}
-          className="bg-gray-500 text-white px-4 py-2 rounded-md disabled:bg-gray-300"
-        >
-          Précédent
-        </button>
-        <button
-          onClick={() => handleNextIndice(currentIndiceIndex + 1)}
-          disabled={currentIndiceIndex === indices.length - 1}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:bg-gray-300"
-        >
-          Suivant
-        </button>
-      </div>
-
-      {/* Indicateur de progression */}
-      <div className="mt-4 text-center">
-        <span className="text-gray-600">
-          Indice {currentIndiceIndex + 1} sur {indices.length}
-        </span>
+      {/* Liste des indices */}
+      <div className="space-y-4">
+        {indices.map((indice, index) => (
+          <div
+            key={indice.id_indice}
+            className="p-4 bg-gray-50 rounded-lg shadow-sm cursor-pointer hover:bg-gray-100 transition duration-300"
+            onClick={() => handleIndiceClick(indice)}
+          >
+            {discoveredIndices.includes(indice.id_indice) ? (
+              // Si l'indice est déjà révélé, utiliser Link pour la redirection
+              <Link href={`/participants/dashboard/jouer/indice/${indice.id_indice}?chasseId=${chasseId}&enigmeId=${enigmeId}`}>
+                <div className="p-4 bg-gray-50 rounded-lg shadow-sm cursor-pointer hover:bg-gray-100 transition duration-300">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Indice {index + 1} {discoveredIndices.includes(indice.id_indice) ? '(Déjà révélé)' : ''}
+                  </h2>
+                  {discoveredIndices.includes(indice.id_indice) && (
+                    <p className="text-gray-600 mt-2">{indice.contenu}</p>
+                  )}
+                </div>
+              </Link>
+            ) : (
+              // Sinon, afficher uniquement le titre de l'indice
+              <div>
+                <h2 className="text-lg font-semibold text-gray-800">
+                  Indice {index + 1}
+                </h2>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Popup de confirmation */}
@@ -138,7 +140,7 @@ const IndiceList: React.FC<{ idEnigme: string }> = ({ idEnigme }) => {
               Attention !
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-gray-600">
-              Passer à l'indice suivant vous fera perdre {indices[currentIndiceIndex].degre_aide} points.
+              Révéler cet indice vous fera perdre {selectedIndice?.degre_aide} points.
               Êtes-vous sûr de vouloir continuer ?
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -162,4 +164,4 @@ const IndiceList: React.FC<{ idEnigme: string }> = ({ idEnigme }) => {
   );
 };
 
-export default IndiceList;
+export default IndiceComponent;
