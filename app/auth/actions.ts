@@ -141,7 +141,7 @@ export async function signUpUser(currentState: { message: string }, formData: Fo
     revalidatePath('/', 'layout')
     // Notifier l'utilisateur que son compte a été créé avec succès
     // Et lui demander de vérifier sa boîte mail pour activer son compte
-    toast.success('Votre compte a été créé avec succès. Veuillez vérifier votre boîte mail pour activer votre compte.')
+    // toast.success('Votre compte a été créé avec succès. Veuillez vérifier votre boîte mail pour activer votre compte.')
     // Rediriger l'utilisateur vers la page de connexion
     redirect(`/authentication/login?redirect=${type}`)
 }
