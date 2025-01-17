@@ -125,7 +125,6 @@ const ScanQRCodePage: React.FC = () => {
 
   const handleError = (err: string) => {
     if (!err.includes('NotFoundException')) {
-      setScanError('En attente de QR code...');
       setTimeout(() => {
         setScanError(null);
       }, 3000);
@@ -196,7 +195,7 @@ const ScanQRCodePage: React.FC = () => {
             onClick={() => setUseScanner(false)}
             className={`rounded-lg px-6 py-3 shadow-lg transition duration-300 ${
               !useScanner
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
                 : 'bg-gray-200 text-gray-600'
             }`}
           >
@@ -209,7 +208,7 @@ const ScanQRCodePage: React.FC = () => {
             }}
             className={`rounded-lg px-6 py-3 shadow-lg transition duration-300 ${
               useScanner
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
                 : 'bg-gray-200 text-gray-600'
             }`}
           >
@@ -228,7 +227,7 @@ const ScanQRCodePage: React.FC = () => {
             />
             <button
               onClick={() => handleCodeValidation(codeSaisi)}
-              className="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-blue-600 hover:to-purple-700 w-full"
+              className="rounded-lg bg-blue-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:bg-blue-700 w-full"
             >
               Valider
             </button>
