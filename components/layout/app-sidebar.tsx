@@ -20,6 +20,8 @@ import {
   LayoutDashboard,
   MapPin,
   Search,
+  Plus,
+  LibraryBig,
   User,
 } from 'lucide-react';
 import { SideBarProps } from '@/types';
@@ -116,7 +118,12 @@ const dataOrganisateur = {
     {
       title: 'Chasses',
       url: '#',
-      icon: Search,
+      icon: LibraryBig,
+    },
+    {
+      title: 'Créer',
+      url: '/organisateurs/dashboard/creation_chasse',
+      icon: Plus,
     },
     {
       title: 'Profil',

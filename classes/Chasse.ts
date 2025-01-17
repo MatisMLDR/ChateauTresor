@@ -1,5 +1,5 @@
 import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType } from "@/types";
-import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles } from '@/utils/dao/ChasseUtils';
+import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles, getChassesByEquipeId } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
@@ -258,6 +258,21 @@ class Chasse {
     }
 
     return data;
+  }
+
+  public static async getChassesByEquipeId(id_equipe: UUID): Promise<Chasse[]> {
+    try {
+      // Appel de la méthode du DAO pour récupérer les chasses par id_equipe
+      const chassesData = await getChassesByEquipeId(id_equipe);
+  
+      // Convertir les données en instances de la classe Chasse
+      const chasses = chassesData.map((chasseData: ChasseType) => new Chasse(chasseData));
+  
+      return chasses;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des chasses par équipe :', error);
+      throw new Error('Erreur lors de la récupération des chasses par équipe');
+    }
   }
 
   public async create(): Promise<void> {

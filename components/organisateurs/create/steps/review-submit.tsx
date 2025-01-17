@@ -7,12 +7,11 @@ import { Clock, MapPin, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ReviewSubmitProps {
-  formData: Partial<ChasseType>; // Les données actuelles du formulaire
-  setFormData: (data: Partial<ChasseType>) => void; // Fonction pour mettre à jour les données du formulaire
+  formData: Partial<ChasseType>;
+  setFormData: (data: Partial<ChasseType>) => void;
 }
 
 export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
-  // Vérifie si toutes les informations requises sont complètes
   const estComplet =
     formData.titre &&
     formData.description &&
@@ -96,6 +95,26 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
                 <p className="mb-2 text-muted-foreground">{enigme.titre}</p>
                 <div className="text-sm text-muted-foreground">
                   {enigme.indices?.length || 0} indices fournis
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Carte pour les récompenses */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Récompenses ({formData.recompenses?.length || 0})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {formData.recompenses?.map((recompense, index) => (
+              <div key={recompense.id_recompense || index} className="rounded-lg bg-muted p-4">
+                <h3 className="mb-2 font-semibold">Récompense {index + 1}</h3>
+                <p className="mb-2 text-muted-foreground">{recompense.nom}</p>
+                <div className="text-sm text-muted-foreground">
+                  Type: {recompense.type} | Valeur: {recompense.valeur} | Quantité: {recompense.quantite_dispo}
                 </div>
               </div>
             ))}

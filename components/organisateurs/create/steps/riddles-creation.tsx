@@ -243,12 +243,12 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
       if (enigmeEnCoursEdition) {
         setEnigmeEnCoursEdition({
           ...enigmeEnCoursEdition,
-          indices: [...(enigmeEnCoursEdition.indices || []), newIndice],
+          indices: [...(enigmeEnCoursEdition.indices || []), { ...newIndice, id_enigme: enigmeEnCoursEdition.id_enigme as UUID, id_indice: newIndice.id_indice as UUID }],
         });
       } else {
         setNouvelleEnigme({
           ...nouvelleEnigme,
-          indices: [...(nouvelleEnigme.indices || []), newIndice],
+          indices: [...(nouvelleEnigme.indices || []), { ...newIndice, id_enigme: nouvelleEnigme.id_enigme as UUID, id_indice: newIndice.id_indice as UUID }],
         });
       }
     }

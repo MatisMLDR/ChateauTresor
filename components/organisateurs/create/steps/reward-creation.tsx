@@ -2,13 +2,29 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Pencil } from "lucide-react";
+import { Plus, Trash2, Pencil, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea"; // Ajout d'un Textarea
+import { Textarea } from "@/components/ui/textarea";
 import { UUID } from "crypto";
 import { ChasseType, RecompenseType } from "@/types";
 import { Label } from "@radix-ui/react-label";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface RewardCreationProps {
   formData: Partial<ChasseType>;
@@ -31,12 +47,27 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     id_chasse: null,
   });
 
-  // Synchroniser les récompenses avec formData
-  useEffect(() => {
-    setRewards(formData.recompenses || []);
-  }, [formData.recompenses]);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-  // Mettre à jour une récompense dans formData
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = rewards.findIndex((r) => r.id_recompense === active.id);
+      const newIndex = rewards.findIndex((r) => r.id_recompense === over.id);
+
+      if (oldIndex !== undefined && newIndex !== undefined) {
+        const updatedRewards = arrayMove(rewards, oldIndex, newIndex);
+        setRewards(updatedRewards);
+      }
+    }
+  };
+
   const updateRewardInFormData = (reward: RecompenseType) => {
     const updatedRewards = formData.recompenses?.map((r) =>
       r.id_recompense === reward.id_recompense ? reward : r
@@ -47,7 +78,6 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     });
   };
 
-  // Ajouter une nouvelle récompense
   const addReward = (reward: RecompenseType) => {
     const updatedRewards = [...rewards, reward];
     setRewards(updatedRewards);
@@ -55,7 +85,6 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     resetForm();
   };
 
-  // Mettre à jour une récompense existante
   const updateReward = (reward: RecompenseType) => {
     const updatedRewards = rewards.map((r) =>
       r.id_recompense === reward.id_recompense ? reward : r
@@ -65,14 +94,12 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     setEditingReward(null);
   };
 
-  // Supprimer une récompense
   const deleteReward = (id_recompense: UUID) => {
     const updatedRewards = rewards.filter((r) => r.id_recompense !== id_recompense);
     setRewards(updatedRewards);
     setFormData({ ...formData, recompenses: updatedRewards });
   };
 
-  // Réinitialiser le formulaire
   const resetForm = () => {
     setNewReward({
       id_recompense: crypto.randomUUID() as UUID,
@@ -89,71 +116,91 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     setEditingReward(null);
   };
 
-  return (
-    <div className="space-y-8">
-      {/* Afficher les récompenses ajoutées */}
-      {rewards.length > 0 && (
+  function SortableReward({ reward }: { reward: RecompenseType }) {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+    } = useSortable({ id: reward.id_recompense! });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <div ref={setNodeRef} style={style} {...attributes}>
         <Card>
-          <CardHeader>
-            <CardTitle>Récompenses ajoutées</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {rewards.map((reward) => (
-                <Card
-                  key={reward.id_recompense}
-                  className={`${
-                    editingReward?.id_recompense === reward.id_recompense
-                      ? "ring-2 ring-primary"
-                      : ""
-                  }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                      {reward.image && (
-                        <img
-                          src={reward.image}
-                          alt={reward.nom}
-                          className="h-16 w-16 object-cover rounded-lg"
-                        />
-                      )}
-                      <div className="flex-1">
-                        <h3 className="font-semibold">{reward.nom}</h3>
-                        <p className="text-sm text-muted-foreground">{reward.description}</p>
-                        <div className="text-sm text-muted-foreground">
-                          Type: {reward.type} | Valeur: {reward.valeur} | Quantité: {reward.quantite_dispo}
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingReward(reward); // Passer en mode édition
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (reward.id_recompense) {
-                            deleteReward(reward.id_recompense);
-                          }
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <div {...listeners} className="cursor-grab">
+                <GripVertical className="h-5 w-5 text-muted-foreground" />
+              </div>
+              {reward.image && (
+                <img
+                  src={reward.image}
+                  alt={reward.nom}
+                  className="h-16 w-16 object-cover rounded-lg"
+                />
+              )}
+              <div className="flex-1">
+                <h3 className="font-semibold">{reward.nom}</h3>
+                <p className="text-sm text-muted-foreground">{reward.description}</p>
+                <div className="text-sm text-muted-foreground">
+                  Type: {reward.type} | Valeur: {reward.valeur} | Quantité: {reward.quantite_dispo}
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditingReward(reward);
+                }}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (reward.id_recompense) {
+                    deleteReward(reward.id_recompense);
+                  }
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           </CardContent>
         </Card>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        {rewards.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Récompenses ajoutées</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <SortableContext items={rewards.map((r) => r.id_recompense!).filter((id): id is UUID => id !== undefined)} strategy={verticalListSortingStrategy}>
+                  {rewards.map((reward) => (
+                    <SortableReward key={reward.id_recompense} reward={reward} />
+                  ))}
+                </SortableContext>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </DndContext>
 
       {/* Formulaire de création/modification de récompense */}
       <Card>
@@ -209,7 +256,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                 }}
               />
             </div>
-            <div className="grid grid-cols-3 gap-4"> {/* Grille pour les champs Valeur, Quantité et Prix */}
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="value">Valeur</Label>
                 <Input
