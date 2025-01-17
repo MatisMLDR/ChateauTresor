@@ -128,7 +128,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
         </div>
       </CardContent>
       <CardFooter className="p-4">
-        <Link href={`/participants/chasses/${chasse.getIdChasse()}`} className="w-full">
+        <Link href={`/participants/dashboard/chasses/${chasse.getIdChasse()}`} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
       </CardFooter>
