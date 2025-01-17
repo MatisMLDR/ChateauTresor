@@ -100,7 +100,7 @@ export function NavProjects({
               >
                 {type === 'organisateur' ? (
                   <>
-                    <Link href={`${item.id}/update`}>
+                    <Link href={`/organisateurs/dashboard/modifier_chasse/${item.id}`}>
                       <DropdownMenuItem>
                         <Settings className="text-muted-foreground" />
                         <span>Modifier</span>
