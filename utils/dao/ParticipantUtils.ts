@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { UUID } from 'crypto';
-dotenv.config();
 
 /*
  * Méthode pour récupérer un participant par son id

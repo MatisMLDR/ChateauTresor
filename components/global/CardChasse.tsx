@@ -68,36 +68,6 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
   const formattedNote = note.toFixed(1);
 
   return (
-    <div key={chasse.id_chasse} className="border rounded-md p-4 shadow-md">
-      <img
-        src={chasse.getImage() || '/default-chasse.jpg'}
-        alt={chasse.getTitre()}
-        className="w-full h-40 object-cover rounded-md mb-4"
-      />
-      <h3 className="font-bold text-lg mb-2">{chasse.getTitre()}</h3>
-      <p className="text-gray-600 text-sm mb-2">{chasse.getDescription()}</p>
-      <p className="text-gray-800 mb-2 bg-yellow-400">Nb étoiles : {note}</p>
-      <p className="text-gray-800 font-medium">Difficulté : {chasse.getDifficulte()} / 3</p>
-      <p className="text-gray-800 font-medium">Durée : {convertTimeToMinutesAndHours(chasse.getDureeEstime()).minutesFormatted}</p>
-      <p className="text-gray-800 font-medium">Nombre d'avis : {nbAvis}</p>
-      {/* <p className="text-gray-800 font-medium">
-        <span>
-          Icone localisation
-        </span>
-        {
-          chasse.chateau
-        }
-      </p> */}
-      <p className="text-gray-800 font-medium">Capacité : {chasse.getCapacite()}</p>
-      <p className="text-gray-800 font-medium">Prix : {chasse.getPrix()} €</p>
-      <Link href={`/participants/dashboard/chasses/${chasse.getIdChasse()}`}>
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md w-full">
-          Voir plus
-        </button>
-      </Link>
-    </div>
-  )
-}
     <Card className="transition-shadow duration-200 hover:shadow-lg">
       <CardHeader className="relative p-0">
         <div className="relative">
@@ -163,7 +133,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
         </Link>
       </CardFooter>
     </Card>
-  );
-};
+  )
+}
 
 export default CardChasse;
