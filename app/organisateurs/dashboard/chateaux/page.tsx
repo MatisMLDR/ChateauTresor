@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import CardChateau from '@/components/global/CardChateau';
 import Chateau from '@/classes/Chateau';
+import { Skeleton } from '@/components/ui/skeleton'; // Importez les composants Skeleton de shadcn/ui
 
 const ChateauListPage: React.FC = () => {
   const [chateaux, setChateaux] = useState<Chateau[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true); // État de chargement
 
-  // Récupere la liste des chateaux avec leurs chasses associée
+  // Récupère la liste des châteaux avec leurs chasses associées
   useEffect(() => {
     const fetchChateaux = async () => {
       try {
@@ -21,13 +23,15 @@ const ChateauListPage: React.FC = () => {
               `/api/chasses/chateau?id_chateau=${chateau.id_chateau}`
             );
             const chasses = await chassesResponse.json();
-            return new Chateau({ ...chateau, chasses }); // Ensure chateau is a Chateau instance
+            return new Chateau({ ...chateau, chasses }); // Assurez-vous que chateau est une instance de Chateau
           })
         );
 
         setChateaux(chateauxWithChasses);
       } catch (err) {
         console.error('Erreur lors de la récupération des châteaux :', err);
+      } finally {
+        setLoading(false); // Arrête le chargement une fois les données récupérées
       }
     };
 
@@ -57,9 +61,21 @@ const ChateauListPage: React.FC = () => {
 
         {/* Liste des châteaux */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredChateaux.map((chateau) => (
-            <CardChateau chateau={chateau} key={chateau.getIdChateau()} />
-          ))}
+          {loading
+            ? // Affiche les squelettes pendant le chargement
+              Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="flex flex-col space-y-3">
+                  <Skeleton className="h-[125px] w-full rounded-lg" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+              ))
+            : // Affiche les châteaux une fois le chargement terminé
+              filteredChateaux.map((chateau) => (
+                <CardChateau chateau={chateau} key={chateau.getIdChateau()} />
+              ))}
         </div>
       </div>
     </div>

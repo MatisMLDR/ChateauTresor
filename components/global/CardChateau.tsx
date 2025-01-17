@@ -88,7 +88,7 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
         </div>
       </CardContent>
       <CardFooter className="p-4">
-        <Link href={`/chateaux/${chateau.getIdChateau()}`} className="w-full">
+        <Link href={`/participants/dashboard/chateaux/${chateau.getIdChateau()}`} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
       </CardFooter>
