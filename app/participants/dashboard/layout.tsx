@@ -1,4 +1,4 @@
-import React from "react";
+import React from "React";
 import {SideBarMenu} from "@/components/ui/SideBarMenu";
 
 export default function ParticipantsLayout({
@@ -7,6 +7,6 @@ export default function ParticipantsLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <SideBarMenu user={"joueur"}>{children}</SideBarMenu>
+        <SideBarMenu type={"participant"}>{children}</SideBarMenu>
     );
 }

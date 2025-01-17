@@ -7,12 +7,12 @@ import {
 
 import { SideBarProps } from '@/types';
 
-import React from "react";
+import React from "React";
 
-export function SideBarMenu({ children, user }: SideBarProps) {
+export function SideBarMenu({ children, type }: SideBarProps) {
     return (
         <SidebarProvider>
-            <AppSidebar user={user}/>
+            <AppSidebar type={type}/>
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">

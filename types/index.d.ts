@@ -242,7 +242,7 @@ export type RecompenseType = {
 
 export type SideBarProps = {
   children?: React.reactNode;
-  user: "joueur" | "organisateur";
+  type: "participant" | "organisateur";
 }
 
 //// Props de la page de profile ////
