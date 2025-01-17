@@ -1,9 +1,8 @@
-import { EnigmeType } from "@/types";
+import { EnigmeType, IndiceType } from "@/types";
 import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, updateEnigme } from "@/utils/dao/EnigmeUtils";
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 import { UUID } from "crypto";
 import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils";
-import Indice from "./Indice";
 
 export class Enigme {
   id_enigme: UUID;
@@ -17,13 +16,14 @@ export class Enigme {
   description_reponse: string;
   degre_difficulte: number;
   image_reponse: string;
+  indices: any;
 
   constructor(enigme: EnigmeType) {
     this.id_enigme = enigme.id_enigme as UUID;
     this.id_chasse = enigme.id_chasse as UUID; 
     this.titre = enigme.titre;
     this.code_reponse = enigme.code_reponse;
-    this.ordre = enigme.ordre;
+    this.ordre = enigme.ordre ?? 0;
     this.description = enigme.description;
     this.endroit_qrcode = enigme.endroit_qrcode;
     this.temps_max = enigme.temps_max;
@@ -216,6 +216,20 @@ export class Enigme {
             throw new Error('Enigme does not exist');
         }
       }
+
+    /**
+     * Méthode pour charger les indices associés à cette énigme
+     */
+    public async loadIndices(): Promise<void> {
+      try {
+        const indicesData = await getAllIndicesByEnigme(this.id_enigme);
+        this.indices = indicesData.map((indice: IndiceType) => ({ ...indice }));
+        console.log(`Indices chargés pour l'énigme ${this.id_enigme}:`, this.indices);
+      } catch (error) {
+        console.error(`Erreur lors du chargement des indices pour l'énigme ${this.id_enigme}:`, error);
+        throw new Error('Erreur lors du chargement des indices');
+      }
+    }
 
   // Calculs
   /*

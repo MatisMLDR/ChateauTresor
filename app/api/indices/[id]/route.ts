@@ -51,7 +51,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
   const indiceId = params.id;
-  const indiceId = params.id; // Utilisation directe du paramètre dynamique [id]
   const body = await request.json();
 
   console.log('Mise à jour de l\'indice avec ID:', indiceId); // Log pour déboguer
