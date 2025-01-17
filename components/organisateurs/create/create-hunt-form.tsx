@@ -99,7 +99,7 @@ export function CreateHuntForm({ initialData, isEditMode = false }: CreateHuntFo
     // Associer les indices à l'id_enigme correspondant
     const indicesTable = (chasse.enigmes || []).flatMap((enigme, index) =>
       (enigme.indices || []).map((indice) => ({
-        id_indice: isEditMode ? indice.id_indice : crypto.randomUUID(), // Utiliser l'ID existant en mode édition
+        id_indice: isEditMode ? indice.id_indice : crypto.randomUUID() as UUID, // Utiliser l'ID existant en mode édition
         id_enigme: enigmesTable[index].id_enigme, // Utiliser l'id_enigme généré pour cette énigme
         contenu: indice.contenu || "Pas de contenu",
         ordre: Number(indice.ordre || 1),
@@ -131,58 +131,41 @@ export function CreateHuntForm({ initialData, isEditMode = false }: CreateHuntFo
       const { chasseTable, enigmesTable, indicesTable, recompensesTable } = transformFormDataToTables(
         formData as ChasseType
       );
-
-      console.log("ChasseTable :", chasseTable);
-      console.log("ÉnigmesTable :", enigmesTable);
-      console.log("IndicesTable :", indicesTable);
-      console.log("RécompensesTable :", recompensesTable);
-
+  
       // Étape 1 : Création ou mise à jour de la chasse
       const chasse = new Chasse(chasseTable);
       if (isEditMode) {
-        console.log("Mise à jour de la chasse...");
-        await chasse.update(); // Utiliser la méthode update en mode édition
+        await chasse.update();
         toast.success("Chasse mise à jour avec succès.");
       } else {
-        console.log("Création de la chasse...");
-        await chasse.create(); // Utiliser la méthode create en mode création
+        await chasse.create();
         toast.success("Chasse créée avec succès.");
       }
-
-      // Récupération de l'ID de la chasse
-      const chasseId = chasse.getIdChasse();
-      console.log("UUID de la chasse :", chasseId);
-
+  
       // Étape 2 : Création ou mise à jour des énigmes et indices
       for (let enigmeData of enigmesTable) {
         const enigmeInstance = new Enigme(enigmeData);
         if (isEditMode) {
-          console.log("Mise à jour de l'énigme :", enigmeInstance);
-          await enigmeInstance.update(); // Utiliser la méthode update en mode édition
+          await enigmeInstance.update();
         } else {
-          console.log("Création de l'énigme :", enigmeInstance);
-          await enigmeInstance.create(); // Utiliser la méthode create en mode création
+          await enigmeInstance.create();
         }
-        toast.success(`Énigme "${enigmeData.titre}" sauvegardée avec succès.`);
-
+  
         // Étape 3 : Création ou mise à jour des indices associés à cette énigme
         const indicesForEnigme = indicesTable.filter(
           (indice) => indice.id_enigme === enigmeData.id_enigme
         );
-
+  
         for (const indiceData of indicesForEnigme) {
           const indiceInstance = new Indice(indiceData);
           if (isEditMode) {
-            console.log("Mise à jour de l'indice :", indiceInstance);
-            await indiceInstance.update(); // Utiliser la méthode update en mode édition
+            await indiceInstance.update();
           } else {
-            console.log("Création de l'indice :", indiceInstance);
-            await indiceInstance.create(); // Utiliser la méthode create en mode création
+            await indiceInstance.create();
           }
         }
-        console.log("Indices de l'énigme sauvegardés avec succès.");
       }
-
+  
       // Étape 4 : Création ou mise à jour des récompenses
       for (const recompenseData of recompensesTable) {
         const recompenseInstance = new Recompense({
@@ -190,17 +173,13 @@ export function CreateHuntForm({ initialData, isEditMode = false }: CreateHuntFo
           id_recompense: recompenseData.id_recompense as `${string}-${string}-${string}-${string}-${string}`
         });
         if (isEditMode) {
-          console.log("Mise à jour de la récompense :", recompenseInstance);
-          await recompenseInstance.update(); // Utiliser la méthode update en mode édition
+          await recompenseInstance.update();
         } else {
-          console.log("Création de la récompense :", recompenseInstance);
-          await recompenseInstance.create(); // Utiliser la méthode create en mode création
+          await recompenseInstance.create();
         }
-        toast.success(`Récompense "${recompenseData.nom}" sauvegardée avec succès.`);
       }
-
+  
       toast.success("Toutes les données ont été sauvegardées avec succès.");
-
     } catch (error) {
       console.error("Erreur lors de la création ou de la mise à jour :", error);
       toast.error("Une erreur est survenue lors de la sauvegarde.");

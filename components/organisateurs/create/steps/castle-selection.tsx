@@ -9,6 +9,8 @@ import { MapPin } from "lucide-react";
 import { contenuTextuel } from "@/constants";
 import { Input } from "@/components/ui/input";
 import Chateau from "@/classes/Chateau";
+import { Button } from "@/components/ui/button";
+import { format, parseISO } from 'date-fns'; // Import pour le formatage des dates
 
 interface SelectionChateauProps {
   formData: Partial<ChasseType>;
@@ -17,8 +19,12 @@ interface SelectionChateauProps {
 
 export function CastleSelection({ formData, setFormData }: SelectionChateauProps) {
   const [chateaux, setChateaux] = useState<ChateauType[]>([]);
+  const [filteredChateaux, setFilteredChateaux] = useState<ChateauType[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [chargement, setChargement] = useState<boolean>(true);
   const [erreur, setErreur] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [chateauxPerPage] = useState<number>(4); // Nombre de châteaux affichés par page
 
   // Charger la liste des châteaux
   useEffect(() => {
@@ -35,6 +41,15 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
             image: chateau.getImage(),
           }))
         );
+        setFilteredChateaux(
+          tousLesChateaux.map((chateau) => ({
+            id_chateau: chateau.getIdChateau(),
+            nom: chateau.getNom(),
+            localisation: chateau.getLocalisation(),
+            description: chateau.getDescription(),
+            image: chateau.getImage(),
+          }))
+        ); // Initialiser les châteaux filtrés
       } catch (err) {
         console.error(err);
         setErreur("Erreur lors du chargement des châteaux.");
@@ -46,6 +61,22 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
     chargerChateaux();
   }, []);
 
+  // Filtrer les châteaux en fonction du terme de recherche
+  useEffect(() => {
+    const filtered = chateaux.filter((chateau) =>
+      chateau.nom?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredChateaux(filtered);
+    setCurrentPage(1); // Réinitialiser la pagination après une recherche
+  }, [searchTerm, chateaux]);
+
+  // Pagination
+  const indexOfLastChateau = currentPage * chateauxPerPage;
+  const indexOfFirstChateau = indexOfLastChateau - chateauxPerPage;
+  const currentChateaux = filteredChateaux.slice(indexOfFirstChateau, indexOfLastChateau);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   if (chargement) {
     return <p>Chargement des châteaux...</p>;
   }
@@ -56,6 +87,18 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
 
   return (
     <div className="space-y-6">
+      {/* Barre de recherche */}
+      <div className="space-y-2">
+        <Label htmlFor="search">Rechercher un château</Label>
+        <Input
+          id="search"
+          type="text"
+          placeholder="Rechercher par nom..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <div className="space-y-4">
         <Label>Sélectionner un château</Label>
         <RadioGroup
@@ -68,44 +111,75 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {chateaux.map((chateau) => (
-              <Card
-                key={chateau.id_chateau}
-                className={`cursor-pointer transition-all ${
-                  formData.chateau?.id_chateau === chateau.id_chateau ? "ring-2 ring-primary" : ""
-                }`}
-                onClick={() => setFormData({ ...formData, chateau })}
-              >
-                <CardContent className="p-0">
-                  <div className="relative">
-                    <img
-                      src={chateau.image || "https://via.placeholder.com/300x200"}
-                      alt={chateau.nom}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <RadioGroupItem
-                        value={chateau.id_chateau.toString()}
-                        id={chateau.id_chateau.toString()}
-                        className="sr-only"
+            {currentChateaux.length === 0 ? (
+              <p className="text-muted-foreground">Aucun château trouvé.</p>
+            ) : (
+              currentChateaux.map((chateau) => (
+                <Card
+                  key={chateau.id_chateau}
+                  className={`cursor-pointer transition-all ${
+                    formData.chateau?.id_chateau === chateau.id_chateau ? "ring-2 ring-primary" : ""
+                  }`}
+                  onClick={() => setFormData({ ...formData, chateau })}
+                >
+                  <CardContent className="p-0">
+                    <div className="relative">
+                      <img
+                        src={chateau.image || "https://via.placeholder.com/300x200"}
+                        alt={chateau.nom}
+                        className="w-full h-48 object-cover"
                       />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <RadioGroupItem
+                          value={chateau.id_chateau.toString()}
+                          id={chateau.id_chateau.toString()}
+                          className="sr-only"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold mb-2">{chateau.nom}</h3>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                      <MapPin className="h-4 w-4" />
-                      {chateau.localisation || "Non spécifiée"}
+                    <div className="p-4">
+                      <h3 className="font-semibold mb-2">{chateau.nom}</h3>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                        <MapPin className="h-4 w-4" />
+                        {chateau.localisation || "Non spécifiée"}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {chateau.description || "Pas de description"}
+                      </p>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {chateau.description || "Pas de description"}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </RadioGroup>
+
+        {/* Pagination */}
+        <div className="flex justify-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Précédent
+          </Button>
+          {Array.from({ length: Math.ceil(filteredChateaux.length / chateauxPerPage) }, (_, i) => (
+            <Button
+              key={i + 1}
+              variant={currentPage === i + 1 ? "default" : "outline"}
+              onClick={() => paginate(i + 1)}
+            >
+              {i + 1}
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === Math.ceil(filteredChateaux.length / chateauxPerPage)}
+          >
+            Suivant
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,7 +188,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           <Input
             id="date_debut"
             type="date"
-            value={formData.date_debut || ""}
+            value={formData.date_debut ? format(parseISO(formData.date_debut), 'yyyy-MM-dd') : ""}
             onChange={(e) => setFormData({ ...formData, date_debut: e.target.value })}
           />
         </div>
@@ -123,7 +197,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           <Input
             id="date_fin"
             type="date"
-            value={formData.date_fin || ""}
+            value={formData.date_fin ? format(parseISO(formData.date_fin), 'yyyy-MM-dd') : ""}
             onChange={(e) => setFormData({ ...formData, date_fin: e.target.value })}
           />
         </div>
@@ -136,9 +210,12 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           type="number"
           min={0}
           value={formData.capacite || 1}
-          onChange={(e) =>
-            setFormData({ ...formData, capacite: parseFloat(e.target.value) })
-          }
+          onChange={(e) => {
+            const value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+              setFormData({ ...formData, capacite: value });
+            }
+          }}
         />
       </div>
     </div>

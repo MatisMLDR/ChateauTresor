@@ -1,5 +1,5 @@
 import { MembreEquipeType } from '@/types';
-import { createMembre, deleteMembre, getMembreById, updateMembre } from '@/utils/dao/MembreEquipeUtils';
+import { createMembre, deleteMembre, getMembreById, getMembreByUserId, updateMembre } from '@/utils/dao/MembreEquipeUtils';
 import { UUID } from "crypto";
 
 export class MembreEquipeClass {
@@ -73,6 +73,18 @@ export class MembreEquipeClass {
 
       return new MembreEquipeClass(data); 
   }
+
+  public static async readByIdUser(id_user: UUID): Promise<MembreEquipeClass> {
+    const data = await getMembreByUserId(id_user) as any;
+  
+    if (!data) {
+      throw new Error("L'utilisateur n'a pas été trouvé");
+    }
+  
+    // Retourne une instance de MembreEquipeClass
+    return new MembreEquipeClass(data);
+  }
+    
 
   public async read(): Promise<any> {
           if (!this.id_membre) {

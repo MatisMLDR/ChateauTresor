@@ -31,6 +31,20 @@ export async function getAllChassesByChateau(id_chateau: UUID): Promise<any> {
 }
 
 /*
+* Méthode pour récupérer les chasses correspondantes à l'id d'une équipe
+* @returns Promise<any> Les chasses correspondantes à l'id d'une équipe
+* @throws Error si la récupération des chasses échoue
+* @example const chasse = await getChasseByEquipeId(1);
+*/
+export async function getChassesByEquipeId(id_equipe: UUID): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/equipe?id_equipe=${id_equipe}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des chasses de l\'équipe');
+  }
+  return await res.json();
+}
+
+/*
 * Méthode pour récupérer une chasse par son id
 * @returns Promise<any> La chasse correspondante à l'id
 * @throws Error si la récupération de la chasse échoue

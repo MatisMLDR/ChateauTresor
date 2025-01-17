@@ -22,6 +22,14 @@ export async function getMembreById(id_membre: UUID): Promise<MembreEquipeClass>
   return new MembreEquipeClass(membre);
 }
 
+export async function getMembreByUserId(id_user: UUID): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/membres/user?id_user=${id_user}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération du user');
+  }
+  return await res.json();
+}
+
 /*
  * Méthode pour récupérer tous les membres d'une équipe
  * @param id_equipe L'identifiant de l'équipe

@@ -17,6 +17,15 @@ export async function getEquipeById(id_equipe: UUID): Promise<any> {
   return await res.json();
 }
 
+export async function getEquipeByMembreId(id_membre: UUID): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/membre?id_membre=${id_membre}`);
+  if (!res.ok) {
+    throw new Error(`Erreur lors de la récupération de l'équipe organisatrice avec l'ID du membre ${id_membre}`);
+  }
+  return await res.json();
+}
+
+
 /*
  * Méthode pour récupérer toutes les équipes organisatrices
  * @returns Promise<any[]> Un tableau d'équipes organisatrices

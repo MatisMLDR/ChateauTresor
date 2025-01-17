@@ -1,5 +1,5 @@
 import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
-import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
+import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe, getEquipeByMembreId } from '@/utils/dao/EquipeOrganisatriceUtils';
 import { UUID } from "crypto";
 
 class EquipeOrganisatrice {
@@ -87,6 +87,31 @@ class EquipeOrganisatrice {
     return new EquipeOrganisatrice(data);
   }
 
+    /**
+   * Récupère une équipe en fonction de l'id_membre.
+   * @param id_membre - L'identifiant du membre.
+   * @returns Une instance de EquipeOrganisatrice.
+   * @throws Error si l'équipe n'est pas trouvée.
+   */
+  
+    public static async getEquipeByMembreId(id_membre: UUID): Promise<EquipeOrganisatrice> {
+      try {
+        const data = await getEquipeByMembreId(id_membre);
+  
+        if (!data) {
+          throw new Error(`Aucune équipe trouvée pour le membre avec l'ID ${id_membre}`);
+        }
+  
+        // Retourne une instance de EquipeOrganisatrice
+        return new EquipeOrganisatrice(data);
+      } catch (error) {
+        console.error('Erreur lors de la récupération de l\'équipe :', error);
+        throw new Error('Erreur lors de la récupération de l\'équipe');
+      }
+    }
+
+  
+
   public async read(): Promise<any> {
           if (!this.id_equipe) {
               throw new Error('Equipe ID is required');
@@ -171,6 +196,7 @@ class EquipeOrganisatrice {
     if (totalEquipes === 0) return 0;
     return this.nb_membres / totalEquipes;
   }
+  
 }
 
 export default EquipeOrganisatrice;
