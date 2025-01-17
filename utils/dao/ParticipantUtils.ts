@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import { UUID } from 'crypto';
 
 /*
