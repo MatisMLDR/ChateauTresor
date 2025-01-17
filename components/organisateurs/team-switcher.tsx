@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import * as React from "React"
 import { ChevronsUpDown, Plus } from "lucide-react"
 
 import {
@@ -22,29 +22,31 @@ import {
 import Image from 'next/image';
 
 import { SideBarProps } from "@/types"
+import { useEffect } from "react"
+import { useState } from "react";
 
 export function TeamSwitcher({
                                teams,
-                               user
+                               type
                              }: {
   teams: {
     name: string
     plan: string
   }[],
-  user: SideBarProps['user'];
+  type: SideBarProps['type'];
 
 }) {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState({
+  const [activeTeam, setActiveTeam] = useState({
     name: "Château",
     plan: "Trésor"
   })
 
-  React.useEffect(() => {
-    if (user === "organisateur" && teams.length > 0) {
+  useEffect(() => {
+    if (type === "organisateur" && teams.length > 0) {
       setActiveTeam(teams[0])
     }
-  }, [user, teams])
+  }, [type, teams])
 
   return (
       <SidebarMenu>
@@ -54,7 +56,7 @@ export function TeamSwitcher({
               <SidebarMenuButton
                   size="lg"
                   className={`data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground 
-                  ${user === "organisateur" ? "cursor-pointer" : "cursor-default hover:bg-sidebar"}`}
+                  ${type === "organisateur" ? "cursor-pointer" : "cursor-default hover:bg-sidebar"}`}
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
                   <Image src={"/logo.svg"} alt={"Logo Chateau Tresor"} layout={"fill"} className={"!static"} />
@@ -65,10 +67,10 @@ export function TeamSwitcher({
                 </span>
                   <span className="truncate text-xs">{activeTeam.plan}</span>
                 </div>
-                {user === "organisateur" && <ChevronsUpDown className="ml-auto" />}
+                {type === "organisateur" && <ChevronsUpDown className="ml-auto" />}
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            {user === "organisateur" && (
+            {type === "organisateur" && (
                 <DropdownMenuContent
                     className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
                     align="start"

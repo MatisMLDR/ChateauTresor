@@ -26,7 +26,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
-export function NavUser({user} : SideBarProps) {
+export function NavUser({type} : SideBarProps) {
   const { isMobile } = useSidebar();
   const [firstLetter, setFirstLetter] = useState('');
   const [email, setEmail] = useState('');
@@ -45,10 +45,7 @@ export function NavUser({user} : SideBarProps) {
         setFirstLetter(user.email.charAt(0).toUpperCase()); // Set the first letter of the user's email
         setEmail(user.email);
         try {
-          const response = await fetch(`/api/profils/${user.id}`);
-          const data = await response.json();
-          console.log(data);
-          setLogin(data.username);
+          setLogin(user.user_metadata.username);
         } catch (err) {
           console.error('Erreur lors de la récupération des détails du château :', err);
         }
@@ -116,7 +113,7 @@ export function NavUser({user} : SideBarProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href={`/${user === "organisateur" ? "organisateurs" : "participants"}/profil`}>
+              <Link href={`/${type === "organisateur" ? "organisateurs" : "participants"}/dashboard/profil`}>
                 <DropdownMenuItem>
                   <UserPen />
                   Profil

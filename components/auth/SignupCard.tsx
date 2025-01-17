@@ -25,7 +25,7 @@ const SignupCard = ({ redirect }: AuthProps) => {
           <ProviderSigninBlock />
         </CardContent>
         <CardFooter className="flex-col text-center">
-          <Link className="w-full text-sm text-muted-foreground" href={`/login?redirect=${redirect}`}>
+          <Link className="w-full text-sm text-muted-foreground" href={`/authentication/login?redirect=${redirect}`}>
             Déjà un compte ? Se connecter
           </Link>
         </CardFooter>

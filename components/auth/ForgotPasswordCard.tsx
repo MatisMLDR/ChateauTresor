@@ -15,11 +15,11 @@ const ForgotPasswordCard = ({ redirect }: AuthProps) => {
         <ForgotPasswordForm />
       </CardContent>
       <CardFooter className="flex-col text-center">
-        <Link className="w-full text-sm text-muted-foreground " href={`/login?redirect=${redirect}`}>
-          Back to login
+        <Link className="w-full text-sm text-muted-foreground mb-2" href={`/authentication/login?redirect=${redirect}`}>
+          Retour à la connexion
         </Link>
-        <Link className="w-full text-sm text-muted-foreground" href={`/signup?redirect=${redirect}`}>
-          Don&apos;t have an account? Signup
+        <Link className="w-full text-sm text-muted-foreground" href={`/authentication/signup?redirect=${redirect}`}>
+          Pas de compte ? S'inscrire
         </Link>
       </CardFooter>
     </Card>

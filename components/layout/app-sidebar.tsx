@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import * as React from 'React';
 
 import { NavMain } from './nav-main';
 import { NavProjects } from './nav-projects';
@@ -144,20 +144,20 @@ const dataOrganisateur = {
   ],
 };
 
-export function AppSidebar({ user, ...props }: SideBarProps) {
-  const data = user === 'organisateur' ? dataOrganisateur : dataUser;
+export function AppSidebar({ type, ...props }: SideBarProps) {
+  const data = type === 'organisateur' ? dataOrganisateur : dataUser;
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher user={user} teams={data.teams} />
+        <TeamSwitcher type={type} teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects user={user} chasse={data.chasses} />
+        <NavProjects type={type} chasse={data.chasses} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user}/>
+        <NavUser type={type}/>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

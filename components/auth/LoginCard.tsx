@@ -24,15 +24,15 @@ const LoginCard = ({ redirect }: AuthProps) => {
         <ProviderSigninBlock />
       </CardContent>
       <CardFooter className="flex-col text-center">
-        <Link className="w-full text-sm text-muted-foreground " href={`/forgot-password?redirect=${redirect}`}>
+        <Link className="w-full text-sm text-muted-foreground " href={`/authentication/forgot-password?redirect=${redirect}`}>
           Mot de passe oublié?
         </Link>
-        <Link className="w-full text-sm text-muted-foreground" href={`/signup?redirect=${redirect}`}>	
+        <Link className="w-full text-sm text-muted-foreground" href={`/authentication/signup?redirect=${redirect}`}>	
           Vous n&apos;avez pas de compte? Créer un compte
         </Link>
 
-        <Link className="w-full text-sm text-muted-foreground" href={`/login?redirect=${redirect}`}>
-          {`Vous êtes un ${redirect}? Connectez-vous ici`}
+        <Link className="w-full text-sm text-muted-foreground" href={`/authentication/login?redirect=${redirect === "participant" ? "organisateur" : "participant"}`}>
+          {`Vous êtes un ${redirect === "participant" ? "organisateur" : "participant"} ? Connectez-vous ici`}
         </Link>
       </CardFooter>
     </Card>

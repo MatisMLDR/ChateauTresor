@@ -72,7 +72,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
       <CardHeader className="relative p-0">
         <div className="relative">
           <img
-            src={chasse.getImage() || '/default-chasse.jpg'}
+            src={chasse.getImage() || '/default-chasse.webp'}
             alt={chasse.getTitre()}
             className="h-48 w-full rounded-t-md object-cover"
           />
@@ -128,7 +128,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
         </div>
       </CardContent>
       <CardFooter className="p-4">
-        <Link href={`/participants/chasses/${chasse.getIdChasse()}`} className="w-full">
+        <Link href={`/participants/dashboard/chasses/${chasse.getIdChasse()}`} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
       </CardFooter>

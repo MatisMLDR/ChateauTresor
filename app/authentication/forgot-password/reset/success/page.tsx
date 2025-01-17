@@ -21,13 +21,13 @@ if (!redirect) {
                 <CardHeader className="space-y-1">
 
                     <div className="flex justify-center py-4">
-                        <Link href={redirect === "participant" ? "/" : "/organisateur"}>
+                        <Link href={redirect === "participant" ? "/" : "/organisateurs"}>
                             <Image src="/logo.svg" alt="logo" width={50} height={50} />
                         </Link>
                     </div>
 
                     <CardTitle className="text-2xl font-bold">Your password has been successfully reset!</CardTitle>
-                    <CardDescription>Login <Link href={`/login?redirect=${redirect}`}>here</Link></CardDescription>
+                    <CardDescription>Login <Link href={`/authentication/login?redirect=${redirect}`}>here</Link></CardDescription>
                 </CardHeader>
             </Card>
         </div>

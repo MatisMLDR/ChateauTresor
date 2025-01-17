@@ -24,5 +24,5 @@ export async function GET(request: NextRequest) {
     }
 
     // redirect the user to an error page with some instructions
-    redirect('/login?error=Le lien a expiré. Veuillez vous connecter à nouveau.')
+    redirect('/authentication/login?error=Le lien a expiré. Veuillez vous connecter à nouveau.')
 }

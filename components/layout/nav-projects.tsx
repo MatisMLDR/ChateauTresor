@@ -27,12 +27,12 @@ import { useEffect, useState } from 'react';
 
 export function NavProjects({
   chasse,
-  user,
+  type,
 }: {
   chasse: {
     id: string;
   }[];
-  user: SideBarProps['user'];
+  type: SideBarProps['type'];
 }) {
   const { isMobile } = useSidebar();
   const [chasseNames, setChasseNames] = useState<Record<string, string>>({});
@@ -72,7 +72,7 @@ export function NavProjects({
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>
-        {user === 'organisateur' ? 'Chasses récentes' : 'Chasses inscrites'}
+        {type === 'organisateur' ? 'Chasses récentes' : 'Chasses inscrites'}
       </SidebarGroupLabel>
       <SidebarMenu>
         {chasse.map((item) => (
@@ -80,7 +80,7 @@ export function NavProjects({
             <SidebarMenuButton asChild>
               {/* Adapte l'URL en fonction du rôle de l'utilisateur */}
               <Link
-                href={`${user === 'organisateur' ? '/organisateurs/dashboard/modifier_chasse/' : '/participants/dashboard/chasses/'}${item.id}`}
+                href={`${type === 'organisateur' ? '/organisateurs/dashboard/modifier_chasse/' : '/participants/dashboard/chasses/'}${item.id}`}
               >
                 <Map />
                 {chasseNames[item.id] || <Skeleton className={'h-full w-full'} />}
@@ -98,7 +98,7 @@ export function NavProjects({
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}
               >
-                {user === 'organisateur' ? (
+                {type === 'organisateur' ? (
                   <>
                     <Link href={`${item.id}/update`}>
                       <DropdownMenuItem>

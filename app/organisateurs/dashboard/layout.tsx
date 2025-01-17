@@ -1,4 +1,4 @@
-import React from "react";
+import React from "React";
 import {SideBarMenu} from "@/components/ui/SideBarMenu";
 
 export default function OrganisateursLayout({
@@ -7,6 +7,6 @@ export default function OrganisateursLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <SideBarMenu user={"organisateur"}>{children}</SideBarMenu>
+        <SideBarMenu type={"organisateur"}>{children}</SideBarMenu>
     );
 }

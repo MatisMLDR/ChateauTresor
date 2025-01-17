@@ -78,7 +78,7 @@ export type EnigmeType = {
   id_enigme?: UUID;
   id_chasse: UUID;
   titre: string;
-  indices?: Indice[];
+  indices?: IndiceType[];
   code_reponse: string;
   ordre?: number;
   description: string;
@@ -242,7 +242,7 @@ export type RecompenseType = {
 
 export type SideBarProps = {
   children?: React.reactNode;
-  user: "joueur" | "organisateur";
+  type: "participant" | "organisateur";
 }
 
 //// Props de la page de profile ////
