@@ -22,6 +22,7 @@ import {
 import Image from 'next/image';
 
 import { SideBarProps } from "@/types"
+import {useState, useEffect} from "react";
 
 export function TeamSwitcher({
                                teams,
@@ -35,12 +36,12 @@ export function TeamSwitcher({
 
 }) {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState({
+  const [activeTeam, setActiveTeam] = useState({
     name: "Château",
     plan: "Trésor"
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (type === "organisateur" && teams.length > 0) {
       setActiveTeam(teams[0])
     }
