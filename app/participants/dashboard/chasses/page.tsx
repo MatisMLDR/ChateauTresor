@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import RangeSlider from '@/components/ui/RangeSlider';
+
 import {
   Select,
   SelectContent,
@@ -23,9 +25,10 @@ const ChasseListPage: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
   const [filteredChasses, setFilteredChasses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const minPrice = 0; // Connecter à la base de donnéees
+  const maxPrice = 1000; // Idem
   const [filters, setFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
+    priceRange: [minPrice, maxPrice] as [number, number],
     duration: '',
     difficulty: '',
     noteMin: '',
@@ -40,6 +43,13 @@ const ChasseListPage: React.FC = () => {
     { value: '2', label: 'Moyen' },
     { value: '3', label: 'Difficile' },
   ];
+
+  const handlePriceRangeChange = (newRange: [number, number]) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      priceRange: newRange,
+    }));
+  };
 
   useEffect(() => {
     const fetchChasses = async () => {
@@ -60,11 +70,11 @@ const ChasseListPage: React.FC = () => {
   const applyFilters = async () => {
     let filtered = [...chasses];
 
-    if (filters.minPrice) {
-      filtered = filtered.filter((chasse) => chasse.getPrix() >= parseInt(filters.minPrice));
-    }
-    if (filters.maxPrice) {
-      filtered = filtered.filter((chasse) => chasse.getPrix() <= parseInt(filters.maxPrice));
+    if (filters.priceRange) {
+      const [minPrice, maxPrice] = filters.priceRange;
+      filtered = filtered.filter(
+        (chasse) => chasse.getPrix() >= minPrice && chasse.getPrix() <= maxPrice
+      );
     }
     if (filters.duration) {
       filtered = filtered.filter((chasse) => chasse.getDureeEstime() <= parseInt(filters.duration));
@@ -105,8 +115,7 @@ const ChasseListPage: React.FC = () => {
 
   const handleResetFilters = () => {
     setFilters({
-      minPrice: '',
-      maxPrice: '',
+      priceRange: [minPrice, maxPrice] as [number, number],
       duration: '',
       difficulty: '',
       noteMin: '',
@@ -132,27 +141,14 @@ const ChasseListPage: React.FC = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFilterSubmit} className="space-y-4">
-            {/* Min Price */}
+            {/* Price Range */}
             <div>
-              <Label htmlFor="minPrice">Prix min</Label>
-              <Input
-                type="number"
-                name="minPrice"
-                max={filters.maxPrice}
+              <Label htmlFor="priceRange">Prix</Label>
+              <RangeSlider
                 min={0}
-                value={filters.minPrice}
-                onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
-              />
-            </div>
-            {/* Max Price */}
-            <div>
-              <Label htmlFor="maxPrice">Prix max</Label>
-              <Input
-                type="number"
-                name="maxPrice"
-                min={filters.minPrice || 0}
-                value={filters.maxPrice}
-                onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+                max={1000}
+                defaultValue={filters.priceRange}
+                onValueChange={handlePriceRangeChange}
               />
             </div>
             {/* Duration */}
@@ -213,7 +209,7 @@ const ChasseListPage: React.FC = () => {
               />
               <Label htmlFor="family">Pensé pour les familles</Label>
             </div>
-            {/* Available Now */}
+            {/* Disponible Maintenant */}
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="available"
@@ -222,7 +218,7 @@ const ChasseListPage: React.FC = () => {
               />
               <Label htmlFor="available">Disponible Maintenant</Label>
             </div>
-            {/* Buttons */}
+            {/* Boutons */}
             <Button type="submit" className="w-full">
               Filtrer
             </Button>
@@ -232,7 +228,7 @@ const ChasseListPage: React.FC = () => {
           </form>
         </CardContent>
       </Card>
-      {/* Hunts List */}
+      {/* Liste des chasses */}
       <div className="w-full">
         <div className="mb-6">
           <Input
@@ -244,20 +240,15 @@ const ChasseListPage: React.FC = () => {
         </div>
         <Separator className="my-6" />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {loading ? (
-                // Affichages de 6 fausses chasses pour le chargement
-                Array.from({ length: 6 }, (_, index) => (
-                    <Skeleton
-                        key={index}
-                        className="h-[350px] rounded-md"
-                    />
-                ))
-            ) : (
-                // Affichage des vraies chasses
-                filteredHunts.map((chasse) => (
-                  <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
-                ))
-            )}
+          {loading
+            ? // Affichages de 6 fausses chasses pour le chargement
+              Array.from({ length: 6 }, (_, index) => (
+                <Skeleton key={index} className="h-[350px] rounded-md" />
+              ))
+            : // Affichage des vraies chasses
+              filteredHunts.map((chasse) => (
+                <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
+              ))}
         </div>
       </div>
     </div>

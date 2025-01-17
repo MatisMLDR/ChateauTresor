@@ -11,7 +11,7 @@ const ChasseCard: React.FC<ChasseCardProps> = ({ chasse, isAchetee, onJouer }) =
   return (
     <div className="border rounded-md p-4 shadow-md">
       <img
-        src={chasse.image || '/default-chasse.jpg'}
+        src={chasse.image || '/default-chasse.webp'}
         alt={chasse.titre}
         className="w-full h-40 object-cover rounded-md mb-4"
       />

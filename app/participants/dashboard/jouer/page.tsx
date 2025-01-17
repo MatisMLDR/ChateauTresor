@@ -6,6 +6,19 @@ import { EnigmeType } from '@/types';
 import IndiceComponent from '@/components/participants/jouer/indiceComponent';
 import Chasse from '@/classes/Chasse';
 import Link from 'next/link';
+import { ArrowLeftFromLine } from 'lucide-react'; // Import de l'icône
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog'; // Import des composants AlertDialog
+import { buttonVariants } from '@/components/ui/button'; // Import des styles de bouton
 
 const GameInterface: React.FC = () => {
   const [enigmes, setEnigmes] = useState<EnigmeType[]>([]);
@@ -54,13 +67,6 @@ const GameInterface: React.FC = () => {
     router.push('/participants/dashboard/chassesAchete');
   };
 
-  useEffect(() => {
-    if (enigmes.length > 0) {
-      const currentEnigmeId = enigmes[currentEnigmeIndex].id_enigme;
-      router.push(`/participants/dashboard/jouer?chasseId=${chasseId}&enigmeId=${currentEnigmeId}`, { scroll: false });
-    }
-  }, [currentEnigmeIndex, enigmes, chasseId, router]);
-
   if (showSuccessPage) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
@@ -68,7 +74,7 @@ const GameInterface: React.FC = () => {
         <p className="text-lg mb-8 text-center">Vous avez résolu toutes les énigmes de cette chasse.</p>
         <button
           onClick={handleBackAfterSuccess}
-          className="bg-white text-blue-600 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"
         >
           Retour aux chasses achetées
         </button>
@@ -79,7 +85,7 @@ const GameInterface: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-red-500 to-pink-600 text-white p-4">
-        <button onClick={handleBack} className="mb-6 bg-white text-red-600 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
+        <button onClick={handleBack} className="mb-6 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
           Retour à la liste des chasses
         </button>
         <p className="text-lg text-center">{error}</p>
@@ -90,7 +96,7 @@ const GameInterface: React.FC = () => {
   if (enigmes.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
-        <button onClick={handleBack} className="mb-6 bg-white text-blue-600 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
+        <button onClick={handleBack} className="mb-6 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
           Retour à la liste des chasses
         </button>
         <p className="text-lg">Chargement des énigmes...</p>
@@ -104,12 +110,40 @@ const GameInterface: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-4">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6">
-        <button
-          onClick={handleBack}
-          className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 w-full"
-        >
-          Retour à la liste des chasses
-        </button>
+        {/* Bouton de retour avec AlertDialog */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              className="mb-6 text-black p-3 rounded-lg shadow-lg transition duration-300 flex items-center justify-center"
+              title="Retour à la liste des chasses" // Info-bulle au survol
+            >
+              <ArrowLeftFromLine className="w-6 h-6" /> {/* Icône de retour */}
+            </button>
+          </AlertDialogTrigger>
+
+          {/* Pop-up de confirmation */}
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-xl font-bold mb-4">
+                Êtes-vous sûr de vouloir quitter ?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mb-6">
+                Votre progression sera enregistrée, mais vous devrez revenir pour continuer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className={buttonVariants({ variant: 'outline' })}>
+                Non
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleBack}
+                className={buttonVariants({ variant: 'default' })}
+              >
+                Oui
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* Barre de progression */}
         <div className="mb-8">
@@ -121,7 +155,7 @@ const GameInterface: React.FC = () => {
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
-              className="bg-gradient-to-r from-blue-500 to-purple-600 h-2.5 rounded-full"
+              className="bg-black h-2.5 rounded-full"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -133,7 +167,7 @@ const GameInterface: React.FC = () => {
         <div className="mb-8">
           <button
             onClick={() => setShowIndices(!showIndices)}
-            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 w-full"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 w-full"
           >
             {showIndices ? 'Masquer les indices' : 'Afficher les indices'}
           </button>
@@ -149,7 +183,7 @@ const GameInterface: React.FC = () => {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Valider le code</h2>
           <Link href={`/participants/dashboard/jouer/scan?chasseId=${chasseId}&enigmeId=${currentEnigme.id_enigme}`}>
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 w-full">
+            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 w-full">
               Valider le code
             </button>
           </Link>

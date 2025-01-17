@@ -30,7 +30,7 @@ const ChateauDetailsPage: React.FC = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">{chateau.nom}</h1>
       <img
-        src={chateau.image || '/default-chateau.jpg'}
+        src={chateau.image || '/default-castle.webp'}
         alt={chateau.nom}
         className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4"
       />
