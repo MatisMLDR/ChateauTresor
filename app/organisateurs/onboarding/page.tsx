@@ -3,7 +3,7 @@ import React from 'react'
 const OnBording = () => {
   return (
     <div>
-      OnBording
+      <h1></h1>
     </div>
   )
 }

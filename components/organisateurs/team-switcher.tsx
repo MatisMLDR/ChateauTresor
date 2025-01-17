@@ -22,7 +22,8 @@ import {
 import Image from 'next/image';
 
 import { SideBarProps } from "@/types"
-import {useState, useEffect} from "react";
+import { useEffect } from "react"
+import { useState } from "react";
 
 export function TeamSwitcher({
                                teams,
