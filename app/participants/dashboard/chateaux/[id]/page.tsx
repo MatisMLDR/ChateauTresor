@@ -76,7 +76,7 @@ const ChateauDetailsPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <img
-                src={chateau.image || '/default-chateau.jpg'}
+                src={chateau.image || '/default-castle.webp'}
                 alt={chateau.nom}
                 className="w-full max-h-80 object-cover rounded-lg shadow-md mb-4"
             />

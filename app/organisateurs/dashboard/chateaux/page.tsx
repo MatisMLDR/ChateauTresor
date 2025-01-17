@@ -58,7 +58,7 @@ const ChateauListPage: React.FC = () => {
           {filteredChateaux.map((chateau) => (
             <div key={chateau.id_chateau} className="border rounded-md p-4 shadow-md">
               <img
-                src={chateau.image || '/default-chateau.jpg'}
+                src={chateau.image || '/default-castle.webp'}
                 alt={chateau.nom}
                 className="w-full h-40 object-cover rounded-md mb-4"
               />
