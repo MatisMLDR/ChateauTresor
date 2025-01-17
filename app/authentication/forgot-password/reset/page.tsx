@@ -20,7 +20,7 @@ if (!redirect) {
             <Card className="w-[350px] mx-auto">
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center py-4">
-                        <Link href={redirect === "participant" ? "/" : "/organisateur"}>
+                        <Link href={redirect === "participant" ? "/" : "/organisateurs"}>
                             <Image src="/logo.svg" alt="logo" width={50} height={50} />
                         </Link>
                     </div>
