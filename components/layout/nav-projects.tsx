@@ -1,6 +1,6 @@
 'use client';
 
-import { Map, MoreHorizontal, QrCode, Search, Settings, Star, Trash, type, User } from 'lucide-react';
+import { Map, MoreHorizontal, QrCode, Search, Settings, Star, Trash, User } from 'lucide-react';
 
 import {
   DropdownMenu,
