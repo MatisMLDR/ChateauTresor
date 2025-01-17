@@ -1,4 +1,4 @@
-import { ChasseType, ProfilType } from "@/types";
+import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType } from "@/types";
 import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
@@ -7,6 +7,8 @@ import { getAllEnigmesByChasse } from "@/utils/dao/EnigmeUtils";
 import Avis from "./Avis";
 import { getProfilById } from "@/utils/dao/ProfilUtils";
 import { addParticipation } from "@/utils/dao/ParticipantUtils";
+import Chateau from "./Chateau";
+import { Enigme } from "./Enigme";
 
 class Chasse {
   private id_chasse: UUID;
@@ -26,6 +28,10 @@ class Chasse {
   private statut: string;
   private id_chateau: UUID | null;
   private id_equipe: UUID | null;
+  private chateau?: ChateauType;
+  private enigmes?: EnigmeType[];
+  private indices?: IndiceType[];
+  private recompenses?: any;
 
   constructor(chasse: ChasseType) {
     this.id_chasse = chasse.id_chasse as UUID;
@@ -211,6 +217,34 @@ class Chasse {
     this.statut = avis.statut;
     this.id_chateau = avis.id_chateau;
     this.id_equipe = avis.id_equipe;
+  }
+
+  public async loadChateau(): Promise<void> {
+    if (this.id_chateau) {
+      const chateau = await Chateau.readId(this.id_chateau);
+      this.chateau = chateau;
+    }
+  }
+  
+  public async loadEnigmes(): Promise<void> {
+    try {
+      const enigmesData = await getAllEnigmesByChasse(this.id_chasse);
+      this.enigmes = await Promise.all(
+        enigmesData.map(async (enigmeData: EnigmeType) => {
+          const enigme = new Enigme(enigmeData); // Utilisez la classe Enigme ici
+          await enigme.loadIndices(); // Charge les indices pour chaque énigme
+          return enigme;
+        })
+      );
+      console.log('Énigmes et leurs indices chargés:', this.enigmes);
+    } catch (error) {
+      console.error('Erreur lors du chargement des énigmes:', error);
+    }
+  }
+  
+  public async loadRecompenses(): Promise<void> {
+    const recompenses = await getAllRecompensesByChasse(this.id_chasse);
+    this.recompenses = recompenses;
   }
 
   public async getAllEnigmes(): Promise<any> {

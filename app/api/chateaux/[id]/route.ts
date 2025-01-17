@@ -1,7 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
+import { UUID } from 'crypto';
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: { id: UUID } }) {
   const supabase = createClient();
 
   try {
