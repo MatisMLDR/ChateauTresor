@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "React"
 import { ChevronsUpDown, Plus } from "lucide-react"
 
 import {
@@ -22,6 +21,8 @@ import {
 import Image from 'next/image';
 
 import { SideBarProps } from "@/types"
+import { useEffect } from "react"
+import { useState } from "react";
 
 export function TeamSwitcher({
                                teams,
@@ -35,12 +36,12 @@ export function TeamSwitcher({
 
 }) {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState({
+  const [activeTeam, setActiveTeam] = useState({
     name: "Château",
     plan: "Trésor"
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (type === "organisateur" && teams.length > 0) {
       setActiveTeam(teams[0])
     }
