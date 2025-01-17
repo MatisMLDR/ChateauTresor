@@ -15,7 +15,7 @@ const ForgotPasswordCard = ({ redirect }: AuthProps) => {
         <ForgotPasswordForm />
       </CardContent>
       <CardFooter className="flex-col text-center">
-        <Link className="w-full text-sm text-muted-foreground " href={`/authentication/login?redirect=${redirect}`}>
+        <Link className="w-full text-sm text-muted-foreground mb-2" href={`/authentication/login?redirect=${redirect}`}>
           Retour à la connexion
         </Link>
         <Link className="w-full text-sm text-muted-foreground" href={`/authentication/signup?redirect=${redirect}`}>
