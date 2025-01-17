@@ -216,7 +216,7 @@ export type Haut_FaitType = {
 
 export type EquipeOrganisatriceType = {
   id_equipe: UUID;              // SERIAL PRIMARY KEY, donc un nombre entier auto-incrémenté
-  type: string;                   // VARCHAR(255), avec une valeur par défaut 'Association'
+  nom: string;                   // VARCHAR(255)
   n_siret: string | null;         // VARCHAR(255), peut être null
   id_taxes: string | null;        // VARCHAR(255), peut être null
   nb_membres: number;             // INT, avec une valeur par défaut 0

@@ -4,7 +4,7 @@ import { UUID } from "crypto";
 
 class EquipeOrganisatrice {
   private id_equipe: UUID;
-  private type: string;
+  private nom: string;
   private n_siret: string | null;
   private id_taxes: string | null;
   private nb_membres: number;
@@ -14,7 +14,7 @@ class EquipeOrganisatrice {
 
   constructor(equipe: EquipeOrganisatriceType) {
     this.id_equipe = equipe.id_equipe;
-    this.type = equipe.type;
+    this.nom = equipe.nom;
     this.n_siret = equipe.n_siret;
     this.id_taxes = equipe.id_taxes;
     this.nb_membres = equipe.nb_membres;
@@ -26,9 +26,6 @@ class EquipeOrganisatrice {
   // Getters
   public getIdEquipe(): UUID {
     return this.id_equipe;
-  }
-  public getType(): string {
-    return this.type;
   }
   public getNSiret(): string | null {
     return this.n_siret;
@@ -48,12 +45,12 @@ class EquipeOrganisatrice {
   public getTelephone(): string | null {
     return this.telephone;
   }
+  public getNom(): string {
+    return this.nom;
+  }
   
 
   // Setters
-  public setType(type: string): void {
-    this.type = type;
-  }
   public setNSiret(n_siret: string | null): void {
     this.n_siret = n_siret;
   }
@@ -113,7 +110,7 @@ class EquipeOrganisatrice {
           }
       
           this.id_equipe = avis.id_equipe;
-          this.type = avis.type;
+          this.nom = avis.nom;
           this.n_siret = avis.n_siret;
           this.id_taxes = avis.id_taxes;
           this.nb_membres = avis.nb_membres;
