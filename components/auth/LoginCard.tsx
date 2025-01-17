@@ -10,7 +10,7 @@ import AuthHeader from './AuthHeader'
 const LoginCard = ({ redirect }: AuthProps) => {
   return (
     <Card className="w-[350px] mx-auto">
-      <AuthHeader redirect={redirect} title="Connexion" description="Choisir votre méthode de connexion préférée" />
+      <AuthHeader redirect={redirect} title={`Connexion ${redirect}`} description="Choisir votre méthode de connexion préférée" />
       <CardContent className="grid gap-4">
         <LoginForm redirect={redirect} />
         <div className="relative">

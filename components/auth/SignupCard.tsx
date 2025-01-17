@@ -11,7 +11,7 @@ const SignupCard = ({ redirect }: AuthProps) => {
   return (
     <div>
       <Card className="w-[350px] mx-auto">
-        <AuthHeader redirect={redirect} title="S'inscrire" description="Créer mon compte" />
+        <AuthHeader redirect={redirect} title={`Inscription ${redirect}`} description="Créer mon compte" />
         <CardContent className="grid gap-4">
           <SignupForm redirect={redirect} />
           <div className="relative">

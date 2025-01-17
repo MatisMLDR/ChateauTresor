@@ -192,7 +192,7 @@ export async function logout(userType: "participant" | "organisateur") {
         console.error('Error logging out:', error)
     }
     // Redireger vers la landing page correspondante
-    const redirectPath = `/${userType}`
+    const redirectPath = userType === "participant" ? "/" : "/organisateur"
 
     redirect(redirectPath)
 }

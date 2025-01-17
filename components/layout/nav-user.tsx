@@ -122,7 +122,7 @@ export function NavUser({type} : SideBarProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             {/* TODO : Modifier le lien pour qu'il redirige vers la landing page correspondante */}
-            <DropdownMenuItem onClick={() => logout("participant")}> 
+            <DropdownMenuItem onClick={() => logout(type)}> 
               <LogOut />
               Déconnexion
             </DropdownMenuItem>
