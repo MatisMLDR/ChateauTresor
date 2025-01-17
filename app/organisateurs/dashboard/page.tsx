@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "React";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Euro, Users, Trophy, Star } from "lucide-react";
@@ -35,7 +35,7 @@ export default function DashboardPage() {
   const [recentHunts, setRecentHunts] = useState<HuntStats[]>([]);
   const [selectedHunt, setSelectedHunt] = useState<HuntStats | null>(null);
   const [popupHunt, setPopupHunt] = useState<HuntStats | null>(null);
-  const [totalDailyRevenue, setTotalDailyRevenue] = useState([]);
+  const [totalDailyRevenue, setTotalDailyRevenue] = useState<{ date: string; revenue: number }[]>([]);
 
 
 // Possible implémentation de la récupération des données de la base de données Supabase
@@ -157,9 +157,18 @@ export default function DashboardPage() {
       setSelectedHunt(testHunts[0]); // Default selection
     }, []);
 
-  const handleHuntSelection = (huntId) => {
+  const handleHuntSelection = (huntId: string) => {
     if (huntId === "total") {
-      setSelectedHunt({ id: "total", title: "Revenus Totaux", dailyRevenue: totalDailyRevenue });
+      setSelectedHunt({
+        id: "total",
+        title: "Revenus Totaux",
+        dailyRevenue: totalDailyRevenue,
+        averageRating: 0,
+        reviewCount: 0,
+        successRate: 0,
+        riddleCompletionRate: 0,
+        cluesRevealed: 0,
+      });
     } else {
       const hunt = recentHunts.find((h) => h.id === huntId);
       setSelectedHunt(hunt || null);
