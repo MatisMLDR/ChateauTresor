@@ -72,7 +72,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
       <CardHeader className="relative p-0">
         <div className="relative">
           <img
-            src={chasse.getImage() || '/default-chasse.jpg'}
+            src={chasse.getImage() || '/default-chasse.webp'}
             alt={chasse.getTitre()}
             className="h-48 w-full rounded-t-md object-cover"
           />
