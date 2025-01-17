@@ -20,6 +20,7 @@ import {
   LayoutDashboard,
   MapPin,
   Search,
+  Plus,
   User,
 } from 'lucide-react';
 import { SideBarProps } from '@/types';
