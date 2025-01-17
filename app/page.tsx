@@ -14,7 +14,14 @@ export default async function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
-      <ValidateRiddle />
+      <Navbar />
+      <main className="flex-1">
+        <Hero />
+        <Features />
+        <Testimonials />
+        <Cta />
+      </main>
+      <Footer />
     </div>
   )
 }
