@@ -7,7 +7,7 @@ export async function GET() {
   try {
     // Récupérer toutes les chasses non terminées depuis la vue
     const { data, error } = await supabase
-      .from('vue_chasses_non_terminees')
+      .from('vue_chasses_valides')
       .select('*');
 
     if (error) {

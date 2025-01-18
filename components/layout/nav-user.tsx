@@ -45,7 +45,7 @@ export function NavUser({type} : SideBarProps) {
         setFirstLetter(user.email.charAt(0).toUpperCase()); // Set the first letter of the user's email
         setEmail(user.email);
         try {
-          setLogin(user.user_metadata.username);
+          setLogin(user.user_metadata.username); // Va marcher pour les nouveaux utilisateurs
         } catch (err) {
           console.error('Erreur lors de la récupération des détails du château :', err);
         }

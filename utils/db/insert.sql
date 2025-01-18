@@ -56,11 +56,12 @@ VALUES ('63e923ce-db26-4024-90cb-ff43eccfdbcb', 'IUT 2', ' 2 Place du Doyen Goss
         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg/2560px-Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg',
         'https://www.chateau-amboise.com/', '530a3302-4d03-49c0-a262-a72b3d434da9') ON CONFLICT (id_chateau) DO NOTHING;
 
+
 -- Insert data into Equipe_Organisatrice
 INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale,
                                          telephone)
-VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Association', null, null, '1', null, null, null),
-       ('42fdbebf-d919-4bc2-a7b7-f00688f706af', 'Samsung', 'Entreprise', '33436749700172', 'FR89334367497', '0',
+VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Particulier', null, null, null, null, null),
+       ('42fdbebf-d919-4bc2-a7b7-f00688f706af', 'Samsung', 'Société', '33436749700172', 'FR89334367497', 
         'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ',
         '01 44 04 70 00') ON CONFLICT (id_equipe) DO NOTHING;
 

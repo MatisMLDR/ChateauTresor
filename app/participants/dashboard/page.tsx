@@ -10,7 +10,7 @@ const Accueil = async () => {
 
   return (
     <div className='p-4'>
-      <h1 className='text-3xl font-bold mb-3'>Bienvenue [Nom de l'utilisateur]</h1>
+      <h1 className='text-3xl font-bold mb-3'>Bienvenue {user?.user_metadata.prenom}</h1>
     </div>
   )
 }
