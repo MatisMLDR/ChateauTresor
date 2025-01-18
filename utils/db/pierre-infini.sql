@@ -29,6 +29,7 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 -- Supprimer les fonctions
 DROP FUNCTION IF EXISTS public.handle_new_user;
 
+
 CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
@@ -388,7 +389,7 @@ UPDATE ON Recompense
     FOR EACH ROW
     EXECUTE FUNCTION update_modification_date();
 
-    -- Insert data into profiles
+-- Insert data into profiles
 INSERT INTO public.profiles (id, username, updated_at, email, birthday, email_confirm, nom, adresse, ville, code_postal,
                              stripe_id, plan, prenom)
 VALUES ('b302ddb0-c4b4-42d8-8956-00bcb2c0589e', 'ParticipantTest', null, 'testparticipant@chateautresor.com', null,
@@ -448,17 +449,17 @@ VALUES ('63e923ce-db26-4024-90cb-ff43eccfdbcb', 'IUT 2', ' 2 Place du Doyen Goss
 
 
 -- Insert data into Equipe_Organisatrice
-INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale,
-                                         telephone)
-VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Particulier', null, null, null, null, null),
+INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, site_web, adresse_postale,
+                                         telephone, statut_verification)
+VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Particulier', null, null, null, null, null, 'Vérifiée'),
        ('42fdbebf-d919-4bc2-a7b7-f00688f706af', 'Samsung', 'Société', '33436749700172', 'FR89334367497', 
         'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ',
-        '01 44 04 70 00') ON CONFLICT (id_equipe) DO NOTHING;
+        '01 44 04 70 00', 'Vérifiée') ON CONFLICT (id_equipe) DO NOTHING;
 
 -- Insert data into Membre_equipe
-INSERT INTO public.Membre_equipe (id_membre, carte_identite, est_verifie, role_equipe, id_user)
-VALUES ('73078d78-ce50-49b5-bf29-b692c76345bd', null, TRUE, 'Chef', 'a27901fd-3c67-4891-b7ac-55dd04a2f122'),
-       ('aa877810-9602-45a6-8591-cffaa4824aae', null, TRUE, 'Organisateur',
+INSERT INTO public.Membre_equipe (id_membre, id_user)
+VALUES ('73078d78-ce50-49b5-bf29-b692c76345bd', 'a27901fd-3c67-4891-b7ac-55dd04a2f122'),
+       ('aa877810-9602-45a6-8591-cffaa4824aae', 
         'd566eb81-3bf9-4470-a89c-30ea8da57087') ON CONFLICT (id_membre) DO NOTHING;
 
 -- Insert data into Appartenance_Equipe
@@ -480,13 +481,13 @@ INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, 
                            date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
 VALUES ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg',
         '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2',
-        '02:00:00', 'Theme de la chasse', 'Inactif', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
+        '02:00:00', 'Theme de la chasse', 'Validée', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
         '5da884fa-d39c-4e99-8644-a18e2bf34a60'),
        ('550e8400-e29b-41d4-a716-446655440000', 'Chasse de Chambord', '300',
         'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !',
         '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp',
         '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1',
-        '02:00:00', 'Dynastie royale', 'Inactif', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
+        '02:00:00', 'Dynastie royale', 'Validée', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
         '42fdbebf-d919-4bc2-a7b7-f00688f706af') ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation
@@ -555,84 +556,3 @@ VALUES ('f35a1787-d883-4ba7-8e9b-d8dc2dd6c84d', 'd2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4
        ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', TRUE, '2025-01-07'),
        ('57be79ad-b153-4122-a0ba-4b60e0ee496b', '5dafc8db-7ca3-48f8-b6ef-8305c70e1987', TRUE,
         '2025-01-07') ON CONFLICT (id_haut_fait, id_participant) DO NOTHING;
-
--- Création de la vue pour les chasses non terminées
-CREATE VIEW vue_chasses_valides AS
-SELECT
-   id_chasse,
-   titre,
-   capacite,
-   description,
-   age_requis,
-   image,
-   date_creation,
-   date_modification,
-   date_debut,
-   date_fin,
-   prix,
-   difficulte,
-   duree_estime,
-   theme,
-   statut,
-   id_chateau,
-   id_equipe
-FROM
-   public.Chasse
-WHERE
-   date_fin > CURRENT_TIMESTAMP
-   AND statut = 'Validée';
-
-CREATE VIEW vue_chasse_en_attente_de_validation AS
-SELECT
-   id_chasse,
-   titre,
-   capacite,
-   description,
-   age_requis,
-   image,
-   date_creation,
-   date_modification,
-   date_debut,
-   date_fin,
-   prix,
-   difficulte,
-   duree_estime,
-   theme,
-   statut,
-   id_chateau,
-   id_equipe
-FROM
-   public.Chasse
-WHERE
-   statut = 'En attente de validation';
-
-CREATE VIEW vue_demandes_appartenance_equipe AS
-SELECT
-   id_demande,
-   date_demande,
-   statut,
-   id_equipe,
-   id_utilisateur
-FROM
-   public.Appartenance_Equipe
-WHERE
-   statut = 'En attente de validation';
-
-CREATE VIEW vue_equipes_verifiees AS
-SELECT
-   id_equipe,
-   nom,
-   type,
-   n_siret,
-   id_taxes,
-   nb_membres,
-   site_web,
-   adresse_postale,
-   statut_verification,
-   carte_identite_chef,
-   telephone,
-   description
-FROM
-   public.Equipe_Organisatrice
-WHERE
-   statut = 'Vérifiée';

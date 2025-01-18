@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
@@ -8,11 +8,14 @@ import { createClient } from '@/utils/supabase/client';
 import { MembreEquipe } from '@/classes/MembreEquipe';
 import { UUID } from 'crypto';
 import { createEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [totalSteps, setTotalSteps] = useState(2);
   const [equipes, setEquipes] = useState<EquipeOrganisatrice[] | []>([]);
   const [formData, setFormData] = useState({
+    hasTeam: 'non',
     equipe: '',
     id_membre: '',
     prenomUtilisateur: '',
@@ -30,18 +33,9 @@ const Onboarding = () => {
     idTaxes: '',
     terms: false, // Ajouté pour la case à cocher des conditions d'utilisation
   });
-  const totalSteps = formData.equipe === 'oui' ? 2 : 6; // Changer le nombre d'étapes en fonction du choix de l'utilisateur
 
+  // useEffect pour récupérer l'id du membre et le prénom de l'utilisateur
   useEffect(() => {
-    // Récupérer toutes les équipes
-    async function fetchEquipes() {
-      try {
-        const equipes = await EquipeOrganisatrice.getAllEquipesVerifiees();
-        setEquipes(equipes);
-      } catch (err) {
-        // Do nothing
-      }
-    }
     async function fetchIdMembre() {
       const supabase = createClient();
       try {
@@ -58,9 +52,26 @@ const Onboarding = () => {
         // Do nothing
       }
     }
-    fetchEquipes();
     fetchIdMembre();
-  }, [equipes, formData.id_membre]);
+  }, [formData.id_membre]);
+
+  // useEffect pour changer le nombre d'étapes en fonction du choix de l'utilisateur
+  useEffect(() => {
+    setTotalSteps(formData.hasTeam === 'oui' ? 2 : 6);
+  }, [formData.equipe]);
+
+  // useEffect pour récupérer les équipes vérifiées
+  useEffect(() => {
+    async function fetchEquipes() {
+      try {
+        const equipes = await EquipeOrganisatrice.getAllEquipesVerifiees();
+        setEquipes(equipes);
+      } catch (err) {
+        // Do nothing
+      }
+    }
+    fetchEquipes();
+  }, [equipes]);
 
   console.log("equipes", equipes);
 
@@ -86,7 +97,7 @@ const Onboarding = () => {
     // Préparation des données pour l'appartenance à l'équipe
     const data = {
       id_membre: formData.id_membre as UUID,
-      id_equipe: formData.equipe as UUID,
+      id_equipe: formData.equipe as UUID, // TODO : Corriger pour pouvoir utiliser l'objet EquipeOrganisatrice
     };
 
     try {
@@ -137,15 +148,15 @@ const Onboarding = () => {
 
   return (
     <div className="h-screen w-full flex justify-center items-center">
-      <div className='max-w-[400px]'>
+      <div className='max-w-[800px]'>
         {/* Barre de progression */}
         {currentStep > 1 && (
-        <div className='h-4 border rounded-full shadow-sm mb-8'>
-          <div
-            className={`h-full rounded-full bg-primary transition-all duration-300 ease-in-out`}
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
+          <div className='h-2 border rounded-full shadow-sm mb-8'>
+            <div
+              className={`h-full rounded-full bg-primary transition-all duration-300 ease-in-out`}
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
         )}
         <form>
           {currentStep === 1 && (
@@ -156,25 +167,27 @@ const Onboarding = () => {
               <h2 className="text-xl mb-4">Nous avons besoin de plus d'informations</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="equipe">Avez-vous une équipe existante ?</label>
+                  <label htmlFor="hasTeam">Avez-vous une équipe existante ?
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <select
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
-                    name="equipe"
-                    value={formData.equipe}
+                    name="hasTeam"
+                    value={formData.hasTeam}
                     onChange={handleInputChange}
                   >
-                    <option value="oui">Oui</option>
                     <option value="non">Non</option>
+                    <option value="oui">Oui</option>
                   </select>
                 </div>
-                <Button type="button" onClick={handleNextStep}>
+                <Button type="button" className='mt-12' onClick={handleNextStep}>
                   Continuer
                 </Button>
               </div>
             </>
           )}
 
-          {currentStep === 2 && formData.equipe == "oui" && (
+          {currentStep === 2 && formData.hasTeam == "oui" && (
             <>
               {/* ÉTAPE 2 et équipe existente : */}
               {/* L'utilisateur a choisi de rejoindre une équipe, il la choisie parmi celle existantes et indique son rôle (organisateur, créateur, autre) */}
@@ -184,12 +197,13 @@ const Onboarding = () => {
               <h2 className="text-xl mb-4">Choisissez votre équipe et votre rôle</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="equipe">Trouver son équipe</label>
+                  <label htmlFor="equipe">Trouver son équipe<span className="text-red-500 ml-1">*</span></label>
                   <select
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
                     name="equipe"
-                    value={formData.equipe}
+                    value={formData.equipe || ""}
                     onChange={handleInputChange}
+                    required
                   >
                     {equipes.map((equipe) => {
                       return (
@@ -201,12 +215,13 @@ const Onboarding = () => {
                   </select>
                 </div>
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="role">Votre rôle</label>
+                  <label htmlFor="role">Votre rôle<span className="text-red-500 ml-1">*</span></label>
                   <select
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
+                    required
                   >
                     {/* role_equipe IN ('Invité', 'Créateur', 'Administrateur', 'Modérateur', 'Organisateur', 'Trésorier', 'Autre') */}
                     <option value="organisateur">Organisateur</option>
@@ -226,17 +241,21 @@ const Onboarding = () => {
                     onChange={handleInputChange}
                     placeholder="Bref message à l'équipe"
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px] h-[100px]"
-                    required
                   />
                 </div>
-                <Button type="submit" onSubmit={handleSubmitWithExistingTeam}>
-                  Soumettre la demande
-                </Button>
+                <div className="flex justify-between items-center mt-12">
+                  <Button type="button" onClick={handlePreviousStep}>
+                    Retour
+                  </Button>
+                  <Button type="submit" onSubmit={handleSubmitWithExistingTeam}>
+                    Soumettre la demande
+                  </Button>
+                </div>
               </div>
             </>
           )}
 
-          {currentStep === 2 && formData.equipe === "nom" && (
+          {currentStep === 2 && formData.hasTeam === "non" && (
             <>
               {/* ÉTAPE 2 et pas d'équipe : Nom de l'équipe */}
               {/* L'utilisateur a choisi de créer une équipe, il entre les informations nécessaires pour la création */}
@@ -247,23 +266,25 @@ const Onboarding = () => {
               <h2 className="text-xl mb-4">Veuillez entrer le nom de votre équipe</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="nomEquipe">Nom de l'équipe</label>
+                  <label htmlFor="nomEquipe">Nom de l'équipe
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <Input
                     type="text"
                     id="nomEquipe"
                     name="nomEquipe"
-                    value={formData.nomEquipe || ""}
+                    value={formData.nomEquipe}
                     onChange={handleInputChange}
+                    required
                     placeholder="Nom de l'équipe"
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
-                    required
                   />
                 </div>
-                <div className="flex gap-4">
+                <div className="flex justify-between items-center mt-12">
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
-                  <Button type="button" onClick={handleNextStep}>
+                  <Button type="button" disabled={formData.nomEquipe === ""} onClick={handleNextStep}>
                     Continuer
                   </Button>
                 </div>
@@ -271,7 +292,7 @@ const Onboarding = () => {
             </>
           )}
 
-          {currentStep === 3 && formData.equipe === "nom" && (
+          {currentStep === 3 && formData.hasTeam === "non" && (
             <>
               {/* ÉTAPE 3 et pas d'équipe : Type de l'équipe (Société ou Particuliers) */}
               {/* L'utilisateur entre les informations supplémentaires pour la création de son équipe */}
@@ -282,30 +303,53 @@ const Onboarding = () => {
               <h2 className="text-xl mb-4">Sélectionnez le type de votre équipe</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="type">Type de l'équipe</label>
+                  <label htmlFor="type">Type de l'équipe
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <select
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
                     name="type"
                     value={formData.type || "Particuliers"}
                     onChange={handleInputChange}
+                    required
                   >
                     <option value="Société">Société</option>
                     <option value="Particuliers">Particuliers</option>
                   </select>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex justify-between items-center mt-12">
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
-                  <Button type="button" onClick={handleNextStep}>
-                    Continuer
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline">
+                        Soumettre la demande
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Soumettre la demande
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Êtes-vous sûr de vouloir soumettre votre demande ?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleSubmitWithExistingTeam}>
+                          Continuer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </>
           )}
 
-          {currentStep === 4 && formData.equipe === "nom" && (
+          {currentStep === 4 && formData.hasTeam === "non" && (
             <>
               {/* ÉTAPE 4 et pas d'équipe : Documents supplémentaires */}
               {/* Les informations doivent impérativement inclure les informations de la table equipe_organisatrice */}
@@ -348,7 +392,9 @@ const Onboarding = () => {
                 )}
 
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="telephone">Téléphone</label>
+                  <label htmlFor="telephone">Téléphone
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <Input
                     type="tel"
                     id="telephone"
@@ -361,7 +407,9 @@ const Onboarding = () => {
                   />
                 </div>
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="adressePostale">Adresse Postale</label>
+                  <label htmlFor="adressePostale">Adresse Postale
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <Input
                     type="text"
                     id="adressePostale"
@@ -386,7 +434,9 @@ const Onboarding = () => {
                   />
                 </div>
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="description">Description du projet</label>
+                  <label htmlFor="description">Description du projet
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <textarea
                     id="description"
                     name="description"
@@ -398,18 +448,18 @@ const Onboarding = () => {
                   />
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex justify-between items-center mt-12">
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
-                  <Button type="button" onClick={handleNextStep}>
+                  <Button type="button" onClick={handleNextStep} disabled={formData.description === "" || formData.telephone === "" || formData.adressePostale === ""}>
                     Continuer
                   </Button>
                 </div>
               </div>
             </>
           )}
-          {currentStep === 5 && formData.equipe === "nom" && (
+          {currentStep === 5 && formData.hasTeam === "non" && (
             <>
               {/* ÉTAPE 5 et pas d'équipe : Documents de vérification pour le chef d'équipe */}
               {/* Enfin derniere étape demande la soumission de documents tels que la carte d'identité */}
@@ -418,31 +468,32 @@ const Onboarding = () => {
               <h2 className="text-xl mb-4">Veuillez télécharger votre carte d'identité</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="carteIdentite">Carte d'identité du chef d'équipe</label>
+                  <label htmlFor="carteIdentite">Carte d'identité du chef d'équipe (image ou .pdf)</label>
                   <Input
                     type="file"
                     id="carteIdentite"
                     name="carteIdentite"
                     accept="image/*,.pdf"
                     onChange={handleInputChange}
+                    value={formData.carteIdentite || ""}
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
                     required
                   />
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex justify-between items-center mt-12">
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
                   <Button type="button" onClick={handleNextStep}>
-                    Continuer
+                    {formData.carteIdentite === "" ? "Plus tard" : "Continuer"}
                   </Button>
                 </div>
               </div>
             </>
           )}
 
-          {currentStep === 6 && formData.equipe === "nom" && (
+          {currentStep === 6 && formData.hasTeam === "non" && (
             <>
               {/* ÉTAPE 6 et pas d'équipes : Confirmation et relecture */}
               {/* Cette dernière étape restitue toutes les informations du formulaires vérifier les informations (pas modifiables) */}
@@ -469,21 +520,44 @@ const Onboarding = () => {
                     type="checkbox"
                     id="terms"
                     name="terms"
-                    checked={formData.terms || false}
+                    checked={formData.terms}
                     onChange={handleInputChange}
                     className="h-4 w-4"
                     required
                   />
-                  <label htmlFor="terms">J'accepte les conditions d'utilisation</label>
+                  <label htmlFor="terms">
+                    J'accepte les conditions d'utilisation
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex justify-between items-center mt-12">
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
-                  <Button type="submit" onSubmit={handleSubmitWithoutExistingTeam}>
-                    Soumettre la demande
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline">
+                        Soumettre la demande
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Soumettre la demande
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Êtes-vous sûr de vouloir soumettre votre demande ?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleSubmitWithoutExistingTeam}>
+                          Continuer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </>
