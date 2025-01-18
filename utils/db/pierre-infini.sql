@@ -556,3 +556,85 @@ VALUES ('f35a1787-d883-4ba7-8e9b-d8dc2dd6c84d', 'd2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4
        ('d6bb9967-6b28-4c32-a5c8-f4179dab068f', 'e3f2a9b5-4c7f-5d9f-0c9f-2f3a9b5d9f0c', TRUE, '2025-01-07'),
        ('57be79ad-b153-4122-a0ba-4b60e0ee496b', '5dafc8db-7ca3-48f8-b6ef-8305c70e1987', TRUE,
         '2025-01-07') ON CONFLICT (id_haut_fait, id_participant) DO NOTHING;
+
+-- Création de la vue pour les chasses non terminées
+CREATE VIEW vue_chasses_valides AS
+SELECT
+   id_chasse,
+   titre,
+   capacite,
+   description,
+   age_requis,
+   image,
+   date_creation,
+   date_modification,
+   date_debut,
+   date_fin,
+   prix,
+   difficulte,
+   duree_estime,
+   theme,
+   statut,
+   id_chateau,
+   id_equipe
+FROM
+   public.Chasse
+WHERE
+   date_fin > CURRENT_TIMESTAMP
+   AND statut = 'Validée';
+
+CREATE VIEW vue_chasse_en_attente_de_validation AS
+SELECT
+   id_chasse,
+   titre,
+   capacite,
+   description,
+   age_requis,
+   image,
+   date_creation,
+   date_modification,
+   date_debut,
+   date_fin,
+   prix,
+   difficulte,
+   duree_estime,
+   theme,
+   statut,
+   id_chateau,
+   id_equipe
+FROM
+   public.Chasse
+WHERE
+   statut = 'En attente de validation';
+
+CREATE VIEW vue_demandes_appartenance_equipe AS
+SELECT
+   id_membre,
+   id_equipe,
+   date_appartenance,
+   statut,
+   date_demande,
+   message_demande,
+   role_equipe
+FROM
+   public.Appartenance_Equipe
+WHERE
+   statut = 'En attente de validation';
+
+CREATE VIEW vue_equipes_verifiees AS
+SELECT
+   id_equipe,
+   nom,
+   type,
+   n_siret,
+   id_taxes,
+   site_web,
+   adresse_postale,
+   statut_verification,
+   carte_identite_chef,
+   telephone,
+   description
+FROM
+   public.Equipe_Organisatrice
+WHERE
+   statut_verification = 'Vérifiée';
