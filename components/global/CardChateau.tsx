@@ -9,6 +9,7 @@ import Chateau from '@/classes/Chateau';
 import Chasse from '@/classes/Chasse';
 import { getAllChassesByChateau } from '@/utils/dao/ChasseUtils';
 import { ChasseType } from '@/types';
+import { usePathname } from 'next/navigation'; // Import du hook usePathname
 
 interface CardChateauProps {
   chateau: Chateau;
@@ -16,6 +17,7 @@ interface CardChateauProps {
 
 const CardChateau = ({ chateau }: CardChateauProps) => {
   const [chasses, setChasses] = useState<Chasse[]>([]);
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchChasses = async () => {
@@ -30,6 +32,8 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
   }, [chateau.getIdChateau()]);
 
   const availableChasses = chasses.filter((chasse) => chasse.isAvailable());
+
+  const isParticipants = pathname.includes('participants');
 
   return (
     <Card className="flex h-full flex-col transition-shadow duration-200 hover:shadow-lg">
@@ -74,7 +78,11 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
               {availableChasses.map((chasse) => (
                 <li key={chasse.getIdChasse()} className="text-sm text-gray-800">
                   <Link
-                    href={`/participants/dashboard/chasses/${chasse.getIdChasse()}`}
+                    href={
+                      isParticipants
+                        ? `/participants/dashboard/chasses/${chasse.getIdChasse()}`
+                        : `/organisateurs/dashboard/chasses/${chasse.getIdChasse()}`
+                    }
                     className="hover:text-blue-600"
                   >
                     {chasse.getTitre()}
