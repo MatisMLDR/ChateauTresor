@@ -15,6 +15,7 @@ const Onboarding = () => {
   const [formData, setFormData] = useState({
     equipe: '',
     id_membre: '',
+    prenomUtilisateur: '',
     nomEquipe: '',
     role: '',
     message: '',
@@ -50,6 +51,7 @@ const Onboarding = () => {
           setFormData((prevData) => ({
             ...prevData,
             id_membre: membre.getIdMembre(),
+            prenomUtilisateur: user.user_metadata.prenom,
           }));
         }
       } catch (err) {
@@ -150,7 +152,7 @@ const Onboarding = () => {
             <>
               {/* ÉTAPE 1 : Vérification de l'appartenance à une équipe */}
               {/* Demande si l'utilisateur fait déjà partie d'une équipe */}
-              <h1 className="text-3xl font-bold mb-2">Bienvenue [Nom membre]</h1>
+              <h1 className="text-3xl font-bold mb-2">Bienvenue {formData.prenomUtilisateur}</h1>
               <h2 className="text-xl mb-4">Nous avons besoin de plus d'informations</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
