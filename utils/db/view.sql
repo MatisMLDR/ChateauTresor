@@ -50,11 +50,13 @@ WHERE
 
 CREATE VIEW vue_demandes_appartenance_equipe AS
 SELECT
-   id_demande,
-   date_demande,
-   statut,
+   id_membre,
    id_equipe,
-   id_utilisateur
+   date_appartenance,
+   statut,
+   date_demande,
+   message_demande,
+   role_equipe
 FROM
    public.Appartenance_Equipe
 WHERE
@@ -67,7 +69,6 @@ SELECT
    type,
    n_siret,
    id_taxes,
-   nb_membres,
    site_web,
    adresse_postale,
    statut_verification,
@@ -77,4 +78,4 @@ SELECT
 FROM
    public.Equipe_Organisatrice
 WHERE
-   statut = 'Vérifiée';
+   statut_verification = 'Vérifiée';

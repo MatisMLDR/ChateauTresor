@@ -5,7 +5,7 @@ export async function GET() {
   const supabase = createClient();
   try {
     // Récupérer toutes les équipes organisatrices
-    const { data, error } = await supabase.from('vue_equipe_verifiees').select('*');
+    const { data, error } = await supabase.from('vue_equipes_verifiees').select('*');
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
