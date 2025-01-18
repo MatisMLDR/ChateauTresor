@@ -6,7 +6,7 @@ import ResetPasswordForm from '@/components/auth/ResetPasswordForm'
 import { notFound } from 'next/navigation'
 export default async function ResetPassword({ searchParams }: { searchParams: { redirect: "participant" | "organisateur" } }) {
 
-    const redirect = await searchParams.redirect
+    const { redirect } = await searchParams
 if (!redirect) {
         <div>loading...</div>
     }

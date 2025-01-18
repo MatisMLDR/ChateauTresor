@@ -6,7 +6,7 @@ import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm'
 import { notFound } from 'next/navigation'
 export default async function ForgotPasswordSuccess({ searchParams }: { searchParams: { redirect: "participant" | "organisateur" } }) {
 
-    const redirect = await searchParams.redirect
+    const { redirect } = await searchParams
 
     if (!redirect) {
         <div>loading...</div>
