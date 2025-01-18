@@ -8,7 +8,7 @@ import Chasse from '@/classes/Chasse';
 import { UUID } from 'crypto';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
-import { MembreEquipeClass } from '@/classes/MembreEquipe';
+import { MembreEquipe } from '@/classes/MembreEquipe';
 import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
 
 export default function OrganisateurChassesPage() {
@@ -31,7 +31,7 @@ export default function OrganisateurChassesPage() {
 
       try {
         // Étape 1 : Récupérer le membre d'équipe correspondant à l'utilisateur
-        const membre = await MembreEquipeClass.readByIdUser(user.id as UUID);
+        const membre = await MembreEquipe.readByIdUser(user.id as UUID);
         const id_membre = membre.getIdMembre();
 
         if (!membre) {

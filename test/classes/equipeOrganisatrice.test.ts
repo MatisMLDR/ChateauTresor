@@ -19,10 +19,10 @@ jest.mock('@/utils/dao/EquipeOrganisatriceUtils', () => ({
 describe('EquipeOrganisatrice', () => {
   const mockEquipeData: EquipeOrganisatriceType = {
     id_equipe: "123e4567-e89b-12d3-a456-426614174000",
-    type: "Association",
+    nom: "Association Exemple",
+    type: "Société",
     n_siret: "12345678901234",
     id_taxes: "FR123456789",
-    nb_membres: 15,
     site_web: "https://example.com",
     adresse_postale: "123 Rue Exemple, Paris, France",
     telephone: "0123456789",
@@ -39,7 +39,6 @@ describe('EquipeOrganisatrice', () => {
     expect(equipe.getType()).toBe(mockEquipeData.type);
     expect(equipe.getNSiret()).toBe(mockEquipeData.n_siret);
     expect(equipe.getIdTaxes()).toBe(mockEquipeData.id_taxes);
-    expect(equipe.getNbMembres()).toBe(mockEquipeData.nb_membres);
     expect(equipe.getSiteWeb()).toBe(mockEquipeData.site_web);
     expect(equipe.getAdressePostale()).toBe(mockEquipeData.adresse_postale);
     expect(equipe.getTelephone()).toBe(mockEquipeData.telephone);

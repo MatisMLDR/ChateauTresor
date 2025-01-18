@@ -39,6 +39,19 @@ export async function getAllEquipes(): Promise<any[]> {
   }
   return await res.json();
 }
+/*
+ * Méthode pour récupérer toutes les équipes organisatrices vérifiées
+ * @returns Promise<any[]> Un tableau d'équipes organisatrices vérifiées
+ * @throws Error si la récupération échoue
+ * @example const equipes = await getAllEquipesVerifiees();
+ */
+export async function getAllEquipesVerifiees(): Promise<any[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes/verifiees`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération de toutes les équipes organisatrices vérifiées');
+  }
+  return await res.json();
+}
 
 /*
  * Méthode pour créer une nouvelle équipe organisatrice
