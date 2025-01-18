@@ -1,3 +1,8 @@
+-- Supprimer les vues si elles existent
+DROP VIEW IF EXISTS vue_chasses_valides, 
+                    vue_chasse_en_attente_de_validation, 
+                    vue_demandes_appartenance_equipe CASCADE;
+
 DROP TABLE IF EXISTS public.Chateau,
     public.Equipe_Organisatrice,
     public.Membre_equipe,

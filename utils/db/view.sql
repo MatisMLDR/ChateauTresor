@@ -1,5 +1,5 @@
 -- Création de la vue pour les chasses non terminées
-CREATE VIEW vue_chasses_non_terminees AS
+CREATE VIEW vue_chasses_valides AS
 SELECT id_chasse,
        titre,
        capacite,
@@ -18,8 +18,8 @@ SELECT id_chasse,
        id_chateau,
        id_equipe
 FROM public.Chasse
-WHERE date_fin IS NULL
-   OR date_fin > CURRENT_TIMESTAMP;
+WHERE date_fin > CURRENT_TIMESTAMP
+   AND statut = 'Validée';
 
 CREATE VIEW vue_chasse_en_attente_de_validation AS
 SELECT id_chasse,
@@ -40,4 +40,13 @@ SELECT id_chasse,
        id_chateau,
        id_equipe
 FROM public.Chasse
+WHERE statut = 'En attente de validation';
+
+CREATE VIEW vue_demandes_appartenance_equipe AS
+SELECT id_demande,
+       date_demande,
+       statut,
+       id_equipe,
+       id_utilisateur
+FROM public.Appartenance_Equipe
 WHERE statut = 'En attente de validation';

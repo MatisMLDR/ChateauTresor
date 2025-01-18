@@ -128,6 +128,10 @@ CREATE TABLE public.Appartenance_Equipe
     id_membre         UUID NOT NULL,
     id_equipe         UUID NOT NULL,
     date_appartenance DATE DEFAULT CURRENT_DATE,
+    statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
+        statut IN ('En attente de validation', 'Validé', 'Refusé')
+        ),
+    date_demande      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_membre, id_equipe),
     FOREIGN KEY (id_membre) REFERENCES Membre_equipe (id_membre) ON DELETE CASCADE,
     FOREIGN KEY (id_equipe) REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE
@@ -161,7 +165,7 @@ CREATE TABLE public.Chasse
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
     theme             VARCHAR(255)                 DEFAULT 'Aucun thème',
     statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
-        statut IN ('En attente de validation', 'Valide', 'En cours', 'Finie')
+        statut IN ('En attente de validation', 'Validée', 'En cours', 'Finie')
         ),
     id_chateau        UUID                NOT NULL REFERENCES Chateau (id_chateau) ON DELETE CASCADE,
     id_equipe         UUID                NOT NULL REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE
