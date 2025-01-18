@@ -113,7 +113,7 @@ export function NavUser({type} : SideBarProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href={`/${type === "organisateur" ? "organisateurs" : "participants"}/dashboard/profil`}>
+              <Link href={`/${type === "organisateur" ? "organisateurs" : type === "participant" ? "participants" : "proprietaires"}/dashboard/profil`}>
                 <DropdownMenuItem>
                   <UserPen />
                   Profil

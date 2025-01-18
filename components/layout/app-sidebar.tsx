@@ -21,6 +21,7 @@ import {
   MapPin,
   Search,
   Plus,
+  Calendar,
   LibraryBig,
   User,
 } from 'lucide-react';
@@ -151,8 +152,37 @@ const dataOrganisateur = {
   ],
 };
 
+const dataProprietaire = {
+  teams: [
+    {
+      name: 'Chateau',
+      plan: 'Tresor',
+    },
+  ],
+  navMain: [
+    {
+      title: 'Châteaux',
+      url: '/proprietaire/dashboard/chateaux',
+      icon: Castle,
+    },
+    {
+      title: 'Calendrier',
+      url: '/proprietaire/dashboard/calendrier',
+      icon: Calendar,
+    },
+  ],
+  chasses: [
+    {
+      id: "2aab1306-2875-426c-b0d3-f440f05fa8b8",
+    },
+    {
+      id: "63e923ce-db26-4024-90cb-ff43eccfdbcb",
+    },
+  ],
+};
+
 export function AppSidebar({ type, ...props }: SideBarProps) {
-  const data = type === 'organisateur' ? dataOrganisateur : dataUser;
+  const data = type === 'organisateur' ? dataOrganisateur : type === 'participant' ? dataUser : dataProprietaire;
 
   return (
     <Sidebar collapsible="icon" {...props}>

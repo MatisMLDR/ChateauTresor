@@ -203,15 +203,15 @@ export async function loginUser(currentState: { message: string }, formData: For
     }
 }
 
-export async function logout(userType: "participant" | "organisateur") {
+export async function logout(userType: "participant" | "organisateur" | "proprietaire") {
     const supabase = createClient()
     const { error } = await supabase.auth.signOut()
 
     if (error) {
         console.error('Error logging out:', error)
     }
-    // Redireger vers la landing page correspondante
-    const redirectPath = userType === "participant" ? "/" : "/organisateurs"
+    // Rediriger vers la landing page correspondante
+    const redirectPath = userType === "organisateur" ? "/organisateurs" : "/"
 
     redirect(redirectPath)
 }
