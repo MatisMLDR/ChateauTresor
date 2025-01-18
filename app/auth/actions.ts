@@ -180,6 +180,7 @@ export async function loginUser(currentState: { message: string }, formData: For
         console.error('Error logging in:', error)
         return { message: "Erreur lors de la connexion" }
     }
+    // Vérifier le type de l'utilisateur
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
     revalidatePath('/', 'layout')
     // Rediriger vers la page asscoiée au type de l'utilisateur
@@ -188,7 +189,7 @@ export async function loginUser(currentState: { message: string }, formData: For
 
         if (user && user.id) {
             const membre = await MembreEquipe.readByIdUser(user.id as UUID)
-            const equipesDuMembre = await MembreEquipe.getAllEquipesByMembre(user.id as UUID);
+            const equipesDuMembre = await MembreEquipe.getAllEquipesByMembre(membre.getIdMembre() as UUID);
             if (equipesDuMembre.length > 0) {
                 redirect('/organisateur/dashboard')
             } else {
