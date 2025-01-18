@@ -1,7 +1,7 @@
 /*
  * DAO pour les membres de l'équipe
  */
-import { MembreEquipeType } from '@/types';
+import { AppartenanceEquipeType, MembreEquipeType } from '@/types';
 import { MembreEquipe } from '@/classes/MembreEquipe';
 import { UUID } from 'crypto';
 
@@ -112,8 +112,8 @@ export async function createMembre(membre: any): Promise<MembreEquipe> {
   * @returns Promise<void>
   * @throws Error si la création échoue
   */
-export async function createAppartenanceMembreEquipe(appartenanceData: MembreEquipeType): Promise<void> {
-  const res = await fetch(`${PUBLIC_URL}/appartenances/membre`, {
+export async function createAppartenanceMembreEquipe(appartenanceData: AppartenanceEquipeType): Promise<void> {
+  const res = await fetch(`${PUBLIC_URL}/appartenances`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -124,4 +124,32 @@ export async function createAppartenanceMembreEquipe(appartenanceData: MembreEqu
   if (!res.ok) {
     throw new Error('Erreur lors de la création de l\'appartenance');
   }
+}
+
+export async function deleteAppartenanceMembreEquipe(id_membre: UUID, id_equipe: UUID): Promise<void> {
+  const res = await fetch(`${PUBLIC_URL}/appartenances/membre/${id_membre}/${id_equipe}`, {
+    method: 'DELETE',
+  });
+
+  if (!res.ok) {
+    throw new Error('Erreur lors de la suppression de l\'appartenance');
+  }
+}
+
+export async function getAppartenanceMembreEquipe(id_membre: UUID, id_equipe: UUID): Promise<any> {
+  const res = await fetch(`${PUBLIC_URL}/appartenances/membre/${id_membre}/${id_equipe}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération de l\'appartenance');
+  }
+  return await res.json();
+}
+
+export async function getAllAppartenancesMembre(id_membre: UUID): Promise<any> {
+  const res = await fetch(`${PUBLIC_URL}/appartenances/membre?id_membre=${id_membre}`);
+
+  if (res.status != 404 && !res.ok) {
+    throw new Error('Erreur lors de la récupération de l\'appartenance');
+  }
+
+  return await res.json();
 }

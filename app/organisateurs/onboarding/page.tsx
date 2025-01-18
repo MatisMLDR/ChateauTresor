@@ -323,7 +323,7 @@ const Onboarding = () => {
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="outline">
+                      <Button type="button" disabled={formData.type === ""}>
                         Soumettre la demande
                       </Button>
                     </AlertDialogTrigger>
@@ -338,7 +338,11 @@ const Onboarding = () => {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleSubmitWithExistingTeam}>
+                        <AlertDialogAction 
+                          type="submit" 
+                          formAction="/organisateurs/onboarding/attente/acceptation-equipe"
+                          onClick={handleSubmitWithExistingTeam}
+                        >
                           Continuer
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -537,7 +541,7 @@ const Onboarding = () => {
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="outline">
+                      <Button type="button" disabled={!formData.terms}>
                         Soumettre la demande
                       </Button>
                     </AlertDialogTrigger>
@@ -552,7 +556,11 @@ const Onboarding = () => {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleSubmitWithoutExistingTeam}>
+                        <AlertDialogAction 
+                          type="submit" 
+                          formAction="/organisateurs/onboarding/attente/verification-equipe"
+                          onClick={handleSubmitWithoutExistingTeam}
+                        >
                           Continuer
                         </AlertDialogAction>
                       </AlertDialogFooter>

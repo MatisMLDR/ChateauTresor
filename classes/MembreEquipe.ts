@@ -1,5 +1,5 @@
 import { AppartenanceEquipeType, MembreEquipeType } from '@/types';
-import { createAppartenanceMembreEquipe, createMembre, deleteMembre, getMembreById, getMembreByUserId, updateMembre } from '@/utils/dao/MembreEquipeUtils';
+import { createAppartenanceMembreEquipe, createMembre, deleteMembre, getAllAppartenancesMembre, getMembreById, getMembreByUserId, updateMembre } from '@/utils/dao/MembreEquipeUtils';
 import { UUID } from "crypto";
 
 export class MembreEquipe {
@@ -58,6 +58,12 @@ export class MembreEquipe {
     } catch (error) {
       throw new Error('Membre not created');
     }
+  }
+
+  public static async getAllEquipesByMembre(id_membre: UUID): Promise<MembreEquipe[]> {
+    const data = await getAllAppartenancesMembre(id_membre) as any;
+
+    return data.map((membre: MembreEquipeType) => new MembreEquipe(membre));
   }
 
 

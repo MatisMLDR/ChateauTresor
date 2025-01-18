@@ -5,6 +5,9 @@ import { revalidatePath } from 'next/cache'
 import { createStripeCustomer } from '@/utils/stripe/api'
 import { formatFullName } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice'
+import { MembreEquipe } from '@/classes/MembreEquipe'
+import { UUID } from 'crypto'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
 
@@ -148,7 +151,6 @@ export async function signUpUser(currentState: { message: string }, formData: Fo
 
 export async function loginOrganisateur(currentState: { message: string }, formData: FormData): Promise<any> {
 
-
     const result = await loginUser(currentState, formData, "organisateur")
     if (result?.message) {
         return result;
@@ -180,8 +182,24 @@ export async function loginUser(currentState: { message: string }, formData: For
     }
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
     revalidatePath('/', 'layout')
-    // Rediriger vers la page d'accueil du participant
-    redirect(`/${type}s/dashboard`)
+    // Rediriger vers la page asscoiée au type de l'utilisateur
+    if (type === "organisateur") { 
+        const user = (await supabase.auth.getUser()).data.user
+
+        if (user && user.id) {
+            const membre = await MembreEquipe.readByIdUser(user.id as UUID)
+            const equipesDuMembre = await MembreEquipe.getAllEquipesByMembre(user.id as UUID);
+            if (equipesDuMembre.length > 0) {
+                redirect('/organisateur/dashboard')
+            } else {
+                redirect('/organisateur/onboarding')
+            }
+        }
+        // Si le membre de l'équipe organisatrice n'a pas encore d'équipe
+
+    } else {
+        redirect(`/${type}s/dashboard`)
+    }
 }
 
 export async function logout(userType: "participant" | "organisateur") {
@@ -192,7 +210,7 @@ export async function logout(userType: "participant" | "organisateur") {
         console.error('Error logging out:', error)
     }
     // Redireger vers la landing page correspondante
-    const redirectPath = userType === "participant" ? "/" : "/organisateur"
+    const redirectPath = userType === "participant" ? "/" : "/organisateurs"
 
     redirect(redirectPath)
 }

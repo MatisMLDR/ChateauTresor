@@ -2,23 +2,6 @@ import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
 import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe, getEquipeByMembreId, getAllEquipesVerifiees } from '@/utils/dao/EquipeOrganisatriceUtils';
 import { UUID } from "crypto";
 
-// -- -- Table Equipe_Organisatrice
-// -- CREATE TABLE public.Equipe_Organisatrice
-// -- (
-// --     id_equipe       UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-// --     nom             VARCHAR(255) UNIQUE NOT NULL,
-// --     type            VARCHAR(255) DEFAULT 'Association',
-// --     n_siret         VARCHAR(255) DEFAULT NULL,
-// --     id_taxes        VARCHAR(255) DEFAULT NULL,
-// --     site_web        VARCHAR(255) DEFAULT NULL,
-// --     adresse_postale VARCHAR(255) DEFAULT 'Non spécifiée',
-// --     statut_verification VARCHAR(255) NOT NULL DEFAULT 'En attente de vérification'
-// --     CHECK (statut_verification IN ('En attente de vérification', 'Vérifiée', 'Refusée')),
-// --     carte_identite_chef VARCHAR(255),
-// --     telephone       VARCHAR(20) DEFAULT NULL,
-// --     description     TEXT DEFAULT 'Pas de description',
-// -- );
-
 class EquipeOrganisatrice {
   private id_equipe: UUID;
   private nom: string;
