@@ -18,7 +18,9 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog'; // Import des composants AlertDialog
-import { buttonVariants } from '@/components/ui/button'; // Import des styles de bouton
+import { buttonVariants } from '@/components/ui/button';
+import { UUID } from 'crypto';
+import { Enigme } from '@/classes/Enigme'; // Import des styles de bouton
 
 const GameInterface: React.FC = () => {
   const [enigmes, setEnigmes] = useState<EnigmeType[]>([]);
@@ -35,13 +37,15 @@ const GameInterface: React.FC = () => {
   useEffect(() => {
     const fetchEnigmes = async () => {
       try {
-        const chasseInstance = await Chasse.readId(chasseId);
+        const chasseInstance = await Chasse.readId(chasseId as UUID);
         const enigmes = await chasseInstance.getAllEnigmes();
-        const enigmesTriees = enigmes.sort((a, b) => a.ordre - b.ordre);
+        const enigmesTriees = enigmes.sort(
+          (a: { ordre: number }, b: { ordre: number }) => a.ordre - b.ordre
+        );
         setEnigmes(enigmesTriees);
 
         if (enigmeIdFromUrl) {
-          const index = enigmesTriees.findIndex((enigme) => enigme.id_enigme === enigmeIdFromUrl);
+          const index = enigmesTriees.findIndex((enigme: Enigme) => enigme.id_enigme === enigmeIdFromUrl);
           if (index !== -1) {
             setCurrentEnigmeIndex(index);
           }
@@ -176,7 +180,7 @@ const GameInterface: React.FC = () => {
         {showIndices && (
           <div className="mb-8 bg-gray-50 p-6 rounded-lg shadow-inner">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Indices</h2>
-            <IndiceComponent idEnigme={currentEnigme.id_enigme} />
+            <IndiceComponent idEnigme={currentEnigme.id_enigme as UUID} />
           </div>
         )}
 

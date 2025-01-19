@@ -55,9 +55,15 @@ export class IndiceParticipant {
    */
   public async markAsDiscovered(): Promise<void> {
     try {
-      await indiceDecouvert(this.id_indice, this.id_participant);
+      // Appeler la méthode du DAO pour enregistrer l'indice comme découvert
+      const result = await indiceDecouvert(this.id_indice, this.id_participant);
+
+      // Mettre à jour les propriétés de l'objet
       this.est_decouvert = true;
       this.date_utilisation = new Date();
+
+      // Log du résultat
+      console.log("Indice marqué comme découvert avec succès:", result);
     } catch (error) {
       console.error("Erreur dans markAsDiscovered:", error);
       throw new Error(
@@ -126,4 +132,71 @@ export class IndiceParticipant {
       );
     }
   }
+
+  /**
+   * Méthode pour récupérer les indices révélés par un participant
+   * @param participantId L'identifiant du participant
+   * @returns Promise<IndiceParticipant[]> La liste des indices révélés
+   * @throws Error si l'opération échoue
+   */
+  public static async getDiscoveredIndices(participantId: UUID): Promise<IndiceParticipant[]> {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant/discovered?participantId=${participantId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const errorResponse = await res.json();
+        console.error('Erreur API:', res.status, errorResponse);
+        throw new Error(errorResponse.error || 'Erreur lors de la récupération des indices révélés');
+      }
+
+      const data = await res.json();
+      return data.map((item: any) => new IndiceParticipant(item));
+    } catch (error) {
+      console.error('Erreur dans getDiscoveredIndices:', error);
+      throw error;
+    }
+  }
+
+
+  /**
+   * Méthode pour vérifier si un indice est déjà renseigné pour un participant
+   * @param participantId L'identifiant du participant
+   * @param indiceId L'identifiant de l'indice
+   * @returns Promise<boolean> True si l'indice est déjà renseigné, false sinon
+   */
+  public static async checkIfIndiceExists(participantId: UUID, indiceId: UUID): Promise<boolean> {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant/discovered?participantId=${participantId}&idIndice=${indiceId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // Si la réponse n'est pas OK, renvoyer false
+      if (!res.ok) {
+        const errorResponse = await res.json();
+        console.error('Erreur API:', res.status, errorResponse);
+        return false; // Renvoyer false en cas d'erreur
+      }
+
+      const data = await res.json();
+      return data.exists; // Renvoie true ou false
+    } catch (error) {
+      console.error('Erreur dans checkIfIndiceExists:', error);
+      return false; // Renvoyer false en cas d'erreur
+    }
+  }
+
 }

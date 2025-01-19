@@ -15,6 +15,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { UUID } from 'crypto';
+import { Enigme } from '@/classes/Enigme';
 
 const ScanQRCodePage: React.FC = () => {
   const [scanError, setScanError] = useState<string | null>(null);
@@ -33,9 +35,9 @@ const ScanQRCodePage: React.FC = () => {
 
   const fetchEnigmeTitle = async () => {
     try {
-      const chasseInstance = await Chasse.readId(chasseId);
+      const chasseInstance = await Chasse.readId(chasseId as UUID);
       const enigmes = await chasseInstance.getAllEnigmes();
-      const currentEnigme = enigmes.find((enigme) => enigme.id_enigme === enigmeId);
+      const currentEnigme = enigmes.find((enigme: Enigme) => enigme.id_enigme === enigmeId);
       if (currentEnigme) {
         setEnigmeTitle(currentEnigme.titre);
       }
@@ -52,16 +54,16 @@ const ScanQRCodePage: React.FC = () => {
 
   const handleCodeValidation = async (code: string) => {
     try {
-      const chasseInstance = await Chasse.readId(chasseId);
+      const chasseInstance = await Chasse.readId(chasseId as UUID);
       const enigmes = await chasseInstance.getAllEnigmes();
-      const enigmesTriees = enigmes.sort((a, b) => a.ordre - b.ordre);
-      const currentEnigme = enigmesTriees.find((enigme) => enigme.id_enigme === enigmeId);
+      const enigmesTriees = enigmes.sort((a: { ordre: number; }, b: { ordre: number; }) => a.ordre - b.ordre);
+      const currentEnigme = enigmesTriees.find((enigme: Enigme) => enigme.id_enigme === enigmeId);
 
       if (currentEnigme && code === currentEnigme.code_reponse) {
         setValidationMessage('Code correct !');
         setShowValidationPopup(true);
 
-        const currentIndex = enigmesTriees.findIndex((enigme) => enigme.id_enigme === enigmeId);
+        const currentIndex = enigmesTriees.findIndex((enigme: Enigme) => enigme.id_enigme === enigmeId);
 
         if (currentIndex < enigmesTriees.length - 1) {
           const nextEnigme = enigmesTriees[currentIndex + 1];
