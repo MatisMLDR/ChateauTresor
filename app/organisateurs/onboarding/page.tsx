@@ -131,18 +131,10 @@ const Onboarding = () => {
     };
 
     try {
-      const res = await createEquipe(data);
+      await createEquipe(data);
 
-      if (!res.ok) {
-        console.error('Erreur lors de l\'insertion des données :', res.error);
-        // Gérer l'erreur (affichage de message, etc.)
-      } else {
-        console.log('Équipe créée avec succès');
-        // Redirection après le succès de l'insertion
-        router.push('/organisateurs/onboarding/attente/verification-equipe');
-      }
     } catch (err) {
-      console.error('Erreur inconnue lors de l\'insertion des données :', err);
+      console.error('Erreur lors de l\'insertion des données :', err);
     }
   };
 
@@ -344,7 +336,10 @@ const Onboarding = () => {
                     onChange={handleInputChange}
                     required
                   >
-                    <option value="Société" selected>Société</option>
+                    <option value="" disabled>
+                      Sélectionner un type
+                    </option>
+                    <option value="Société">Société</option>
                     <option value="Particuliers">Particuliers</option>
                   </select>
                 </div>
@@ -352,7 +347,7 @@ const Onboarding = () => {
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
-                  <Button type="button" onClick={handleNextStep}>
+                  <Button type="button" onClick={handleNextStep} disabled={formData.type === ""}>
                     Continuer
                   </Button>
                 </div>

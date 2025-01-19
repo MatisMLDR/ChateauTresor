@@ -61,8 +61,8 @@ export async function getAllEquipesVerifiees(): Promise<any[]> {
  * @throws Error si la création échoue
  * @example const nouvelleEquipe = await createEquipe(equipeData);
  */
-export async function createEquipe(equipe: any): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/equipes`, {
+export async function createEquipe(equipe: any): Promise<void> {
+  const res = await fetch(`${PUBLIC_URL}/api/equipes`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -70,10 +70,12 @@ export async function createEquipe(equipe: any): Promise<any> {
     body: JSON.stringify(equipe),
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error('Erreur lors de la création de l\'équipe organisatrice');
+    console.error('Response Error:', res.status, res.statusText);
+    throw new Error(`Erreur lors de la création de l'équipe organisatrice: ${res.statusText}`);
   }
-  return await res.json();
 }
 
 /*
@@ -152,4 +154,12 @@ export async function refuserDemandeEquipe(appartenanceData: any): Promise<void>
   if (!res.ok) {
     throw new Error('Erreur lors du refus de la demande');
   }
+}
+
+export async function getAllChassesOfEquipe(id_equipe: UUID): Promise<any[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/equipe?id_equipe=${id_equipe}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des chasses de l\'équipe');
+  }
+  return await res.json();
 }

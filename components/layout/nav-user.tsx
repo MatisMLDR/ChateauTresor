@@ -32,8 +32,6 @@ export function NavUser({type} : SideBarProps) {
   const [email, setEmail] = useState('');
   const [login, setLogin] = useState('');
 
-  const router = useRouter();
-
   useEffect(() => {
     const fetchUser = async () => {
       const supabase = createClient();
@@ -49,9 +47,7 @@ export function NavUser({type} : SideBarProps) {
         } catch (err) {
           console.error('Erreur lors de la récupération des détails du château :', err);
         }
-      } else {
-        router.push('/login'); // Redirect to login if no user is found
-      }
+      } 
     };
 
     fetchUser();

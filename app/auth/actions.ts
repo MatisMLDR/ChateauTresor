@@ -196,7 +196,7 @@ export async function loginUser(currentState: { message: string }, formData: For
 
         if (user && user.id) {
             const membre = await MembreEquipe.readByIdUser(user.id as UUID);
-            const equipesDuMembre = await MembreEquipe.getAllEquipesByMembre(membre.getIdMembre() as UUID);
+            const equipesDuMembre = await MembreEquipe.getAllAppartenancesOfMembre(membre.getIdMembre() as UUID);
             if (equipesDuMembre.length > 0) {
                 redirectPath = `/organisateurs/dashboard/${equipesDuMembre[0].id_equipe}`;
             } else {

@@ -60,10 +60,22 @@ export class MembreEquipe {
     }
   }
 
-  public static async getAllEquipesByMembre(id_membre: UUID): Promise<any[]> {
+  public static async getAllAppartenancesOfMembre(id_membre: UUID): Promise<any[]> {
     const data = await getAllAppartenancesMembre(id_membre) as any;
 
     return data;
+  }
+
+  public static async getAllEquipesOfMembre(id_membre: UUID): Promise<EquipeOrganisatrice[]> {
+    const data = await getAllAppartenancesMembre(id_membre) as any;
+    // Use Promise.all to ensure the array of promises is awaited
+    const equipes = await Promise.all(
+      data.map(async (appartenance: any) => {
+        return await EquipeOrganisatrice.readId(appartenance.id_equipe);
+      })
+    );
+
+    return equipes; // Now this will return the resolved array of EquipeOrganisatrice objects
   }
 
 

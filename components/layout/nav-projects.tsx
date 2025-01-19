@@ -1,7 +1,6 @@
 'use client';
 
 import { Map, Castle, MoreHorizontal, QrCode, Search, Settings, Star, Calendar, Trash, User } from 'lucide-react';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,63 +17,125 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-
 import { Skeleton } from '@/components/ui/skeleton';
-
 import { SideBarProps } from '@/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { UUID } from 'crypto';
+import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
+import Chasse from '@/classes/Chasse';
 
 export function NavProjects({
-  chasse,
+  id_equipe_courante,
   type,
 }: {
-  chasse: {
-    id: string;
-  }[];
+  id_equipe_courante: UUID;
   type: SideBarProps['type'];
 }) {
   const { isMobile } = useSidebar();
-  const [chasseNames, setChasseNames] = useState<Record<string, string>>({});
+  const [lastThreeHunts, setLastThreeHunts] = useState<Chasse[]>([]);
 
   useEffect(() => {
-    // Fonction pour récupérer le nom d'une chasse ou d'un château depuis l'API
-    const fetchItemName = async (id: string) => {
+    const fetchLastThreeHunts = async () => {
       try {
-        let url = `/api/chasses/${id}`;
-        if (type === "proprietaire") {
-          url = `/api/chateaux/${id}`;
+        const equipe = await EquipeOrganisatrice.readId(id_equipe_courante);
+        if (equipe) {
+          localStorage.setItem('equipe', JSON.stringify(equipe));
+          const teamHunts = await equipe.getAllChasses();
+          setLastThreeHunts(teamHunts.slice(0, 3)); // Set the last 3 hunts
         }
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-        const data = await response.json();
-        if(type === "proprietaire") {
-          return data.nom;
-        }
-        return data.titre;
-      } catch (error) {
-        console.error(`Erreur lors de la récupération de l'item ${id}`, error);
+      } catch (err) {
+        console.error('Error fetching hunts:', err);
       }
     };
-  
-    // Récupérer tous les noms des chasses ou des châteaux
-    const fetchAllItemNames = async () => {
-      const names: Record<string, string> = {};
-      try {
-        const namesArray = await Promise.all(chasse.map((item) => fetchItemName(item.id)));
-        chasse.forEach((item, index) => {
-          names[item.id] = namesArray[index];
-        });
-        setChasseNames(names);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des noms des chasses', error);
-      }
-    };
-  
-    fetchAllItemNames();
-  }, [chasse, type]); // Ajoutez type à la liste des dépendances
+    fetchLastThreeHunts();
+  }, [id_equipe_courante]);
+
+  const renderMenuItems = (hunt: Chasse) => {
+    const baseUrl = `/organisateurs/dashboard/${id_equipe_courante}/chasses`;
+
+    // Based on user type, determine actions
+    switch (type) {
+      case 'organisateur':
+        return (
+          <>
+            <Link href={`${baseUrl}/modifier_chasse/${hunt.getIdChasse()}`}>
+              <DropdownMenuItem>
+                <Settings className="text-muted-foreground" />
+                Modifier
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`${baseUrl}/${hunt.getIdChasse()}/avis`}>
+              <DropdownMenuItem>
+                <Star className="text-muted-foreground" />
+                Avis
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`${baseUrl}/${hunt.getIdChasse()}/qr`}>
+              <DropdownMenuItem>
+                <QrCode className="text-muted-foreground" />
+                QR
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Trash className="text-muted-foreground" />
+              Supprimer
+            </DropdownMenuItem>
+          </>
+        );
+      case 'participant':
+        return (
+          <>
+            <Link href={`/participants/dashboard/chasses/${hunt.getIdChasse()}`}>
+              <DropdownMenuItem>
+                <Search className="text-muted-foreground" />
+                Voir
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuSeparator />
+            <Link href={`/participants/dashboard/chasses/${hunt.getIdChasse()}/avis`}>
+              <DropdownMenuItem>
+                <Star className="text-muted-foreground" />
+                Avis
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`/participants/dashboard/chasses/${hunt.getIdChasse()}/createur`}>
+              <DropdownMenuItem>
+                <User className="text-muted-foreground" />
+                Voir le créateur
+              </DropdownMenuItem>
+            </Link>
+          </>
+        );
+      case 'proprietaire':
+        return (
+          <>
+            <Link href={`/proprietaires/dashboard/chasses/${hunt.getIdChasse()}`}>
+              <DropdownMenuItem>
+                <Search className="text-muted-foreground" />
+                Voir
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuSeparator />
+            <Link href={`/proprietaire/modifier/${hunt.getIdChasse()}`}>
+              <DropdownMenuItem>
+                <Settings className="text-muted-foreground" />
+                Modifier
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`/proprietaire/calendrier/${hunt.getIdChasse()}`}>
+              <DropdownMenuItem>
+                <Calendar className="text-muted-foreground" />
+                Calendrier
+              </DropdownMenuItem>
+            </Link>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -82,15 +143,20 @@ export function NavProjects({
         {type === 'organisateur' ? 'Chasses récentes' : type === 'participant' ? 'Vos chasses' : 'Châteaux'}
       </SidebarGroupLabel>
       <SidebarMenu>
-        {chasse.map((item) => (
-          <SidebarMenuItem key={item.id}>
+        {lastThreeHunts.map((hunt) => (
+          <SidebarMenuItem key={hunt.getIdChasse()}>
             <SidebarMenuButton asChild>
-              {/* Adapte l'URL en fonction du rôle de l'utilisateur */}
               <Link
-                href={`${type === 'organisateur' ? '/organisateurs/dashboard/modifier_chasse/' : type === 'participant' ? `/participants/dashboard/chasses/'}${item.id}` : '/chateaux/'}${item.id}`}
+                href={
+                  type === 'organisateur'
+                    ? `/organisateurs/dashboard/${id_equipe_courante}/modifier_chasse/${hunt.getIdChasse()}`
+                    : type === 'participant'
+                    ? `/participants/dashboard/chasses/${hunt.getIdChasse()}`
+                    : `/chateaux/${hunt.getIdChasse()}`
+                }
               >
                 {type === 'proprietaire' ? <Castle /> : <Map />}
-                {chasseNames[item.id] || <Skeleton className={'h-full w-full'} />}
+                {hunt.getTitre() || <Skeleton className={'h-full w-full'} />}
               </Link>
             </SidebarMenuButton>
             <DropdownMenu>
@@ -100,83 +166,8 @@ export function NavProjects({
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-48 rounded-lg"
-                side={isMobile ? 'bottom' : 'right'}
-                align={isMobile ? 'end' : 'start'}
-              >
-                {type === 'organisateur' ? (
-                  <>
-                    <Link href={`/organisateurs/dashboard/modifier_chasse/${item.id}`}>
-                      <DropdownMenuItem>
-                        <Settings className="text-muted-foreground" />
-                        <span>Modifier</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link href={`${item.id}/avis`}>
-                      <DropdownMenuItem>
-                        <Star className="text-muted-foreground" />
-                        <span>Avis</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link href={`${item.id}/qr`}>
-                      <DropdownMenuItem>
-                        <QrCode className="text-muted-foreground" />
-                        <span>QR</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Trash className="text-muted-foreground" />
-                      <span>Supprimer</span>
-                    </DropdownMenuItem>
-                  </>
-                ) : type === 'participant' ? (
-                  <>
-                    <Link href={`/participants/dashboard/chasses/${item.id}`}>
-                      <DropdownMenuItem>
-                        <Search className="text-muted-foreground" />
-                        <span>Voir</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuSeparator />
-                    <Link href={`${item.id}/avis`}>
-                      <DropdownMenuItem>
-                        <Star className="text-muted-foreground" />
-                        <span>Avis</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link href={`${item.id}/createur`}>
-                      <DropdownMenuItem>
-                        <User className="text-muted-foreground" />
-                        <span>Voir le créateur</span>
-                      </DropdownMenuItem>
-                    </Link>
-                  </>
-                ) : (        
-                  //Partie sur les propriétaires de châteaux
-                  <>
-                    <Link href={`/proprietaires/dashboard/chasses/${item.id}`}>
-                      <DropdownMenuItem>
-                        <Search className="text-muted-foreground" />
-                        <span>Voir</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuSeparator />
-                    <Link href={`/proprietaire/modifier/${item.id}`}>
-                      <DropdownMenuItem>
-                        <Settings className="text-muted-foreground" />
-                        <span>Modifier</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link href={`/proprietaire/calendrier/${item.id}`}>
-                      <DropdownMenuItem>
-                        <Calendar className="text-muted-foreground" />
-                        <span>Calendrier</span>
-                      </DropdownMenuItem>
-                    </Link>
-                  </>            
-                )}
+              <DropdownMenuContent className="w-48 rounded-lg" side={isMobile ? 'bottom' : 'right'} align={isMobile ? 'end' : 'start'}>
+                {renderMenuItems(hunt)}
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

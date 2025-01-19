@@ -1,6 +1,7 @@
 import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
-import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe, getEquipeByMembreId, getAllEquipesVerifiees, getAllDemandesOfEquipe, accepterDemandeEquipe, refuserDemandeEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
+import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe, getEquipeByMembreId, getAllEquipesVerifiees, getAllDemandesOfEquipe, accepterDemandeEquipe, refuserDemandeEquipe, getAllChassesOfEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
 import { UUID } from "crypto";
+import Chasse from "./Chasse";
 
 class EquipeOrganisatrice {
   private id_equipe: UUID;
@@ -64,6 +65,10 @@ class EquipeOrganisatrice {
   public getDescription(): string | null {
     return this.description;
   }
+  public async getAllChasses(): Promise<Chasse[]> {
+    const data = await getAllChassesOfEquipe(this.id_equipe);
+    return data.map((chasse) => new Chasse(chasse));
+  }
 
 
   // Setters
@@ -99,7 +104,7 @@ class EquipeOrganisatrice {
   }
 
   // Méthode pour charger les données de l'équipe organisatrice
-  public static async readId(id_equipe: UUID): Promise<any> {
+  public static async readId(id_equipe: UUID): Promise<EquipeOrganisatrice> {
 
     const data = await getEquipeById(id_equipe) as any;
 
@@ -223,9 +228,13 @@ class EquipeOrganisatrice {
     );
   }
 
-  public static async createEquipe(equipe: EquipeOrganisatrice): Promise<EquipeOrganisatrice> {
-    const data = await createEquipe(equipe);
-    return new EquipeOrganisatrice(data);
+  public static async createEquipe(equipe: EquipeOrganisatrice): Promise<void> {
+    try {
+      await createEquipe(equipe);
+    } catch (error) {
+      console.error('Erreur lors de la création de l\'équipe :', error);
+      throw new Error('Erreur lors de la création de l\'équipe');
+    }
   }
 
   public static async getAllDemandesEquipe(id_equipe: UUID): Promise<any> {
