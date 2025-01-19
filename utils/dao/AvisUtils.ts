@@ -11,12 +11,26 @@ dotenv.config();
  * @example const avis = await getAllAvisByChasse(1);
  * @params id_chasse L'identifiant d'une chasse
  **/
-export async function getAllAvisByChasse(id_chasse: UUID): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/chasse?id_chasse=${id_chasse}`);
-  if (!res.ok) {
-    throw new Error('Erreur lors de la récupération des avis');
+export async function getAllAvisByChasse(id_chasse: UUID): Promise<any[]> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/chasse?id_chasse=${id_chasse}`);
+    
+    // Si la réponse est 404, retourner un tableau vide
+    if (res.status === 404) {
+      return [];
+    }
+
+    // Si la réponse n'est pas OK, lever une erreur
+    if (!res.ok) {
+      throw new Error('Erreur lors de la récupération des avis');
+    }
+
+    // Retourner les données JSON
+    return await res.json();
+  } catch (error) {
+    console.error('Erreur dans getAllAvisByChasse:', error);
+    throw error;
   }
-  return await res.json();
 }
 
 /**

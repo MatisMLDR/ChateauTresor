@@ -4,10 +4,11 @@ import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm'
 import { notFound } from 'next/navigation'
-export default async function ForgotPasswordSuccess({ params}: Readonly<{ params: { redirect: "participant" | "organisateur" } }>) {
+export default async function ForgotPasswordSuccess({ searchParams }: { searchParams: { redirect: "participant" | "organisateur" } }) {
 
-    const redirect = await searchParams.redirect
-if (!redirect) {
+    const { redirect } = await searchParams
+
+    if (!redirect) {
         <div>loading...</div>
     }
 

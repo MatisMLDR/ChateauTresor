@@ -196,13 +196,22 @@ export type ProfilType = {
   plan: string; // Non null, défaut 'none'
 }
 
+
 /* A modifier avec les ? */
 export type MembreEquipeType = {
-  id_membre: UUID; // Identifiant unique, SERIAL, non null
-  carte_identite?: string | null; // Peut être null, sinon VARCHAR(255)
-  est_verifie?: boolean; // Optionnel, par défaut false
-  role_equipe?: string; // Optionnel, par défaut 'Membre'
+  id_membre: UUID; // UUID, non null
   id_user: UUID; // UUID, non null
+}
+/* A modifier avec les ? */
+export type AppartenanceEquipeType = {
+  id_membre: UUID; // Identifiant unique, SERIAL, non null
+  role_equipe?: string; // Optionnel, par défaut 'Membre'
+  date_demande?: string; // Optionnel, TIMESTAMP, par défaut CURRENT_TIMESTAMP
+  message_demande?: string; // Optionnel, par défaut 'Pas de message'
+  role_equipe?: string; // Optionnel, par défaut 'Invité'
+  date_appartenance?: string; // Optionnel, DATE, par défaut CURRENT_DATE
+  statut?: string; // Optionnel, par défaut 'En attente de validation'
+  id_equipe: UUID; // UUID, non null
 }
 
 export type Haut_FaitType = {
@@ -215,14 +224,17 @@ export type Haut_FaitType = {
 }
 
 export type EquipeOrganisatriceType = {
-  id_equipe: UUID;              // SERIAL PRIMARY KEY, donc un nombre entier auto-incrémenté
-  type: string;                   // VARCHAR(255), avec une valeur par défaut 'Association'
-  n_siret: string | null;         // VARCHAR(255), peut être null
-  id_taxes: string | null;        // VARCHAR(255), peut être null
-  nb_membres: number;             // INT, avec une valeur par défaut 0
-  site_web: string | null;        // VARCHAR(255), peut être null
-  adresse_postale: string;        // VARCHAR(255), avec une valeur par défaut 'Non spécifiée'
-  telephone: string | null;       // VARCHAR(20), peut être null              
+  id_equipe: UUID;
+  nom: string;
+  type: "Société" | "Particulier";
+  n_siret: string | null;
+  id_taxes: string | null;
+  site_web: string | null;
+  adresse_postale: string;
+  telephone: string | null;
+  statut_verification: string;
+  carte_identite_chef: string | null;
+  description: string | null;
 }
 
 export type RecompenseType = {
@@ -242,7 +254,7 @@ export type RecompenseType = {
 
 export type SideBarProps = {
   children?: React.reactNode;
-  type: "participant" | "organisateur";
+  type: "participant" | "organisateur" | "proprietaire";
 }
 
 //// Props de la page de profile ////

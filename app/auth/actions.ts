@@ -5,6 +5,9 @@ import { revalidatePath } from 'next/cache'
 import { createStripeCustomer } from '@/utils/stripe/api'
 import { formatFullName } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice'
+import { MembreEquipe } from '@/classes/MembreEquipe'
+import { UUID } from 'crypto'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
 
@@ -148,7 +151,6 @@ export async function signUpUser(currentState: { message: string }, formData: Fo
 
 export async function loginOrganisateur(currentState: { message: string }, formData: FormData): Promise<any> {
 
-
     const result = await loginUser(currentState, formData, "organisateur")
     if (result?.message) {
         return result;
@@ -156,7 +158,7 @@ export async function loginOrganisateur(currentState: { message: string }, formD
 }
 
 export async function loginParticipant(currentState: { message: string }, formData: FormData): Promise<any> {
-    
+
     const result = await loginUser(currentState, formData, "participant");
 
     if (result?.message) {
@@ -178,21 +180,46 @@ export async function loginUser(currentState: { message: string }, formData: For
         console.error('Error logging in:', error)
         return { message: "Erreur lors de la connexion" }
     }
+    // Vérifier le type de l'utilisateur
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
-    revalidatePath('/', 'layout')
-    // Rediriger vers la page d'accueil du participant
-    redirect(`/${type}s/dashboard`)
+    revalidatePath("/", 'layout')
+
+    if (type === "participant") {
+        return redirect('/participants/dashboard');
+    }
+    // Rediriger vers la page asscoiée au type de l'utilisateur
+    let redirectPath = '/organisateurs/onboarding';
+
+
+    try {
+        const user = (await supabase.auth.getUser()).data.user;
+
+        if (user && user.id) {
+            const membre = await MembreEquipe.readByIdUser(user.id as UUID);
+            const equipesDuMembre = await MembreEquipe.getAllEquipesByMembre(membre.getIdMembre() as UUID);
+            if (equipesDuMembre.length > 0) {
+                redirectPath = '/organisateurs/dashboard';
+            } else {
+                redirectPath = '/organisateurs/onboarding';
+            }
+        } 
+    } catch (error) {
+        redirectPath = '/organisateurs/onboarding';
+    } finally {
+        redirect(redirectPath);
+    }
+
 }
 
-export async function logout(userType: "participant" | "organisateur") {
+export async function logout(userType: "participant" | "organisateur" | "proprietaire") {
     const supabase = createClient()
     const { error } = await supabase.auth.signOut()
 
     if (error) {
         console.error('Error logging out:', error)
     }
-    // Redireger vers la landing page correspondante
-    const redirectPath = userType === "participant" ? "/" : "/organisateur"
+    // Rediriger vers la landing page correspondante
+    const redirectPath = userType === "organisateur" ? "/organisateurs" : "/"
 
     redirect(redirectPath)
 }

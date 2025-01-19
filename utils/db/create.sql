@@ -101,24 +101,26 @@ CREATE TABLE public.Chateau
 -- Table Equipe_Organisatrice
 CREATE TABLE public.Equipe_Organisatrice
 (
-    id_equipe       UUID PRIMARY KEY    NOT NULL DEFAULT uuid_generate_v4(),
+    id_equipe       UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
     nom             VARCHAR(255) UNIQUE NOT NULL,
-    type            VARCHAR(255)                 DEFAULT 'Association',
-    n_siret         VARCHAR(255)                 DEFAULT NULL,
-    id_taxes        VARCHAR(255)                 DEFAULT NULL,
-    nb_membres      INT                          DEFAULT 0,
-    site_web        VARCHAR(255)                 DEFAULT NULL,
-    adresse_postale VARCHAR(255)                 DEFAULT 'Non spécifiée',
-    telephone       VARCHAR(20)                  DEFAULT NULL
+    type            VARCHAR(255) NOT NULL DEFAULT 'Société' CHECK (
+        type IN ('Société', 'Particulier')
+        ),
+    n_siret         VARCHAR(255) DEFAULT NULL,
+    id_taxes        VARCHAR(255) DEFAULT NULL,
+    site_web        VARCHAR(255) DEFAULT NULL,
+    adresse_postale VARCHAR(255) DEFAULT 'Non spécifiée',
+    statut_verification VARCHAR(255) NOT NULL DEFAULT 'En attente de vérification'
+    CHECK (statut_verification IN ('En attente de vérification', 'Vérifiée', 'Refusée')),
+    carte_identite_chef VARCHAR(255) DEFAULT NULL,
+    telephone       VARCHAR(20) DEFAULT NULL,
+    description     TEXT DEFAULT 'Pas de description'
 );
 
 -- Table Membre_equipe
 CREATE TABLE public.Membre_equipe
 (
     id_membre      UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-    carte_identite VARCHAR(255)              DEFAULT NULL,
-    est_verifie    BOOLEAN                   DEFAULT FALSE,
-    role_equipe    VARCHAR(255)              DEFAULT 'Membre',
     id_user        UUID             NOT NULL UNIQUE REFERENCES auth.users ON DELETE CASCADE
 );
 
@@ -128,9 +130,27 @@ CREATE TABLE public.Appartenance_Equipe
     id_membre         UUID NOT NULL,
     id_equipe         UUID NOT NULL,
     date_appartenance DATE DEFAULT CURRENT_DATE,
+    statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
+        statut IN ('En attente de validation', 'Validé', 'Refusé')
+        ),
+    date_demande      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    message_demande   TEXT DEFAULT 'Pas de message',
+    role_equipe    VARCHAR(255)              DEFAULT 'Invité' CHECK (
+        role_equipe IN ('Invité', 'Créateur', 'Administrateur', 'Modérateur', 'Organisateur', 'Trésorier', 'Autre')
+        ),
     PRIMARY KEY (id_membre, id_equipe),
     FOREIGN KEY (id_membre) REFERENCES Membre_equipe (id_membre) ON DELETE CASCADE,
     FOREIGN KEY (id_equipe) REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE
+);
+
+CREATE TABLE public.Invitations_Equipe
+(
+    id_invitation  UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+    id_equipe      UUID NOT NULL REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE,
+    email_invite   VARCHAR(255) NOT NULL,
+    statut         VARCHAR(50) NOT NULL DEFAULT 'Envoyée'
+    CHECK (statut IN ('Envoyée', 'Acceptée', 'Refusée')),
+    date_invitation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table Participant
@@ -161,7 +181,7 @@ CREATE TABLE public.Chasse
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
     theme             VARCHAR(255)                 DEFAULT 'Aucun thème',
     statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
-        statut IN ('En attente de validation', 'Valide', 'En cours', 'Finie')
+        statut IN ('En attente de validation', 'Validée', 'En cours', 'Finie')
         ),
     id_chateau        UUID                NOT NULL REFERENCES Chateau (id_chateau) ON DELETE CASCADE,
     id_equipe         UUID                NOT NULL REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE

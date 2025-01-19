@@ -56,18 +56,19 @@ VALUES ('63e923ce-db26-4024-90cb-ff43eccfdbcb', 'IUT 2', ' 2 Place du Doyen Goss
         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg/2560px-Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg',
         'https://www.chateau-amboise.com/', '530a3302-4d03-49c0-a262-a72b3d434da9') ON CONFLICT (id_chateau) DO NOTHING;
 
+
 -- Insert data into Equipe_Organisatrice
-INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale,
-                                         telephone)
-VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Association', null, null, '1', null, null, null),
-       ('42fdbebf-d919-4bc2-a7b7-f00688f706af', 'Samsung', 'Entreprise', '33436749700172', 'FR89334367497', '0',
+INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, site_web, adresse_postale,
+                                         telephone, statut_verification)
+VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Particulier', null, null, null, null, null, 'Vérifiée'),
+       ('42fdbebf-d919-4bc2-a7b7-f00688f706af', 'Samsung', 'Société', '33436749700172', 'FR89334367497', 
         'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ',
-        '01 44 04 70 00') ON CONFLICT (id_equipe) DO NOTHING;
+        '01 44 04 70 00', 'Vérifiée') ON CONFLICT (id_equipe) DO NOTHING;
 
 -- Insert data into Membre_equipe
-INSERT INTO public.Membre_equipe (id_membre, carte_identite, est_verifie, role_equipe, id_user)
-VALUES ('73078d78-ce50-49b5-bf29-b692c76345bd', null, TRUE, 'Chef', 'a27901fd-3c67-4891-b7ac-55dd04a2f122'),
-       ('aa877810-9602-45a6-8591-cffaa4824aae', null, TRUE, 'Organisateur',
+INSERT INTO public.Membre_equipe (id_membre, id_user)
+VALUES ('73078d78-ce50-49b5-bf29-b692c76345bd', 'a27901fd-3c67-4891-b7ac-55dd04a2f122'),
+       ('aa877810-9602-45a6-8591-cffaa4824aae', 
         'd566eb81-3bf9-4470-a89c-30ea8da57087') ON CONFLICT (id_membre) DO NOTHING;
 
 -- Insert data into Appartenance_Equipe
@@ -89,13 +90,13 @@ INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, 
                            date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
 VALUES ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg',
         '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2',
-        '02:00:00', 'Theme de la chasse', 'Inactif', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
+        '02:00:00', 'Theme de la chasse', 'Validée', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
         '5da884fa-d39c-4e99-8644-a18e2bf34a60'),
        ('550e8400-e29b-41d4-a716-446655440000', 'Chasse de Chambord', '300',
         'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !',
         '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp',
         '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1',
-        '02:00:00', 'Dynastie royale', 'Inactif', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
+        '02:00:00', 'Dynastie royale', 'Validée', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
         '42fdbebf-d919-4bc2-a7b7-f00688f706af') ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation

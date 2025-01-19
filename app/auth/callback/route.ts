@@ -50,6 +50,6 @@ export async function GET(request: Request) {
 
     // return the user to an error page with instructions
     // return NextResponse.redirect(`${origin}/auth?error=Erreur lors de la connexion`)
-    return NextResponse.redirect(`${origin}/login`)
+    return NextResponse.redirect(`${origin}/authentication/login?redirect=participant`)
 
 }

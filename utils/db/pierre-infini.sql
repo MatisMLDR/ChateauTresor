@@ -1,7 +1,14 @@
+-- Supprimer les vues si elles existent
+DROP VIEW IF EXISTS vue_chasses_valides, 
+                    vue_chasse_en_attente_de_validation, 
+                    vue_demandes_appartenance_equipe,
+                    vue_equipes_verifiees CASCADE;
+
 DROP TABLE IF EXISTS public.Chateau,
     public.Equipe_Organisatrice,
     public.Membre_equipe,
     public.Appartenance_Equipe,
+    public.Invitations_Equipe,
     public.Participant,
     public.Chasse,
     public.Participation,
@@ -21,6 +28,7 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 
 -- Supprimer les fonctions
 DROP FUNCTION IF EXISTS public.handle_new_user;
+
 
 CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
@@ -125,24 +133,26 @@ CREATE TABLE public.Chateau
 -- Table Equipe_Organisatrice
 CREATE TABLE public.Equipe_Organisatrice
 (
-    id_equipe       UUID PRIMARY KEY    NOT NULL DEFAULT uuid_generate_v4(),
+    id_equipe       UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
     nom             VARCHAR(255) UNIQUE NOT NULL,
-    type            VARCHAR(255)                 DEFAULT 'Association',
-    n_siret         VARCHAR(255)                 DEFAULT NULL,
-    id_taxes        VARCHAR(255)                 DEFAULT NULL,
-    nb_membres      INT                          DEFAULT 0,
-    site_web        VARCHAR(255)                 DEFAULT NULL,
-    adresse_postale VARCHAR(255)                 DEFAULT 'Non spécifiée',
-    telephone       VARCHAR(20)                  DEFAULT NULL
+    type            VARCHAR(255) NOT NULL DEFAULT 'Société' CHECK (
+        type IN ('Société', 'Particulier')
+        ),
+    n_siret         VARCHAR(255) DEFAULT NULL,
+    id_taxes        VARCHAR(255) DEFAULT NULL,
+    site_web        VARCHAR(255) DEFAULT NULL,
+    adresse_postale VARCHAR(255) DEFAULT 'Non spécifiée',
+    statut_verification VARCHAR(255) NOT NULL DEFAULT 'En attente de vérification'
+    CHECK (statut_verification IN ('En attente de vérification', 'Vérifiée', 'Refusée')),
+    carte_identite_chef VARCHAR(255) DEFAULT NULL,
+    telephone       VARCHAR(20) DEFAULT NULL,
+    description     TEXT DEFAULT 'Pas de description'
 );
 
 -- Table Membre_equipe
 CREATE TABLE public.Membre_equipe
 (
     id_membre      UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-    carte_identite VARCHAR(255)              DEFAULT NULL,
-    est_verifie    BOOLEAN                   DEFAULT FALSE,
-    role_equipe    VARCHAR(255)              DEFAULT 'Membre',
     id_user        UUID             NOT NULL UNIQUE REFERENCES auth.users ON DELETE CASCADE
 );
 
@@ -152,9 +162,27 @@ CREATE TABLE public.Appartenance_Equipe
     id_membre         UUID NOT NULL,
     id_equipe         UUID NOT NULL,
     date_appartenance DATE DEFAULT CURRENT_DATE,
+    statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
+        statut IN ('En attente de validation', 'Validé', 'Refusé')
+        ),
+    date_demande      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    message_demande   TEXT DEFAULT 'Pas de message',
+    role_equipe    VARCHAR(255)              DEFAULT 'Invité' CHECK (
+        role_equipe IN ('Invité', 'Créateur', 'Administrateur', 'Modérateur', 'Organisateur', 'Trésorier', 'Autre')
+        ),
     PRIMARY KEY (id_membre, id_equipe),
     FOREIGN KEY (id_membre) REFERENCES Membre_equipe (id_membre) ON DELETE CASCADE,
     FOREIGN KEY (id_equipe) REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE
+);
+
+CREATE TABLE public.Invitations_Equipe
+(
+    id_invitation  UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+    id_equipe      UUID NOT NULL REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE,
+    email_invite   VARCHAR(255) NOT NULL,
+    statut         VARCHAR(50) NOT NULL DEFAULT 'Envoyée'
+    CHECK (statut IN ('Envoyée', 'Acceptée', 'Refusée')),
+    date_invitation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table Participant
@@ -185,7 +213,7 @@ CREATE TABLE public.Chasse
     duree_estime INTERVAL DEFAULT INTERVAL '00:00:00',
     theme             VARCHAR(255)                 DEFAULT 'Aucun thème',
     statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
-        statut IN ('En attente de validation', 'Valide', 'En cours', 'Finie')
+        statut IN ('En attente de validation', 'Validée', 'En cours', 'Finie')
         ),
     id_chateau        UUID                NOT NULL REFERENCES Chateau (id_chateau) ON DELETE CASCADE,
     id_equipe         UUID                NOT NULL REFERENCES Equipe_Organisatrice (id_equipe) ON DELETE CASCADE
@@ -419,18 +447,19 @@ VALUES ('63e923ce-db26-4024-90cb-ff43eccfdbcb', 'IUT 2', ' 2 Place du Doyen Goss
         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg/2560px-Ch%C3%A2teau_et_tour_des_Minimes_%28Amboise%29.jpg',
         'https://www.chateau-amboise.com/', '530a3302-4d03-49c0-a262-a72b3d434da9') ON CONFLICT (id_chateau) DO NOTHING;
 
+
 -- Insert data into Equipe_Organisatrice
-INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, nb_membres, site_web, adresse_postale,
-                                         telephone)
-VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Association', null, null, '1', null, null, null),
-       ('42fdbebf-d919-4bc2-a7b7-f00688f706af', 'Samsung', 'Entreprise', '33436749700172', 'FR89334367497', '0',
+INSERT INTO public.Equipe_Organisatrice (id_equipe, nom, type, n_siret, id_taxes, site_web, adresse_postale,
+                                         telephone, statut_verification)
+VALUES ('5da884fa-d39c-4e99-8644-a18e2bf34a60', 'EquipeTest', 'Particulier', null, null, null, null, null, 'Vérifiée'),
+       ('42fdbebf-d919-4bc2-a7b7-f00688f706af', 'Samsung', 'Société', '33436749700172', 'FR89334367497', 
         'https://www.samsung.com/fr/', '6 RUE FRUCTIDOR 93400 SAINT-OUEN-SUR-SEINE ',
-        '01 44 04 70 00') ON CONFLICT (id_equipe) DO NOTHING;
+        '01 44 04 70 00', 'Vérifiée') ON CONFLICT (id_equipe) DO NOTHING;
 
 -- Insert data into Membre_equipe
-INSERT INTO public.Membre_equipe (id_membre, carte_identite, est_verifie, role_equipe, id_user)
-VALUES ('73078d78-ce50-49b5-bf29-b692c76345bd', null, TRUE, 'Chef', 'a27901fd-3c67-4891-b7ac-55dd04a2f122'),
-       ('aa877810-9602-45a6-8591-cffaa4824aae', null, TRUE, 'Organisateur',
+INSERT INTO public.Membre_equipe (id_membre, id_user)
+VALUES ('73078d78-ce50-49b5-bf29-b692c76345bd', 'a27901fd-3c67-4891-b7ac-55dd04a2f122'),
+       ('aa877810-9602-45a6-8591-cffaa4824aae', 
         'd566eb81-3bf9-4470-a89c-30ea8da57087') ON CONFLICT (id_membre) DO NOTHING;
 
 -- Insert data into Appartenance_Equipe
@@ -449,16 +478,16 @@ VALUES ('d2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', 'b302ddb0-c4b4-42d8-8956-00bcb2c
 
 -- Insert data into Chasse
 INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, image, date_creation, date_modification,
-                           date_debut, date_fin, prix, difficulte, duree_estime, theme, id_chateau, id_equipe)
+                           date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
 VALUES ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg',
         '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2',
-        '02:00:00', 'Theme de la chasse', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
+        '02:00:00', 'Theme de la chasse', 'Validée', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
         '5da884fa-d39c-4e99-8644-a18e2bf34a60'),
        ('550e8400-e29b-41d4-a716-446655440000', 'Chasse de Chambord', '300',
         'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !',
         '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp',
         '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1',
-        '02:00:00', 'Dynastie royale', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
+        '02:00:00', 'Dynastie royale', 'Validée', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
         '42fdbebf-d919-4bc2-a7b7-f00688f706af') ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation
@@ -529,45 +558,83 @@ VALUES ('f35a1787-d883-4ba7-8e9b-d8dc2dd6c84d', 'd2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4
         '2025-01-07') ON CONFLICT (id_haut_fait, id_participant) DO NOTHING;
 
 -- Création de la vue pour les chasses non terminées
-CREATE VIEW vue_chasses_non_terminees AS
-SELECT id_chasse,
-       titre,
-       capacite,
-       description,
-       age_requis,
-       image,
-       date_creation,
-       date_modification,
-       date_debut,
-       date_fin,
-       prix,
-       difficulte,
-       duree_estime,
-       theme,
-       statut,
-       id_chateau,
-       id_equipe
-FROM public.Chasse
-WHERE date_fin IS NULL
-   OR date_fin > CURRENT_TIMESTAMP;
+CREATE VIEW vue_chasses_valides AS
+SELECT
+   id_chasse,
+   titre,
+   capacite,
+   description,
+   age_requis,
+   image,
+   date_creation,
+   date_modification,
+   date_debut,
+   date_fin,
+   prix,
+   difficulte,
+   duree_estime,
+   theme,
+   statut,
+   id_chateau,
+   id_equipe
+FROM
+   public.Chasse
+WHERE
+   date_fin > CURRENT_TIMESTAMP
+   AND statut = 'Validée';
 
 CREATE VIEW vue_chasse_en_attente_de_validation AS
-SELECT id_chasse,
-       titre,
-       capacite,
-       description,
-       age_requis,
-       image,
-       date_creation,
-       date_modification,
-       date_debut,
-       date_fin,
-       prix,
-       difficulte,
-       duree_estime,
-       theme,
-       statut,
-       id_chateau,
-       id_equipe
-FROM public.Chasse
-WHERE statut = 'En attente de validation';
+SELECT
+   id_chasse,
+   titre,
+   capacite,
+   description,
+   age_requis,
+   image,
+   date_creation,
+   date_modification,
+   date_debut,
+   date_fin,
+   prix,
+   difficulte,
+   duree_estime,
+   theme,
+   statut,
+   id_chateau,
+   id_equipe
+FROM
+   public.Chasse
+WHERE
+   statut = 'En attente de validation';
+
+CREATE VIEW vue_demandes_appartenance_equipe AS
+SELECT
+   id_membre,
+   id_equipe,
+   date_appartenance,
+   statut,
+   date_demande,
+   message_demande,
+   role_equipe
+FROM
+   public.Appartenance_Equipe
+WHERE
+   statut = 'En attente de validation';
+
+CREATE VIEW vue_equipes_verifiees AS
+SELECT
+   id_equipe,
+   nom,
+   type,
+   n_siret,
+   id_taxes,
+   site_web,
+   adresse_postale,
+   statut_verification,
+   carte_identite_chef,
+   telephone,
+   description
+FROM
+   public.Equipe_Organisatrice
+WHERE
+   statut_verification = 'Vérifiée';

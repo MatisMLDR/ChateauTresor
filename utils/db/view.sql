@@ -1,43 +1,81 @@
 -- Création de la vue pour les chasses non terminées
-CREATE VIEW vue_chasses_non_terminees AS
-SELECT id_chasse,
-       titre,
-       capacite,
-       description,
-       age_requis,
-       image,
-       date_creation,
-       date_modification,
-       date_debut,
-       date_fin,
-       prix,
-       difficulte,
-       duree_estime,
-       theme,
-       statut,
-       id_chateau,
-       id_equipe
-FROM public.Chasse
-WHERE date_fin IS NULL
-   OR date_fin > CURRENT_TIMESTAMP;
+CREATE VIEW vue_chasses_valides AS
+SELECT
+   id_chasse,
+   titre,
+   capacite,
+   description,
+   age_requis,
+   image,
+   date_creation,
+   date_modification,
+   date_debut,
+   date_fin,
+   prix,
+   difficulte,
+   duree_estime,
+   theme,
+   statut,
+   id_chateau,
+   id_equipe
+FROM
+   public.Chasse
+WHERE
+   date_fin > CURRENT_TIMESTAMP
+   AND statut = 'Validée';
 
 CREATE VIEW vue_chasse_en_attente_de_validation AS
-SELECT id_chasse,
-       titre,
-       capacite,
-       description,
-       age_requis,
-       image,
-       date_creation,
-       date_modification,
-       date_debut,
-       date_fin,
-       prix,
-       difficulte,
-       duree_estime,
-       theme,
-       statut,
-       id_chateau,
-       id_equipe
-FROM public.Chasse
-WHERE statut = 'En attente de validation';
+SELECT
+   id_chasse,
+   titre,
+   capacite,
+   description,
+   age_requis,
+   image,
+   date_creation,
+   date_modification,
+   date_debut,
+   date_fin,
+   prix,
+   difficulte,
+   duree_estime,
+   theme,
+   statut,
+   id_chateau,
+   id_equipe
+FROM
+   public.Chasse
+WHERE
+   statut = 'En attente de validation';
+
+CREATE VIEW vue_demandes_appartenance_equipe AS
+SELECT
+   id_membre,
+   id_equipe,
+   date_appartenance,
+   statut,
+   date_demande,
+   message_demande,
+   role_equipe
+FROM
+   public.Appartenance_Equipe
+WHERE
+   statut = 'En attente de validation';
+
+CREATE VIEW vue_equipes_verifiees AS
+SELECT
+   id_equipe,
+   nom,
+   type,
+   n_siret,
+   id_taxes,
+   site_web,
+   adresse_postale,
+   statut_verification,
+   carte_identite_chef,
+   telephone,
+   description
+FROM
+   public.Equipe_Organisatrice
+WHERE
+   statut_verification = 'Vérifiée';
