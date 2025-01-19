@@ -158,7 +158,7 @@ export async function loginOrganisateur(currentState: { message: string }, formD
 }
 
 export async function loginParticipant(currentState: { message: string }, formData: FormData): Promise<any> {
-    
+
     const result = await loginUser(currentState, formData, "participant");
 
     if (result?.message) {
@@ -182,25 +182,33 @@ export async function loginUser(currentState: { message: string }, formData: For
     }
     // Vérifier le type de l'utilisateur
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
-    revalidatePath('/', 'layout')
+    revalidatePath("/", 'layout')
+
+    if (type === "participant") {
+        return redirect('/participants/dashboard');
+    }
     // Rediriger vers la page asscoiée au type de l'utilisateur
-    if (type === "organisateur") { 
-        const user = (await supabase.auth.getUser()).data.user
+    let redirectPath = '/organisateurs/onboarding';
+
+
+    try {
+        const user = (await supabase.auth.getUser()).data.user;
 
         if (user && user.id) {
-            const membre = await MembreEquipe.readByIdUser(user.id as UUID)
+            const membre = await MembreEquipe.readByIdUser(user.id as UUID);
             const equipesDuMembre = await MembreEquipe.getAllEquipesByMembre(membre.getIdMembre() as UUID);
             if (equipesDuMembre.length > 0) {
-                redirect('/organisateur/dashboard')
+                redirectPath = '/organisateurs/dashboard';
             } else {
-                redirect('/organisateur/onboarding')
+                redirectPath = '/organisateurs/onboarding';
             }
-        }
-        // Si le membre de l'équipe organisatrice n'a pas encore d'équipe
-
-    } else {
-        redirect(`/${type}s/dashboard`)
+        } 
+    } catch (error) {
+        redirectPath = '/organisateurs/onboarding';
+    } finally {
+        redirect(redirectPath);
     }
+
 }
 
 export async function logout(userType: "participant" | "organisateur" | "proprietaire") {
