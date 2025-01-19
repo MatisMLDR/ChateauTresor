@@ -7,7 +7,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <SideBarMenu type={"organisateur"}>{children}</SideBarMenu>
+    <SideBarMenu type={"organisateur"} fullyUnlocked={false}>{children}</SideBarMenu>
   );
 };
 

@@ -255,6 +255,7 @@ export type RecompenseType = {
 export type SideBarProps = {
   children?: React.reactNode;
   type: "participant" | "organisateur" | "proprietaire";
+  fullyUnlocked?: boolean;
 }
 
 //// Props de la page de profile ////

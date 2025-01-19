@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id = await params.id;
+  const { id }= await params;
 
   try {
     const { data, error } = await supabase.from('equipe_organisatrice').select('*').eq('id_equipe', id).single();

@@ -1,6 +1,7 @@
 import { UUID } from 'crypto';
-import dotenv from 'dotenv';
-dotenv.config();
+
+const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
+
 
 /*
  * Méthode pour récupérer une équipe organisatrice par son ID
@@ -112,5 +113,43 @@ export async function deleteEquipe(id_equipe: UUID): Promise<void> {
 
   if (!res.ok) {
     throw new Error(`Erreur lors de la suppression de l'équipe organisatrice avec l'ID ${id_equipe}`);
+  }
+}
+
+export async function getAllDemandesOfEquipe(id_equipe: UUID): Promise<any[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/appartenances/demandes?id_equipe=${id_equipe}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des demandes de l\'équipe');
+  }
+  return await res.json();
+}
+
+export async function accepterDemandeEquipe(appartenanceData: any): Promise<void> {
+
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/demandes/accepter`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(appartenanceData),
+  });
+
+  if (!res.ok) {
+    console.log("res", res);
+    throw new Error('Erreur lors de l\'acceptation de la demande');
+  }
+}
+
+export async function refuserDemandeEquipe(appartenanceData: any): Promise<void> {
+  const res = await fetch(`${PUBLIC_URL}}/api/appartenances/demandes/refuser`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(appartenanceData),
+  });
+
+  if (!res.ok) {
+    throw new Error('Erreur lors du refus de la demande');
   }
 }

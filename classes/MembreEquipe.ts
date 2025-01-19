@@ -60,7 +60,7 @@ export class MembreEquipe {
     }
   }
 
-  public static async getAllEquipesByMembre(id_membre: UUID): Promise<MembreEquipe[]> {
+  public static async getAllEquipesByMembre(id_membre: UUID): Promise<any[]> {
     const data = await getAllAppartenancesMembre(id_membre) as any;
 
     return data;

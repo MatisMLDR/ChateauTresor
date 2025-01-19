@@ -228,10 +228,12 @@ const Onboarding = () => {
                     onChange={handleInputChange}
                     required
                   >
-                    {/* role_equipe IN ('Invité', 'Créateur', 'Administrateur', 'Modérateur', 'Organisateur', 'Trésorier', 'Autre') */}
+                    <option value="" disabled>
+                      Sélectionner un rôle
+                    </option>
                     <option value="organisateur">Organisateur</option>
                     <option value="createur">Créateur</option>
-                    <option value="membre" selected>Invité</option>
+                    <option value="membre">Invité</option>
                     <option value="moderateur">Modérateur</option>
                     <option value="tresorier">Trésorier</option>
                     <option value="autre">Autre</option>
