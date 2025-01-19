@@ -1,6 +1,6 @@
 'use client';
 
-import { Map, MoreHorizontal, QrCode, Search, Settings, Star, Trash, User } from 'lucide-react';
+import { Map, Castle, MoreHorizontal, QrCode, Search, Settings, Star, Calendar, Trash, User } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -38,25 +38,32 @@ export function NavProjects({
   const [chasseNames, setChasseNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    // Fonction pour récupérer le nom d'une chasse depuis l'API
-    const fetchChasseName = async (id: string) => {
+    // Fonction pour récupérer le nom d'une chasse ou d'un château depuis l'API
+    const fetchItemName = async (id: string) => {
       try {
-        const response = await fetch(`/api/chasses/${id}`);
+        let url = `/api/chasses/${id}`;
+        if (type === "proprietaire") {
+          url = `/api/chateaux/${id}`;
+        }
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Erreur HTTP: ${response.status}`);
         }
         const data = await response.json();
+        if(type === "proprietaire") {
+          return data.nom;
+        }
         return data.titre;
       } catch (error) {
-        console.error(`Erreur lors de la récupération de la chasse ${id}`, error);
+        console.error(`Erreur lors de la récupération de l'item ${id}`, error);
       }
     };
-
-    // Récupérer tous les noms des chasses
-    const fetchAllChasseNames = async () => {
+  
+    // Récupérer tous les noms des chasses ou des châteaux
+    const fetchAllItemNames = async () => {
       const names: Record<string, string> = {};
       try {
-        const namesArray = await Promise.all(chasse.map((item) => fetchChasseName(item.id)));
+        const namesArray = await Promise.all(chasse.map((item) => fetchItemName(item.id)));
         chasse.forEach((item, index) => {
           names[item.id] = namesArray[index];
         });
@@ -65,14 +72,14 @@ export function NavProjects({
         console.error('Erreur lors de la récupération des noms des chasses', error);
       }
     };
-
-    fetchAllChasseNames();
-  }, [chasse]);
+  
+    fetchAllItemNames();
+  }, [chasse, type]); // Ajoutez type à la liste des dépendances
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>
-        {type === 'organisateur' ? 'Chasses récentes' : 'Chasses inscrites'}
+        {type === 'organisateur' ? 'Chasses récentes' : type === 'participant' ? 'Vos chasses' : 'Châteaux'}
       </SidebarGroupLabel>
       <SidebarMenu>
         {chasse.map((item) => (
@@ -80,9 +87,9 @@ export function NavProjects({
             <SidebarMenuButton asChild>
               {/* Adapte l'URL en fonction du rôle de l'utilisateur */}
               <Link
-                href={`${type === 'organisateur' ? '/organisateurs/dashboard/modifier_chasse/' : '/participants/dashboard/chasses/'}${item.id}`}
+                href={`${type === 'organisateur' ? '/organisateurs/dashboard/modifier_chasse/' : type === 'participant' ? `/participants/dashboard/chasses/'}${item.id}` : '/chateaux/'}${item.id}`}
               >
-                <Map />
+                {type === 'proprietaire' ? <Castle /> : <Map />}
                 {chasseNames[item.id] || <Skeleton className={'h-full w-full'} />}
               </Link>
             </SidebarMenuButton>
@@ -124,7 +131,7 @@ export function NavProjects({
                       <span>Supprimer</span>
                     </DropdownMenuItem>
                   </>
-                ) : (
+                ) : type === 'participant' ? (
                   <>
                     <Link href={`/participants/dashboard/chasses/${item.id}`}>
                       <DropdownMenuItem>
@@ -146,6 +153,29 @@ export function NavProjects({
                       </DropdownMenuItem>
                     </Link>
                   </>
+                ) : (        
+                  //Partie sur les propriétaires de châteaux
+                  <>
+                    <Link href={`/proprietaires/dashboard/chasses/${item.id}`}>
+                      <DropdownMenuItem>
+                        <Search className="text-muted-foreground" />
+                        <span>Voir</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                    <Link href={`/proprietaire/modifier/${item.id}`}>
+                      <DropdownMenuItem>
+                        <Settings className="text-muted-foreground" />
+                        <span>Modifier</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href={`/proprietaire/calendrier/${item.id}`}>
+                      <DropdownMenuItem>
+                        <Calendar className="text-muted-foreground" />
+                        <span>Calendrier</span>
+                      </DropdownMenuItem>
+                    </Link>
+                  </>            
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
