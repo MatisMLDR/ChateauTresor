@@ -113,7 +113,7 @@ export async function createMembre(membre: any): Promise<MembreEquipe> {
   * @throws Error si la création échoue
   */
 export async function createAppartenanceMembreEquipe(appartenanceData: AppartenanceEquipeType): Promise<void> {
-  const res = await fetch(`${PUBLIC_URL}/appartenances`, {
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export async function createAppartenanceMembreEquipe(appartenanceData: Appartena
 }
 
 export async function deleteAppartenanceMembreEquipe(id_membre: UUID, id_equipe: UUID): Promise<void> {
-  const res = await fetch(`${PUBLIC_URL}/appartenances/membre/${id_membre}/${id_equipe}`, {
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/membre/${id_membre}/${id_equipe}`, {
     method: 'DELETE',
   });
 
@@ -137,7 +137,7 @@ export async function deleteAppartenanceMembreEquipe(id_membre: UUID, id_equipe:
 }
 
 export async function getAppartenanceMembreEquipe(id_membre: UUID, id_equipe: UUID): Promise<any> {
-  const res = await fetch(`${PUBLIC_URL}/appartenances/membre/${id_membre}/${id_equipe}`);
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/membre/${id_membre}/${id_equipe}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de l\'appartenance');
   }
@@ -145,9 +145,9 @@ export async function getAppartenanceMembreEquipe(id_membre: UUID, id_equipe: UU
 }
 
 export async function getAllAppartenancesMembre(id_membre: UUID): Promise<any> {
-  const res = await fetch(`${PUBLIC_URL}/appartenances/membre?id_membre=${id_membre}`);
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/membre?id_membre=${id_membre}`);
 
-  if (res.status != 404 && !res.ok) {
+  if (!res.ok) {
     throw new Error('Erreur lors de la récupération de l\'appartenance');
   }
 

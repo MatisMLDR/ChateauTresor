@@ -9,8 +9,12 @@ import { MembreEquipe } from '@/classes/MembreEquipe';
 import { UUID } from 'crypto';
 import { createEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useRouter } from 'next/navigation';
 
 const Onboarding = () => {
+
+  const router = useRouter();
+
   const [currentStep, setCurrentStep] = useState(1);
   const [totalSteps, setTotalSteps] = useState(2);
   const [equipes, setEquipes] = useState<EquipeOrganisatrice[] | []>([]);
@@ -58,7 +62,7 @@ const Onboarding = () => {
   // useEffect pour changer le nombre d'étapes en fonction du choix de l'utilisateur
   useEffect(() => {
     setTotalSteps(formData.hasTeam === 'oui' ? 2 : 6);
-  }, [formData.equipe]);
+  }, [formData.hasTeam]);
 
   // useEffect pour récupérer les équipes vérifiées
   useEffect(() => {
@@ -71,9 +75,7 @@ const Onboarding = () => {
       }
     }
     fetchEquipes();
-  }, [equipes]);
-
-  console.log("equipes", equipes);
+  }, []);
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -105,7 +107,7 @@ const Onboarding = () => {
       await MembreEquipe.createAppartenanceEquipe(data);
 
       // Redirection après le succès de l'insertion
-      window.location.href = '/organisateurs/onboarding/attente/acceptation-equipe';
+      router.push('/organisateurs/onboarding/attente/acceptation-equipe');
 
     } catch (err) {
       console.error('Erreur inconnue lors de l\'insertion des données :', err);
@@ -137,7 +139,7 @@ const Onboarding = () => {
       } else {
         console.log('Équipe créée avec succès');
         // Redirection après le succès de l'insertion
-        window.location.href = '/organisateurs/onboarding/attente/verification-equipe';
+        router.push('/organisateurs/onboarding/attente/verification-equipe');
       }
     } catch (err) {
       console.error('Erreur inconnue lors de l\'insertion des données :', err);
@@ -201,10 +203,13 @@ const Onboarding = () => {
                   <select
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
                     name="equipe"
-                    value={formData.equipe || ""}
+                    value={formData.equipe}
                     onChange={handleInputChange}
                     required
                   >
+                    <option value="" disabled>
+                      Sélectionner une équipe
+                    </option>
                     {equipes.map((equipe) => {
                       return (
                         <option key={equipe.getIdEquipe()} value={equipe.getIdEquipe()}>
@@ -247,9 +252,33 @@ const Onboarding = () => {
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
-                  <Button type="submit" onSubmit={handleSubmitWithExistingTeam}>
-                    Soumettre la demande
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button type="button">
+                        Soumettre la demande
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Soumettre la demande
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Êtes-vous sûr de vouloir soumettre votre demande ?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction
+                          type="submit"
+                          formAction="/organisateurs/onboarding/attente/acceptation-equipe"
+                          onClick={handleSubmitWithExistingTeam}
+                        >
+                          Continuer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </>
@@ -309,11 +338,11 @@ const Onboarding = () => {
                   <select
                     className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
                     name="type"
-                    value={formData.type || "Particuliers"}
+                    value={formData.type}
                     onChange={handleInputChange}
                     required
                   >
-                    <option value="Société">Société</option>
+                    <option value="Société" selected>Société</option>
                     <option value="Particuliers">Particuliers</option>
                   </select>
                 </div>
@@ -321,33 +350,9 @@ const Onboarding = () => {
                   <Button type="button" onClick={handlePreviousStep}>
                     Retour
                   </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button type="button" disabled={formData.type === ""}>
-                        Soumettre la demande
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Soumettre la demande
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Êtes-vous sûr de vouloir soumettre votre demande ?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction 
-                          type="submit" 
-                          formAction="/organisateurs/onboarding/attente/acceptation-equipe"
-                          onClick={handleSubmitWithExistingTeam}
-                        >
-                          Continuer
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  <Button type="button" onClick={handleNextStep}>
+                    Continuer
+                  </Button>
                 </div>
               </div>
             </>
@@ -373,7 +378,7 @@ const Onboarding = () => {
                         type="text"
                         id="nSiret"
                         name="nSiret"
-                        value={formData.nSiret || ""}
+                        value={formData.nSiret}
                         onChange={handleInputChange}
                         placeholder="Numéro SIRET"
                         className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px]"
@@ -556,8 +561,8 @@ const Onboarding = () => {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction 
-                          type="submit" 
+                        <AlertDialogAction
+                          type="submit"
                           formAction="/organisateurs/onboarding/attente/verification-equipe"
                           onClick={handleSubmitWithoutExistingTeam}
                         >
