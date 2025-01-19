@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Trophy } from 'lucide-react';
 import { getAllRecompensesByChasse } from '@/utils/dao/RecompenseUtils';
 import Recompense from '@/classes/Recompense';
+import { UUID } from 'crypto';
 
 const RecompensePage: React.FC = () => {
   const router = useRouter();
@@ -27,7 +28,7 @@ const RecompensePage: React.FC = () => {
         throw new Error('ID de chasse manquant');
       }
 
-      const data = await getAllRecompensesByChasse(chasseId); // Récupérer les récompenses
+      const data = await getAllRecompensesByChasse(chasseId as UUID); // Récupérer les récompenses
       const recompenses = data.map((recompense: any) => new Recompense(recompense)); // Convertir en objets Recompense
       setRecompenses(recompenses);
     } catch (err) {

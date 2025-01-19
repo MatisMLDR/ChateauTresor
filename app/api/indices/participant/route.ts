@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 export async function POST(request: Request) {
   const supabase = createClient();
@@ -46,5 +47,40 @@ export async function POST(request: Request) {
       { error: 'Une erreur est survenue', details: String(err) },
       { status: 500 }
     );
+  }
+}
+
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'GET') {
+    const { participantId } = req.query;
+
+    if (!participantId) {
+      return res.status(400).json({ error: 'Le paramètre participantId est obligatoire' });
+    }
+
+    const supabase = createClient();
+
+    try {
+      // Récupérer les indices révélés par le participant
+      const { data, error } = await supabase
+        .from('indice_participant')
+        .select('*')
+        .eq('id_participant', participantId)
+        .eq('est_decouvert', true);
+
+
+      if (error) {
+        console.error('Erreur Supabase:', error);
+        return res.status(500).json({ error: 'Erreur lors de la récupération des indices révélés', details: error.message });
+      }
+
+      return res.status(200).json(data);
+    } catch (err) {
+      console.error('Erreur inattendue:', err);
+      return res.status(500).json({ error: 'Une erreur est survenue', details: String(err) });
+    }
+  } else {
+    return res.status(405).json({ error: 'Méthode non autorisée' });
   }
 }

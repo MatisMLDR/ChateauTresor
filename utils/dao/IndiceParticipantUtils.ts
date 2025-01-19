@@ -11,17 +11,28 @@ dotenv.config();
  * @example await indiceDecouvert('indice-id', 'participant-id');
  */
 export async function indiceDecouvert(id_indice: UUID, id_participant: UUID): Promise<any> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id_indice, id_participant }),
-  });
-  if (!res.ok) {
-    throw new Error('Erreur lors de l\'enregistrement de l\'indice découvert');
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id_indice, id_participant }),
+    });
+
+    if (!res.ok) {
+      const errorResponse = await res.json(); // Lire le corps de la réponse en cas d'erreur
+      console.error('Erreur API:', res.status, errorResponse);
+      throw new Error(errorResponse.error || 'Erreur lors de l\'enregistrement de l\'indice découvert');
+    }
+
+    const data = await res.json();
+    console.log('Indice marqué comme découvert avec succès:', data);
+    return data;
+  } catch (error) {
+    console.error('Erreur dans indiceDecouvert:', error);
+    throw error;
   }
-  return await res.json();
 }
 
 /**
@@ -71,5 +82,38 @@ export async function deleteIndiceParticipant(id_indice: UUID, id_participant: U
   );
   if (!res.ok) {
     throw new Error('Erreur lors de la suppression de l\'enregistrement Indice_Participant');
+  }
+}
+
+/**
+* Méthode pour vérifier si un indice est déjà renseigné pour un participant
+* @param participantId L'identifiant du participant
+* @param indiceId L'identifiant de l'indice
+* @returns Promise<boolean> True si l'indice est déjà renseigné, false sinon
+* @throws Error si l'opération échoue
+*/
+export async function checkIfIndiceExists(participantId: UUID, indiceId: UUID): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant/discovered?participantId=${participantId}&idIndice=${indiceId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const errorResponse = await res.json();
+      console.error('Erreur API:', res.status, errorResponse);
+      throw new Error(errorResponse.error || 'Erreur lors de la vérification de l\'indice');
+    }
+
+    const data = await res.json();
+    return data.exists; // Renvoie true ou false
+  } catch (error) {
+    console.error('Erreur dans checkIfIndiceExists:', error);
+    throw error;
   }
 }
