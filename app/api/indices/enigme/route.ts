@@ -33,14 +33,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Aucun indice trouvé
-    if (!data || data.length === 0) {
-      return NextResponse.json(
-        { message: `Aucun indice trouvé pour l'énigme avec id ${idEnigme}` },
-        { status: 404 }
-      );
-    }
-
     // Réponse avec les données des indices
     return NextResponse.json(data, { status: 200 });
   } catch (err) {

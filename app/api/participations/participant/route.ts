@@ -29,14 +29,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Aucune participation trouvée
-    if (!data || data.length === 0) {
-      return NextResponse.json(
-        { message: `Aucune participation trouvée pour le participant avec id ${idParticipant}` },
-        { status: 404 }
-      );
-    }
-
     // Réponse avec les données
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
@@ -115,14 +107,6 @@ export async function PATCH(request: Request) {
       return NextResponse.json(
         { error: 'Erreur lors de la mise à jour de la participation', details: error.message },
         { status: 500 }
-      );
-    }
-
-    // Aucune donnée mise à jour
-    if (!data || data.length === 0) {
-      return NextResponse.json(
-        { message: `Aucune participation trouvée pour le participant avec id ${id_participant} et la chasse avec id ${id_chasse}` },
-        { status: 404 }
       );
     }
 

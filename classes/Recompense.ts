@@ -1,4 +1,4 @@
-import { RecompenseType } from "@/types";
+import { RecompenseType, ImageFile } from "@/types";
 import { createRecompense, deleteRecompense, getRecompenseById, updateRecompense } from '@/utils/dao/RecompenseUtils';
 import { UUID } from "crypto";
 
@@ -10,7 +10,7 @@ class Recompense {
     private valeur: number;
     private quantite_dispo: number;
     private prix_reel: number;
-    private image: string | null;
+    private image: ImageFile | null;
     private date_modification: string;
     private id_chasse: UUID | null;
 
@@ -55,9 +55,9 @@ class Recompense {
         return this.prix_reel;
     }
 
-    public getImage(): string | null {
+    public getImage(): ImageFile | null {
         return this.image;
-    }
+      }
 
     public getDateModification(): string {
         return this.date_modification;
@@ -95,9 +95,9 @@ class Recompense {
         this.prix_reel = prix_reel;
     }
 
-    public setImage(image: string): void {
+    public setImage(image: ImageFile): void {
         this.image = image;
-    }
+      }
 
     public setDateModification(date_modification: string): void {
         this.date_modification = date_modification;

@@ -32,13 +32,6 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!data || data.length === 0) {
-      return NextResponse.json(
-        { message: `Aucune énigme trouvée pour la chasse avec id ${idChasse}` },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     console.error('Erreur dans l\'API:', err); // Log pour déboguer

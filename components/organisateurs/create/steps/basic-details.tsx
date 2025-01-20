@@ -1,6 +1,6 @@
 "use client";
 
-import { ChasseType } from '@/types';
+import { ChasseType, ImageFile } from '@/types';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,54 +14,57 @@ interface BasicDetailsProps {
 }
 
 export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
-  const [fileName, setFileName] = useState<string | null>(null); // État pour stocker le nom du fichier sélectionné
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // Pour l'aperçu de l'image
 
-  // Fonction pour convertir une durée au format "HH:MM:SS" en minutes
+  // Convertir la durée en minutes
   const convertirDureeEnMinutes = (duree: string) => {
     if (!duree) return 0;
     const [heures, minutes, secondes] = duree.split(':').map(Number);
     return heures * 60 + minutes + secondes / 60;
   };
 
-  // Fonction pour convertir les minutes en format "HH:MM:SS"
-  const convertirMinutesEnDuree = (minutes: number) => {
+  // Convertir les minutes en durée (format HH:MM:SS)
+  const convertirMinutesEnDuree = (minutes: number): string => {
     const heures = Math.floor(minutes / 60);
     const mins = Math.floor(minutes % 60);
     const secs = Math.floor((minutes % 1) * 60);
     return `${String(heures).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
-  // Gestion de l'image téléchargée
+  // Gérer le changement d'image
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Stocker le fichier dans formData.image
+      setFormData({ ...formData, image: file });
+
+      // Créer un aperçu de l'image pour l'affichage
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result as string });
+        setImagePreview(reader.result as string); // Stocker l'aperçu en base64
       };
       reader.readAsDataURL(file);
-      setFileName(file.name); // Stocker le nom du fichier sélectionné
+
+      setFileName(file.name);
     }
   };
 
-  // Convertir la durée en minutes pour l'affichage
+  // Calculer la durée estimée en minutes
   const dureeEstimeeEnMinutes = formData.duree_estime
     ? convertirDureeEnMinutes(formData.duree_estime)
     : 0;
 
-  // Récupérer le nom du fichier ou de l'image existante
+  // Obtenir le nom de l'image
   const getImageName = () => {
-    if (fileName) return fileName; // Afficher le nom du fichier sélectionné
+    if (fileName) return fileName;
     if (!formData.image) return "Aucun fichier choisi";
-    if (formData.image.startsWith("data:image")) {
-      return "Fichier téléchargé";
-    }
-    return formData.image.split('/').pop() || "Image de la chasse"; // Extraire le nom du fichier de l'URL
+    return formData.image instanceof File ? formData.image.name : "Image de la chasse"; // Utiliser le nom du fichier
   };
 
   return (
     <div className="space-y-6">
-      {/* Champ de saisie pour le titre */}
+      {/* Titre de la chasse */}
       <div className="space-y-2">
         <Label htmlFor="title">{contenuTextuel.create.form.huntTitle}</Label>
         <Input
@@ -72,7 +75,7 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
         />
       </div>
 
-      {/* Champ de saisie pour la description */}
+      {/* Description de la chasse */}
       <div className="space-y-2">
         <Label htmlFor="description">{contenuTextuel.create.form.description}</Label>
         <Textarea
@@ -84,12 +87,12 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
         />
       </div>
 
-      {/* Champ pour télécharger une image */}
+      {/* Image de la chasse */}
       <div className="space-y-2">
-        <Label>Image de la chasse</Label> {/* Étiquette non cliquable */}
-        {formData.image && (
+        <Label>Image de la chasse</Label>
+        {imagePreview && ( // Afficher l'aperçu de l'image
           <img
-            src={formData.image}
+            src={imagePreview}
             alt="Image de la chasse"
             className="w-32 h-32 object-cover rounded-lg mb-2"
           />
@@ -110,11 +113,11 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          className="hidden" // Masquer l'input de fichier par défaut
+          className="hidden"
         />
       </div>
 
-      {/* Champs de saisie pour la durée et le prix */}
+      {/* Durée et Prix */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="duration">{contenuTextuel.create.form.duration}</Label>
@@ -149,6 +152,7 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
         </div>
       </div>
 
+      {/* Âge requis */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="Age_requis">{contenuTextuel.create.form.age}</Label>
@@ -163,8 +167,8 @@ export function BasicDetails({ formData, setFormData }: BasicDetailsProps) {
         </div>
       </div>
 
+      {/* Thème de la chasse */}
       <div className="space-y-6">
-        {/* Champ de saisie pour le theme */}
         <div className="space-y-2">
           <Label htmlFor="theme">{contenuTextuel.create.form.themeContent}</Label>
           <Input

@@ -28,13 +28,6 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!participations || participations.length === 0) {
-      return NextResponse.json(
-        { message: `Aucun participant trouvé pour la chasse avec id ${idChasse}` },
-        { status: 404 }
-      );
-    }
-
     // Étape 2 : Récupérer les informations des participants à partir de la table participant
     const participantIds = participations.map((p) => p.id_participant);
     const { data: participants, error: participantsError } = await supabase

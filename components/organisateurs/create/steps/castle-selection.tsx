@@ -27,29 +27,21 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [chateauxPerPage] = useState<number>(4);
 
+  // Charger les châteaux au montage du composant
   useEffect(() => {
     const chargerChateaux = async () => {
       try {
         setChargement(true);
         const tousLesChateaux = await Chateau.getAllChateaux();
-        setChateaux(
-          tousLesChateaux.map((chateau) => ({
-            id_chateau: chateau.getIdChateau(),
-            nom: chateau.getNom(),
-            localisation: chateau.getLocalisation(),
-            description: chateau.getDescription(),
-            image: chateau.getImage(),
-          }))
-        );
-        setFilteredChateaux(
-          tousLesChateaux.map((chateau) => ({
-            id_chateau: chateau.getIdChateau(),
-            nom: chateau.getNom(),
-            localisation: chateau.getLocalisation(),
-            description: chateau.getDescription(),
-            image: chateau.getImage(),
-          }))
-        );
+        const chateauxFormatted = tousLesChateaux.map((chateau) => ({
+          id_chateau: chateau.getIdChateau(),
+          nom: chateau.getNom(),
+          localisation: chateau.getLocalisation(),
+          description: chateau.getDescription(),
+          image: chateau.getImage(), // Assurez-vous que cette méthode retourne une URL (string) ou null
+        }));
+        setChateaux(chateauxFormatted);
+        setFilteredChateaux(chateauxFormatted);
       } catch (err) {
         console.error(err);
         setErreur("Erreur lors du chargement des châteaux.");
@@ -61,14 +53,16 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
     chargerChateaux();
   }, []);
 
+  // Filtrer les châteaux en fonction du terme de recherche
   useEffect(() => {
     const filtered = chateaux.filter((chateau) =>
       chateau.nom?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredChateaux(filtered);
-    setCurrentPage(1);
+    setCurrentPage(1); // Réinitialiser la pagination après un nouveau filtre
   }, [searchTerm, chateaux]);
 
+  // Pagination
   const indexOfLastChateau = currentPage * chateauxPerPage;
   const indexOfFirstChateau = indexOfLastChateau - chateauxPerPage;
   const currentChateaux = filteredChateaux.slice(indexOfFirstChateau, indexOfLastChateau);
@@ -80,11 +74,12 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
   }
 
   if (erreur) {
-    return <p>{erreur}</p>;
+    return <p className="text-red-500">{erreur}</p>;
   }
 
   return (
     <div className="space-y-6">
+      {/* Barre de recherche */}
       <div className="space-y-2">
         <Label htmlFor="search">Rechercher un château</Label>
         <Input
@@ -96,6 +91,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
         />
       </div>
 
+      {/* Liste des châteaux */}
       <div className="space-y-4">
         <Label>Sélectionner un château</Label>
         <RadioGroup
@@ -122,7 +118,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
                   <CardContent className="p-0">
                     <div className="relative">
                       <img
-                        src={chateau.image || "https://via.placeholder.com/300x200"}
+                        src={chateau.image instanceof File ? URL.createObjectURL(chateau.image) : chateau.image || "https://via.placeholder.com/300x200"}
                         alt={chateau.nom}
                         className="w-full h-48 object-cover"
                       />
@@ -151,6 +147,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           </div>
         </RadioGroup>
 
+        {/* Pagination */}
         <div className="flex justify-center gap-2">
           <Button
             variant="outline"
@@ -178,6 +175,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
         </div>
       </div>
 
+      {/* Dates et heures */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="date_debut">Date de début</Label>
@@ -205,7 +203,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           <Input
             id="horaire_debut"
             type="time"
-            value={formData.horaire_debut ? formData.horaire_debut.split(':').slice(0, 2).join(':') : ""}
+            value={formData.horaire_debut || ""}
             onChange={(e) => setFormData({ ...formData, horaire_debut: e.target.value })}
           />
         </div>
@@ -214,12 +212,13 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           <Input
             id="horaire_fin"
             type="time"
-            value={formData.horaire_fin ? formData.horaire_fin.split(':').slice(0, 2).join(':') : ""}
+            value={formData.horaire_fin || ""}
             onChange={(e) => setFormData({ ...formData, horaire_fin: e.target.value })}
           />
         </div>
       </div>
 
+      {/* Capacité maximale */}
       <div className="space-y-2">
         <Label htmlFor="capacite">Capacité maximale</Label>
         <Input

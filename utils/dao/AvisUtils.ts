@@ -15,11 +15,6 @@ export async function getAllAvisByChasse(id_chasse: UUID): Promise<any[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/chasse?id_chasse=${id_chasse}`);
     
-    // Si la réponse est 404, retourner un tableau vide
-    if (res.status === 404) {
-      return [];
-    }
-
     // Si la réponse n'est pas OK, lever une erreur
     if (!res.ok) {
       throw new Error('Erreur lors de la récupération des avis');

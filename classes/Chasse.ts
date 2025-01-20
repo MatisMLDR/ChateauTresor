@@ -1,4 +1,4 @@
-import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType } from "@/types";
+import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType, ImageFile } from "@/types";
 import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles, getChassesByEquipeId } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
@@ -16,7 +16,7 @@ class Chasse {
   private capacite: number;
   private description: string;
   private age_requis: number;
-  private image: string | null;
+  private image: ImageFile;
   private date_creation: string;
   private date_modification: string;
   private date_debut: string | null;
@@ -41,7 +41,7 @@ class Chasse {
     this.capacite = chasse.capacite ?? 0;
     this.description = chasse.description ?? "Pas de description";
     this.age_requis = chasse.age_requis ?? 0;
-    this.image = chasse.image ?? null;
+    this.image = chasse.image;
     this.date_creation = chasse.date_creation ?? new Date().toISOString();
     this.date_modification = chasse.date_modification ?? new Date().toISOString();
     this.date_debut = chasse.date_debut ?? null;
@@ -62,7 +62,7 @@ class Chasse {
   public getIdChasse(): UUID {
     return this.id_chasse;
   }
-  public getImage(): string | null {
+  public getImage(): ImageFile {
     return this.image;
   }
   public getTitre(): string {
@@ -118,7 +118,7 @@ class Chasse {
   }
 
   // Setters
-  public setImage(image: string): void {
+  public setImage(image: ImageFile): void {
     this.image = image;
   }
   public setTitre(titre: string): void {
@@ -291,7 +291,7 @@ class Chasse {
     }
   }
 
-  public async create(): Promise<void> {
+  public async create(): Promise<any> {
     const avis = await createChasse(this) as any
 
     if (!avis) {

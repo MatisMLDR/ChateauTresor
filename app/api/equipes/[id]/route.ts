@@ -7,9 +7,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
   try {
     const { data, error } = await supabase.from('equipe_organisatrice').select('*').eq('id_equipe', id).single();
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });

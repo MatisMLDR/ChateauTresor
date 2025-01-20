@@ -1,26 +1,26 @@
-import { EnigmeType, IndiceType } from "@/types";
+import { EnigmeType, IndiceType, ImageFile } from "@/types";
 import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, updateEnigme } from "@/utils/dao/EnigmeUtils";
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 import { UUID } from "crypto";
 import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
-  id_enigme: UUID;
-  id_chasse: UUID;
-  titre: string;
-  code_reponse: string;
-  ordre: number;
-  description: string;
-  endroit_qrcode: string;
-  temps_max: number;
-  description_reponse: string;
-  degre_difficulte: number;
-  image_reponse: string;
-  indices: any;
+  private id_enigme: UUID;
+  private id_chasse: UUID;
+  private titre: string;
+  private code_reponse: string;
+  private ordre: number;
+  private description: string;
+  private endroit_qrcode: string;
+  private temps_max: number;
+  private description_reponse: string;
+  private degre_difficulte: number;
+  private image_reponse: ImageFile;
+  private indices: IndiceType[] = [];
 
   constructor(enigme: EnigmeType) {
     this.id_enigme = enigme.id_enigme as UUID;
-    this.id_chasse = enigme.id_chasse as UUID; 
+    this.id_chasse = enigme.id_chasse as UUID;
     this.titre = enigme.titre;
     this.code_reponse = enigme.code_reponse;
     this.ordre = enigme.ordre ?? 0;
@@ -30,6 +30,7 @@ export class Enigme {
     this.description_reponse = enigme.description_reponse;
     this.degre_difficulte = enigme.degre_difficulte;
     this.image_reponse = enigme.image_reponse;
+    this.indices = enigme.indices || [];
   }
 
   // Getters
@@ -73,7 +74,7 @@ export class Enigme {
     return this.degre_difficulte;
   }
 
-  public getImageReponse(): string {
+  public getImageReponse(): ImageFile {
     return this.image_reponse;
   }
 
@@ -120,7 +121,7 @@ export class Enigme {
     this.degre_difficulte = degre_difficulte;
   }
 
-  public setImageReponse(image_reponse: string): void {
+  public setImageReponse(image_reponse: ImageFile): void {
     this.image_reponse = image_reponse;
   }
 
@@ -182,10 +183,12 @@ export class Enigme {
       }
     
       public async create(): Promise<void> {
-        const avis = await createEnigme(this) as any
-    
+        // Exclure la propriété 'indices' avant l'insertion
+        const { indices, ...dataSansIndices } = this;
+        const avis = await createEnigme(dataSansIndices) as any;
+      
         if (!avis) {
-            throw new Error('Enigme not created');
+          throw new Error('Enigme not created');
         }
       }
     
@@ -210,10 +213,12 @@ export class Enigme {
       }
     
       public async update(): Promise<void> {
+        // Exclure 'indices' lors de la mise à jour
+        const { indices, ...dataSansIndices } = this;
         try {
-          await updateEnigme(this);
+          await updateEnigme(dataSansIndices);
         } catch (error) {
-            throw new Error('Enigme does not exist');
+          throw new Error('Enigme does not exist');
         }
       }
 

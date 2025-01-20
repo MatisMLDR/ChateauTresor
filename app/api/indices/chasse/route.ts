@@ -28,13 +28,6 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!enigmes || enigmes.length === 0) {
-      return NextResponse.json(
-        { message: `Aucune énigme trouvée pour la chasse avec id ${idChasse}` },
-        { status: 404 }
-      );
-    }
-
     // Extraire les ids des énigmes
     const enigmeIds = enigmes.map((enigme) => enigme.id_enigme);
 
@@ -48,13 +41,6 @@ export async function GET(request: Request) {
       return NextResponse.json(
         { error: 'Erreur lors de la récupération des indices', details: indicesError.message },
         { status: 500 }
-      );
-    }
-
-    if (!indices || indices.length === 0) {
-      return NextResponse.json(
-        { message: `Aucun indice trouvé pour les énigmes de la chasse avec id ${idChasse}` },
-        { status: 404 }
       );
     }
 

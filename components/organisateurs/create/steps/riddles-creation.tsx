@@ -35,7 +35,7 @@ import { contenuTextuel } from '@/constants';
 import { ChasseType, EnigmeType, IndiceType } from "@/types";
 import { UUID } from "crypto";
 
-export interface RiddlesCreationProps {
+interface RiddlesCreationProps {
   formData: Partial<ChasseType>;
   setFormData: (data: Partial<ChasseType>) => void;
 }
@@ -62,49 +62,88 @@ function IndiceCompacte({
     transition,
   };
 
+  // Gestion type-safe du contenu
+  const renderContenu = () => {
+    if (indice.type === 'text') {
+      return (
+        <div className="text-sm">
+          {typeof indice.contenu === 'string' ? indice.contenu : ''}
+        </div>
+      );
+    }
+    
+    if (indice.type === 'image') {
+      const url = indice.contenu instanceof File 
+        ? URL.createObjectURL(indice.contenu)
+        : indice.contenu as string;
+        
+      return (
+        <img
+          src={url}
+          alt="Indice visuel"
+          className="h-16 w-16 object-cover rounded-lg"
+        />
+      );
+    }
+
+    if (indice.type === 'son') {
+      const url = indice.contenu instanceof File
+        ? URL.createObjectURL(indice.contenu)
+        : indice.contenu as string;
+
+      return (
+        <audio controls className="w-full">
+          <source src={url} type="audio/mpeg" />
+          Votre navigateur ne supporte pas l'audio
+        </audio>
+      );
+    }
+
+    return null;
+  };
+
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      className="cursor-pointer"
-    >
+    <div ref={setNodeRef} style={style} {...attributes}>
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
             <div {...listeners} className="cursor-grab">
               <GripVertical className="h-5 w-5 text-muted-foreground" />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold">{indice.type}</h3>
-              <p className="text-sm text-muted-foreground">{indice.contenu}</p>
-              <div className="text-sm text-muted-foreground">
-                Degré d&apos;aide: {indice.degre_aide}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Ordre: {indice.ordre} {/* Affichage de l'ordre */}
+
+            <div className="flex items-center justify-center w-8 h-8 bg-muted rounded-full">
+              <span className="text-sm font-medium">{indice.ordre}</span>
+            </div>
+
+            <div className="flex-1 space-y-2">
+              {renderContenu()}
+              <div className="text-xs text-muted-foreground">
+                Degré d'aide : {indice.degre_aide}
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEditIndice(indice);
-              }}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteIndice(indice.id_indice);
-              }}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditIndice(indice);
+                }}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteIndice(indice.id_indice);
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -112,7 +151,12 @@ function IndiceCompacte({
   );
 }
 
-function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }: { enigme: EnigmeType; onSelectEnigme: (enigme: EnigmeType) => void; onEditEnigme: (enigme: EnigmeType) => void; onDeleteEnigme: (id_enigme: UUID) => void }) {
+function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }: { 
+  enigme: EnigmeType; 
+  onSelectEnigme: (enigme: EnigmeType) => void;
+  onEditEnigme: (enigme: EnigmeType) => void;
+  onDeleteEnigme: (id_enigme: UUID) => void;
+}) {
   const {
     attributes,
     listeners,
@@ -126,16 +170,8 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
     transition,
   };
 
-  // Affiche directement l'ordre stocké (qui commence à 1)
-  const ordre = enigme.ordre || 0;
-
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      className="cursor-pointer"
-    >
+    <div ref={setNodeRef} style={style} {...attributes}>
       <Card onClick={() => onSelectEnigme(enigme)}>
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
@@ -143,11 +179,13 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
               <GripVertical className="h-5 w-5 text-muted-foreground" />
             </div>
             <div className="flex items-center justify-center w-8 h-8 bg-muted rounded-full">
-              <span className="text-sm font-medium">{ordre}</span> {/* Affiche l'ordre stocké */}
+              <span className="text-sm font-medium">{enigme.ordre}</span>
             </div>
             {enigme.image_reponse && (
               <img
-                src={enigme.image_reponse}
+                src={enigme.image_reponse instanceof File ? 
+                      URL.createObjectURL(enigme.image_reponse) : 
+                      enigme.image_reponse}
                 alt={enigme.titre}
                 className="h-16 w-16 object-cover rounded-lg"
               />
@@ -174,9 +212,7 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
               size="icon"
               onClick={(e) => {
                 e.stopPropagation();
-                if (enigme.id_enigme) {
-                  onDeleteEnigme(enigme.id_enigme);
-                }
+                onDeleteEnigme(enigme.id_enigme as UUID);
               }}
             >
               <Trash2 className="h-4 w-4" />
@@ -212,86 +248,91 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     })
   );
 
-  const ajouterIndice = () => {
-    setAfficherModalIndice(true);
-  };
-
-  const traiterSoumissionIndice = (indice: {
-    type: "text" | "image" | "son";
-    contenu: string;
-    degre_aide?: number;
-  }) => {
-    if (indiceEnCoursEdition) {
-      const updatedIndices = (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map((i) =>
-        i.id_indice === indiceEnCoursEdition.id_indice ? { ...i, ...indice } : i
-      );
-
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
       if (enigmeEnCoursEdition) {
-        setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: updatedIndices });
-      } else {
-        setNouvelleEnigme({ ...nouvelleEnigme, indices: updatedIndices });
-      }
-    } else {
-      const newIndice = {
-        id_indice: crypto.randomUUID(),
-        type: indice.type,
-        contenu: indice.contenu,
-        degre_aide: indice.degre_aide || 1,
-        ordre: (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).length + 1, // Commence à 1
-      };
-
-      if (enigmeEnCoursEdition) {
-        setEnigmeEnCoursEdition({
-          ...enigmeEnCoursEdition,
-          indices: [...(enigmeEnCoursEdition.indices || []), { ...newIndice, id_enigme: enigmeEnCoursEdition.id_enigme as UUID, id_indice: newIndice.id_indice as UUID }],
+        setEnigmeEnCoursEdition({ 
+          ...enigmeEnCoursEdition, 
+          image_reponse: file 
         });
       } else {
-        setNouvelleEnigme({
-          ...nouvelleEnigme,
-          indices: [...(nouvelleEnigme.indices || []), { ...newIndice, id_enigme: nouvelleEnigme.id_enigme as UUID, id_indice: newIndice.id_indice as UUID }],
+        setNouvelleEnigme({ 
+          ...nouvelleEnigme, 
+          image_reponse: file 
         });
       }
     }
+  };
+
+  const ajouterIndice = () => setAfficherModalIndice(true);
+
+  const traiterSoumissionIndice = (indice: {
+    type: "text" | "image" | "son";
+    contenu: string | File;
+    degre_aide?: number;
+  }) => {
+    // Calcul de l'ordre : on garde l'existant en édition, on incrémente seulement pour les nouveaux
+    const currentIndices = enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || [];
+    const nouvelOrdre = indiceEnCoursEdition 
+      ? indiceEnCoursEdition.ordre 
+      : currentIndices.length + 1;
+  
+    const newIndice = {
+      ...indiceEnCoursEdition,
+      ...indice,
+      id_indice: indiceEnCoursEdition?.id_indice || crypto.randomUUID() as UUID,
+      id_enigme: enigmeEnCoursEdition?.id_enigme || nouvelleEnigme.id_enigme || (crypto.randomUUID() as UUID),
+      ordre: nouvelOrdre, // Utilisation du bon ordre selon le contexte
+      degre_aide: indice.degre_aide ?? 0,
+    };
+  
+    if (enigmeEnCoursEdition) {
+      const updatedIndices = indiceEnCoursEdition 
+        ? enigmeEnCoursEdition.indices?.map(i => i.id_indice === newIndice.id_indice ? newIndice : i)
+        : [...(enigmeEnCoursEdition.indices || []), newIndice];
+      
+      setEnigmeEnCoursEdition({
+        ...enigmeEnCoursEdition,
+        indices: updatedIndices,
+      });
+    } else {
+      const updatedIndices = indiceEnCoursEdition 
+        ? nouvelleEnigme.indices?.map(i => i.id_indice === newIndice.id_indice ? newIndice : i)
+        : [...(nouvelleEnigme.indices || []), newIndice];
+      
+      setNouvelleEnigme({
+        ...nouvelleEnigme,
+        indices: updatedIndices,
+      });
+    }
+  
     setIndiceEnCoursEdition(null);
     setAfficherModalIndice(false);
   };
 
   const mettreAJourEnigme = (enigme: EnigmeType) => {
-    const updatedEnigmes = formData.enigmes?.map((e) =>
+    const updatedEnigmes = formData.enigmes?.map(e => 
       e.id_enigme === enigme.id_enigme ? enigme : e
-    );
-    setFormData({
-      ...formData,
-      enigmes: updatedEnigmes,
-    });
+    ) || [];
+    setFormData({ ...formData, enigmes: updatedEnigmes });
   };
 
   const supprimerIndice = (id_indice: UUID) => {
     if (enigmeEnCoursEdition) {
-      const updatedEnigme = {
-        ...enigmeEnCoursEdition,
-        indices: enigmeEnCoursEdition.indices?.filter((i) => i.id_indice !== id_indice),
-      };
-      setEnigmeEnCoursEdition(updatedEnigme);
+      const updatedIndices = enigmeEnCoursEdition.indices?.filter(i => i.id_indice !== id_indice);
+      setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: updatedIndices });
     } else {
-      setNouvelleEnigme((prevEnigme) => ({
-        ...prevEnigme,
-        indices: prevEnigme.indices?.filter((i) => i.id_indice !== id_indice),
-      }));
+      const updatedIndices = nouvelleEnigme.indices?.filter(i => i.id_indice !== id_indice);
+      setNouvelleEnigme({ ...nouvelleEnigme, indices: updatedIndices });
     }
-  };
-
-  const editerIndice = (indice: IndiceType) => {
-    setIndiceEnCoursEdition(indice);
-    setAfficherModalIndice(true);
   };
 
   const ajouterEnigme = () => {
     if (nouvelleEnigme.titre && nouvelleEnigme.indices?.length) {
       const enigmeComplete = {
         ...nouvelleEnigme,
-        id_enigme: crypto.randomUUID(),
-        ordre: (formData.enigmes?.length || 0) + 1, // Commence à 1
+        ordre: (formData.enigmes?.length || 0) + 1,
       } as EnigmeType;
 
       setFormData({
@@ -314,31 +355,24 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
   };
 
   const supprimerEnigme = (id_enigme: UUID) => {
-    const updatedEnigmes = formData.enigmes?.filter((e) => e.id_enigme !== id_enigme) || [];
+    const updatedEnigmes = formData.enigmes?.filter(e => e.id_enigme !== id_enigme) || [];
     setFormData({
       ...formData,
-      enigmes: updatedEnigmes.map((enigme, index) => ({
-        ...enigme,
-        ordre: index + 1, // Commence à 1
-      })),
+      enigmes: updatedEnigmes.map((e, index) => ({ ...e, ordre: index + 1 })),
     });
   };
 
   const handleDragEndEnigmes = (event: any) => {
     const { active, over } = event;
-
     if (active.id !== over?.id) {
-      const oldIndex = formData.enigmes?.findIndex((e) => e.id_enigme === active.id);
-      const newIndex = formData.enigmes?.findIndex((e) => e.id_enigme === over.id);
-
+      const oldIndex = formData.enigmes?.findIndex(e => e.id_enigme === active.id);
+      const newIndex = formData.enigmes?.findIndex(e => e.id_enigme === over.id);
+      
       if (oldIndex !== undefined && newIndex !== undefined) {
         const updatedEnigmes = arrayMove(formData.enigmes || [], oldIndex, newIndex);
         setFormData({
           ...formData,
-          enigmes: updatedEnigmes.map((enigme, index) => ({
-            ...enigme,
-            ordre: index + 1, // Commence à 1
-          })),
+          enigmes: updatedEnigmes.map((e, index) => ({ ...e, ordre: index + 1 })),
         });
       }
     }
@@ -346,49 +380,28 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
 
   const handleDragEndIndices = (event: any) => {
     const { active, over } = event;
-
     if (active.id !== over?.id) {
-      const oldIndex = (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).findIndex(
-        (indice) => indice.id_indice === active.id
-      );
-      const newIndex = (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).findIndex(
-        (indice) => indice.id_indice === over.id
-      );
+      const indices = enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || [];
+      const oldIndex = indices.findIndex(i => i.id_indice === active.id);
+      const newIndex = indices.findIndex(i => i.id_indice === over.id);
 
-      if (oldIndex !== undefined && newIndex !== undefined) {
-        const updatedIndices = arrayMove(
-          enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || [],
-          oldIndex,
-          newIndex
-        );
-
-        // Réorganiser l'ordre des indices après déplacement
-        const reorderedIndices = updatedIndices.map((indice, index) => ({
-          ...indice,
-          ordre: index + 1, // Commence à 1
-        }));
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const updatedIndices = arrayMove(indices, oldIndex, newIndex)
+          .map((indice, index) => ({ ...indice, ordre: index + 1 }));
 
         if (enigmeEnCoursEdition) {
-          setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: reorderedIndices });
+          setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: updatedIndices });
         } else {
-          setNouvelleEnigme({ ...nouvelleEnigme, indices: reorderedIndices });
+          setNouvelleEnigme({ ...nouvelleEnigme, indices: updatedIndices });
         }
       }
     }
   };
 
-  const editerEnigme = (enigme: EnigmeType) => {
-    setEnigmeEnCoursEdition(enigme);
-  };
-
   return (
     <div className="space-y-8">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEndEnigmes}
-      >
-        {formData.enigmes && formData.enigmes.length > 0 && ( // Afficher uniquement si des énigmes existent
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndEnigmes}>
+        {formData.enigmes && formData.enigmes.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle>Énigmes ajoutées</CardTitle>
@@ -396,17 +409,15 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <CardContent>
               <div className="space-y-2">
                 <SortableContext
-                  items={formData.enigmes
-                    ?.filter((enigme) => enigme.id_enigme !== undefined)
-                    .map((enigme) => enigme.id_enigme as string) || []}
+                  items={formData.enigmes.map(e => e.id_enigme as string)}
                   strategy={verticalListSortingStrategy}
                 >
-                  {formData.enigmes?.map((enigme, index) => (
+                  {formData.enigmes.map((enigme) => (
                     <EnigmeCompacte
                       key={enigme.id_enigme}
                       enigme={enigme}
                       onSelectEnigme={setEnigmeEnCoursEdition}
-                      onEditEnigme={editerEnigme}
+                      onEditEnigme={setEnigmeEnCoursEdition}
                       onDeleteEnigme={supprimerEnigme}
                     />
                   ))}
@@ -417,7 +428,6 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
         )}
       </DndContext>
 
-      {/* Formulaire de création/modification */}
       <Card>
         <CardHeader>
           <CardTitle>
@@ -426,10 +436,10 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="titre">Titre de l&apos;énigme</Label>
+            <Label htmlFor="titre">Titre de l'énigme</Label>
             <Textarea
               id="titre"
-              value={enigmeEnCoursEdition?.titre || nouvelleEnigme.titre || ""} // Toujours fournir une valeur par défaut
+              value={enigmeEnCoursEdition?.titre || nouvelleEnigme.titre || ""}
               onChange={(e) =>
                 enigmeEnCoursEdition
                   ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, titre: e.target.value })
@@ -440,10 +450,10 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Contenu de l&apos;énigme</Label>
+            <Label htmlFor="description">Contenu de l'énigme</Label>
             <Textarea
               id="description"
-              value={enigmeEnCoursEdition?.description || nouvelleEnigme.description || ""} // Toujours fournir une valeur par défaut
+              value={enigmeEnCoursEdition?.description || nouvelleEnigme.description || ""}
               onChange={(e) =>
                 enigmeEnCoursEdition
                   ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description: e.target.value })
@@ -462,29 +472,22 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
               </Button>
             </div>
 
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEndIndices}
-            >
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndIndices}>
               <SortableContext
-                items={
-                  (enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(
-                    (indice) => indice.id_indice
-                  )
-                }
+                items={(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(i => i.id_indice)}
                 strategy={verticalListSortingStrategy}
               >
-                {(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(
-                  (indice, index) => (
-                    <IndiceCompacte
-                      key={indice.id_indice}
-                      indice={indice}
-                      onEditIndice={editerIndice}
-                      onDeleteIndice={supprimerIndice}
-                    />
-                  )
-                )}
+                {(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map((indice) => (
+                  <IndiceCompacte
+                    key={indice.id_indice}
+                    indice={indice}
+                    onEditIndice={(indice) => {
+                      setIndiceEnCoursEdition(indice);
+                      setAfficherModalIndice(true); // Ajoutez cette ligne
+                    }}
+                    onDeleteIndice={supprimerIndice}
+                  />
+                ))}
               </SortableContext>
             </DndContext>
           </div>
@@ -493,7 +496,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <Label htmlFor="endroit_qrcode">Endroit du QR Code</Label>
             <Input
               id="endroit_qrcode"
-              value={enigmeEnCoursEdition?.endroit_qrcode || nouvelleEnigme.endroit_qrcode || ""} // Toujours fournir une valeur par défaut
+              value={enigmeEnCoursEdition?.endroit_qrcode || nouvelleEnigme.endroit_qrcode || ""}
               onChange={(e) =>
                 enigmeEnCoursEdition
                   ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, endroit_qrcode: e.target.value })
@@ -504,15 +507,13 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="temps_max">
-              Durée maximale pour résoudre l&apos;énigme (en minutes)
-            </Label>
+            <Label htmlFor="temps_max">Durée maximale (minutes)</Label>
             <Input
               id="temps_max"
               type="number"
               min={0}
               step={5}
-              value={enigmeEnCoursEdition?.temps_max || nouvelleEnigme.temps_max || 0} // Toujours fournir une valeur par défaut
+              value={enigmeEnCoursEdition?.temps_max || nouvelleEnigme.temps_max || 0}
               onChange={(e) =>
                 enigmeEnCoursEdition
                   ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, temps_max: parseInt(e.target.value) })
@@ -522,49 +523,54 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description_reponse">
-              Description de la réponse de l&apos;énigme
-            </Label>
+            <Label htmlFor="description_reponse">Description de la réponse</Label>
             <Textarea
               id="description_reponse"
-              value={enigmeEnCoursEdition?.description_reponse || nouvelleEnigme.description_reponse || ""} // Toujours fournir une valeur par défaut
+              value={enigmeEnCoursEdition?.description_reponse || nouvelleEnigme.description_reponse || ""}
               onChange={(e) =>
                 enigmeEnCoursEdition
                   ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description_reponse: e.target.value })
                   : setNouvelleEnigme({ ...nouvelleEnigme, description_reponse: e.target.value })
               }
-              placeholder="Entrez la description de la réponse de l'énigme"
+              placeholder="Entrez la description de la réponse"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="image_reponse">Image de la réponse</Label>
+            {enigmeEnCoursEdition?.image_reponse || nouvelleEnigme.image_reponse ? (
+              <img 
+                src={
+                  enigmeEnCoursEdition?.image_reponse instanceof File ? 
+                  URL.createObjectURL(enigmeEnCoursEdition.image_reponse) : 
+                  nouvelleEnigme.image_reponse instanceof File ?
+                  URL.createObjectURL(nouvelleEnigme.image_reponse) :
+                  enigmeEnCoursEdition?.image_reponse || nouvelleEnigme.image_reponse
+                }
+                className="h-32 w-32 object-cover mb-2 rounded-lg"
+                alt="Prévisualisation"
+              />
+            ) : null}
             <Input
               id="image_reponse"
               type="file"
               accept="image/*"
-              onChange={(e) =>
-                enigmeEnCoursEdition
-                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, image_reponse: e.target.value })
-                  : setNouvelleEnigme({ ...nouvelleEnigme, image_reponse: e.target.value })
-              }
+              onChange={handleFileChange}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="degre_difficulte">Degré de difficulté</Label>
+            <Label htmlFor="degre_difficulte">Difficulté</Label>
             <Select
-              value={
-                (enigmeEnCoursEdition?.degre_difficulte || nouvelleEnigme.degre_difficulte || 1).toString()
-              }
-              onValueChange={(value: string) =>
+              value={(enigmeEnCoursEdition?.degre_difficulte || nouvelleEnigme.degre_difficulte || 1).toString()}
+              onValueChange={(value) =>
                 enigmeEnCoursEdition
                   ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, degre_difficulte: parseInt(value) })
                   : setNouvelleEnigme({ ...nouvelleEnigme, degre_difficulte: parseInt(value) })
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Sélectionner le degré de difficulté" />
+                <SelectValue placeholder="Sélectionner la difficulté" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="1">Facile</SelectItem>
@@ -583,16 +589,15 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
             <Button
               onClick={() => {
                 if (enigmeEnCoursEdition) {
-                  mettreAJourEnigme(enigmeEnCoursEdition); // Mettre à jour l'énigme dans formData
-                  setEnigmeEnCoursEdition(null); // Réinitialiser l'énigme en cours d'édition
+                  mettreAJourEnigme(enigmeEnCoursEdition);
+                  setEnigmeEnCoursEdition(null);
                 } else {
-                  ajouterEnigme(); // Ajouter une nouvelle énigme
+                  ajouterEnigme();
                 }
               }}
               disabled={
-                (enigmeEnCoursEdition
-                  ? !enigmeEnCoursEdition.titre || !enigmeEnCoursEdition.indices?.length
-                  : !nouvelleEnigme.titre || !nouvelleEnigme.indices?.length)
+                !(enigmeEnCoursEdition ? enigmeEnCoursEdition.titre : nouvelleEnigme.titre) ||
+                !(enigmeEnCoursEdition ? enigmeEnCoursEdition.indices?.length : nouvelleEnigme.indices?.length)
               }
             >
               {enigmeEnCoursEdition ? "Enregistrer" : "Ajouter une énigme"}
@@ -604,9 +609,12 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
       {afficherModalIndice && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <CreateIndice
-            onClose={() => setAfficherModalIndice(false)}
+            onClose={() => {
+              setAfficherModalIndice(false);
+              setIndiceEnCoursEdition(null); // Réinitialiser l'édition
+            }}
             onSubmit={traiterSoumissionIndice}
-            indice={indiceEnCoursEdition} // Cette prop est maintenant acceptée
+            indice={indiceEnCoursEdition} // Envoyez l'indice en cours d'édition
           />
         </div>
       )}

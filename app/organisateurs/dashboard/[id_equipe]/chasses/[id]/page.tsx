@@ -1,7 +1,7 @@
 // app/organisateurs/dashboard/[id_equipe]/chasses/[id]/page.tsx
 import React from 'react';
 import Link from 'next/link';
-import { ExternalLink, Star, Pencil } from 'lucide-react';
+import { ExternalLink, Star, Pencil, QrCode } from 'lucide-react'; // Ajoutez l'icône QrCode
 
 import { InformationBadge } from "@/components/ui/information-badge";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,13 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
 
               {/* Bouton de suppression de la chasse */}
               <DeleteChasseButton chasseId={chasse.getIdChasse()} />
+
+              {/* Bouton pour accéder aux QR codes */}
+              <Link href={`/organisateurs/dashboard/${id_equipe}/chasses/${chasse.getIdChasse()}/qrcodes`}>
+                <Button variant="ghost" size="icon">
+                  <QrCode className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
           <p className="mb-4 text-gray-700">{chasse.getDescription()}</p>

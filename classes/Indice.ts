@@ -1,11 +1,11 @@
-import {  IndiceType, TypeIndice } from "@/types";
 import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
+import { IndiceType, ImageFile, AudioFile, TextFile } from "@/types";
 import { UUID } from "crypto";
 
 class Indice {
   private id_indice: UUID;
-  private type: TypeIndice;
-  private contenu: string;
+  private type: 'image' | 'son' | 'text';
+  private contenu: ImageFile | AudioFile | TextFile;
   private degre_aide: number;
   private ordre: number;
   private id_enigme: UUID;
@@ -14,7 +14,7 @@ class Indice {
   constructor(indice: IndiceType) {
     this.id_indice = indice.id_indice;
     this.type = indice.type;
-    this.contenu = indice.contenu || "Pas de contenu";
+    this.contenu = indice.contenu;
     this.degre_aide = Math.min(Math.max(indice.degre_aide || 1, 1), 5); // Assure le degré entre 1 et 5
     this.ordre = indice.ordre || 1;
     this.id_enigme = indice.id_enigme;
@@ -25,10 +25,10 @@ class Indice {
   public getId(): UUID {
     return this.id_indice;
   }
-  public getType(): TypeIndice {
+  public getType(): 'son' | 'image' | 'text' {
     return this.type;
   }
-  public getContenu(): string {
+  public getContenu(): ImageFile | AudioFile | TextFile {
     return this.contenu;
   }
   public getDegreAide(): number {
@@ -42,10 +42,10 @@ class Indice {
   }
 
   // Setters
-  public setType(type: TypeIndice): void {
+  public setType(type: 'son' | 'image' | 'text'): void {
     this.type = type;
   }
-  public setContenu(contenu: string): void {
+  public setContenu(contenu: ImageFile | AudioFile | TextFile): void {
     this.contenu = contenu;
   }
   public setDegreAide(degre_aide: number): void {

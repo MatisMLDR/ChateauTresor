@@ -1,4 +1,4 @@
-import { ChateauType } from "@/types";
+import { ChateauType, ImageFile } from "@/types";
 import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
 import { UUID } from "crypto";
 
@@ -11,7 +11,7 @@ class Chateau {
   private prix_location: number;
   private telephone: string | null;
   private description: string;
-  private image: string | null;
+  private image: ImageFile;
   private site_web: string | null;
   private id_proprietaire: UUID | null;
 
@@ -24,7 +24,7 @@ class Chateau {
     this.prix_location = chateau.prix_location || 0.00; // Valeur par défaut
     this.telephone = chateau.telephone || null; // Valeur par défaut
     this.description = chateau.description || 'Pas de description'; // Valeur par défaut
-    this.image = chateau.image || null; // Valeur par défaut
+    this.image = chateau.image; // Valeur par défaut
     this.site_web = chateau.site_web || null; // Valeur par défaut
     this.id_proprietaire = chateau.id_proprietaire || null; // Valeur par défaut
   }
@@ -62,9 +62,10 @@ class Chateau {
     return this.description;
   }
 
-  public getImage(): string | null {
+  public getImage(): ImageFile {
     return this.image;
   }
+
 
   public getSiteWeb(): string | null {
     return this.site_web;
@@ -107,7 +108,7 @@ class Chateau {
     this.description = description;
   }
 
-  public setImage(image: string | null): void {
+  public setImage(image: ImageFile): void {
     this.image = image;
   }
 

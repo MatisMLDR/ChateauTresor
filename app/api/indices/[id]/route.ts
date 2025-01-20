@@ -30,13 +30,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
       );
     }
 
-    if (!data) {
-      return NextResponse.json(
-        { error: 'Aucun indice trouvé avec cet ID' },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     console.error('Erreur inattendue:', err); // Log pour déboguer
