@@ -28,26 +28,22 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
   const [isBlocking, setIsBlocking] = useState(false);
   const [selectedEventDate, setSelectedEventDate] = useState<Date | null>(null);
 
-  // Determine user's locale
-  const userLocale = navigator.language || 'en-US';
-
-  // Function to capitalize the first letter of a string
+  // Mets le 1ere lettre en majuscule
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  // Get the capitalized month name
+  // Mets le 1ere lettre en majuscule pour une date
   const monthName = capitalizeFirstLetter(
-    new Intl.DateTimeFormat(userLocale, { month: 'long' }).format(currentDate)
+    new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(currentDate)
   );
 
-  // Determine the first day of the week based on locale
-  const localeFormatter = new Intl.DateTimeFormat(userLocale, { weekday: 'narrow' });
+  // Trouve le 1er jour de la semaine
+  const localeFormatter = new Intl.DateTimeFormat('fr-FR', { weekday: 'narrow' });
   const getFirstDayOfWeek = (): number => {
-    // Create a date for each day of the week and find the one considered the first
-    const days = [1, 2, 3, 4, 5, 6, 0]; // Monday to Sunday
+    const days = [1, 2, 3, 4, 5, 6, 0]; // Lundi à Dimanche
     const formattedDays = days.map((day) => {
-      const date = new Date(2023, 0, day); // January 2023
+      const date = new Date(2023, 0, day); // Janvier 2023
       return localeFormatter.format(date);
     });
     const uniqueDays = Array.from(new Set(formattedDays));
@@ -57,7 +53,7 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
 
   const firstDayOfWeek = getFirstDayOfWeek();
 
-  // Generate a 6-week grid for the current month
+  // Genere la grille du calendrier
   const getCalendarGrid = () => {
     const grid: (Date | null)[][] = Array.from({ length: 6 }, () => Array(7).fill(null));
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
