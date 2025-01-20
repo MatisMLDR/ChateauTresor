@@ -1,48 +1,66 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
-// GET : Récupérer une équipe par l'id d'un membre
+// GET : Récupérer toutes les équipes d'un membre par son id
 export async function GET(request: Request) {
   const supabase = createClient();
   const { searchParams } = new URL(request.url);
   const id_membre = searchParams.get('id_membre');
 
+  // Vérification du paramètre
   if (!id_membre) {
     return NextResponse.json({ error: 'id_membre est requis' }, { status: 400 });
   }
 
   try {
-    // Étape 1 : Récupérer l'id_equipe à partir de la table appartenance_equipe
+    // Étape 1 : Récupérer tous les id_equipe associés au membre
     const { data: appartenanceData, error: appartenanceError } = await supabase
       .from('appartenance_equipe')
       .select('id_equipe')
-      .eq('id_membre', id_membre)
-      .single(); // On suppose qu'un membre n'appartient qu'à une seule équipe
+      .eq('id_membre', id_membre);
 
-    if (appartenanceError || !appartenanceData) {
+    // Gestion des erreurs
+    if (appartenanceError) {
       return NextResponse.json(
-        { error: appartenanceError?.message || 'Membre non trouvé ou non associé à une équipe' },
+        { error: appartenanceError.message || 'Erreur lors de la récupération des équipes du membre' },
+        { status: 500 }
+      );
+    }
+
+    // Si le membre n'appartient à aucune équipe
+    if (!appartenanceData || appartenanceData.length === 0) {
+      return NextResponse.json(
+        { message: 'Ce membre n\'appartient à aucune équipe' },
         { status: 404 }
       );
     }
 
-    const id_equipe = appartenanceData.id_equipe;
+    // Extraire les id_equipe
+    const id_equipes = appartenanceData.map((row) => row.id_equipe);
 
-    // Étape 2 : Récupérer les informations de l'équipe à partir de la table equipe_organisatrice
+    // Étape 2 : Récupérer les informations de toutes les équipes associées
     const { data: equipeData, error: equipeError } = await supabase
       .from('equipe_organisatrice')
       .select('*')
-      .eq('id_equipe', id_equipe)
-      .single(); // On suppose qu'il n'y a qu'une seule équipe correspondante
+      .in('id_equipe', id_equipes); // Utilisation de `in` pour récupérer plusieurs équipes
 
-    if (equipeError || !equipeData) {
+    // Gestion des erreurs
+    if (equipeError) {
       return NextResponse.json(
-        { error: equipeError?.message || 'Équipe non trouvée' },
+        { error: equipeError.message || 'Erreur lors de la récupération des informations des équipes' },
+        { status: 500 }
+      );
+    }
+
+    // Si aucune équipe n'est trouvée (cas improbable, mais à gérer)
+    if (!equipeData || equipeData.length === 0) {
+      return NextResponse.json(
+        { message: 'Aucune équipe trouvée pour ce membre' },
         { status: 404 }
       );
     }
 
-    // Retourner les informations de l'équipe
+    // Retourner les informations des équipes
     return NextResponse.json(equipeData, { status: 200 });
   } catch (err) {
     console.error('Erreur serveur :', err);

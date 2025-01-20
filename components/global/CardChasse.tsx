@@ -9,6 +9,7 @@ import { Clock, Euro, MapPin, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { RatingStars } from '@/components/RatingStars';
 import Chasse from '@/classes/Chasse';
+import { usePathname } from 'next/navigation'; // Import usePathname
 
 interface CardChasseProps {
   chasse: Chasse;
@@ -17,6 +18,7 @@ interface CardChasseProps {
 const CardChasse = ({ chasse }: CardChasseProps) => {
   const [nbAvis, setNbAvis] = useState<number>(0);
   const [note, setNote] = useState<number>(0);
+  const pathname = usePathname(); // Utilise usePathname pour obtenir le chemin actuel
 
   useEffect(() => {
     const fetchNbAvis = async () => {
@@ -66,6 +68,18 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
   };
 
   const formattedNote = note.toFixed(1);
+
+  // Fonction pour déterminer le bon lien en fonction du chemin actuel
+  const getChasseLink = () => {
+    if (pathname.includes('/organisateurs/dashboard')) {
+      // Si l'utilisateur est sur une page d'organisateur, extraire l'ID de l'équipe de l'URL
+      const idEquipe = pathname.split('/')[3]; // Extrait l'ID de l'équipe de l'URL
+      return `/organisateurs/dashboard/${idEquipe}/chasses/${chasse.getIdChasse()}`;
+    } else {
+      // Sinon, rediriger vers la page des participants
+      return `/participants/dashboard/chasses/${chasse.getIdChasse()}`;
+    }
+  };
 
   return (
     <Card className="transition-shadow duration-200 hover:shadow-lg">
@@ -128,12 +142,12 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
         </div>
       </CardContent>
       <CardFooter className="p-4">
-        <Link href={`/participants/dashboard/chasses/${chasse.getIdChasse()}`} className="w-full">
+        <Link href={getChasseLink()} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
       </CardFooter>
     </Card>
-  )
-}
+  );
+};
 
 export default CardChasse;
