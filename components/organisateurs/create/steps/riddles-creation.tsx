@@ -79,7 +79,7 @@ function IndiceCompacte({
               <h3 className="font-semibold">{indice.type}</h3>
               <p className="text-sm text-muted-foreground">{indice.contenu}</p>
               <div className="text-sm text-muted-foreground">
-                Degré d'aide: {indice.degre_aide}
+                Degré d&apos;aide: {indice.degre_aide}
               </div>
               <div className="text-sm text-muted-foreground">
                 Ordre: {indice.ordre} {/* Affichage de l'ordre */}
@@ -426,7 +426,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="titre">Titre de l'énigme</Label>
+            <Label htmlFor="titre">Titre de l&apos;énigme</Label>
             <Textarea
               id="titre"
               value={enigmeEnCoursEdition?.titre || nouvelleEnigme.titre || ""} // Toujours fournir une valeur par défaut
@@ -440,7 +440,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Contenu de l'énigme</Label>
+            <Label htmlFor="description">Contenu de l&apos;énigme</Label>
             <Textarea
               id="description"
               value={enigmeEnCoursEdition?.description || nouvelleEnigme.description || ""} // Toujours fournir une valeur par défaut
@@ -505,7 +505,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
 
           <div className="space-y-2">
             <Label htmlFor="temps_max">
-              Durée maximale pour résoudre l'énigme (en minutes)
+              Durée maximale pour résoudre l&apos;énigme (en minutes)
             </Label>
             <Input
               id="temps_max"
@@ -523,7 +523,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
 
           <div className="space-y-2">
             <Label htmlFor="description_reponse">
-              Description de la réponse de l'énigme
+              Description de la réponse de l&apos;énigme
             </Label>
             <Textarea
               id="description_reponse"
