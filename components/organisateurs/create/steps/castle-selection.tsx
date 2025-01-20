@@ -9,6 +9,7 @@ import { MapPin } from "lucide-react";
 import { contenuTextuel } from "@/constants";
 import { Input } from "@/components/ui/input";
 import Chateau from "@/classes/Chateau";
+import Loader from '@/components/global/loader';
 import { Button } from "@/components/ui/button";
 import { format, parseISO } from 'date-fns'; // Import pour le formatage des dates
 
@@ -78,7 +79,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (chargement) {
-    return <p>Chargement des châteaux...</p>;
+    return <Loader />;
   }
 
   if (erreur) {

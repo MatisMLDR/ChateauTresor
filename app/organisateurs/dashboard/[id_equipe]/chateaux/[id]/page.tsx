@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Loader from '@/components/global/loader';
 
 const ChateauDetailsPage: React.FC = () => {
   const params = useParams();
@@ -23,7 +24,7 @@ const ChateauDetailsPage: React.FC = () => {
   }, [params.id]);
 
   if (!chateau) {
-    return <div>Chargement des informations du château...</div>;
+    return <Loader />;
   }
 
   return (

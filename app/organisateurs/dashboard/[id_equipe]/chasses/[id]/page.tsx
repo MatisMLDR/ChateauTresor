@@ -1,4 +1,4 @@
-// app/organisateur/chasse/[id]/page.tsx
+// app/organisateurs/dashboard/[id_equipe]/chasses/[id]/page.tsx
 import React from 'react';
 import Link from 'next/link';
 import { ExternalLink, Star, Pencil } from 'lucide-react';
@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Chasse from '@/classes/Chasse';
+import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
 import { DeleteChasseButton } from '@/components/organisateurs/deleteChasse'; // Importez le Client Component
 
-export default async function OrganisateurChassePage({ params }: { params: { id: UUID } }) {
-  // Attendre que les params soient résolus
-  const { id } = params;
+export default async function OrganisateurChassePage({ params }: { params: { id_equipe: UUID; id: UUID } }) {
+  // Récupérer les paramètres dynamiques
+  const { id_equipe, id } = params;
 
   // Utiliser l'ID pour récupérer les données de la chasse
   const chasse = await Chasse.readId(id);
@@ -24,7 +25,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id:
   const dureeMoyenne = await chasse.getDureeMoyenne();
 
   if (!chasse) {
-    return <div>Chargement des informations de la chasse...</div>;
+    return <Loader />;
   }
 
   return (
@@ -42,7 +43,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id:
             <h1 className="text-3xl font-bold">{chasse.getTitre()}</h1>
             <div className="flex items-center space-x-2">
               {/* Bouton de modification de la chasse */}
-              <Link href={`/organisateurs/dashboard/chasses/modifier_chasse/${chasse.getIdChasse()}`}>
+              <Link href={`/organisateurs/dashboard/${id_equipe}/modifier_chasse/${chasse.getIdChasse()}`}>
                 <Button variant="ghost" size="icon">
                   <Pencil className="h-4 w-4" />
                 </Button>
@@ -54,7 +55,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id:
           </div>
           <p className="mb-4 text-gray-700">{chasse.getDescription()}</p>
           <p className="mb-2 flex items-center">
-            Lieu : <Link href={`/organisateurs/dashboard/chateaux/${chasse.getIdChateau()}`} className="text-blue-600 hover:underline ml-1 flex justify-around items-center">
+            Lieu : <Link href={`/organisateurs/chateaux/${chasse.getIdChateau()}`} className="text-blue-600 hover:underline ml-1 flex justify-around items-center">
               {chasse.getIdChateau()} <ExternalLink className="w-4 h-4 ml-1" />
             </Link>
           </p>

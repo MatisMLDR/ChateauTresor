@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Chasse from '@/classes/Chasse';
 import { UUID } from 'crypto';
+import Loader from '@/components/global/loader';
 import AddAvisForm from '@/components/participants/AddAvisForm';
 
 export default async function ChassePage({ params }: { params: { id: UUID } }) {
@@ -16,7 +17,7 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
     const avis = await chasse.getAllAvis();
 
     if (!chasse) {
-        return <div>Chargement des informations de la chasse...</div>;
+        return <Loader />;
     }
 
     return (

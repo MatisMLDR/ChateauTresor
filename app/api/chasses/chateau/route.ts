@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
   if (!idChateau) {
     return NextResponse.json(
-      { error: 'Paramètre id_chateau invalide ou manquant' },
+      { error: 'Paramètre id_chateau manquant' },
       { status: 400 }
     );
   }
@@ -21,22 +21,15 @@ export async function GET(request: Request) {
 
     if (error) {
       return NextResponse.json(
-        { error: 'Erreur lors de la récupération des chasses', details: error.message },
+        { error: 'Erreur lors de la récupération des chasses' },
         { status: 500 }
-      );
-    }
-
-    if (!data || data.length === 0) {
-      return NextResponse.json(
-        { message: `Aucune chasse trouvée pour le château avec id ${idChateau}` },
-        { status: 404 }
       );
     }
 
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: 'Une erreur est survenue lors du traitement de la requête', details: err },
+      { error: 'Une erreur est survenue lors du traitement de la requête' },
       { status: 500 }
     );
   }

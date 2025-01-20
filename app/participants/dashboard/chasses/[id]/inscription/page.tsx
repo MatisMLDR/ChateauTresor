@@ -5,6 +5,7 @@ import { Participant } from '@/classes/Participant';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/utils/supabase/client';
+import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
@@ -72,7 +73,7 @@ const Page = () => {
   };
 
   if (!chasse || !idUser) {
-    return <div>Chargement des informations...</div>;
+    return <Loader />;
   }
 
   return (
