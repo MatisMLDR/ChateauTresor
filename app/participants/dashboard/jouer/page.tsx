@@ -20,7 +20,10 @@ import {
 } from '@/components/ui/alert-dialog'; // Import des composants AlertDialog
 import { buttonVariants } from '@/components/ui/button';
 import { UUID } from 'crypto';
-import { Enigme } from '@/classes/Enigme'; // Import des styles de bouton
+import { Enigme } from '@/classes/Enigme';
+import { createParticipation, participationExists } from '@/utils/dao/ParticipationUtils';
+import { Participant } from '@/classes/Participant';
+import { createClient } from '@/utils/supabase/client'; // Import des styles de bouton
 
 const GameInterface: React.FC = () => {
   const [enigmes, setEnigmes] = useState<EnigmeType[]>([]);
@@ -28,6 +31,11 @@ const GameInterface: React.FC = () => {
   const [showIndices, setShowIndices] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccessPage, setShowSuccessPage] = useState(false);
+  const [isParticipating, setIsParticipating] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const[participantId, setParticipantId] = useState<string | null>(null);
+
+
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -62,6 +70,78 @@ const GameInterface: React.FC = () => {
       fetchEnigmes();
     }
   }, [chasseId, enigmeIdFromUrl]);
+
+
+  // Récupérer l'ID de l'utilisateur connecté
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        setUserId(user.id); // Récupérer l'ID de l'utilisateur connecté
+      } else {
+        console.error('Utilisateur non connecté');
+        setError('Utilisateur non connecté. Veuillez vous connecter.');
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // Récupérer l'ID du participant une fois que userId est défini
+  useEffect(() => {
+    const fetchParticipantId = async () => {
+      if (userId) {
+        try {
+          const participant = await Participant.readByIdUser(userId as UUID);
+          setParticipantId(participant.id_participant);
+        } catch (error) {
+          console.error('Erreur lors de la récupération du participant :', error);
+          setError('Erreur lors de la récupération du participant. Veuillez réessayer.');
+        }
+      }
+    };
+
+    fetchParticipantId();
+  }, [userId]);
+
+
+
+
+  // Vérifier et insérer la participation une fois que participantId et chasseId sont définis
+  useEffect(() => {
+    const checkAndInsertParticipation = async () => {
+      if (participantId && chasseId) {
+        try {
+          // Vérifie si la participation existe
+          const exists = await participationExists(participantId as UUID, chasseId as UUID);
+
+          if (!exists) {
+            // Si la participation n'existe pas, on l'insère
+            await createParticipation({
+              id_participant: participantId,
+              id_chasse: chasseId,
+              jour: new Date().toISOString().split('T')[0], // Date du jour au format YYYY-MM-DD
+            });
+            console.log('Participation insérée avec succès.');
+          }
+
+          // Met à jour l'état pour indiquer que l'utilisateur participe
+          setIsParticipating(true);
+        } catch (error) {
+          console.error('Erreur lors de la vérification ou de l\'insertion de la participation :', error);
+          setError('Erreur lors de la vérification de la participation. Veuillez réessayer.');
+        }
+      }
+    };
+
+    checkAndInsertParticipation();
+  }, [participantId, chasseId]);
+
+
 
   const handleBackAfterSuccess = () => {
     router.push('/participants/dashboard/chassesAchete');
@@ -180,7 +260,7 @@ const GameInterface: React.FC = () => {
         {showIndices && (
           <div className="mb-8 bg-gray-50 p-6 rounded-lg shadow-inner">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Indices</h2>
-            <IndiceComponent idEnigme={currentEnigme.id_enigme as UUID} />
+            <IndiceComponent idEnigme={currentEnigme.id_enigme as UUID} participantId={participantId as UUID} />
           </div>
         )}
 

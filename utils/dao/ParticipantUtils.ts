@@ -25,7 +25,7 @@ export async function getParticipantByUserId(id_user: UUID): Promise<any> {
  * Méthode pour récupérer toutes les participations aux énigmes
  * @returns Promise<any> Un tableau des participations aux énigmes
  * @throws Error si la récupération des participations aux énigmes échoue
- * @example const enigmes = await getAllParticipationsEnigmes(1);
+ * @example const scoreTotal = await getAllParticipationsEnigmes(1);
  * @params id_participant L'identifiant du participant
  */
 export async function getAllParticipantEnigmes(id_participant: UUID): Promise<any> {

@@ -29,7 +29,8 @@ interface Indice {
 import { IndiceParticipant } from '@/classes/IndiceParticipant'; // Importez la méthode markAsDiscovered
 import { Participant } from '@/classes/Participant'; // Importez la méthode readByIdUser
 import { createClient } from '@/utils/supabase/client';
-import { partition } from '@jest/expect-utils';
+import { getParticipationByParticipantIdAndChasseId, updateParticipationScore } from '@/utils/dao/ParticipationUtils';
+
 
 const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme, participantId }) => {
   const [indices, setIndices] = useState<Indice[]>([]);
@@ -38,12 +39,33 @@ const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme
   const [selectedIndice, setSelectedIndice] = useState<Indice | null>(null);
   const [discoveredIndices, setDiscoveredIndices] = useState<UUID[]>([]);
   const [loading, setLoading] = useState(true); // État pour gérer le chargement
+  const [userId, setUserId] = useState<string | null>(null);
 
 
   // Récupérez les paramètres de recherche de l'URL
   const searchParams = useSearchParams();
   const chasseId = searchParams.get('chasseId');
   const enigmeId = searchParams.get('enigmeId');
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        setUserId(user.id); // Récupérer l'ID de l'utilisateur connecté
+      } else {
+        console.error('Utilisateur non connecté');
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+
 
   useEffect(() => {
     const fetchIndices = async () => {
@@ -63,26 +85,6 @@ const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme
 
     fetchIndices();
   }, [idEnigme]);
-
-
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        setUserId(user.id); // Récupérer l'ID de l'utilisateur connecté
-      } else {
-        console.error('Utilisateur non connecté');
-      }
-    };
-
-    fetchUser();
-  }, []);
 
 
 // CA MARCHE MAIS ERREUR SI L'INDIE N'EST PAS DEJA DECOUVERT
@@ -186,8 +188,14 @@ const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme
       await indiceParticipant.markAsDiscovered();
 
       // Soustraire le degre_aide de l'indice au score de l'utilisateur
+      const participation = await getParticipationByParticipantIdAndChasseId(participantId, chasseId as UUID);
       const pointsLost = selectedIndice.degre_aide;
-      console.log(`Vous avez perdu ${pointsLost} points.`); // À remplacer par la logique de mise à jour du score
+      const participationScore = (participation.score ?? 0) as number;
+      const score = (participationScore + pointsLost) as number;
+
+      console.log(`Vous avez perdu ${participationScore} points.`); // À remplacer par la logique de mise à jour du score
+      console.log(`Votre nouveau score est de ${score} points.`); // À remplacer par la logique de mise à jour du score
+      await updateParticipationScore(participantId, chasseId as UUID, score);
 
       // Ajouter l'indice à la liste des indices découverts
       setDiscoveredIndices((prev) => [...prev, selectedIndice.id_indice]);
