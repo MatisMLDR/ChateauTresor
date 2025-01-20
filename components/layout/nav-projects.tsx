@@ -154,6 +154,7 @@ export function NavProjects({
                     ? `/participants/dashboard/chasses/${hunt.getIdChasse()}`
                     : `/chateaux/${hunt.getIdChasse()}`
                 }
+                className="inline-flex max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis"
               >
                 {type === 'proprietaire' ? <Castle /> : <Map />}
                 {hunt.getTitre() || <Skeleton className={'h-full w-full'} />}
