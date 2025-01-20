@@ -224,7 +224,7 @@ export type Haut_FaitType = {
 }
 
 export type EquipeOrganisatriceType = {
-  id_equipe?: UUID;
+  id_equipe: UUID;
   nom: string;
   type: "Société" | "Particulier";
   n_siret: string | null;

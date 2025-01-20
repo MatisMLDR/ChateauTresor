@@ -140,7 +140,7 @@ export function TeamSwitcher({
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                     <Plus className="size-4" />
                   </div>
-                  <div className="font-medium text-muted-foreground">Rejoindre une équipe</div>
+                  <div className="font-medium text-muted-foreground">Nouvelle équipe</div>
                 </Link>
               </DropdownMenuItem>
 

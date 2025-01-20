@@ -228,9 +228,10 @@ class EquipeOrganisatrice {
     );
   }
 
-  public static async createEquipe(equipe: any): Promise<void> {
+  public static async createEquipe(equipe: any): Promise<EquipeOrganisatrice> {
     try {
-      await createEquipe(equipe);
+      const equipeData = await createEquipe(equipe);
+      return new EquipeOrganisatrice(equipeData);
     } catch (error) {
       console.error('Erreur lors de la création de l\'équipe :', error);
       throw new Error('Erreur lors de la création de l\'équipe');

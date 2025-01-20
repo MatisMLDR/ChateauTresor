@@ -1,3 +1,4 @@
+import { EquipeOrganisatriceType } from '@/types';
 import { UUID } from 'crypto';
 
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
@@ -61,7 +62,7 @@ export async function getAllEquipesVerifiees(): Promise<any[]> {
  * @throws Error si la création échoue
  * @example const nouvelleEquipe = await createEquipe(equipeData);
  */
-export async function createEquipe(equipe: any): Promise<void> {
+export async function createEquipe(equipe: any): Promise<EquipeOrganisatriceType> {
   console.log("createEquipe", equipe)
   const res = await fetch(`${PUBLIC_URL}/api/equipes`, {
     method: 'POST',
@@ -70,15 +71,13 @@ export async function createEquipe(equipe: any): Promise<void> {
     },
     body: JSON.stringify(equipe),
   });
-
-  const data = await res.json();
-
-  console.log("data", data)
-
+  
   if (!res.ok) {
     console.error('Response Error:', res.status, res.statusText);
     throw new Error(`Erreur lors de la création de l'équipe organisatrice: ${res.statusText}`);
   }
+  const data = await res.json();
+  return data;
 }
 
 /*
