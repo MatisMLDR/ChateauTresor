@@ -87,7 +87,6 @@ const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme
   }, [idEnigme]);
 
 
-// CA MARCHE MAIS ERREUR SI L'INDIE N'EST PAS DEJA DECOUVERT
   // Vérifier tous les indices au chargement du composant
   useEffect(() => {
     const checkAllIndices = async () => {
@@ -190,8 +189,8 @@ const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme
       // Soustraire le degre_aide de l'indice au score de l'utilisateur
       const participation = await getParticipationByParticipantIdAndChasseId(participantId, chasseId as UUID);
       const pointsLost = selectedIndice.degre_aide;
-      const participationScore = (participation.score ?? 0) as number;
-      const score = (participationScore + pointsLost) as number;
+      const participationScore = participation.score;
+      const score = (participationScore - pointsLost);
 
       console.log(`Vous avez perdu ${participationScore} points.`); // À remplacer par la logique de mise à jour du score
       console.log(`Votre nouveau score est de ${score} points.`); // À remplacer par la logique de mise à jour du score

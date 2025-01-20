@@ -30,6 +30,7 @@ const GameInterface: React.FC = () => {
   const [enigmes, setEnigmes] = useState<EnigmeType[]>([]);
   const [currentEnigmeIndex, setCurrentEnigmeIndex] = useState(0);
   const [showIndices, setShowIndices] = useState(false);
+  const [chasse, setChasse] = useState<Chasse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSuccessPage, setShowSuccessPage] = useState(false);
   const [isParticipating, setIsParticipating] = useState<boolean>(false);
@@ -47,6 +48,7 @@ const GameInterface: React.FC = () => {
     const fetchEnigmes = async () => {
       try {
         const chasseInstance = await Chasse.readId(chasseId as UUID);
+        setChasse(chasseInstance);
         const enigmes = await chasseInstance.getAllEnigmes();
         const enigmesTriees = enigmes.sort(
           (a: { ordre: number }, b: { ordre: number }) => a.ordre - b.ordre
@@ -114,18 +116,22 @@ const GameInterface: React.FC = () => {
 
   // Vérifier et insérer la participation une fois que participantId et chasseId sont définis
   useEffect(() => {
+    if (!participantId || !chasseId || !chasse) {
+      return;
+    }
     const checkAndInsertParticipation = async () => {
       if (participantId && chasseId) {
         try {
           // Vérifie si la participation existe
           const exists = await participationExists(participantId as UUID, chasseId as UUID);
-
+          const scoreInitial = await chasse.getScoreInitial();
           if (!exists) {
             // Si la participation n'existe pas, on l'insère
             await createParticipation({
               id_participant: participantId,
               id_chasse: chasseId,
               jour: new Date().toISOString().split('T')[0], // Date du jour au format YYYY-MM-DD
+              score: scoreInitial,
             });
             console.log('Participation insérée avec succès.');
           }
@@ -140,7 +146,7 @@ const GameInterface: React.FC = () => {
     };
 
     checkAndInsertParticipation();
-  }, [participantId, chasseId]);
+  }, [participantId, chasseId, chasse]);
 
 
 

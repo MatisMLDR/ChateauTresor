@@ -563,6 +563,18 @@ class Chasse {
     
   }
 
+  public async getScoreInitial(): Promise<number> {
+    // Récupérer les énigmes de la chasse
+    const enigmes = await this.getAllEnigmes();
+
+    // Faire la somme du degré de difficulté de chaque énigme
+    const scoreInitial = enigmes.reduce((acc: number, enigme: any) => acc + enigme.degre_difficulte, 0);
+
+    // Multiplier par la difficulté de la chasse
+
+    return scoreInitial * this.difficulte;
+  }
+
 }
 
 export default Chasse;
