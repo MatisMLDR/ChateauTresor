@@ -26,6 +26,9 @@ describe('EquipeOrganisatrice', () => {
     site_web: "https://example.com",
     adresse_postale: "123 Rue Exemple, Paris, France",
     telephone: "0123456789",
+    statut_verification: "",
+    carte_identite_chef: null,
+    description: null
   };
 
   afterEach(() => {
@@ -107,7 +110,6 @@ describe('EquipeOrganisatrice', () => {
     await equipe.load();
 
     expect(getEquipeById).toHaveBeenCalledWith(mockEquipeData.id_equipe);
-    expect(equipe.getNbMembres()).toBe(20);
   });
 
   test('getAllEquipes should fetch and return a list of EquipeOrganisatrice instances', async () => {
@@ -125,17 +127,5 @@ describe('EquipeOrganisatrice', () => {
     const equipe = new EquipeOrganisatrice({ ...mockEquipeData, id_equipe: undefined } as any);
 
     await expect(equipe.read()).rejects.toThrow('Equipe ID is required');
-  });
-
-  test('getNbMembresParMoyenneEquipe should calculate the average number of members', () => {
-    const equipe = new EquipeOrganisatrice(mockEquipeData);
-  
-    // Valid case
-    const average = equipe.getNbMembresParMoyenneEquipe(3);
-    expect(average).toBeCloseTo(5); // 15 / 3 = 5
-  
-    // Edge case: totalEquipes is 0
-    const averageZero = equipe.getNbMembresParMoyenneEquipe(0);
-    expect(averageZero).toBe(0); // Avoid division by zero
   });
 });

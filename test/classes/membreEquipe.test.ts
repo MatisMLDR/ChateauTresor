@@ -7,9 +7,6 @@ jest.mock("@/utils/dao/MembreEquipeUtils");
 describe("MembreEquipe", () => {
   const mockMembre: MembreEquipeType = {
     id_membre: "8545523b-af23-4ed0-9be9-b3a09f52aec0",
-    carte_identite: "12345ABC",
-    est_verifie: true,
-    role_equipe: "Admin",
     id_user: "24a83015-32e1-49a5-a6a9-e16fa417c67f",
   };
 
@@ -20,9 +17,6 @@ describe("MembreEquipe", () => {
   it("should create an instance of MembreEquipe", () => {
     const membre = new MembreEquipe(mockMembre);
     expect(membre.getIdMembre()).toBe("8545523b-af23-4ed0-9be9-b3a09f52aec0");
-    expect(membre.getCarteIdentite()).toBe("12345ABC");
-    expect(membre.isVerifie()).toBe(true);
-    expect(membre.getRoleEquipe()).toBe("Admin");
     expect(membre.getIdUser()).toBe("24a83015-32e1-49a5-a6a9-e16fa417c67f");
   });
 
@@ -42,8 +36,6 @@ describe("MembreEquipe", () => {
     const membre = new MembreEquipe(mockMembre);
     (getMembreById as jest.Mock).mockResolvedValue(mockMembre);
     await membre.load();
-    expect(membre.getCarteIdentite()).toBe("12345ABC");
-    expect(membre.getRoleEquipe()).toBe("Admin");
   });
 
   it("should create a new MembreEquipe", async () => {
