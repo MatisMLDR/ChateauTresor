@@ -62,6 +62,7 @@ export async function getAllEquipesVerifiees(): Promise<any[]> {
  * @example const nouvelleEquipe = await createEquipe(equipeData);
  */
 export async function createEquipe(equipe: any): Promise<void> {
+  console.log("createEquipe", equipe)
   const res = await fetch(`${PUBLIC_URL}/api/equipes`, {
     method: 'POST',
     headers: {
@@ -71,6 +72,8 @@ export async function createEquipe(equipe: any): Promise<void> {
   });
 
   const data = await res.json();
+
+  console.log("data", data)
 
   if (!res.ok) {
     console.error('Response Error:', res.status, res.statusText);

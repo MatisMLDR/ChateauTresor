@@ -37,8 +37,6 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
   }, [id_equipe]);
 
 
-
-
   if (!fullyUnlocked) {
     const data = dataNotFullyUnlocked;
     return (
