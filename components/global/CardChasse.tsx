@@ -69,16 +69,17 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
 
   const formattedNote = note.toFixed(1);
 
+  const url = pathname.split('/');
+  let teamId = null;
+
+  const participantType = url[1]
+  if(participantType === 'organisateurs') {
+    teamId = url[3]
+  }
+
   // Fonction pour déterminer le bon lien en fonction du chemin actuel
   const getChasseLink = () => {
-    if (pathname.includes('/organisateurs/dashboard')) {
-      // Si l'utilisateur est sur une page d'organisateur, extraire l'ID de l'équipe de l'URL
-      const idEquipe = pathname.split('/')[3]; // Extrait l'ID de l'équipe de l'URL
-      return `/organisateurs/dashboard/${idEquipe}/chasses/${chasse.getIdChasse()}`;
-    } else {
-      // Sinon, rediriger vers la page des participants
-      return `/participants/dashboard/chasses/${chasse.getIdChasse()}`;
-    }
+    return `/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chasses/${chasse.getIdChasse()}`;
   };
 
   return (

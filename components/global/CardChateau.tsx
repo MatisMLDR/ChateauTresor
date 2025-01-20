@@ -34,9 +34,12 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
   const availableChasses = chasses.filter((chasse) => chasse.isAvailable());
 
   const url = pathname.split('/');
+  let teamId = null;
 
-  const teamId = url[3]
   const participantType = url[1]
+  if(participantType === 'organisateurs') {
+    teamId = url[3]
+  }
 
   return (
     <Card className="flex h-full flex-col transition-shadow duration-200 hover:shadow-lg">
@@ -81,7 +84,7 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
               {availableChasses.map((chasse) => (
                 <li key={chasse.getIdChasse()} className="text-sm text-gray-800">
                   <Link
-                    href={`/${participantType}/dashboard/${teamId}/chasses/${chasse.getIdChasse()}`}
+                    href={`/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chasses/${chasse.getIdChasse()}`}
                     className="hover:text-blue-600"
                   >
                     {chasse.getTitre()}
@@ -95,7 +98,7 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
         </div>
       </CardContent>
       <CardFooter className="p-4">
-        <Link href={`/${participantType}/dashboard/${teamId}/chateaux/${chateau.getIdChateau()}`} className="w-full">
+        <Link href={`/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chateaux/${chateau.getIdChateau()}`} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
       </CardFooter>
