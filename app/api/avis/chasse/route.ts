@@ -6,8 +6,8 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const idChasse = searchParams.get('id_chasse');
 
-  // Vérification du paramètre
-  if (!idChasse) {
+  // Validation du paramètre id_chasse
+  if (!idChasse || typeof idChasse !== 'string') {
     return NextResponse.json(
       { error: 'Paramètre id_chasse invalide ou manquant' },
       { status: 400 }
@@ -23,13 +23,14 @@ export async function GET(request: Request) {
 
     // Gestion des erreurs Supabase
     if (error) {
+      console.error('Erreur Supabase:', error);
       return NextResponse.json(
         { error: 'Erreur lors de la récupération des avis', details: error.message },
         { status: 500 }
       );
     }
 
-    // Aucune avis trouvé
+    // Aucun avis trouvé
     if (!data || data.length === 0) {
       return NextResponse.json(
         { message: `Aucun avis trouvé pour la chasse avec id ${idChasse}` },
@@ -41,6 +42,7 @@ export async function GET(request: Request) {
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     // Gestion des erreurs inattendues
+    console.error('Erreur inattendue:', err);
     return NextResponse.json(
       { error: 'Une erreur est survenue lors du traitement de la requête', details: String(err) },
       { status: 500 }

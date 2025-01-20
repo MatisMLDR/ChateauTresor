@@ -12,7 +12,11 @@ import { UUID } from 'crypto';
 import { DeleteChasseButton } from '@/components/organisateurs/deleteChasse'; // Importez le Client Component
 
 export default async function OrganisateurChassePage({ params }: { params: { id: UUID } }) {
-  const chasse = await Chasse.readId(params.id);
+  // Attendre que les params soient résolus
+  const { id } = params;
+
+  // Utiliser l'ID pour récupérer les données de la chasse
+  const chasse = await Chasse.readId(id);
   const note = await chasse.getNoteMoyenne();
   const avis = await chasse.getAllAvis();
   const nbParticipants = await chasse.getNbParticipants();
