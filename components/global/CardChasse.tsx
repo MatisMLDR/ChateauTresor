@@ -142,10 +142,16 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
           )}
         </div>
       </CardContent>
-      <CardFooter className="p-4">
+      <CardFooter className="p-4 flex flex-col gap-2">
         <Link href={getChasseLink()} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
+        {participantType === 'proprietaire' && (
+          <>
+            <Button className="w-full" variant={'outline'}>Valider</Button>
+            <Button className="w-full" variant={'destructive'}>Refuser</Button>
+          </>
+        )}
       </CardFooter>
     </Card>
   );

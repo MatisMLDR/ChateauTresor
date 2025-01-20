@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Info, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Chasse from '@/classes/Chasse';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,9 +16,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import CardChasse from './CardChasse';
 
 type CalendarProps = {
-  events: { [date: string]: string[] };
+  events: { [date: string]: Chasse[] };
   blockedDaysData: string[];
   onBlockDayChange: (dateString: string, isBlocked: boolean) => void;
 };
@@ -28,32 +30,26 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
   const [isBlocking, setIsBlocking] = useState(false);
   const [selectedEventDate, setSelectedEventDate] = useState<Date | null>(null);
 
-  // Mets le 1ere lettre en majuscule
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  // Mets le 1ere lettre en majuscule pour une date
   const monthName = capitalizeFirstLetter(
     new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(currentDate)
   );
 
-  // Trouve le 1er jour de la semaine
-  const localeFormatter = new Intl.DateTimeFormat('fr-FR', { weekday: 'narrow' });
   const getFirstDayOfWeek = (): number => {
-    const days = [1, 2, 3, 4, 5, 6, 0]; // Lundi à Dimanche
+    const days = [1, 2, 3, 4, 5, 6, 0];
     const formattedDays = days.map((day) => {
-      const date = new Date(2023, 0, day); // Janvier 2023
-      return localeFormatter.format(date);
+      const date = new Date(2023, 0, day);
+      return new Intl.DateTimeFormat('fr-FR', { weekday: 'narrow' }).format(date);
     });
     const uniqueDays = Array.from(new Set(formattedDays));
-    const firstDay = days[formattedDays.indexOf(uniqueDays[0])];
-    return firstDay;
+    return days[formattedDays.indexOf(uniqueDays[0])];
   };
 
   const firstDayOfWeek = getFirstDayOfWeek();
 
-  // Genere la grille du calendrier
   const getCalendarGrid = () => {
     const grid: (Date | null)[][] = Array.from({ length: 6 }, () => Array(7).fill(null));
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -110,7 +106,8 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
 
   const isCurrentMonth = (date: Date) => {
     return (
-      date.getMonth() === currentDate.getMonth() && date.getFullYear() === currentDate.getFullYear()
+      date.getMonth() === currentDate.getMonth() && 
+      date.getFullYear() === currentDate.getFullYear()
     );
   };
 
@@ -145,6 +142,7 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
             const hasEvents = events[dateString]?.length > 0;
             const isBlocked = blockedDaysSet.has(dateString);
             const isCurrent = isCurrentMonth(date);
+            
             return (
               <div key={date.toString()} className="flex flex-col items-center">
                 {isCurrent ? (
@@ -187,15 +185,17 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
                           <AlertDialogTitle>Confirmation</AlertDialogTitle>
                           <AlertDialogDescription>
                             {isBlocking
-                              ? `Êtes-vous sûr de vouloir bloquer le ${date.toLocaleDateString()} ? Aucune chasse au trésor ne pourra être créée ce jour-là.`
-                              : `Êtes-vous sûr de vouloir débloquer le ${date.toLocaleDateString()} ? Les organisateurs pourront à nouveau créer des chasses au trésor ce jour-là.`}
+                              ? `Êtes-vous sûr de vouloir bloquer le ${date.toLocaleDateString()} ?`
+                              : `Êtes-vous sûr de vouloir débloquer le ${date.toLocaleDateString()} ?`}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel onClick={() => setSelectedDate(null)}>
                             Annuler
                           </AlertDialogCancel>
-                          <AlertDialogAction onClick={confirmBlockDay}>Confirmer</AlertDialogAction>
+                          <AlertDialogAction onClick={confirmBlockDay}>
+                            Confirmer
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -208,15 +208,15 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
           })}
         </div>
         {selectedEventDate && isCurrentMonth(selectedEventDate) && (
-          <div className="mt-4">
-            <h3 className="text-lg font-bold">
-              Événements du {selectedEventDate.toLocaleDateString()}
+          <div className="mt-4 p-4 border rounded-lg bg-white shadow-sm">
+            <h3 className="text-lg font-bold mb-4">
+              Chasses programmées le {selectedEventDate.toLocaleDateString()}
             </h3>
-            <ul className="list-disc pl-5">
-              {events[selectedEventDate.toISOString().split('T')[0]]?.map((event, index) => (
-                <li key={index}>{event}</li>
-              ))}
-            </ul>
+            <div className="space-y-4">
+              {events[selectedEventDate.toISOString().split('T')[0]]?.map((chasse, index) => (
+                <CardChasse key={index} chasse={chasse} />
+                ))}
+            </div>
           </div>
         )}
       </div>
