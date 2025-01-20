@@ -54,6 +54,7 @@ export class MembreEquipe {
 
   public static async createAppartenanceEquipe(appartenanceData: AppartenanceEquipeType): Promise<void> {
     try {
+      console.log('appartenanceDate dans createAppartenanceEquipe', appartenanceData)
       await createAppartenanceMembreEquipe(appartenanceData);
     } catch (error) {
       throw new Error('Membre not created');

@@ -66,16 +66,32 @@ const Onboarding = () => {
 
   // useEffect pour récupérer les équipes vérifiées
   useEffect(() => {
+    if (!formData.id_membre) {
+      return; // Ne fais rien si id_membre n'est pas encore disponible
+    }
     async function fetchEquipes() {
       try {
         const equipes = await EquipeOrganisatrice.getAllEquipesVerifiees();
+        console.log('Equipes vérifiées :', equipes);
+        console.log('ID du membre :', formData.id_membre);
+        const equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(formData.id_membre as UUID);
+        console.log('Equipes du membre :', equipesDuMembre);
+        // Garder uniquement les equipes ou le membre n'y figure pas
+        equipesDuMembre.forEach(equipeDuMembre => {
+          // Supprimer l'équipe du membre du tableau équipes
+          const index = equipes.findIndex(equipe => equipe.getIdEquipe() === equipeDuMembre.getIdEquipe());
+          if (index !== -1) {
+            equipes.splice(index, 1);
+          }
+        });
+        console.log('Equipes filtrées :', equipes);
         setEquipes(equipes);
       } catch (err) {
         // Do nothing
       }
     }
     fetchEquipes();
-  }, []);
+  }, [formData.id_membre]);
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -101,7 +117,7 @@ const Onboarding = () => {
       id_membre: formData.id_membre as UUID,
       id_equipe: formData.equipe as UUID, // TODO : Corriger pour pouvoir utiliser l'objet EquipeOrganisatrice
     };
-
+    console.log("Data quand l'utilisateur veut rejoindre son équipe : ", data)
     try {
 
       await MembreEquipe.createAppartenanceEquipe(data);
@@ -110,12 +126,12 @@ const Onboarding = () => {
       router.push('/organisateurs/onboarding/attente/acceptation-equipe');
 
     } catch (err) {
-      console.error('Erreur inconnue lors de l\'insertion des données :', err);
+      console.error('Erreur lors de l\'insertion des données :', err);
     }
   };
   const handleSubmitWithoutExistingTeam = async (e: any) => {
     e.preventDefault();
-
+    
     // Préparation des données pour la nouvelle équipe
     const data = {
       nom: formData.nomEquipe,
@@ -131,9 +147,9 @@ const Onboarding = () => {
     };
 
     try {
-      await createEquipe(data);
+      await EquipeOrganisatrice.createEquipe(data);
 
-    } catch (err) {
+    } catch (err) { 
       console.error('Erreur lors de l\'insertion des données :', err);
     }
   };
@@ -340,7 +356,7 @@ const Onboarding = () => {
                       Sélectionner un type
                     </option>
                     <option value="Société">Société</option>
-                    <option value="Particuliers">Particuliers</option>
+                    <option value="Particulier">Particulier</option>
                   </select>
                 </div>
                 <div className="flex justify-between items-center mt-12">

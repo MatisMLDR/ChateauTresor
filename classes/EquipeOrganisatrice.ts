@@ -228,7 +228,7 @@ class EquipeOrganisatrice {
     );
   }
 
-  public static async createEquipe(equipe: EquipeOrganisatrice): Promise<void> {
+  public static async createEquipe(equipe: any): Promise<void> {
     try {
       await createEquipe(equipe);
     } catch (error) {
