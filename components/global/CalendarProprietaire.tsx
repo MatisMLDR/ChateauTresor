@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Info, Home } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import Chasse from '@/classes/Chasse';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,15 +15,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import Chasse from '@/classes/Chasse';
 import CardChasse from './CardChasse';
 
 type CalendarProps = {
-  events: { [date: string]: Chasse[] };
+  chasses: Chasse[];
   blockedDaysData: string[];
   onBlockDayChange: (dateString: string, isBlocked: boolean) => void;
 };
 
-export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange }: CalendarProps) {
+export function CalendarProprietaire({ chasses, blockedDaysData, onBlockDayChange }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isBlocking, setIsBlocking] = useState(false);
@@ -38,14 +38,16 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
     new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(currentDate)
   );
 
+  const localeFormatter = new Intl.DateTimeFormat('fr-FR', { weekday: 'narrow' });
   const getFirstDayOfWeek = (): number => {
     const days = [1, 2, 3, 4, 5, 6, 0];
     const formattedDays = days.map((day) => {
       const date = new Date(2023, 0, day);
-      return new Intl.DateTimeFormat('fr-FR', { weekday: 'narrow' }).format(date);
+      return localeFormatter.format(date);
     });
     const uniqueDays = Array.from(new Set(formattedDays));
-    return days[formattedDays.indexOf(uniqueDays[0])];
+    const firstDay = days[formattedDays.indexOf(uniqueDays[0])];
+    return firstDay;
   };
 
   const firstDayOfWeek = getFirstDayOfWeek();
@@ -81,9 +83,29 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
 
   const blockedDaysSet = new Set<string>(blockedDaysData);
 
+  const isDateInChasse = (date: Date, chasse: Chasse) => {
+    const chasseStart = new Date(chasse.getDateDebut() || 0);
+    const chasseEnd = new Date(chasse.getDateFin() || 0);
+    
+    // Conversion en UTC pour comparaison neutre
+    const checkDateUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+    const chasseStartUTC = Date.UTC(
+      chasseStart.getUTCFullYear(),
+      chasseStart.getUTCMonth(),
+      chasseStart.getUTCDate()
+    );
+    const chasseEndUTC = Date.UTC(
+      chasseEnd.getUTCFullYear(),
+      chasseEnd.getUTCMonth(),
+      chasseEnd.getUTCDate()
+    ) + 86399999; // Ajoute 23h59m59s999ms
+
+    return checkDateUTC >= chasseStartUTC && checkDateUTC <= chasseEndUTC;
+  };
+
   const toggleBlockDay = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
-    if (!isCurrentMonth(date) || events[dateString]?.length > 0) return;
+    if (!isCurrentMonth(date) || chasses.some(c => isDateInChasse(date, c))) return;
     setSelectedDate(date);
     setIsBlocking(!blockedDaysSet.has(dateString));
   };
@@ -91,7 +113,7 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
   const confirmBlockDay = () => {
     if (selectedDate && isCurrentMonth(selectedDate)) {
       const dateString = selectedDate.toISOString().split('T')[0];
-      if (events[dateString]?.length > 0) return;
+      if (chasses.some(c => isDateInChasse(selectedDate, c))) return;
       onBlockDayChange(dateString, isBlocking);
     }
     setSelectedDate(null);
@@ -106,8 +128,7 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
 
   const isCurrentMonth = (date: Date) => {
     return (
-      date.getMonth() === currentDate.getMonth() && 
-      date.getFullYear() === currentDate.getFullYear()
+      date.getMonth() === currentDate.getMonth() && date.getFullYear() === currentDate.getFullYear()
     );
   };
 
@@ -139,10 +160,9 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
           {calendarGrid.flat().map((date, index) => {
             if (!date) return <div key={index} className="h-12"></div>;
             const dateString = date.toISOString().split('T')[0];
-            const hasEvents = events[dateString]?.length > 0;
+            const hasEvents = chasses.some(c => isDateInChasse(date, c));
             const isBlocked = blockedDaysSet.has(dateString);
             const isCurrent = isCurrentMonth(date);
-            
             return (
               <div key={date.toString()} className="flex flex-col items-center">
                 {isCurrent ? (
@@ -185,17 +205,15 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
                           <AlertDialogTitle>Confirmation</AlertDialogTitle>
                           <AlertDialogDescription>
                             {isBlocking
-                              ? `Êtes-vous sûr de vouloir bloquer le ${date.toLocaleDateString()} ?`
-                              : `Êtes-vous sûr de vouloir débloquer le ${date.toLocaleDateString()} ?`}
+                              ? `Êtes-vous sûr de vouloir bloquer le ${date.toLocaleDateString()} ? Aucune chasse au trésor ne pourra être créée ce jour-là.`
+                              : `Êtes-vous sûr de vouloir débloquer le ${date.toLocaleDateString()} ? Les organisateurs pourront à nouveau créer des chasses au trésor ce jour-là.`}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel onClick={() => setSelectedDate(null)}>
                             Annuler
                           </AlertDialogCancel>
-                          <AlertDialogAction onClick={confirmBlockDay}>
-                            Confirmer
-                          </AlertDialogAction>
+                          <AlertDialogAction onClick={confirmBlockDay}>Confirmer</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -208,15 +226,15 @@ export function CalendarProprietaire({ events, blockedDaysData, onBlockDayChange
           })}
         </div>
         {selectedEventDate && isCurrentMonth(selectedEventDate) && (
-          <div className="mt-4 p-4 border rounded-lg bg-white shadow-sm">
-            <h3 className="text-lg font-bold mb-4">
-              Chasses programmées le {selectedEventDate.toLocaleDateString()}
+          <div className="mt-4">
+            <h3 className="text-lg font-bold">
+              Événements du {selectedEventDate.toLocaleDateString()}
             </h3>
-            <div className="space-y-4">
-              {events[selectedEventDate.toISOString().split('T')[0]]?.map((chasse, index) => (
+            {chasses
+              .filter(c => isDateInChasse(selectedEventDate, c))
+              .map((chasse, index) => (
                 <CardChasse key={index} chasse={chasse} />
-                ))}
-            </div>
+              ))}
           </div>
         )}
       </div>
