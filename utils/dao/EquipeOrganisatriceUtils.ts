@@ -27,7 +27,6 @@ export async function getEquipeByMembreId(id_membre: UUID): Promise<any> {
   return await res.json();
 }
 
-
 /*
  * Méthode pour récupérer toutes les équipes organisatrices
  * @returns Promise<any[]> Un tableau d'équipes organisatrices
@@ -145,13 +144,17 @@ export async function accepterDemandeEquipe(appartenanceData: any): Promise<void
 }
 
 export async function refuserDemandeEquipe(appartenanceData: any): Promise<void> {
-  const res = await fetch(`${PUBLIC_URL}}/api/appartenances/demandes/refuser`, {
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/demandes/refuser`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(appartenanceData),
   });
+
+  const data = await res.json();
+
+  console.log("data dans refuserDemandeEquipe : ", data);
 
   if (!res.ok) {
     throw new Error('Erreur lors du refus de la demande');
