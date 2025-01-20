@@ -35,7 +35,7 @@ export function TeamSwitcher({
   id_equipe_courante,
 }: {
   type: SideBarProps['type'],
-  id_equipe_courante?: UUID | undefined
+  id_equipe_courante?: UUID
 }) {
   const { isMobile } = useSidebar()
   const [equipes, setEquipes] = useState<EquipeOrganisatrice[]>([])

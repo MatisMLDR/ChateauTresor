@@ -204,12 +204,18 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher type={type} id_equipe_courante={id_equipe as UUID} />
+        {(type === "organisateur" && id_equipe) 
+          ? <TeamSwitcher type={type} id_equipe_courante={id_equipe as UUID} />
+          : <TeamSwitcher type={type} />
+        }
       </SidebarHeader>
 
       <SidebarContent>
         <NavMain items={type === "participant" ? navMainParticipant : navMainOrganisateur} />
-        <NavProjects type={type} id_equipe_courante={id_equipe as UUID} />
+        {type === "organisateur" 
+          ? <NavProjects type={type} id_equipe_courante={id_equipe as UUID} />
+          : <NavProjects type={type} />
+        }
       </SidebarContent>
       <SidebarFooter>
         <NavUser type={type} />

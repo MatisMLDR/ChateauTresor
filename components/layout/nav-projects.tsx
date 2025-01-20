@@ -29,7 +29,7 @@ export function NavProjects({
   id_equipe_courante,
   type,
 }: {
-  id_equipe_courante?: UUID | undefined;
+  id_equipe_courante?: UUID;
   type: SideBarProps['type'];
 }) {
   const { isMobile } = useSidebar();
