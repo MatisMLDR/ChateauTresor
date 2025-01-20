@@ -35,7 +35,7 @@ export function TeamSwitcher({
   id_equipe_courante,
 }: {
   type: SideBarProps['type'],
-  id_equipe_courante: UUID
+  id_equipe_courante?: UUID | undefined
 }) {
   const { isMobile } = useSidebar()
   const [equipes, setEquipes] = useState<EquipeOrganisatrice[]>([])
@@ -77,7 +77,7 @@ export function TeamSwitcher({
         } else {
           // If the team is not found, try using the `readId` method
           try {
-            const teamFromReadId = await EquipeOrganisatrice.readId(id_equipe_courante);
+            const teamFromReadId = await EquipeOrganisatrice.readId(id_equipe_courante!);
             setActiveTeam(teamFromReadId);
           } catch (err) {
             console.error("Failed to fetch team using readId:", err);

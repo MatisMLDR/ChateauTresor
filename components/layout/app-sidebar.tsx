@@ -12,7 +12,7 @@ import { NavMain } from './nav-main';
 import { NavProjects } from './nav-projects';
 import { NavUser } from './nav-user';
 
-import { dataNotFullyUnlocked, dataOrganisateur, dataProprietaire, dataUser } from '@/constants';
+import { dataNotFullyUnlocked } from '@/constants';
 import { SideBarProps } from '@/types';
 import { UUID } from 'crypto';
 import {
@@ -23,6 +23,7 @@ import {
   MapPin,
   Plus,
   Search,
+  Trophy,
   User
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -39,15 +40,15 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
   const [idUser, setIdUser] = useState<UUID | null>(null);
   const [navMainOrganisateur, setNavMainOrganisateur] = useState([] as any);
   const [navMainParticipant, setNavMainParticipant] = useState([] as any);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && id_equipe) {
+    if (typeof window !== 'undefined' && id_equipe && type === "organisateur") {
       localStorage.setItem('id_equipe', id_equipe as string);
     }
   }, [id_equipe]);
 
-  // Check if the current member is a team admin (owner)
+  // fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);  // Commencer le chargement
@@ -59,16 +60,9 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
         if (user && user.email) {
           setIdUser(user.id as UUID);
-          const membre = await MembreEquipe.readByIdUser(user.id as UUID);
-          const appartenanceEquipeCourante = await membre.getAppartenanceEquipe(id_equipe as UUID);
-          const isOwner = appartenanceEquipeCourante.role_equipe === 'Administrateur';
-          if (isOwner) {
-            localStorage.setItem('isOwner', 'true');
-            setIsOwner(true);
-          }
         }
       } catch (err) {
-        console.error('Erreur lors de la récupération des détails de l\'équipe :', err);
+        console.error('Erreur lors de la récupération de l"utilisateur :', err);
       } finally {
         setLoading(false);  // Fin du chargement
       }
@@ -79,12 +73,38 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
     }
   }, [id_equipe]);
 
-  // Set navMain
+
+  // Check if the current member is a team admin (owner)
   useEffect(() => {
-    if (type !== "organisateur" || !id_equipe || !idUser) {
-      return
+    if (type !== "organisateur" && (!id_equipe || !idUser)) {
+      return;
+    }
+    const checkIfIsOwner = async () => {
+      setLoading(true);
+      try {
+        const membre = await MembreEquipe.readByIdUser(idUser as UUID);
+        const appartenanceEquipeCourante = await membre.getAppartenanceEquipe(id_equipe as UUID);
+        const isOwner = appartenanceEquipeCourante.role_equipe === 'Administrateur';
+        if (isOwner) {
+          localStorage.setItem('isOwner', 'true');
+          setIsOwner(true);
+        }
+      } catch (err) {
+        console.error('Erreur lors de la récupération des détails de l\'équipe :', err);
+      } finally {
+        setLoading(false);
+      }
     }
 
+    checkIfIsOwner();
+
+  }, [id_equipe, idUser]);
+
+  // Set navMain
+  useEffect(() => {
+    if (type !== "organisateur" && (!id_equipe || !idUser)) {
+      return
+    }
     let navMainData = [  // Use `let` so that it's mutable
       {
         title: 'Dashboard',
@@ -123,9 +143,10 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
   }, [isOwner, idUser, id_equipe]);
 
   useEffect(() => {
-    if (type !== "participant" || !idUser) {
+    if (type !== "participant" && !idUser) {
       return
     }
+    console.log("Nous sommes rentrés dans le useEffect de type participant");
     const navMainData = [
       {
         title: 'Carte',
@@ -142,6 +163,11 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
         title: 'Chasses',
         url: '/participants/dashboard/chasses',
         icon: Search,
+      },
+      {
+        title: 'Classements',
+        url: '/participants/dashboard/classements',
+        icon: Trophy,
       },
       {
         title: 'Historique',
@@ -177,11 +203,10 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      {type === 'organisateur' && (
-        <SidebarHeader>
-          <TeamSwitcher type={type} id_equipe_courante={id_equipe as UUID} />
-        </SidebarHeader>
-      )}
+      <SidebarHeader>
+        <TeamSwitcher type={type} id_equipe_courante={id_equipe as UUID} />
+      </SidebarHeader>
+
       <SidebarContent>
         <NavMain items={type === "participant" ? navMainParticipant : navMainOrganisateur} />
         <NavProjects type={type} id_equipe_courante={id_equipe as UUID} />

@@ -29,7 +29,7 @@ export function NavProjects({
   id_equipe_courante,
   type,
 }: {
-  id_equipe_courante: UUID;
+  id_equipe_courante?: UUID | undefined;
   type: SideBarProps['type'];
 }) {
   const { isMobile } = useSidebar();
@@ -38,7 +38,7 @@ export function NavProjects({
   useEffect(() => {
     const fetchLastThreeHunts = async () => {
       try {
-        const equipe = await EquipeOrganisatrice.readId(id_equipe_courante);
+        const equipe = await EquipeOrganisatrice.readId(id_equipe_courante!);
         if (equipe) {
           localStorage.setItem('equipe', JSON.stringify(equipe));
           const teamHunts = await equipe.getAllChasses();
