@@ -5,47 +5,50 @@ import Chasse from '@/classes/Chasse';
 import { ChasseType } from '@/types';
 import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
-import { format, parseISO } from 'date-fns'; // Import de date-fns pour le formatage des dates
+import { format, parseISO } from 'date-fns';
+import { toast } from "react-hot-toast";
 
 const EditHuntPage: React.FC = () => {
   const params = useParams();
   const [huntData, setHuntData] = useState<Partial<ChasseType> | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // État de chargement
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHuntData = async () => {
       try {
         console.log('Début du chargement des données de la chasse...');
-
-        // 1. Récupérer la chasse par son ID
+  
         const chasse = await Chasse.readId(params.id as UUID);
         if (!chasse) {
           throw new Error('Chasse non trouvée');
         }
         console.log('Chasse récupérée:', chasse);
-
-        // 2. Charger les relations
+  
         await chasse.loadChateau();
-        await chasse.loadEnigmes();
+        await chasse.loadEnigmes(); // Charger les énigmes
         await chasse.loadRecompenses();
-
-        // 3. Formater les dates pour le formulaire
+  
+        // Formater les dates et les horaires
         const formattedHuntData = {
           ...chasse,
           date_debut: chasse.getDateDebut() ? format(parseISO(chasse.getDateDebut()), 'yyyy-MM-dd') : '',
           date_fin: chasse.getDateFin() ? format(parseISO(chasse.getDateFin()), 'yyyy-MM-dd') : '',
-          image: chasse.getImage() || '', // Assurez-vous que l'image est bien récupérée
+          horaire_debut: chasse.getHoraireDebut() || '', // Conserver le format HH:mm:ss
+          horaire_fin: chasse.getHoraireFin() || '', // Conserver le format HH:mm:ss
+          image: chasse.getImage() || '',
+          enigmes: chasse.enigmes || [], // Passer les énigmes
+          recompenses: chasse.recompenses || [],
         };
-
-        // 4. Mettre à jour l'état avec les données formatées
+  
         setHuntData(formattedHuntData);
-        setIsLoading(false); // Fin du chargement
+        setIsLoading(false);
       } catch (err) {
         console.error('Erreur lors de la récupération des données de la chasse :', err);
+        toast.error("Erreur lors du chargement des données de la chasse.");
         setIsLoading(false);
       }
     };
-
+  
     if (params.id) {
       fetchHuntData();
     }

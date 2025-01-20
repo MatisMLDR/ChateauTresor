@@ -6,51 +6,33 @@ import { CreateHuntForm } from '@/components/organisateurs/create/create-hunt-fo
 import Chasse from '@/classes/Chasse';
 import { ChasseType } from '@/types';
 import { UUID } from 'crypto';
+import { toast } from 'react-hot-toast';
 import Loader from '@/components/global/loader';
 import Chateau from '@/classes/Chateau';
 
 const EditHuntPage: React.FC = () => {
   const params = useParams();
   const [huntData, setHuntData] = useState<Partial<ChasseType> | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHuntData = async () => {
       try {
         console.log('Début du chargement des données de la chasse...');
 
-        // 1. Récupérer la chasse par son ID
-        console.log('Récupération de la chasse par ID...');
+        // Récupérer la chasse par son ID
         const chasse = await Chasse.readId(params.id as UUID);
         if (!chasse) {
           throw new Error('Chasse non trouvée');
         }
-        console.log('Chasse récupérée:', chasse);
 
-        // 2. Charger les relations
-        console.log('Chargement du château associé...');
+        // Charger les relations (château, énigmes, récompenses)
         await chasse.loadChateau();
-        console.log('Château chargé:', chasse.chateau);
-
-        console.log('Chargement des énigmes...');
         await chasse.loadEnigmes();
-        console.log('Énigmes chargées:', chasse.enigmes);
-
-        // Log des indices pour chaque énigme
-        if (chasse.enigmes) {
-          console.log('Vérification des indices pour chaque énigme...');
-          for (const enigme of chasse.enigmes) {
-            console.log(`Énigme ${enigme.id_enigme} - Titre: ${enigme.titre}`);
-            console.log('Indices associés:', enigme.indices);
-          }
-        }
-
-        console.log('Chargement des récompenses...');
         await chasse.loadRecompenses();
-        console.log('Récompenses chargées:', chasse.recompenses);
 
-        // 3. Mettre à jour l'état avec les données complètes
-        console.log('Mise à jour de l\'état avec les données complètes...');
-        setHuntData({
+        // Formater les données pour le formulaire
+        const formattedHuntData = {
           id_chasse: chasse.getIdChasse(),
           titre: chasse.getTitre(),
           capacite: chasse.getCapacite(),
@@ -61,6 +43,8 @@ const EditHuntPage: React.FC = () => {
           date_modification: chasse.getDateModification(),
           date_debut: chasse.getDateDebut(),
           date_fin: chasse.getDateFin(),
+          horaire_debut: chasse.getHoraireDebut(),
+          horaire_fin: chasse.getHoraireFin(),
           prix: chasse.getPrix(),
           difficulte: chasse.getDifficulte(),
           duree_estime: chasse.getDureeEstime(),
@@ -69,13 +53,16 @@ const EditHuntPage: React.FC = () => {
           id_chateau: chasse.getIdChateau(),
           id_equipe: chasse.getIdEquipe(),
           chateau: chasse.chateau,
-          enigmes: chasse.enigmes,
-          recompenses: chasse.recompenses,
-        });
+          enigmes: chasse.enigmes || [], // Assurez-vous que les énigmes sont bien incluses
+          recompenses: chasse.recompenses || [], // Assurez-vous que les récompenses sont bien incluses
+        };
 
-        console.log('Données de la chasse mises à jour:', huntData);
+        setHuntData(formattedHuntData);
       } catch (err) {
         console.error('Erreur lors de la récupération des données de la chasse :', err);
+        toast.error('Erreur lors du chargement des données de la chasse.');
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -88,8 +75,9 @@ const EditHuntPage: React.FC = () => {
     return <Loader />;
   }
 
-  // Log des données finales avant affichage
-  console.log('Données finales de la chasse:', huntData);
+  if (!huntData) {
+    return <div>Données de la chasse non disponibles.</div>;
+  }
 
   return (
     <div className="container mx-auto p-4">

@@ -66,7 +66,7 @@ const Demandes = async ({ params }: { params: { id_equipe: UUID } }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     {demande.role_equipe}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="flex items-center justify-center gap-2 px-6 py-4 whitespace-nowrap text-center">
                     <ButtonDemande action="accepter" id_membre={demande.id_membre} id_equipe={id_equipe} equipeData={equipe.toObject()} />
                     <ButtonDemande action="refuser" id_membre={demande.id_membre} id_equipe={id_equipe} equipeData={equipe.toObject()} />
                   </td>
