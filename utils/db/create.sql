@@ -110,6 +110,7 @@ CREATE TABLE public.Equipe_Organisatrice
     id_taxes        VARCHAR(255) DEFAULT NULL,
     site_web        VARCHAR(255) DEFAULT NULL,
     adresse_postale VARCHAR(255) DEFAULT 'Non spécifiée',
+    date_creation   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     statut_verification VARCHAR(255) NOT NULL DEFAULT 'En attente de vérification'
     CHECK (statut_verification IN ('En attente de vérification', 'Vérifiée', 'Refusée')),
     carte_identite_chef VARCHAR(255) DEFAULT NULL,
@@ -121,7 +122,7 @@ CREATE TABLE public.Equipe_Organisatrice
 CREATE TABLE public.Membre_equipe
 (
     id_membre      UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-    id_user        UUID             NOT NULL UNIQUE REFERENCES auth.users ON DELETE CASCADE
+    id_user        UUID             NOT NULL UNIQUE REFERENCES public.profiles ON DELETE CASCADE
 );
 
 -- Table Appartenance_Equipe
@@ -129,7 +130,7 @@ CREATE TABLE public.Appartenance_Equipe
 (
     id_membre         UUID NOT NULL,
     id_equipe         UUID NOT NULL,
-    date_appartenance DATE DEFAULT CURRENT_DATE,
+    date_appartenance DATE DEFAULT NULL,
     statut            VARCHAR(50)         NOT NULL DEFAULT 'En attente de validation' CHECK (
         statut IN ('En attente de validation', 'Validé', 'Refusé')
         ),
@@ -335,6 +336,21 @@ END;
 $$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION update_date_appartenance_on_validation()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Si le statut devient "Validé", mettre à jour date_appartenance
+  IF NEW.statut = 'Validé' THEN
+    NEW.date_appartenance = CURRENT_DATE;
+  -- Si le statut passe de "Validé" à autre chose, réinitialiser date_appartenance
+  ELSIF OLD.statut = 'Validé' AND NEW.statut <> 'Validé' THEN
+    NEW.date_appartenance = NULL;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Exemple : Appliquer aux chasses
 CREATE
 OR REPLACE TRIGGER update_chasse_modification_date
@@ -358,3 +374,16 @@ OR REPLACE TRIGGER update_recompense_modification_date
 UPDATE ON Recompense
     FOR EACH ROW
     EXECUTE FUNCTION update_modification_date();
+
+-- Création du trigger pour les mises à jour
+CREATE OR REPLACE TRIGGER trig_update_date_appartenance
+BEFORE UPDATE ON public.Appartenance_Equipe
+FOR EACH ROW
+WHEN (OLD.statut IS DISTINCT FROM NEW.statut) -- Déclenché uniquement si le statut change
+EXECUTE FUNCTION update_date_appartenance_on_validation();
+
+-- Création du trigger pour les insertions
+CREATE OR REPLACE TRIGGER trig_insert_date_appartenance
+BEFORE INSERT ON public.Appartenance_Equipe
+FOR EACH ROW
+EXECUTE FUNCTION update_date_appartenance_on_validation();

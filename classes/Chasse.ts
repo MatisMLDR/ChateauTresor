@@ -180,7 +180,7 @@ class Chasse {
    * Méthode pour charger les données de l'objet indice dans la classe
     * @returns Promise<any> L'objet Chasse avec les données chargées à partir de l'id
    */
-  public static async readId(id_chasse: UUID): Promise<any> {
+  public static async readId(id_chasse: UUID): Promise<Chasse> {
 
     const data = await getChasseById(id_chasse) as any;
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { ArrowUpRight, ChevronsUpDown, Plus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -39,6 +39,8 @@ export function TeamSwitcher({
 }) {
   const { isMobile } = useSidebar()
   const [equipes, setEquipes] = useState<EquipeOrganisatrice[]>([])
+  const [hasMoreThanThreeTeams, setHasMoreThanThreeTeams] = useState(false)
+  const [idMembre, setIdMembre] = useState<UUID | null>(null)
   const [activeTeam, setActiveTeam] = useState<EquipeOrganisatrice | undefined>(
     equipes.find((team) => team.getIdEquipe() === id_equipe_courante)
   )
@@ -54,8 +56,13 @@ export function TeamSwitcher({
 
         try {
           const membre = await MembreEquipe.readByIdUser(user.id as UUID);
-          const equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(membre.getIdMembre() as UUID);
-
+          setIdMembre(membre.getIdMembre() as UUID);
+          let equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(membre.getIdMembre() as UUID);
+          // Display only the first three teams
+          if (equipesDuMembre.length > 3) {
+            setHasMoreThanThreeTeams(true);
+            equipesDuMembre = equipesDuMembre.slice(0, 3);
+          }
           setEquipes(equipesDuMembre as any);
         } catch (err) {
           console.error('Erreur lors de la récupération des détails du château :', err);
@@ -89,7 +96,7 @@ export function TeamSwitcher({
     setTeam();
   }, [equipes, id_equipe_courante]);  // Run whenever `equipes` or `id_equipe_courante` changes
   
-  if (equipes.length === 0 || !activeTeam) {
+  if (type === "organisateur" && (equipes.length === 0 || !activeTeam)) {
     return (
       <Skeleton className="w-full h-10 rounded-md" />
     )
@@ -108,6 +115,13 @@ export function TeamSwitcher({
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
                 <Image src={"/logo.svg"} alt={"Logo Chateau Tresor"} layout={"fill"} className={"!static"} />
               </div>
+              {type === "participant" && 
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">
+                    C. Trésor
+                  </span>
+                </div>
+              }
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
                   {activeTeam?.getNom()}
@@ -140,6 +154,16 @@ export function TeamSwitcher({
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
+              {hasMoreThanThreeTeams && (
+              <DropdownMenuItem className="gap-2 p-2">
+                <Link href={`/organisateurs/dashboard/${id_equipe_courante}/equipes/${idMembre}`} className="flex items-center gap-2">
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                    <ArrowUpRight className="size-4" />
+                  </div>
+                  <div className="font-medium text-muted-foreground">Voir toutes ses équipes</div>
+                </Link>
+              </DropdownMenuItem>
+              )}
               <DropdownMenuItem className="gap-2 p-2">
                 <Link href={`/organisateurs/onboarding`} className="flex items-center gap-2">
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">

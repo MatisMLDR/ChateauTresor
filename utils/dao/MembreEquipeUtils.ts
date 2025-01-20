@@ -127,7 +127,7 @@ export async function createAppartenanceMembreEquipe(appartenanceData: Appartena
 }
 
 export async function deleteAppartenanceMembreEquipe(id_membre: UUID, id_equipe: UUID): Promise<void> {
-  const res = await fetch(`${PUBLIC_URL}/api/appartenances/membre/${id_membre}/${id_equipe}`, {
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/membre/equipe?id_equipe=${id_equipe}&id_membre=${id_membre}`, {
     method: 'DELETE',
   });
 

@@ -1,5 +1,5 @@
 import { AppartenanceEquipeType, EquipeOrganisatriceType, MembreEquipeType } from '@/types';
-import { createAppartenanceMembreEquipe, createMembre, deleteMembre, getAllAppartenancesMembre, getAppartenanceMembreEquipe, getMembreById, getMembreByUserId, updateMembre } from '@/utils/dao/MembreEquipeUtils';
+import { createAppartenanceMembreEquipe, createMembre, deleteAppartenanceMembreEquipe, deleteMembre, getAllAppartenancesMembre, getAppartenanceMembreEquipe, getMembreById, getMembreByUserId, updateMembre } from '@/utils/dao/MembreEquipeUtils';
 import { UUID } from "crypto";
 import EquipeOrganisatrice from './EquipeOrganisatrice';
 
@@ -146,6 +146,14 @@ export class MembreEquipe {
       await updateMembre(this);
     } catch (error) {
       throw new Error('Membre does not exist');
+    }
+  }
+
+  public static async quitterEquipe(id_membre: UUID, id_equipe: UUID): Promise<void> {
+    try {
+      await deleteAppartenanceMembreEquipe(id_membre, id_equipe)
+    } catch (error) {
+      throw new Error('Appartenance does not exist');
     }
   }
 }

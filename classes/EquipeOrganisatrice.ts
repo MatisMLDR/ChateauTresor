@@ -1,7 +1,9 @@
-import { EquipeOrganisatriceType as EquipeOrganisatriceType } from "@/types";
-import { getEquipeById, getAllEquipes, deleteEquipe, createEquipe, updateEquipe, getEquipeByMembreId, getAllEquipesVerifiees, getAllDemandesOfEquipe, accepterDemandeEquipe, refuserDemandeEquipe, getAllChassesOfEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
+import { EquipeOrganisatriceType, ProfilType } from "@/types";
+import { accepterDemandeEquipe, createEquipe, deleteEquipe, getAdminOfEquipe, getAllAppartenancesEquipe, getAllChassesOfEquipe, getAllDemandesOfEquipe, getAllEquipes, getAllEquipesVerifiees, getEquipeById, getEquipeByMembreId, refuserDemandeEquipe, updateEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
 import { UUID } from "crypto";
 import Chasse from "./Chasse";
+import { MembreEquipe } from "./MembreEquipe";
+import { Profil } from "./Profil";
 
 class EquipeOrganisatrice {
   private id_equipe: UUID;
@@ -11,6 +13,7 @@ class EquipeOrganisatrice {
   private id_taxes: string | null;
   private site_web: string | null;
   private adresse_postale: string;
+  private date_creation: string;
   private telephone: string | null;
   private statut_verification: string;
   private carte_identite_chef: string | null;
@@ -25,6 +28,7 @@ class EquipeOrganisatrice {
     this.id_taxes = equipe.id_taxes;
     this.site_web = equipe.site_web;
     this.adresse_postale = equipe.adresse_postale;
+    this.date_creation = equipe.date_creation;
     this.telephone = equipe.telephone;
     this.statut_verification = equipe.statut_verification;
     this.carte_identite_chef = equipe.carte_identite_chef;
@@ -49,6 +53,9 @@ class EquipeOrganisatrice {
   }
   public getAdressePostale(): string {
     return this.adresse_postale;
+  }
+  public getDateCreation(): string {
+    return this.date_creation;
   }
   public getTelephone(): string | null {
     return this.telephone;
@@ -86,6 +93,9 @@ class EquipeOrganisatrice {
   }
   public setAdressePostale(adresse_postale: string): void {
     this.adresse_postale = adresse_postale;
+  }
+  public setDateCreation(date_creation: string): void {
+    this.date_creation = date_creation;
   }
   public setTelephone(telephone: string | null): void {
     this.telephone = telephone;
@@ -267,6 +277,23 @@ class EquipeOrganisatrice {
     }
   }
 
+  public async getNbMembres(): Promise<number> {
+    const data = await getAllAppartenancesEquipe(this.id_equipe);
+
+    return data.length;
+  }
+
+  public async getAdministrateur(): Promise<Profil | null> {
+    const profilAdmin = await getAdminOfEquipe(this.id_equipe) as ProfilType;
+
+    if (!profilAdmin) {
+      return null;
+    }
+
+    return new Profil(profilAdmin)
+
+  }
+
 
   public toObject(): EquipeOrganisatriceType {
     return {
@@ -277,6 +304,7 @@ class EquipeOrganisatrice {
       id_taxes: this.id_taxes,
       site_web: this.site_web,
       adresse_postale: this.adresse_postale,
+      date_creation: this.date_creation,
       telephone: this.telephone,
       statut_verification: this.statut_verification,
       carte_identite_chef: this.carte_identite_chef,

@@ -168,3 +168,23 @@ export async function getAllChassesOfEquipe(id_equipe: UUID): Promise<any[]> {
   }
   return await res.json();
 }
+
+export async function getAllAppartenancesEquipe(id_equipe: UUID): Promise<any[]> {
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/equipe?id_equipe=${id_equipe}`);
+  if (!res.ok && res.status != 404) {
+    throw new Error('Erreur lors de la récupération des appartenances de l\'équipe');
+  }
+  return await res.json();
+}
+
+export async function getAdminOfEquipe(id_equipe: UUID): Promise<any> {
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/equipe/administrateur?id_equipe=${id_equipe}`);
+  
+  if (res.status === 404) {
+    return null; // Aucun administrateur trouvé
+  }
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération de l\'administrateur de l\'équipe');
+  }
+  return await res.json();
+}

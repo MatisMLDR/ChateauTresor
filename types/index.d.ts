@@ -233,6 +233,7 @@ export type EquipeOrganisatriceType = {
   id_taxes: string | null;
   site_web: string | null;
   adresse_postale: string;
+  date_creation: string;
   telephone: string | null;
   statut_verification: string;
   carte_identite_chef: string | null;
