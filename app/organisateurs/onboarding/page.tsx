@@ -113,9 +113,8 @@ const Onboarding = () => {
       id_membre: formData.id_membre as UUID,
       id_equipe: formData.equipe as UUID, // TODO : Corriger pour pouvoir utiliser l'objet EquipeOrganisatrice
     };
-    console.log("Data quand l'utilisateur veut rejoindre son équipe : ", data)
     try {
-
+      
       await MembreEquipe.createAppartenanceEquipe(data);
 
       // Redirection après le succès de l'insertion
