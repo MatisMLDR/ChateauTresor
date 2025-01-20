@@ -13,9 +13,10 @@ import { usePathname } from 'next/navigation'; // Import usePathname
 
 interface CardChasseProps {
   chasse: Chasse;
+  className?: string;
 }
 
-const CardChasse = ({ chasse }: CardChasseProps) => {
+const CardChasse = ({ chasse, className }: CardChasseProps) => {
   const [nbAvis, setNbAvis] = useState<number>(0);
   const [note, setNote] = useState<number>(0);
   const pathname = usePathname(); // Utilise usePathname pour obtenir le chemin actuel
@@ -83,7 +84,7 @@ const CardChasse = ({ chasse }: CardChasseProps) => {
   };
 
   return (
-    <Card className="transition-shadow duration-200 hover:shadow-lg">
+    <Card className={`transition-shadow duration-200 hover:shadow-lg ${className}`}>
       <CardHeader className="relative p-0">
         <div className="relative">
           <img

@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import Chasse from '@/classes/Chasse';
+import CardChasse from '@/components/global/CardChasse';
 
 type CalendarProps = {
   chasses: Chasse[];
@@ -207,13 +208,13 @@ export function CalendarProprietaire({
             <h3 className="mb-2 font-semibold">
               Événements du {selectedEventDate.toLocaleDateString('fr-FR', { timeZone: 'UTC' })}
             </h3>
-            <ul className="list-disc pl-5">
+            <div className="flex gap-2">
               {chasses
                 .filter((c) => isDateInChasse(selectedEventDate, c))
                 .map((chasse, index) => (
-                  <li key={index}>{chasse.getTitre()}</li>
+                  <CardChasse key={index} chasse={chasse} className="w-full"/>
                 ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>
