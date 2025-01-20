@@ -230,11 +230,13 @@ export function CalendarProprietaire({ chasses, blockedDaysData, onBlockDayChang
             <h3 className="text-lg font-bold">
               Événements du {selectedEventDate.toLocaleDateString()}
             </h3>
+            <div className='flex flex-col gap-2'>
             {chasses
               .filter(c => isDateInChasse(selectedEventDate, c))
               .map((chasse, index) => (
                 <CardChasse key={index} chasse={chasse} />
               ))}
+            </div>
           </div>
         )}
       </div>
