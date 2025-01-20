@@ -133,10 +133,6 @@ const ChateauDetailsPage: React.FC = () => {
               <span>Capacité : {chateau.capacite} personnes</span>
             </div>
             <div className="flex items-center">
-              <Euro className="mr-2 h-4 w-4" />
-              <span>Prix de location : {chateau.prix_location} €</span>
-            </div>
-            <div className="flex items-center">
               <MapPin className="mr-2 h-4 w-4" />
               <span>Adresse : {chateau.adresse_postale}</span>
             </div>

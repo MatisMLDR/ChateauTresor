@@ -52,7 +52,7 @@ export function NavProjects({
   }, [id_equipe_courante]);
 
   const renderMenuItems = (hunt: Chasse) => {
-    const baseUrl = `/organisateurs/dashboard/${id_equipe_courante}/chasses`;
+    const baseUrl = `/organisateurs/dashboard/${id_equipe_courante}`;
 
     // Based on user type, determine actions
     switch (type) {
@@ -149,7 +149,7 @@ export function NavProjects({
               <Link
                 href={
                   type === 'organisateur'
-                    ? `/organisateurs/dashboard/${id_equipe_courante}/modifier_chasse/${hunt.getIdChasse()}`
+                    ? `/organisateurs/dashboard/${id_equipe_courante}/chasses/${hunt.getIdChasse()}`
                     : type === 'participant'
                     ? `/participants/dashboard/chasses/${hunt.getIdChasse()}`
                     : `/chateaux/${hunt.getIdChasse()}`
