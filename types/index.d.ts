@@ -113,6 +113,8 @@ export type ChasseType = {
   chateau?: ChateauType;
   enigmes?: EnigmeType[];
   recompenses?: RecompenseType[];
+  horaire_debut?: string;
+  horaire_fin?: string;
 };
 
 export type ParticipantType = {

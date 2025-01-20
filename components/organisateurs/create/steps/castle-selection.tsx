@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import Chateau from "@/classes/Chateau";
 import Loader from '@/components/global/loader';
 import { Button } from "@/components/ui/button";
-import { format, parseISO } from 'date-fns'; // Import pour le formatage des dates
+import { format, parseISO } from 'date-fns';
 
 interface SelectionChateauProps {
   formData: Partial<ChasseType>;
@@ -25,9 +25,8 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
   const [chargement, setChargement] = useState<boolean>(true);
   const [erreur, setErreur] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [chateauxPerPage] = useState<number>(4); // Nombre de châteaux affichés par page
+  const [chateauxPerPage] = useState<number>(4);
 
-  // Charger la liste des châteaux
   useEffect(() => {
     const chargerChateaux = async () => {
       try {
@@ -50,7 +49,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
             description: chateau.getDescription(),
             image: chateau.getImage(),
           }))
-        ); // Initialiser les châteaux filtrés
+        );
       } catch (err) {
         console.error(err);
         setErreur("Erreur lors du chargement des châteaux.");
@@ -62,16 +61,14 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
     chargerChateaux();
   }, []);
 
-  // Filtrer les châteaux en fonction du terme de recherche
   useEffect(() => {
     const filtered = chateaux.filter((chateau) =>
       chateau.nom?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredChateaux(filtered);
-    setCurrentPage(1); // Réinitialiser la pagination après une recherche
+    setCurrentPage(1);
   }, [searchTerm, chateaux]);
 
-  // Pagination
   const indexOfLastChateau = currentPage * chateauxPerPage;
   const indexOfFirstChateau = indexOfLastChateau - chateauxPerPage;
   const currentChateaux = filteredChateaux.slice(indexOfFirstChateau, indexOfLastChateau);
@@ -88,7 +85,6 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
 
   return (
     <div className="space-y-6">
-      {/* Barre de recherche */}
       <div className="space-y-2">
         <Label htmlFor="search">Rechercher un château</Label>
         <Input
@@ -155,7 +151,6 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           </div>
         </RadioGroup>
 
-        {/* Pagination */}
         <div className="flex justify-center gap-2">
           <Button
             variant="outline"
@@ -185,7 +180,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="date_debut">{contenuTextuel.create.form.date_d}</Label>
+          <Label htmlFor="date_debut">Date de début</Label>
           <Input
             id="date_debut"
             type="date"
@@ -194,7 +189,7 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="date_fin">{contenuTextuel.create.form.date_f}</Label>
+          <Label htmlFor="date_fin">Date de fin</Label>
           <Input
             id="date_fin"
             type="date"
@@ -204,8 +199,29 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="horaire_debut">Heure de début</Label>
+          <Input
+            id="horaire_debut"
+            type="time"
+            value={formData.horaire_debut ? formData.horaire_debut.split(':').slice(0, 2).join(':') : ""}
+            onChange={(e) => setFormData({ ...formData, horaire_debut: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="horaire_fin">Heure de fin</Label>
+          <Input
+            id="horaire_fin"
+            type="time"
+            value={formData.horaire_fin ? formData.horaire_fin.split(':').slice(0, 2).join(':') : ""}
+            onChange={(e) => setFormData({ ...formData, horaire_fin: e.target.value })}
+          />
+        </div>
+      </div>
+
       <div className="space-y-2">
-        <Label htmlFor="capacite">{contenuTextuel.create.form.capaciteMaxTxt}</Label>
+        <Label htmlFor="capacite">Capacité maximale</Label>
         <Input
           id="capacite"
           type="number"

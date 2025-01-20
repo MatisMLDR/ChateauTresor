@@ -21,6 +21,8 @@ class Chasse {
   private date_modification: string;
   private date_debut: string | null;
   private date_fin: string | null;
+  private horaire_debut: string | null;
+  private horaire_fin: string | null;
   private prix: number;
   private difficulte: number;
   private duree_estime: string;
@@ -44,6 +46,8 @@ class Chasse {
     this.date_modification = chasse.date_modification ?? new Date().toISOString();
     this.date_debut = chasse.date_debut ?? null;
     this.date_fin = chasse.date_fin ?? null;
+    this.horaire_debut = chasse.horaire_debut ?? null;
+    this.horaire_fin = chasse.horaire_fin ?? null;
     this.prix = chasse.prix ?? 0.0;
     this.difficulte = chasse.difficulte ?? 1;
     this.duree_estime = chasse.duree_estime ?? "00:00:00";
@@ -78,6 +82,12 @@ class Chasse {
   }
   public getDateFin(): string | null {
     return this.date_fin;
+  }
+  public getHoraireDebut(): string | null {
+    return this.horaire_debut;
+  }
+  public getHoraireFin(): string | null {
+    return this.horaire_fin;
   }
   public getCapacite(): number {
     return this.capacite;
@@ -128,6 +138,12 @@ class Chasse {
   }
   public setDateFin(date_fin: string): void {
     this.date_fin = date_fin;
+  }
+  public setHoraireDebut(horaire_debut: string): void {
+    this.horaire_debut = horaire_debut;
+  }
+  public setHoraireFin(horaire_fin: string): void {
+    this.horaire_fin = horaire_fin;
   }
   public setCapacite(capacite: number): void {
     this.capacite = capacite;
