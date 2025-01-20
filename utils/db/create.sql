@@ -173,6 +173,8 @@ CREATE TABLE public.Chasse
     date_modification TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
     date_debut        TIMESTAMP                    DEFAULT NULL,
     date_fin          TIMESTAMP                    DEFAULT NULL,
+    horaire_debut     TIME                         DEFAULT NULL,
+    horaire_fin       TIME                         DEFAULT NULL,
     prix              NUMERIC(10, 2)               DEFAULT 0.00,
     difficulte        INT                          DEFAULT 1 CHECK (
         difficulte BETWEEN 1

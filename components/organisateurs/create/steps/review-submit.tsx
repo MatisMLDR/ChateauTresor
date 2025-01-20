@@ -5,6 +5,7 @@ import { ChasseType } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, MapPin, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QRCodeCanvas } from "qrcode.react";
 
 interface ReviewSubmitProps {
   formData: Partial<ChasseType>;
@@ -96,6 +97,15 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
                 <div className="text-sm text-muted-foreground">
                   {enigme.indices?.length || 0} indices fournis
                 </div>
+                {/* Affichage du QR Code */}
+                {enigme.code_reponse && (
+                  <div className="mt-4">
+                    <QRCodeCanvas value={enigme.code_reponse} size={128} />
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Code de réponse : {enigme.code_reponse}
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
