@@ -1,5 +1,5 @@
 import { AppartenanceEquipeType, EquipeOrganisatriceType, MembreEquipeType } from '@/types';
-import { createAppartenanceMembreEquipe, createMembre, deleteMembre, getAllAppartenancesMembre, getMembreById, getMembreByUserId, updateMembre } from '@/utils/dao/MembreEquipeUtils';
+import { createAppartenanceMembreEquipe, createMembre, deleteMembre, getAllAppartenancesMembre, getAppartenanceMembreEquipe, getMembreById, getMembreByUserId, updateMembre } from '@/utils/dao/MembreEquipeUtils';
 import { UUID } from "crypto";
 import EquipeOrganisatrice from './EquipeOrganisatrice';
 
@@ -76,6 +76,11 @@ export class MembreEquipe {
     );
 
     return equipes; // Now this will return the resolved array of EquipeOrganisatrice objects
+  }
+
+  public async getAppartenanceEquipe(id_equipe: UUID): Promise<AppartenanceEquipeType> {
+    const appartenance = await getAppartenanceMembreEquipe(this.id_membre, id_equipe) as AppartenanceEquipeType;
+    return appartenance;
   }
 
 

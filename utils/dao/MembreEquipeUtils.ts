@@ -137,7 +137,7 @@ export async function deleteAppartenanceMembreEquipe(id_membre: UUID, id_equipe:
 }
 
 export async function getAppartenanceMembreEquipe(id_membre: UUID, id_equipe: UUID): Promise<any> {
-  const res = await fetch(`${PUBLIC_URL}/api/appartenances/membre/${id_membre}/${id_equipe}`);
+  const res = await fetch(`${PUBLIC_URL}/api/appartenances/membre/equipe?id_membre=${id_membre}&id_equipe=${id_equipe}`);
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération de l\'appartenance');
   }
@@ -153,3 +153,4 @@ export async function getAllAppartenancesMembre(id_membre: UUID): Promise<any> {
 
   return await res.json();
 }
+

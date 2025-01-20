@@ -24,35 +24,57 @@ import {
   User
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { use, useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { MembreEquipe } from '@/classes/MembreEquipe';
+import { set } from 'date-fns';
+import { Skeleton } from '../ui/skeleton';
 
 export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   const { id_equipe } = useParams();
+  const [isOwner, setIsOwner] = useState(false);
+  const [loading, setLoading] = useState(true);  // Pour gérer l'état de chargement
 
   useEffect(() => {
-    if (id_equipe) {
+    if (typeof window !== 'undefined' && id_equipe) {
       localStorage.setItem('id_equipe', id_equipe as string);
     }
   }, [id_equipe]);
 
+   // Check if the current member is a team admin (owner)
+   useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true);  // Commencer le chargement
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-  if (!fullyUnlocked) {
-    const data = dataNotFullyUnlocked;
-    return (
-      <Sidebar collapsible="icon" {...props}>
-        <SidebarHeader>
-          <TeamSwitcher type={type} id_equipe_courante={id_equipe as UUID} />
-        </SidebarHeader>
-        <SidebarContent>
-          <NavMain items={data.navMain} />
-        </SidebarContent>
-        <SidebarFooter>
-          <NavUser type={type} />
-        </SidebarFooter>
-        <SidebarRail />
-      </Sidebar>
-    );
+        if (user && user.email) {
+          const membre = await MembreEquipe.readByIdUser(user.id as UUID);
+          const appartenanceEquipeCourante = await membre.getAppartenanceEquipe(id_equipe as UUID);
+          const isOwner = appartenanceEquipeCourante.role_equipe === 'Administrateur'; 
+          if (isOwner) {
+            localStorage.setItem('isOwner', 'true');
+            setIsOwner(true);
+          }
+        }
+      } catch (err) {
+        console.error('Erreur lors de la récupération des détails de l\'équipe :', err);
+      } finally {
+        setLoading(false);  // Fin du chargement
+      }
+    };
+
+    if (id_equipe) {
+      fetchUser();
+    }
+  }, [id_equipe]);
+
+  if (loading) {
+    return <Skeleton className='h-full' />;
   }
 
   const data = type === 'organisateur' ? dataOrganisateur : type === 'participant' ? dataUser : dataProprietaire;
@@ -60,45 +82,46 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
   let navMain = [  // Use `let` so that it's mutable
     {
       title: 'Dashboard',
-      url: `/organisateurs/dashboard/${id_equipe}`,  // Dynamic URL with `id_equipe`
+      url: `/organisateurs/dashboard/${id_equipe}`,  
       icon: LayoutDashboard,
     },
     {
       title: 'Châteaux',
-      url: `/organisateurs/dashboard/${id_equipe}/chateaux`,  // Dynamic URL with `id_equipe`
+      url: `/organisateurs/dashboard/${id_equipe}/chateaux`,  
       icon: Castle,
     },
     {
       title: 'Chasses',
-      url: `/organisateurs/dashboard/${id_equipe}/chasses`,  // Dynamic URL with `id_equipe`
+      url: `/organisateurs/dashboard/${id_equipe}/chasses`,  
       icon: LibraryBig,
     },
-    {
+     
+    ...(isOwner ? [{
       title: 'Demandes',
-      url: `/organisateurs/dashboard/${id_equipe}/demandes`,  // Dynamic URL with `id_equipe`
+      url: `/organisateurs/dashboard/${id_equipe}/demandes`,  
       icon: BellPlus,
-    },
+    }] : []),  // Si isOwner est vrai, on ajoute cet objet, sinon un tableau vide
     {
       title: 'Créer',
-      url: `/organisateurs/dashboard/${id_equipe}/creation_chasse`,  // Dynamic URL with `id_equipe`
+      url: `/organisateurs/dashboard/${id_equipe}/creation_chasse`,  
       icon: Plus,
     },
     {
       title: 'Profil',
-      url: `/organisateurs/dashboard/${id_equipe}/profil`,  // Dynamic URL with `id_equipe`
+      url: `/organisateurs/dashboard/${id_equipe}/profil`,  
       icon: User,
       items: [
         {
           title: 'Informations',
-          url: `/organisateurs/dashboard/${id_equipe}/profil/informations`,  // Dynamic URL with `id_equipe`
+          url: `/organisateurs/dashboard/${id_equipe}/profil/informations`,  
         },
         {
           title: 'Statistiques',
-          url: `/organisateurs/dashboard/${id_equipe}/profil/statistiques`,  // Dynamic URL with `id_equipe`
+          url: `/organisateurs/dashboard/${id_equipe}/profil/statistiques`,  
         },
       ],
     },
-  ];
+  ]
 
   return (
     <Sidebar collapsible="icon" {...props}>
