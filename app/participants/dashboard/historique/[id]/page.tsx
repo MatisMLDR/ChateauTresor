@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import Loader from '@/components/global/loader';
 import Link from 'next/link';
 
 const ChasseDetailsPage: React.FC = () => {
@@ -27,7 +28,7 @@ const ChasseDetailsPage: React.FC = () => {
   }, [params.id]);
 
   if (!chasse) {
-    return <div>Chargement des informations de la chasse...</div>;
+    return <Loader />;
   }
 
   return (

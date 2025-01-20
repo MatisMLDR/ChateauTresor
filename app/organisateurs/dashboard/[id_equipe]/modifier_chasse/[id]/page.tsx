@@ -6,6 +6,7 @@ import { CreateHuntForm } from '@/components/organisateurs/create/create-hunt-fo
 import Chasse from '@/classes/Chasse';
 import { ChasseType } from '@/types';
 import { UUID } from 'crypto';
+import Loader from '@/components/global/loader';
 import Chateau from '@/classes/Chateau';
 
 const EditHuntPage: React.FC = () => {
@@ -84,7 +85,7 @@ const EditHuntPage: React.FC = () => {
   }, [params.id]);
 
   if (!huntData) {
-    return <div>Chargement des données de la chasse...</div>;
+    return <Loader />;
   }
 
   // Log des données finales avant affichage

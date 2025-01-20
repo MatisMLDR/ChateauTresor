@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Chasse from '@/classes/Chasse';
+import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
 import { DeleteChasseButton } from '@/components/organisateurs/deleteChasse'; // Importez le Client Component
 
@@ -24,7 +25,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id:
   const dureeMoyenne = await chasse.getDureeMoyenne();
 
   if (!chasse) {
-    return <div>Chargement des informations de la chasse...</div>;
+    return <Loader />;
   }
 
   return (

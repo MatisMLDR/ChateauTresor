@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { getIndiceById } from '@/utils/dao/IndiceUtils';
+import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
 
 interface Indice {
@@ -65,7 +66,7 @@ export default function IndicePage() {
   if (!indice) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
-        <p className="text-lg">Chargement de l'indice...</p>
+        <Loader />
       </div>
     );
   }

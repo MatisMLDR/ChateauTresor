@@ -3,6 +3,7 @@ import { useParams } from 'next/navigation';
 import { CreateHuntForm } from '@/components/organisateurs/create/create-hunt-form';
 import Chasse from '@/classes/Chasse';
 import { ChasseType } from '@/types';
+import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
 import { format, parseISO } from 'date-fns'; // Import de date-fns pour le formatage des dates
 
@@ -51,7 +52,7 @@ const EditHuntPage: React.FC = () => {
   }, [params.id]);
 
   if (isLoading) {
-    return <div>Chargement des données de la chasse...</div>;
+    return <Loader />;
   }
 
   if (!huntData) {

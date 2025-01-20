@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Trophy } from 'lucide-react';
 import { getAllRecompensesByChasse } from '@/utils/dao/RecompenseUtils';
+import Loader from '@/components/global/loader';
 import Recompense from '@/classes/Recompense';
 import { UUID } from 'crypto';
 
@@ -73,7 +74,7 @@ const RecompensePage: React.FC = () => {
 
       {/* Affichage des récompenses */}
       {loading ? (
-        <p className="text-xl mb-8">Chargement des récompenses...</p>
+        <Loader />
       ) : error ? (
         <p className="text-xl mb-8 text-red-500">{error}</p>
       ) : recompenses.length === 0 ? (

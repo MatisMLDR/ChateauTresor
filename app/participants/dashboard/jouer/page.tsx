@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { EnigmeType } from '@/types';
 import IndiceComponent from '@/components/participants/jouer/indiceComponent';
 import Chasse from '@/classes/Chasse';
+import Loader from '@/components/global/loader';
 import Link from 'next/link';
 import { ArrowLeftFromLine } from 'lucide-react'; // Import de l'icône
 import {
@@ -179,11 +180,11 @@ const GameInterface: React.FC = () => {
 
   if (enigmes.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">  
+        <Loader />
         <button onClick={handleBack} className="mb-6 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
           Retour à la liste des chasses
-        </button>
-        <p className="text-lg">Chargement des énigmes...</p>
+        </button> 
       </div>
     );
   }

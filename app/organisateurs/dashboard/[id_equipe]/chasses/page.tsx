@@ -9,6 +9,7 @@ import { UUID } from 'crypto';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { MembreEquipe } from '@/classes/MembreEquipe';
+import Loader from '@/components/global/loader';
 import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
 
 export default function OrganisateurChassesPage() {
@@ -73,7 +74,7 @@ export default function OrganisateurChassesPage() {
   }, [router, supabase]);
 
   if (isLoading) {
-    return <div>Chargement des chasses...</div>;
+    return <Loader />;
   }
 
   return (
