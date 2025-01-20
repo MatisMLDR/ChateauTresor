@@ -19,12 +19,6 @@ export async function GET(request: Request) {
       .eq('id_user', id_user)
       .single(); // On suppose qu'un id_user correspond à un seul membre
 
-    if (membreError || !membreData) {
-      return NextResponse.json(
-        { error: membreError?.message || 'Membre non trouvé' },
-        { status: 404 }
-      );
-    }
 
     // Retourner les informations du membre
     return NextResponse.json(membreData, { status: 200 });

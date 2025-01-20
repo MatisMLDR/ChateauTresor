@@ -30,13 +30,6 @@ export async function GET(
       );
     }
 
-    if (!data) {
-      return NextResponse.json(
-        { message: `Aucun participant trouvé avec l'ID ${idParticipant}` },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json(

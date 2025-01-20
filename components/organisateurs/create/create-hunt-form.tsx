@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState, useCallback } from "react";
 import { BasicDetails } from "./steps/basic-details";
 import { CastleSelection } from "./steps/castle-selection";
 import { RiddlesCreation } from "./steps/riddles-creation";
 import { ReviewSubmit } from "./steps/review-submit";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChasseType, RecompenseType } from "@/types";
+import { ChasseType, RecompenseType, EnigmeType, IndiceType } from "@/types";
 import { contenuTextuel } from "@/constants";
 import toast, { Toaster } from "react-hot-toast";
 import Chasse from "@/classes/Chasse";
@@ -14,7 +16,8 @@ import Indice from "@/classes/Indice";
 import Recompense from "@/classes/Recompense";
 import { UUID } from "crypto";
 import RewardCreation from "./steps/reward-creation";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 const steps = [
   { title: contenuTextuel.create.steps.basicDetails, component: BasicDetails },
@@ -26,192 +29,361 @@ const steps = [
 
 interface CreateHuntFormProps {
   initialData?: Partial<ChasseType>;
-  isEditMode?: boolean; // Nouvelle prop pour indiquer si on est en mode édition
+  isEditMode?: boolean;
+  onHuntCreated?: (id_equipe: string) => void;
 }
 
-export function CreateHuntForm({ initialData, isEditMode = false }: CreateHuntFormProps) {
+export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated }: CreateHuntFormProps) {
   const router = useRouter();
+  const params = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<ChasseType>>(initialData || { enigmes: [] });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Récupération de l'ID équipe depuis l'URL
+  const idEquipe = params.id_equipe as UUID;
 
   const progress = ((currentStep + 1) / steps.length) * 100;
   const CurrentStepComponent = steps[currentStep].component;
 
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-      window.scrollTo(0, 0);
-    }
+  const handleStepNavigation = (direction: 'next' | 'previous') => {
+    const newStep = direction === 'next' ? currentStep + 1 : currentStep - 1;
+    setCurrentStep(Math.max(0, Math.min(newStep, steps.length - 1)));
+    window.scrollTo(0, 0);
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-      window.scrollTo(0, 0);
-    }
-  };
+  const generateCodeReponse = useCallback(() => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }, []);
 
-  // Fonction pour générer un code de réponse de 6 chiffres
-  const generateCodeReponse = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // Génère un nombre entre 100000 et 999999
-  };
+  const handleUpload = useCallback(async (
+    file: File,
+    folder: 'chasses' | 'enigmes' | 'indices' | 'recompenses',
+    id: UUID,
+    options?: { subfolder?: 'sons' | 'images' }
+  ) => {
+    const supabase = createClient();
+    const extension = file.name.split('.').pop() || 'bin';
+    const subfolderPath = options?.subfolder ? `${options.subfolder}/` : '';
+    const fileName = `${folder}/${subfolderPath}${id}.${extension}`;
 
-  const transformFormDataToTables = (chasse: ChasseType) => {
-    const chasseId = isEditMode ? chasse.id_chasse : crypto.randomUUID(); // Utiliser l'ID existant en mode édition
-    const chasseTable = {
-      id_chasse: chasseId as UUID,
-      titre: chasse.titre || "Nouvelle Chasse",
-      capacite: chasse.capacite || 0,
-      description: chasse.description || "Pas de description",
-      age_requis: chasse.age_requis || 0,
-      image: chasse.image,
-      date_creation: chasse.date_creation || new Date().toISOString(),
-      date_modification: new Date().toISOString(),
-      date_debut: chasse.date_debut,
-      date_fin: chasse.date_fin,
-      prix: chasse.prix || 0.0,
-      difficulte: chasse.difficulte || 1,
-      duree_estime: chasse.duree_estime || "00:00:00",
-      theme: chasse.theme || "Aucun thème",
-      statut: chasse.statut || "Inactif",
-      id_chateau: chasse.chateau?.id_chateau,
-      id_equipe: chasse.id_equipe || "42fdbebf-d919-4bc2-a7b7-f00688f706af",
-    };
-
-    // Générer un id_enigme unique pour chaque énigme
-    const enigmesTable = (chasse.enigmes || []).map((enigme) => {
-      const enigmeId = isEditMode ? enigme.id_enigme : crypto.randomUUID(); // Utiliser l'ID existant en mode édition
-      return {
-        id_enigme: enigmeId as UUID,
-        id_chasse: chasseId as UUID,
-        titre: enigme.titre || "Nouvelle Énigme",
-        description: enigme.description || "Pas de description",
-        ordre: enigme.ordre || 1,
-        code_reponse: enigme.code_reponse || generateCodeReponse(), // Générer un code de réponse si non fourni
-        endroit_qrcode: enigme.endroit_qrcode || "",
-        temps_max: Number(enigme.temps_max || 30), // En secondes
-        description_reponse: enigme.description_reponse || "",
-        image_reponse: enigme.image_reponse || "",
-        degre_difficulte: enigme.degre_difficulte || 1,
-      };
-    });
-
-    // Associer les indices à l'id_enigme correspondant
-    const indicesTable = (chasse.enigmes || []).flatMap((enigme, index) =>
-      (enigme.indices || []).map((indice) => ({
-        id_indice: isEditMode ? indice.id_indice : crypto.randomUUID() as UUID, // Utiliser l'ID existant en mode édition
-        id_enigme: enigmesTable[index].id_enigme, // Utiliser l'id_enigme généré pour cette énigme
-        contenu: indice.contenu || "Pas de contenu",
-        ordre: Number(indice.ordre || 1),
-        degre_aide: Number(indice.degre_aide || 1),
-        type: indice.type || "text",
-      }))
-    );
-
-    // Générer un id_recompense unique pour chaque récompense
-    const recompensesTable = (chasse.recompenses || []).map((recompense) => ({
-      id_recompense: isEditMode ? recompense.id_recompense : crypto.randomUUID(), // Utiliser l'ID existant en mode édition
-      id_chasse: chasseId as UUID, // Lier la récompense à la chasse
-      nom: recompense.nom || "Nouvelle Récompense",
-      description: recompense.description || "Pas de description",
-      type: recompense.type || "Générique",
-      valeur: recompense.valeur || 0.0,
-      quantite_dispo: recompense.quantite_dispo || 0,
-      prix_reel: recompense.prix_reel || 0.0,
-      image: recompense.image || null,
-      date_modification: new Date().toISOString(),
-    }));
-
-    return { chasseTable, enigmesTable, indicesTable, recompensesTable };
-  };
-
-  const handleSubmit = async () => {
     try {
-      // Transformation des données en tables
-      const { chasseTable, enigmesTable, indicesTable, recompensesTable } = transformFormDataToTables(
-        formData as ChasseType
-      );
-  
-      // Étape 1 : Création ou mise à jour de la chasse
-      const chasse = new Chasse(chasseTable);
-      if (isEditMode) {
-        await chasse.update();
-        toast.success("Chasse mise à jour avec succès.");
-      } else {
-        await chasse.create();
-        toast.success("Chasse créée avec succès.");
-      }
-  
-      // Étape 2 : Création ou mise à jour des énigmes et indices
-      for (let enigmeData of enigmesTable) {
-        const enigmeInstance = new Enigme(enigmeData);
-        if (isEditMode) {
-          await enigmeInstance.update();
-        } else {
-          await enigmeInstance.create();
-        }
-  
-        // Étape 3 : Création ou mise à jour des indices associés à cette énigme
-        const indicesForEnigme = indicesTable.filter(
-          (indice) => indice.id_enigme === enigmeData.id_enigme
-        );
-  
-        for (const indiceData of indicesForEnigme) {
-          const indiceInstance = new Indice(indiceData);
-          if (isEditMode) {
-            await indiceInstance.update();
-          } else {
-            await indiceInstance.create();
-          }
-        }
-      }
-  
-      // Étape 4 : Création ou mise à jour des récompenses
-      for (const recompenseData of recompensesTable) {
-        const recompenseInstance = new Recompense({
-          ...recompenseData,
-          id_recompense: recompenseData.id_recompense as `${string}-${string}-${string}-${string}-${string}`
+      console.log(`Tentative d'upload vers ${fileName}`);
+      const { data, error } = await supabase.storage
+        .from('ChateauTresor')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: isEditMode
         });
-        if (isEditMode) {
-          await recompenseInstance.update();
-        } else {
-          await recompenseInstance.create();
-        }
-      }
-  
-      toast.success("Toutes les données ont été sauvegardées avec succès.");
-    } catch (error) {
-      console.error("Erreur lors de la création ou de la mise à jour :", error);
-      toast.error("Une erreur est survenue lors de la sauvegarde.");
-    }
-  };
 
-  const handleFormDataUpdate = (updatedData: Partial<ChasseType>) => {
-    setFormData((prevData) => ({ ...prevData, ...updatedData }));
-  };
+      if (error) {
+        console.error(`Erreur upload ${fileName}:`, error);
+        throw new Error(`Échec de l'upload: ${error.message}`);
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('ChateauTresor')
+        .getPublicUrl(fileName);
+
+      console.log(`Upload réussi pour ${fileName}`, urlData);
+      return urlData.publicUrl;
+
+    } catch (error) {
+      console.error(`Erreur complète upload ${fileName}:`, error);
+      throw error;
+    }
+  }, [isEditMode]);
+
+  const transformFormDataToTables = useCallback(async (chasse: ChasseType) => {
+    setIsSubmitting(true);
+    const chasseId = (isEditMode && chasse.id_chasse) ? chasse.id_chasse : crypto.randomUUID() as UUID;
+
+    try {
+      // Validation des champs obligatoires
+      if (!chasse.titre?.trim()) throw new Error("Le titre est obligatoire");
+      if (!chasse.description?.trim()) throw new Error("La description est obligatoire");
+      if (!chasse.chateau?.id_chateau) throw new Error("Aucun château sélectionné");
+
+      // Upload image principale
+      let uploadedImage = chasse.image;
+      if (chasse.image instanceof File) {
+        console.log("Début upload image principale...");
+        uploadedImage = await handleUpload(chasse.image, 'chasses', chasseId);
+        console.log("Image principale uploadée:", uploadedImage);
+      }
+
+      // Traitement des énigmes
+      const processedEnigmes = [];
+      for (const enigme of chasse.enigmes || []) {
+        console.log("Traitement énigme:", enigme.titre);
+
+        // Upload image réponse
+        let uploadedImageReponse = enigme.image_reponse;
+        if (enigme.image_reponse instanceof File) {
+          const enigmeId = enigme.id_enigme || crypto.randomUUID() as UUID;
+          uploadedImageReponse = await handleUpload(
+            enigme.image_reponse,
+            'enigmes',
+            enigmeId
+          );
+          console.log("Image réponse uploadée:", uploadedImageReponse);
+        }
+
+        // Traitement des indices
+        const processedIndices = [];
+        for (const indice of enigme.indices || []) {
+          console.log("Traitement indice:", indice.type);
+          let contenu = indice.contenu;
+
+          if (indice.contenu instanceof File) {
+            const subfolder = indice.type === 'image' ? 'images' : 'sons';
+            const indiceId = indice.id_indice || crypto.randomUUID() as UUID;
+            contenu = await handleUpload(
+              indice.contenu,
+              'indices',
+              indiceId,
+              { subfolder }
+            );
+            console.log("Contenu indice uploadé:", contenu);
+          }
+
+          processedIndices.push({
+            ...indice,
+            id_indice: indice.id_indice || crypto.randomUUID() as UUID,
+            contenu
+          });
+        }
+
+        processedEnigmes.push({
+          ...enigme,
+          id_enigme: enigme.id_enigme || crypto.randomUUID() as UUID,
+          image_reponse: uploadedImageReponse,
+          indices: processedIndices
+        });
+      }
+
+      // Traitement des récompenses
+      const processedRecompenses = [];
+      for (const recompense of chasse.recompenses || []) {
+        console.log("Traitement récompense:", recompense.nom);
+        let uploadedImage = recompense.image;
+
+        if (recompense.image instanceof File) {
+          const recompenseId = recompense.id_recompense || crypto.randomUUID() as UUID;
+          uploadedImage = await handleUpload(
+            recompense.image,
+            'recompenses',
+            recompenseId
+          );
+          console.log("Image récompense uploadée:", uploadedImage);
+        }
+
+        processedRecompenses.push({
+          ...recompense,
+          id_recompense: recompense.id_recompense || crypto.randomUUID() as UUID,
+          image: uploadedImage
+        });
+      }
+
+      // Construction final des données
+      const finalData = {
+        chasseTable: {
+          id_chasse: chasseId,
+          titre: chasse.titre,
+          capacite: chasse.capacite || 0,
+          description: chasse.description,
+          age_requis: chasse.age_requis || 0,
+          image: uploadedImage,
+          date_creation: chasse.date_creation || new Date().toISOString(),
+          date_modification: new Date().toISOString(),
+          date_debut: chasse.date_debut ? new Date(chasse.date_debut).toISOString() : "",
+          date_fin: chasse.date_fin ? new Date(chasse.date_fin).toISOString() : "",
+          prix: chasse.prix || 0.0,
+          difficulte: chasse.difficulte || 1,
+          duree_estime: chasse.duree_estime || "00:00:00",
+          theme: chasse.theme || "Aucun thème",
+          statut: chasse.statut || "En attente de validation",
+          id_chateau: chasse.chateau.id_chateau,
+          id_equipe: idEquipe, // Utilisation de l'ID équipe depuis l'URL
+        },
+        enigmesTable: processedEnigmes.map((enigme, index) => ({
+          id_enigme: enigme.id_enigme,
+          id_chasse: chasseId,
+          titre: enigme.titre || `Énigme ${index + 1}`,
+          description: enigme.description || "",
+          code_reponse: enigme.code_reponse || generateCodeReponse(),
+          ordre: enigme.ordre || index + 1,
+          endroit_qrcode: enigme.endroit_qrcode || "",
+          temps_max: enigme.temps_max || 30,
+          description_reponse: enigme.description_reponse || "",
+          image_reponse: enigme.image_reponse || "",
+          degre_difficulte: enigme.degre_difficulte || 1,
+        })),
+        indicesTable: processedEnigmes.flatMap(enigme => 
+          enigme.indices.map(indice => ({
+            id_indice: indice.id_indice,
+            id_enigme: enigme.id_enigme,
+            contenu: indice.contenu,
+            ordre: indice.ordre || 1,
+            degre_aide: indice.degre_aide || 1,
+            type: indice.type || "text",
+          }))
+        ),
+        recompensesTable: processedRecompenses.map(recompense => ({
+          id_recompense: recompense.id_recompense,
+          id_chasse: chasseId,
+          nom: recompense.nom || "Récompense sans nom",
+          description: recompense.description || "",
+          type: recompense.type || "physique",
+          valeur: recompense.valeur || 0,
+          quantite_dispo: recompense.quantite_dispo || 0,
+          prix_reel: recompense.prix_reel || 0,
+          image: recompense.image,
+          date_modification: new Date().toISOString(),
+        }))
+      };
+
+      console.log("Données finales transformées:", JSON.stringify(finalData, null, 2));
+      return finalData;
+
+    } catch (error) {
+      console.error("Erreur lors de la transformation des données:", error);
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [handleUpload, isEditMode, generateCodeReponse, idEquipe]);
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      console.log("Début de la soumission...");
+      const transformedData = await transformFormDataToTables(formData as ChasseType);
+      
+      console.log("Enregistrement de la chasse...");
+      const chasseInstance = new Chasse(transformedData.chasseTable);
+      const chasseResult = isEditMode 
+        ? await chasseInstance.update() 
+        : await chasseInstance.create();
+      console.log("Résultat chasse:", chasseResult);
+
+      console.log(`Enregistrement des ${transformedData.enigmesTable.length} énigmes...`);
+      for (const enigmeData of transformedData.enigmesTable) {
+        console.log("Enregistrement énigme:", enigmeData.titre);
+        const enigmeInstance = new Enigme(enigmeData);
+        const result = isEditMode && enigmeData.id_enigme 
+          ? await enigmeInstance.update() 
+          : await enigmeInstance.create();
+        console.log("Résultat énigme:", result);
+      }
+
+      console.log(`Enregistrement des ${transformedData.indicesTable.length} indices...`);
+      for (const indiceData of transformedData.indicesTable) {
+        console.log("Enregistrement indice:", indiceData.type);
+        const indiceInstance = new Indice(indiceData);
+        const result = isEditMode && indiceData.id_indice 
+          ? await indiceInstance.update() 
+          : await indiceInstance.create();
+        console.log("Résultat indice:", result);
+      }
+
+      console.log(`Enregistrement des ${transformedData.recompensesTable.length} récompenses...`);
+      for (const recompenseData of transformedData.recompensesTable) {
+        console.log("Enregistrement récompense:", recompenseData.nom);
+        const recompenseInstance = new Recompense(recompenseData);
+        const result = isEditMode && recompenseData.id_recompense 
+          ? await recompenseInstance.update() 
+          : await recompenseInstance.create();
+        console.log("Résultat récompense:", result);
+      }
+
+      toast.success("Chasse créée avec succès !");
+      if (onHuntCreated) onHuntCreated(transformedData.chasseTable.id_equipe as UUID);
+      router.refresh();
+
+    } catch (error) {
+      console.error("Erreur complète:", {
+        error: error instanceof Error ? {
+          message: error.message,
+          stack: error.stack
+        } : error,
+        formData: JSON.parse(JSON.stringify(formData, (_, v) => {
+          if (v instanceof File) return { name: v.name, type: v.type, size: v.size };
+          return v;
+        }))
+      });
+      toast.error(`Erreur lors de la création : ${(error as Error).message}`);
+    }
+  }, [formData, isEditMode, transformFormDataToTables, onHuntCreated, router]);
+
+  const handleFormDataUpdate = useCallback((updatedData: Partial<ChasseType>) => {
+    setFormData(prev => ({
+      ...prev,
+      ...updatedData,
+      enigmes: updatedData.enigmes ? updatedData.enigmes.map((newEnigme, index) => ({
+        ...prev.enigmes?.[index],
+        ...newEnigme,
+        indices: newEnigme.indices?.map((newIndice, idx) => ({
+          ...prev.enigmes?.[index]?.indices?.[idx],
+          ...newIndice,
+        })),
+      })) : prev.enigmes,
+      recompenses: updatedData.recompenses ? updatedData.recompenses.map((newRec, i) => ({
+        ...prev.recompenses?.[i],
+        ...newRec,
+      })) : prev.recompenses,
+    }));
+  }, []);
 
   return (
     <div className="space-y-8">
-      <Toaster />
+      <Toaster position="top-right" toastOptions={{ duration: 5000 }} />
+      
       <div className="space-y-2">
-        <Progress value={progress} className="h-2" />
-        <div className="text-sm text-muted-foreground">
-          Étape {currentStep + 1} sur {steps.length}: {steps[currentStep].title}
+        <Progress value={progress} className="h-2 bg-muted" />
+        <div className="text-sm text-muted-foreground text-center">
+          Étape {currentStep + 1} sur {steps.length} • {steps[currentStep].title}
         </div>
       </div>
-      <div className="bg-card p-6 rounded-lg border">
-        <CurrentStepComponent formData={formData} setFormData={handleFormDataUpdate} />
+
+      <div className="bg-card p-6 rounded-lg border shadow-sm">
+        <CurrentStepComponent 
+          formData={formData} 
+          setFormData={handleFormDataUpdate} 
+        />
       </div>
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0}>
-          Précédent
+
+      <div className="flex justify-between gap-4">
+        <Button
+          variant="outline"
+          onClick={() => handleStepNavigation('previous')}
+          disabled={currentStep === 0 || isSubmitting}
+          className="min-w-[120px]"
+        >
+          ← Précédent
         </Button>
+
         {currentStep === steps.length - 1 ? (
-          <Button onClick={handleSubmit}>
-            {isEditMode ? "Mettre à jour" : "Enregistrer"}
+          <Button 
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="min-w-[160px] bg-primary hover:bg-primary/90"
+          >
+            {isSubmitting ? (
+              <span className="animate-pulse">Enregistrement...</span>
+            ) : isEditMode ? (
+              "Mettre à jour la chasse"
+            ) : (
+              "Publier la chasse"
+            )}
           </Button>
         ) : (
-          <Button onClick={handleNext}>Suivant</Button>
+          <Button 
+            onClick={() => handleStepNavigation('next')}
+            disabled={isSubmitting}
+            className="min-w-[120px]"
+          >
+            Suivant →
+          </Button>
         )}
       </div>
     </div>

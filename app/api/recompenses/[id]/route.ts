@@ -10,9 +10,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    if (!data) {
-      return NextResponse.json({ message: `Récompense avec ID ${idRecompense} non trouvée` }, { status: 404 });
-    }
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });

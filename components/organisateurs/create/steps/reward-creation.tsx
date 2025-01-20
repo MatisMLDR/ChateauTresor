@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, Pencil, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { UUID } from "crypto";
 import { ChasseType, RecompenseType } from "@/types";
-import { Label } from "@radix-ui/react-label";
 import {
   DndContext,
   closestCenter,
@@ -42,7 +42,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     valeur: 0,
     quantite_dispo: 0,
     prix_reel: 0,
-    image: "",
+    image: null,
     date_modification: new Date().toISOString(),
     id_chasse: null,
   });
@@ -56,14 +56,24 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
-
     if (active.id !== over?.id) {
       const oldIndex = rewards.findIndex((r) => r.id_recompense === active.id);
       const newIndex = rewards.findIndex((r) => r.id_recompense === over.id);
-
-      if (oldIndex !== undefined && newIndex !== undefined) {
+      if (oldIndex !== -1 && newIndex !== -1) {
         const updatedRewards = arrayMove(rewards, oldIndex, newIndex);
         setRewards(updatedRewards);
+        setFormData({ ...formData, recompenses: updatedRewards });
+      }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (editingReward) {
+        setEditingReward({ ...editingReward, image: file });
+      } else {
+        setNewReward({ ...newReward, image: file });
       }
     }
   };
@@ -72,10 +82,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     const updatedRewards = formData.recompenses?.map((r) =>
       r.id_recompense === reward.id_recompense ? reward : r
     );
-    setFormData({
-      ...formData,
-      recompenses: updatedRewards,
-    });
+    setFormData({ ...formData, recompenses: updatedRewards });
   };
 
   const addReward = (reward: RecompenseType) => {
@@ -109,7 +116,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
       valeur: 0,
       quantite_dispo: 0,
       prix_reel: 0,
-      image: "",
+      image: null,
       date_modification: new Date().toISOString(),
       id_chasse: null,
     });
@@ -117,13 +124,9 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
   };
 
   function SortableReward({ reward }: { reward: RecompenseType }) {
-    const {
-      attributes,
-      listeners,
-      setNodeRef,
-      transform,
-      transition,
-    } = useSortable({ id: reward.id_recompense! });
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+      id: reward.id_recompense!,
+    });
 
     const style = {
       transform: CSS.Transform.toString(transform),
@@ -140,7 +143,11 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
               </div>
               {reward.image && (
                 <img
-                  src={reward.image}
+                  src={
+                    reward.image instanceof File
+                      ? URL.createObjectURL(reward.image)
+                      : reward.image || "/placeholder.png"
+                  }
                   alt={reward.nom}
                   className="h-16 w-16 object-cover rounded-lg"
                 />
@@ -167,9 +174,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                 size="icon"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (reward.id_recompense) {
-                    deleteReward(reward.id_recompense);
-                  }
+                  deleteReward(reward.id_recompense as UUID);
                 }}
               >
                 <Trash2 className="h-4 w-4" />
@@ -191,7 +196,10 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <SortableContext items={rewards.map((r) => r.id_recompense!).filter((id): id is UUID => id !== undefined)} strategy={verticalListSortingStrategy}>
+                <SortableContext
+                  items={rewards.map((r) => r.id_recompense!).filter((id): id is UUID => !!id)}
+                  strategy={verticalListSortingStrategy}
+                >
                   {rewards.map((reward) => (
                     <SortableReward key={reward.id_recompense} reward={reward} />
                   ))}
@@ -202,12 +210,9 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
         )}
       </DndContext>
 
-      {/* Formulaire de création/modification de récompense */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            {editingReward ? "Modifier la récompense" : "Ajouter une récompense"}
-          </CardTitle>
+          <CardTitle>{editingReward ? "Modifier la récompense" : "Ajouter une récompense"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-4">
@@ -218,14 +223,13 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                 placeholder="Nom de la récompense"
                 value={editingReward ? editingReward.nom : newReward.nom}
                 onChange={(e) => {
-                  if (editingReward) {
-                    setEditingReward({ ...editingReward, nom: e.target.value });
-                  } else {
-                    setNewReward({ ...newReward, nom: e.target.value });
-                  }
+                  editingReward
+                    ? setEditingReward({ ...editingReward, nom: e.target.value })
+                    : setNewReward({ ...newReward, nom: e.target.value });
                 }}
               />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="description">Description de la récompense</Label>
               <Textarea
@@ -233,14 +237,13 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                 placeholder="Description de la récompense"
                 value={editingReward ? editingReward.description : newReward.description}
                 onChange={(e) => {
-                  if (editingReward) {
-                    setEditingReward({ ...editingReward, description: e.target.value });
-                  } else {
-                    setNewReward({ ...newReward, description: e.target.value });
-                  }
+                  editingReward
+                    ? setEditingReward({ ...editingReward, description: e.target.value })
+                    : setNewReward({ ...newReward, description: e.target.value });
                 }}
               />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="type">Type de récompense</Label>
               <Input
@@ -248,14 +251,13 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                 placeholder="Type de récompense"
                 value={editingReward ? editingReward.type : newReward.type}
                 onChange={(e) => {
-                  if (editingReward) {
-                    setEditingReward({ ...editingReward, type: e.target.value });
-                  } else {
-                    setNewReward({ ...newReward, type: e.target.value });
-                  }
+                  editingReward
+                    ? setEditingReward({ ...editingReward, type: e.target.value })
+                    : setNewReward({ ...newReward, type: e.target.value });
                 }}
               />
             </div>
+
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="value">Valeur</Label>
@@ -265,14 +267,14 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                   placeholder="Valeur"
                   value={editingReward ? editingReward.valeur : newReward.valeur}
                   onChange={(e) => {
-                    if (editingReward) {
-                      setEditingReward({ ...editingReward, valeur: parseFloat(e.target.value) });
-                    } else {
-                      setNewReward({ ...newReward, valeur: parseFloat(e.target.value) });
-                    }
+                    const value = parseFloat(e.target.value);
+                    editingReward
+                      ? setEditingReward({ ...editingReward, valeur: value })
+                      : setNewReward({ ...newReward, valeur: value });
                   }}
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="quantity">Quantité disponible</Label>
                 <Input
@@ -281,14 +283,14 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                   placeholder="Quantité"
                   value={editingReward ? editingReward.quantite_dispo : newReward.quantite_dispo}
                   onChange={(e) => {
-                    if (editingReward) {
-                      setEditingReward({ ...editingReward, quantite_dispo: parseInt(e.target.value) });
-                    } else {
-                      setNewReward({ ...newReward, quantite_dispo: parseInt(e.target.value) });
-                    }
+                    const value = parseInt(e.target.value);
+                    editingReward
+                      ? setEditingReward({ ...editingReward, quantite_dispo: value })
+                      : setNewReward({ ...newReward, quantite_dispo: value });
                   }}
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="price">Prix réel</Label>
                 <Input
@@ -297,30 +299,35 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                   placeholder="Prix"
                   value={editingReward ? editingReward.prix_reel : newReward.prix_reel}
                   onChange={(e) => {
-                    if (editingReward) {
-                      setEditingReward({ ...editingReward, prix_reel: parseFloat(e.target.value) });
-                    } else {
-                      setNewReward({ ...newReward, prix_reel: parseFloat(e.target.value) });
-                    }
+                    const value = parseFloat(e.target.value);
+                    editingReward
+                      ? setEditingReward({ ...editingReward, prix_reel: value })
+                      : setNewReward({ ...newReward, prix_reel: value });
                   }}
                 />
               </div>
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="image">URL de l'image (optionnel)</Label>
+              <Label htmlFor="image">Image de la récompense</Label>
               <Input
                 id="image"
-                placeholder="URL de l'image (optionnel)"
-                value={editingReward ? editingReward.image ?? "" : newReward.image ?? ""}
-                onChange={(e) => {
-                  if (editingReward) {
-                    setEditingReward({ ...editingReward, image: e.target.value });
-                  } else {
-                    setNewReward({ ...newReward, image: e.target.value });
-                  }
-                }}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
               />
+              {editingReward?.image instanceof File && (
+                <div className="text-sm text-muted-foreground">
+                  Fichier sélectionné : {editingReward.image.name}
+                </div>
+              )}
+              {newReward.image instanceof File && (
+                <div className="text-sm text-muted-foreground">
+                  Fichier sélectionné : {newReward.image.name}
+                </div>
+              )}
             </div>
+
             <div className="flex justify-end space-x-2">
               {editingReward && (
                 <Button variant="outline" onClick={resetForm}>
@@ -334,7 +341,6 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                   } else {
                     addReward(newReward);
                   }
-                  resetForm();
                 }}
                 disabled={
                   !(editingReward ? editingReward.nom : newReward.nom) ||

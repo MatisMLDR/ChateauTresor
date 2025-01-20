@@ -27,14 +27,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Si le membre n'appartient à aucune équipe
-    if (!appartenanceData || appartenanceData.length === 0) {
-      return NextResponse.json(
-        { message: 'Ce membre n\'appartient à aucune équipe' },
-        { status: 404 }
-      );
-    }
-
     // Extraire les id_equipe
     const id_equipes = appartenanceData.map((row) => row.id_equipe);
 
@@ -49,14 +41,6 @@ export async function GET(request: Request) {
       return NextResponse.json(
         { error: equipeError.message || 'Erreur lors de la récupération des informations des équipes' },
         { status: 500 }
-      );
-    }
-
-    // Si aucune équipe n'est trouvée (cas improbable, mais à gérer)
-    if (!equipeData || equipeData.length === 0) {
-      return NextResponse.json(
-        { message: 'Aucune équipe trouvée pour ce membre' },
-        { status: 404 }
       );
     }
 

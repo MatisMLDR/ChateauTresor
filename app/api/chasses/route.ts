@@ -70,12 +70,6 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!chateau) {
-      return NextResponse.json(
-        { error: `Aucun château trouvé avec id_chateau=${body.id_chateau}` },
-        { status: 404 }
-      );
-    }
 
     // Insérer la chasse
     const { error: insertError } = await supabase.from('chasse').insert([body]);

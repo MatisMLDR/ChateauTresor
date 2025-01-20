@@ -6,9 +6,6 @@ export async function GET(req: Request, context: { params: { id: string } }) {
   try {
     const { id } = await context.params;
     const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });

@@ -25,18 +25,17 @@ const EditHuntPage: React.FC = () => {
         console.log('Chasse récupérée:', chasse);
   
         await chasse.loadChateau();
-        await chasse.loadEnigmes(); // Charger les énigmes
+        await chasse.loadEnigmes();
         await chasse.loadRecompenses();
   
-        // Formater les dates et les horaires
         const formattedHuntData = {
           ...chasse,
           date_debut: chasse.getDateDebut() ? format(parseISO(chasse.getDateDebut()), 'yyyy-MM-dd') : '',
           date_fin: chasse.getDateFin() ? format(parseISO(chasse.getDateFin()), 'yyyy-MM-dd') : '',
-          horaire_debut: chasse.getHoraireDebut() || '', // Conserver le format HH:mm:ss
-          horaire_fin: chasse.getHoraireFin() || '', // Conserver le format HH:mm:ss
+          horaire_debut: chasse.getHoraireDebut() || '',
+          horaire_fin: chasse.getHoraireFin() || '',
           image: chasse.getImage() || '',
-          enigmes: chasse.enigmes || [], // Passer les énigmes
+          enigmes: chasse.enigmes || [],
           recompenses: chasse.recompenses || [],
         };
   

@@ -5,7 +5,6 @@ import { ChasseType } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, MapPin, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { QRCodeCanvas } from "qrcode.react";
 
 interface ReviewSubmitProps {
   formData: Partial<ChasseType>;
@@ -13,24 +12,25 @@ interface ReviewSubmitProps {
 }
 
 export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
+  // Vérifier si toutes les informations requises sont complètes
   const estComplet =
     formData.titre &&
     formData.description &&
     formData.chateau &&
-    formData.prix &&
-    formData.age_requis &&
+    formData.prix !== undefined &&
+    formData.age_requis !== undefined &&
     formData.duree_estime &&
-    formData.difficulte &&
+    formData.difficulte !== undefined &&
     formData.date_fin &&
     formData.date_debut &&
     formData.theme &&
-    formData.capacite &&
+    formData.capacite !== undefined &&
     formData.recompenses?.length &&
     formData.enigmes?.length;
 
   return (
     <div className="space-y-8">
-      {/* Carte pour les informations de base */}
+      {/* Informations de base */}
       <Card>
         <CardHeader>
           <CardTitle>Informations de base</CardTitle>
@@ -44,19 +44,19 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
             <h3 className="font-semibold">Description</h3>
             <p className="text-muted-foreground">{formData.description}</p>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span>Durée estimée : {formData.duree_estime} minutes</span>
             </div>
             <div>Prix du ticket : {formData.prix}€</div>
             <div>Âge Minimum : {formData.age_requis} ans</div>
-            <div className="capitalize">Difficulté : {formData.difficulte} </div>
+            <div className="capitalize">Difficulté : {formData.difficulte}</div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Carte pour le château sélectionné */}
+      {/* Château sélectionné */}
       <Card>
         <CardHeader>
           <CardTitle>Château sélectionné</CardTitle>
@@ -65,7 +65,7 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
           {formData.chateau ? (
             <div className="space-y-4">
               <img
-                src={formData.chateau.image || undefined}
+                src={formData.chateau.image instanceof File ? URL.createObjectURL(formData.chateau.image) : formData.chateau.image || "/placeholder-image.png"}
                 alt={formData.chateau.nom}
                 className="h-48 w-full rounded-lg object-cover"
               />
@@ -83,7 +83,7 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
         </CardContent>
       </Card>
 
-      {/* Carte pour les énigmes */}
+      {/* Énigmes */}
       <Card>
         <CardHeader>
           <CardTitle>Énigmes ({formData.enigmes?.length || 0})</CardTitle>
@@ -97,22 +97,13 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
                 <div className="text-sm text-muted-foreground">
                   {enigme.indices?.length || 0} indices fournis
                 </div>
-                {/* Affichage du QR Code */}
-                {enigme.code_reponse && (
-                  <div className="mt-4">
-                    <QRCodeCanvas value={enigme.code_reponse} size={128} />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Code de réponse : {enigme.code_reponse}
-                    </p>
-                  </div>
-                )}
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Carte pour les récompenses */}
+      {/* Récompenses */}
       <Card>
         <CardHeader>
           <CardTitle>Récompenses ({formData.recompenses?.length || 0})</CardTitle>
@@ -131,14 +122,6 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
           </div>
         </CardContent>
       </Card>
-
-      {/* Message d'avertissement si les informations ne sont pas complètes */}
-      {!estComplet && (
-        <div className="flex items-center gap-2 text-destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <p className="text-sm">Veuillez compléter toutes les informations requises avant de soumettre</p>
-        </div>
-      )}
     </div>
   );
 }

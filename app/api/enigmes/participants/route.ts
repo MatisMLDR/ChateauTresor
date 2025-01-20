@@ -29,14 +29,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Vérification si les données existent
-    if (!data || data.length === 0) {
-      return NextResponse.json(
-        { message: `Aucune participation trouvée pour l'énigme avec l'id ${idEnigme}` },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     return NextResponse.json(
