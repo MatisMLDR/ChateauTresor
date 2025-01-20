@@ -70,12 +70,15 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
               Capacité : {chateau.getCapacite()} personnes
             </span>
           </div>
-          <div className="flex items-center space-x-2">
-            <Euro className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-800">
-              Prix de location : {chateau.getPrixLocation()} €
-            </span>
-          </div>
+          {
+          participantType === 'organisateur' &&
+            <div className="flex items-center space-x-2">
+              <Euro className="h-4 w-4 text-gray-600" />
+              <span className="text-sm text-gray-800">
+                Prix de location : {chateau.getPrixLocation()} €
+              </span>
+            </div>
+          }
         </div>
         <div className="mt-4">
           <h3 className="text-lg font-bold">Chasses Disponibles ({availableChasses.length})</h3>
