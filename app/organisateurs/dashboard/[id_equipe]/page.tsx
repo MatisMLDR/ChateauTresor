@@ -38,40 +38,6 @@ export default function DashboardPage() {
   const [totalDailyRevenue, setTotalDailyRevenue] = useState<{ date: string; revenue: number }[]>([]);
 
 
-// Possible implémentation de la récupération des données de la base de données Supabase
-  //useEffect(() => {
-    // Commented Supabase fetch implementation
-    /*
-    async function fetchDashboardData() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: hunts } = await supabase
-        .from('treasure_hunts')
-        .select(`
-          id,
-          title,
-          price,
-          hunt_participations (
-            riddles_solved,
-            total_riddles,
-            clues_revealed,
-            completed_at
-          ),
-          hunt_reviews (
-            rating
-          )
-        `)
-        .eq('created_by', user.id)
-        .order('created_at', { ascending: false });
-
-      if (!hunts) return;
-
-      // Process fetched data
-      // ...
-    }
-    */
-
     // Données de test temporares
     useEffect(() => {
       // Temporary test data

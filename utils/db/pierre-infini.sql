@@ -29,7 +29,6 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 -- Supprimer les fonctions
 DROP FUNCTION IF EXISTS public.handle_new_user;
 
-
 CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
@@ -205,6 +204,8 @@ CREATE TABLE public.Chasse
     date_modification TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
     date_debut        TIMESTAMP                    DEFAULT NULL,
     date_fin          TIMESTAMP                    DEFAULT NULL,
+    horaire_debut     TIME                         DEFAULT NULL,
+    horaire_fin       TIME                         DEFAULT NULL,
     prix              NUMERIC(10, 2)               DEFAULT 0.00,
     difficulte        INT                          DEFAULT 1 CHECK (
         difficulte BETWEEN 1
@@ -478,16 +479,16 @@ VALUES ('d2f1e8a4-3b6e-4d8e-9b8e-1f2e8a4d8e9b', 'b302ddb0-c4b4-42d8-8956-00bcb2c
 
 -- Insert data into Chasse
 INSERT INTO public.Chasse (id_chasse, titre, capacite, description, age_requis, image, date_creation, date_modification,
-                           date_debut, date_fin, prix, difficulte, duree_estime, theme, statut, id_chateau, id_equipe)
+                           date_debut, date_fin, prix, difficulte, duree_estime, horaire_debut, horaire_fin, theme, statut, id_chateau, id_equipe)
 VALUES ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'Chasse au trésor 1', '100', 'Une chasse excitante.', '16', 'image.jpg',
         '2025-01-01 00:00:00', '2025-01-01 00:00:00', '2025-01-20 00:00:00', '2025-01-25 00:00:00', '10.00', '2',
-        '02:00:00', 'Theme de la chasse', 'Validée', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
+        '02:00:00', '08:00:00', '18:00:00', 'Theme de la chasse', 'Validée', '63e923ce-db26-4024-90cb-ff43eccfdbcb',
         '5da884fa-d39c-4e99-8644-a18e2bf34a60'),
        ('550e8400-e29b-41d4-a716-446655440000', 'Chasse de Chambord', '300',
         'Découvrez le château de Chambord comme vous ne l''avez jamais vu à travers une chasse aux trésors et des énigmes pour éveiller vos sens de détectives !',
         '16', 'https://www.valdeloire-france.com/app/uploads/2024/01/chambord-02-credit-drone-contrast.webp',
         '2025-01-07 09:00:00', '2025-01-07 09:00:00', '2025-01-29 10:00:00', '2025-01-31 16:00:00', '8.00', '1',
-        '02:00:00', 'Dynastie royale', 'Validée', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
+        '02:00:00', '15:00:00', '21:00:00', 'Dynastie royale', 'Validée', '2aab1306-2875-426c-b0d3-f440f05fa8b8',
         '42fdbebf-d919-4bc2-a7b7-f00688f706af') ON CONFLICT (id_chasse) DO NOTHING;
 
 -- Insert data into Participation

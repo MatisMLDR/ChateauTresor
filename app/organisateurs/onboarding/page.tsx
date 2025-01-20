@@ -66,16 +66,28 @@ const Onboarding = () => {
 
   // useEffect pour récupérer les équipes vérifiées
   useEffect(() => {
+    if (!formData.id_membre) {
+      return; // Ne fais rien si id_membre n'est pas encore disponible
+    }
     async function fetchEquipes() {
       try {
         const equipes = await EquipeOrganisatrice.getAllEquipesVerifiees();
+        const equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(formData.id_membre as UUID);
+        // Garder uniquement les equipes ou le membre n'y figure pas
+        equipesDuMembre.forEach(equipeDuMembre => {
+          // Supprimer l'équipe du membre du tableau équipes
+          const index = equipes.findIndex(equipe => equipe.getIdEquipe() === equipeDuMembre.getIdEquipe());
+          if (index !== -1) {
+            equipes.splice(index, 1);
+          }
+        });
         setEquipes(equipes);
       } catch (err) {
         // Do nothing
       }
     }
     fetchEquipes();
-  }, []);
+  }, [formData.id_membre]);
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -101,21 +113,19 @@ const Onboarding = () => {
       id_membre: formData.id_membre as UUID,
       id_equipe: formData.equipe as UUID, // TODO : Corriger pour pouvoir utiliser l'objet EquipeOrganisatrice
     };
-
     try {
-
+      
       await MembreEquipe.createAppartenanceEquipe(data);
 
       // Redirection après le succès de l'insertion
-      router.push('/organisateurs/onboarding/attente/acceptation-equipe');
-
+      router.push(`/organisateurs/dashboard/${formData.equipe}`);
     } catch (err) {
-      console.error('Erreur inconnue lors de l\'insertion des données :', err);
+      console.error('Erreur lors de l\'insertion des données :', err);
     }
   };
   const handleSubmitWithoutExistingTeam = async (e: any) => {
     e.preventDefault();
-
+    
     // Préparation des données pour la nouvelle équipe
     const data = {
       nom: formData.nomEquipe,
@@ -131,9 +141,10 @@ const Onboarding = () => {
     };
 
     try {
-      await createEquipe(data);
-
-    } catch (err) {
+      const createdTeam = await EquipeOrganisatrice.createEquipe(data);
+      // Rediriger vers la page pour l'équipe créée
+      router.push(`/organisateurs/dashboard/${createdTeam.getIdEquipe()}`);
+    } catch (err) { 
       console.error('Erreur lors de l\'insertion des données :', err);
     }
   };
@@ -265,7 +276,7 @@ const Onboarding = () => {
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                          formAction="/organisateurs/onboarding/attente/acceptation-equipe"
+                          formAction="#"
                           onClick={handleSubmitWithExistingTeam}
                         >
                           Continuer
@@ -340,7 +351,7 @@ const Onboarding = () => {
                       Sélectionner un type
                     </option>
                     <option value="Société">Société</option>
-                    <option value="Particuliers">Particuliers</option>
+                    <option value="Particulier">Particulier</option>
                   </select>
                 </div>
                 <div className="flex justify-between items-center mt-12">
@@ -560,7 +571,7 @@ const Onboarding = () => {
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                          formAction="/organisateurs/onboarding/attente/verification-equipe"
+                          formAction="#"
                           onClick={handleSubmitWithoutExistingTeam}
                         >
                           Continuer

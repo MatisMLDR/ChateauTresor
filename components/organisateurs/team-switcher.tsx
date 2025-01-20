@@ -27,6 +27,7 @@ import { UUID } from "crypto";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import EquipeOrganisatrice from "@/classes/EquipeOrganisatrice";
+import { Skeleton } from "../ui/skeleton";
 
 
 export function TeamSwitcher({
@@ -41,6 +42,8 @@ export function TeamSwitcher({
   const [activeTeam, setActiveTeam] = useState<EquipeOrganisatrice | undefined>(
     equipes.find((team) => team.getIdEquipe() === id_equipe_courante)
   )
+
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -87,7 +90,12 @@ export function TeamSwitcher({
 
     setTeam();
   }, [equipes, id_equipe_courante]);  // Run whenever `equipes` or `id_equipe_courante` changes
-
+  
+  if (equipes.length === 0 || !activeTeam) {
+    return (
+      <Skeleton className="w-full h-10 rounded-md" />
+    )
+  }
 
   console.log(equipes)
   return (
@@ -140,7 +148,7 @@ export function TeamSwitcher({
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                     <Plus className="size-4" />
                   </div>
-                  <div className="font-medium text-muted-foreground">Rejoindre une équipe</div>
+                  <div className="font-medium text-muted-foreground">Nouvelle équipe</div>
                 </Link>
               </DropdownMenuItem>
 

@@ -33,7 +33,13 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
 
   const availableChasses = chasses.filter((chasse) => chasse.isAvailable());
 
-  const isParticipants = pathname.includes('participants');
+  const url = pathname.split('/');
+  let teamId = null;
+
+  const participantType = url[1]
+  if(participantType === 'organisateurs') {
+    teamId = url[3]
+  }
 
   return (
     <Card className="flex h-full flex-col transition-shadow duration-200 hover:shadow-lg">
@@ -64,12 +70,15 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
               Capacité : {chateau.getCapacite()} personnes
             </span>
           </div>
-          <div className="flex items-center space-x-2">
-            <Euro className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-800">
-              Prix de location : {chateau.getPrixLocation()} €
-            </span>
-          </div>
+          {
+          participantType === 'organisateur' &&
+            <div className="flex items-center space-x-2">
+              <Euro className="h-4 w-4 text-gray-600" />
+              <span className="text-sm text-gray-800">
+                Prix de location : {chateau.getPrixLocation()} €
+              </span>
+            </div>
+          }
         </div>
         <div className="mt-4">
           <h3 className="text-lg font-bold">Chasses Disponibles ({availableChasses.length})</h3>
@@ -78,11 +87,7 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
               {availableChasses.map((chasse) => (
                 <li key={chasse.getIdChasse()} className="text-sm text-gray-800">
                   <Link
-                    href={
-                      isParticipants
-                        ? `/participants/dashboard/chasses/${chasse.getIdChasse()}`
-                        : `/organisateurs/dashboard/chasses/${chasse.getIdChasse()}`
-                    }
+                    href={`/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chasses/${chasse.getIdChasse()}`}
                     className="hover:text-blue-600"
                   >
                     {chasse.getTitre()}
@@ -96,11 +101,7 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
         </div>
       </CardContent>
       <CardFooter className="p-4">
-        <Link href={
-          isParticipants
-          ? `/participants/dashboard/chateau/${chateau.getIdChateau()}`
-          : `/organisateurs/dashboard/chateau/${chateau.getIdChateau()}`
-          } className="w-full">
+        <Link href={`/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chateaux/${chateau.getIdChateau()}`} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
       </CardFooter>
