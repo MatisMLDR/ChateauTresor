@@ -18,6 +18,7 @@ import { UUID } from 'crypto';
 import {
   BellPlus,
   Castle,
+  History,
   LayoutDashboard,
   LibraryBig,
   MapPin,
@@ -27,11 +28,10 @@ import {
   User
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { MembreEquipe } from '@/classes/MembreEquipe';
 import { Skeleton } from '../ui/skeleton';
-import { set } from 'date-fns';
 
 export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
