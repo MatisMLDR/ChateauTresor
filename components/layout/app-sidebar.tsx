@@ -20,7 +20,9 @@ import {
   Castle,
   LayoutDashboard,
   LibraryBig,
+  MapPin,
   Plus,
+  Search,
   User
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -28,14 +30,16 @@ import { use, useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { MembreEquipe } from '@/classes/MembreEquipe';
 import { Skeleton } from '../ui/skeleton';
+import { set } from 'date-fns';
 
 export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   const { id_equipe } = useParams();
   const [isOwner, setIsOwner] = useState(false);
   const [idUser, setIdUser] = useState<UUID | null>(null);
-  const [navMain, setNavMain] = useState([] as any);
-  const [loading, setLoading] = useState(true);  
+  const [navMainOrganisateur, setNavMainOrganisateur] = useState([] as any);
+  const [navMainParticipant, setNavMainParticipant] = useState([] as any);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && id_equipe) {
@@ -43,8 +47,8 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
     }
   }, [id_equipe]);
 
-   // Check if the current member is a team admin (owner)
-   useEffect(() => {
+  // Check if the current member is a team admin (owner)
+  useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);  // Commencer le chargement
       try {
@@ -57,7 +61,7 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
           setIdUser(user.id as UUID);
           const membre = await MembreEquipe.readByIdUser(user.id as UUID);
           const appartenanceEquipeCourante = await membre.getAppartenanceEquipe(id_equipe as UUID);
-          const isOwner = appartenanceEquipeCourante.role_equipe === 'Administrateur'; 
+          const isOwner = appartenanceEquipeCourante.role_equipe === 'Administrateur';
           if (isOwner) {
             localStorage.setItem('isOwner', 'true');
             setIsOwner(true);
@@ -77,56 +81,93 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   // Set navMain
   useEffect(() => {
-    if (!id_equipe || !idUser) {
+    if (type !== "organisateur" || !id_equipe || !idUser) {
       return
     }
 
     let navMainData = [  // Use `let` so that it's mutable
       {
         title: 'Dashboard',
-        url: `/organisateurs/dashboard/${id_equipe}`,  
+        url: `/organisateurs/dashboard/${id_equipe}`,
         icon: LayoutDashboard,
       },
       {
         title: 'Châteaux',
-        url: `/organisateurs/dashboard/${id_equipe}/chateaux`,  
+        url: `/organisateurs/dashboard/${id_equipe}/chateaux`,
         icon: Castle,
       },
       {
         title: 'Chasses',
-        url: `/organisateurs/dashboard/${id_equipe}/chasses`,  
+        url: `/organisateurs/dashboard/${id_equipe}/chasses`,
         icon: LibraryBig,
       },
-       
+
       ...(isOwner ? [{
         title: 'Demandes',
-        url: `/organisateurs/dashboard/${id_equipe}/demandes`,  
+        url: `/organisateurs/dashboard/${id_equipe}/demandes`,
         icon: BellPlus,
       }] : []),  // Si isOwner est vrai, on ajoute cet objet, sinon un tableau vide
       {
         title: 'Créer',
-        url: `/organisateurs/dashboard/${id_equipe}/creation_chasse`,  
+        url: `/organisateurs/dashboard/${id_equipe}/creation_chasse`,
         icon: Plus,
       },
       {
         title: 'Profil',
-        url: `/organisateurs/dashboard/${id_equipe}/profil`,  
+        url: `/organisateurs/dashboard/${id_equipe}/profil/${idUser}/parametres`,
+        icon: User,
+      },
+    ]
+
+    setNavMainOrganisateur(navMainData);
+  }, [isOwner, idUser, id_equipe]);
+
+  useEffect(() => {
+    if (type !== "participant" || !idUser) {
+      return
+    }
+    const navMainData = [
+      {
+        title: 'Carte',
+        url: '/participants/dashboard/carte',
+        icon: MapPin,
+        isActive: true,
+      },
+      {
+        title: 'Châteaux',
+        url: '/participants/dashboard/chateaux',
+        icon: Castle,
+      },
+      {
+        title: 'Chasses',
+        url: '/participants/dashboard/chasses',
+        icon: Search,
+      },
+      {
+        title: 'Historique',
+        url: '/participants/dashboard/historique',
+        icon: History,
+      },
+      {
+        title: 'Profil',
+        url: `/participants/dashboard/profil`,
         icon: User,
         items: [
           {
             title: 'Informations',
-            url: `/organisateurs/dashboard/profil/${idUser}/informations`,  
+            url: `/participants/dashboard/profil/${idUser}/informations`,
           },
           {
-            title: 'Statistiques',
-            url: `/organisateurs/dashboard/profil/${idUser}/statistiques`,  
+            title: 'Paramètres',
+            url: `/participants/dashboard/profil/${idUser}/parametres`,
           },
         ],
       },
     ]
+    setNavMainParticipant(navMainData);
+  }, [idUser]);
 
-    setNavMain(navMainData);
-  }, [isOwner, idUser, id_equipe]);
+
 
   if (loading) {
     return <Skeleton className='h-full' />;
@@ -134,14 +175,15 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   // const data = type === 'organisateur' ? dataOrganisateur : type === 'participant' ? dataUser : dataProprietaire;
 
-
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher type={type} id_equipe_courante={id_equipe as UUID} />
-      </SidebarHeader>
+      {type === 'organisateur' && (
+        <SidebarHeader>
+          <TeamSwitcher type={type} id_equipe_courante={id_equipe as UUID} />
+        </SidebarHeader>
+      )}
       <SidebarContent>
-        <NavMain items={navMain} />
+        <NavMain items={type === "participant" ? navMainParticipant : navMainOrganisateur} />
         <NavProjects type={type} id_equipe_courante={id_equipe as UUID} />
       </SidebarContent>
       <SidebarFooter>

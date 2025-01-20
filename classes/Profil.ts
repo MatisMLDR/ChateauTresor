@@ -161,84 +161,84 @@ export class Profil {
       throw new Error("Profil introuvable");
     }
 
-    console.log("Profil après appel API dans read", profile); 
+    console.log("Profil après appel API dans read", profile);
 
     return new Profil(profile);
   }
 
   public async read(): Promise<any> {
-              if (!this.id_profil) {
-                  throw new Error('ID is required');
-              }
-          
-              const avis = await getProfilById(this.id_profil) as any
-          
-              if (!avis) {
-                  throw new Error('Profil not found');
-              }
-          
-              return new Profil(avis);
-            }
-          
-            public async load(): Promise<void> {
-              if (!this.id_profil) {
-                  throw new Error('Profil ID is required');
-              }
-          
-              const avis = await getProfilById(this.id_profil) as any
-          
-              if (!avis) {
-                  throw new Error('Profil not found');
-              }
-          
-              this.id_profil = avis.id;
-              this.username = avis.username;
-              this.updated_at = avis.updated_at;
-              this.email = avis.email;
-              this.birthday = avis.birthday;
-              this.email_confirm = avis.email_confirm;
-              this.nom = avis.nom;
-              this.prenom = avis.prenom;
-              this.adresse = avis.adresse;
-              this.ville = avis.ville;
-              this.code_postal = avis.code_postal;
-              this.stripe_id = avis.stripe_id;
-              this.plan = avis.plan;
-            }
-            
-            public async create(): Promise<void> {
-              const avis = await createProfil(this) as any
-          
-              if (!avis) {
-                  throw new Error('Profil not created');
-              }
-            }
-          
-            public async deleteId(id: string): Promise<void> {
-              try {
-                await deleteProfil(id);
-              } catch (error) {
-                  throw new Error('Profil does not exist');
-              }
-            }
-          
-            public async delete(): Promise<void> {
-              if (!this.id_profil) {
-                console.log("Pas d'id");
-                throw new Error('id is required');
-              }
-              try {
-                await deleteProfil(this.id_profil);
-              } catch (error) {
-                  throw new Error('Profil does not exist');
-              }
-            }
-          
-            public async update(): Promise<void> {
-              try {
-                await updateProfil(this);
-              } catch (error) {
-                  throw new Error('Profil does not exist');
-              }
-            }
+    if (!this.id_profil) {
+      throw new Error('ID is required');
+    }
+
+    const avis = await getProfilById(this.id_profil) as any
+
+    if (!avis) {
+      throw new Error('Profil not found');
+    }
+
+    return new Profil(avis);
+  }
+
+  public async load(): Promise<void> {
+    if (!this.id_profil) {
+      throw new Error('Profil ID is required');
+    }
+
+    const avis = await getProfilById(this.id_profil) as any
+
+    if (!avis) {
+      throw new Error('Profil not found');
+    }
+
+    this.id_profil = avis.id;
+    this.username = avis.username;
+    this.updated_at = avis.updated_at;
+    this.email = avis.email;
+    this.birthday = avis.birthday;
+    this.email_confirm = avis.email_confirm;
+    this.nom = avis.nom;
+    this.prenom = avis.prenom;
+    this.adresse = avis.adresse;
+    this.ville = avis.ville;
+    this.code_postal = avis.code_postal;
+    this.stripe_id = avis.stripe_id;
+    this.plan = avis.plan;
+  }
+
+  public async create(): Promise<void> {
+    const avis = await createProfil(this) as any
+
+    if (!avis) {
+      throw new Error('Profil not created');
+    }
+  }
+
+  public async deleteId(id: string): Promise<void> {
+    try {
+      await deleteProfil(id);
+    } catch (error) {
+      throw new Error('Profil does not exist');
+    }
+  }
+
+  public async delete(): Promise<void> {
+    if (!this.id_profil) {
+      console.log("Pas d'id");
+      throw new Error('id is required');
+    }
+    try {
+      await deleteProfil(this.id_profil);
+    } catch (error) {
+      throw new Error('Profil does not exist');
+    }
+  }
+
+  public async update(): Promise<void> {
+    try {
+      await updateProfil(this);
+    } catch (error) {
+      throw new Error('Profil does not exist');
+    }
+  }
 }
