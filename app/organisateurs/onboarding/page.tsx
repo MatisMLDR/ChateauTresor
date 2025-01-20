@@ -10,6 +10,8 @@ import { UUID } from 'crypto';
 import { createEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useRouter } from 'next/navigation';
+import { Loader } from 'lucide-react';
+import { set } from 'date-fns';
 
 const Onboarding = () => {
 
@@ -37,6 +39,7 @@ const Onboarding = () => {
     idTaxes: '',
     terms: false, // Ajouté pour la case à cocher des conditions d'utilisation
   });
+  const [loading, setLoading] = useState(false);
 
   // useEffect pour récupérer l'id du membre et le prénom de l'utilisateur
   useEffect(() => {
@@ -106,6 +109,7 @@ const Onboarding = () => {
   };
 
   const handleSubmitWithExistingTeam = async (e: any) => {
+    setLoading(true); // On met le loading à true pendant l'opération
     e.preventDefault();
 
     // Préparation des données pour l'appartenance à l'équipe
@@ -114,16 +118,19 @@ const Onboarding = () => {
       id_equipe: formData.equipe as UUID, // TODO : Corriger pour pouvoir utiliser l'objet EquipeOrganisatrice
     };
     try {
-      
+
       await MembreEquipe.createAppartenanceEquipe(data);
 
       // Redirection après le succès de l'insertion
       router.push(`/organisateurs/dashboard/${formData.equipe}`);
     } catch (err) {
       console.error('Erreur lors de l\'insertion des données :', err);
+    } finally {
+      setLoading(false); // On met le loading à false après l'opération
     }
   };
   const handleSubmitWithoutExistingTeam = async (e: any) => {
+    setLoading(true); // On met le loading à true pendant l'opération
     e.preventDefault();
     
     // Préparation des données pour la nouvelle équipe
@@ -142,10 +149,19 @@ const Onboarding = () => {
 
     try {
       const createdTeam = await EquipeOrganisatrice.createEquipe(data);
+      // Créer l'appartenance à l'équipe
+      await MembreEquipe.createAppartenanceEquipe({
+        id_membre: formData.id_membre as UUID,
+        id_equipe: createdTeam.getIdEquipe(),
+        role_equipe: 'Administrateur',
+        statut: 'Validé',
+      });
       // Rediriger vers la page pour l'équipe créée
       router.push(`/organisateurs/dashboard/${createdTeam.getIdEquipe()}`);
     } catch (err) { 
       console.error('Erreur lors de l\'insertion des données :', err);
+    } finally {
+      setLoading(false); // On met le loading à false après l'opération
     }
   };
 
@@ -278,8 +294,9 @@ const Onboarding = () => {
                           type="submit"
                           formAction="#"
                           onClick={handleSubmitWithExistingTeam}
+                          disabled={loading}
                         >
-                          Continuer
+                          {loading ? <Loader className="animate-spin" color='#fff' size={16} /> : "Continuer"} 
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -573,8 +590,9 @@ const Onboarding = () => {
                           type="submit"
                           formAction="#"
                           onClick={handleSubmitWithoutExistingTeam}
+                          disabled={loading}
                         >
-                          Continuer
+                          {loading ? <Loader className="animate-spin" color='#fff' size={16} /> : "Continuer"} 
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
