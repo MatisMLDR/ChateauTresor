@@ -72,10 +72,7 @@ const Onboarding = () => {
     async function fetchEquipes() {
       try {
         const equipes = await EquipeOrganisatrice.getAllEquipesVerifiees();
-        console.log('Equipes vérifiées :', equipes);
-        console.log('ID du membre :', formData.id_membre);
         const equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(formData.id_membre as UUID);
-        console.log('Equipes du membre :', equipesDuMembre);
         // Garder uniquement les equipes ou le membre n'y figure pas
         equipesDuMembre.forEach(equipeDuMembre => {
           // Supprimer l'équipe du membre du tableau équipes
@@ -84,7 +81,6 @@ const Onboarding = () => {
             equipes.splice(index, 1);
           }
         });
-        console.log('Equipes filtrées :', equipes);
         setEquipes(equipes);
       } catch (err) {
         // Do nothing
@@ -123,8 +119,7 @@ const Onboarding = () => {
       await MembreEquipe.createAppartenanceEquipe(data);
 
       // Redirection après le succès de l'insertion
-      router.push('/organisateurs/onboarding/attente/acceptation-equipe');
-
+      router.push(`/organisateurs/dashboard/${formData.equipe}`);
     } catch (err) {
       console.error('Erreur lors de l\'insertion des données :', err);
     }
@@ -147,8 +142,9 @@ const Onboarding = () => {
     };
 
     try {
-      await EquipeOrganisatrice.createEquipe(data);
-
+      const createdTeam = await EquipeOrganisatrice.createEquipe(data);
+      // Rediriger vers la page pour l'équipe créée
+      router.push(`/organisateurs/dashboard/${createdTeam.getIdEquipe()}`);
     } catch (err) { 
       console.error('Erreur lors de l\'insertion des données :', err);
     }
@@ -281,7 +277,7 @@ const Onboarding = () => {
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                          formAction="/organisateurs/onboarding/attente/acceptation-equipe"
+                          formAction="#"
                           onClick={handleSubmitWithExistingTeam}
                         >
                           Continuer
@@ -576,7 +572,7 @@ const Onboarding = () => {
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                          formAction="/organisateurs/onboarding/attente/verification-equipe"
+                          formAction="#"
                           onClick={handleSubmitWithoutExistingTeam}
                         >
                           Continuer
