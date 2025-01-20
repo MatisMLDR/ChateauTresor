@@ -20,13 +20,13 @@ import {
 
 import Image from 'next/image';
 
+import EquipeOrganisatrice from "@/classes/EquipeOrganisatrice";
 import { MembreEquipe } from "@/classes/MembreEquipe";
-import { EquipeOrganisatriceType, SideBarProps } from "@/types";
+import { SideBarProps } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 import { UUID } from "crypto";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import EquipeOrganisatrice from "@/classes/EquipeOrganisatrice";
 import { Skeleton } from "../ui/skeleton";
 
 
@@ -42,9 +42,7 @@ export function TeamSwitcher({
   const [activeTeam, setActiveTeam] = useState<EquipeOrganisatrice | undefined>(
     equipes.find((team) => team.getIdEquipe() === id_equipe_courante)
   )
-
-
-
+  
   useEffect(() => {
     const fetchUser = async () => {
       const supabase = createClient();
@@ -97,7 +95,6 @@ export function TeamSwitcher({
     )
   }
 
-  console.log(equipes)
   return (
     <SidebarMenu>
       <SidebarMenuItem>

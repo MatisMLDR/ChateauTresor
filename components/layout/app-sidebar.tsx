@@ -27,14 +27,15 @@ import { useParams } from 'next/navigation';
 import { use, useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { MembreEquipe } from '@/classes/MembreEquipe';
-import { set } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
 
 export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   const { id_equipe } = useParams();
   const [isOwner, setIsOwner] = useState(false);
-  const [loading, setLoading] = useState(true);  // Pour gérer l'état de chargement
+  const [idUser, setIdUser] = useState<UUID | null>(null);
+  const [navMain, setNavMain] = useState([] as any);
+  const [loading, setLoading] = useState(true);  
 
   useEffect(() => {
     if (typeof window !== 'undefined' && id_equipe) {
@@ -53,6 +54,7 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
         } = await supabase.auth.getUser();
 
         if (user && user.email) {
+          setIdUser(user.id as UUID);
           const membre = await MembreEquipe.readByIdUser(user.id as UUID);
           const appartenanceEquipeCourante = await membre.getAppartenanceEquipe(id_equipe as UUID);
           const isOwner = appartenanceEquipeCourante.role_equipe === 'Administrateur'; 
@@ -73,55 +75,65 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
     }
   }, [id_equipe]);
 
+  // Set navMain
+  useEffect(() => {
+    if (!id_equipe || !idUser) {
+      return
+    }
+
+    let navMainData = [  // Use `let` so that it's mutable
+      {
+        title: 'Dashboard',
+        url: `/organisateurs/dashboard/${id_equipe}`,  
+        icon: LayoutDashboard,
+      },
+      {
+        title: 'Châteaux',
+        url: `/organisateurs/dashboard/${id_equipe}/chateaux`,  
+        icon: Castle,
+      },
+      {
+        title: 'Chasses',
+        url: `/organisateurs/dashboard/${id_equipe}/chasses`,  
+        icon: LibraryBig,
+      },
+       
+      ...(isOwner ? [{
+        title: 'Demandes',
+        url: `/organisateurs/dashboard/${id_equipe}/demandes`,  
+        icon: BellPlus,
+      }] : []),  // Si isOwner est vrai, on ajoute cet objet, sinon un tableau vide
+      {
+        title: 'Créer',
+        url: `/organisateurs/dashboard/${id_equipe}/creation_chasse`,  
+        icon: Plus,
+      },
+      {
+        title: 'Profil',
+        url: `/organisateurs/dashboard/${id_equipe}/profil`,  
+        icon: User,
+        items: [
+          {
+            title: 'Informations',
+            url: `/organisateurs/dashboard/profil/${idUser}/informations`,  
+          },
+          {
+            title: 'Statistiques',
+            url: `/organisateurs/dashboard/profil/${idUser}/statistiques`,  
+          },
+        ],
+      },
+    ]
+
+    setNavMain(navMainData);
+  }, [isOwner, idUser, id_equipe]);
+
   if (loading) {
     return <Skeleton className='h-full' />;
   }
 
-  const data = type === 'organisateur' ? dataOrganisateur : type === 'participant' ? dataUser : dataProprietaire;
+  // const data = type === 'organisateur' ? dataOrganisateur : type === 'participant' ? dataUser : dataProprietaire;
 
-  let navMain = [  // Use `let` so that it's mutable
-    {
-      title: 'Dashboard',
-      url: `/organisateurs/dashboard/${id_equipe}`,  
-      icon: LayoutDashboard,
-    },
-    {
-      title: 'Châteaux',
-      url: `/organisateurs/dashboard/${id_equipe}/chateaux`,  
-      icon: Castle,
-    },
-    {
-      title: 'Chasses',
-      url: `/organisateurs/dashboard/${id_equipe}/chasses`,  
-      icon: LibraryBig,
-    },
-     
-    ...(isOwner ? [{
-      title: 'Demandes',
-      url: `/organisateurs/dashboard/${id_equipe}/demandes`,  
-      icon: BellPlus,
-    }] : []),  // Si isOwner est vrai, on ajoute cet objet, sinon un tableau vide
-    {
-      title: 'Créer',
-      url: `/organisateurs/dashboard/${id_equipe}/creation_chasse`,  
-      icon: Plus,
-    },
-    {
-      title: 'Profil',
-      url: `/organisateurs/dashboard/${id_equipe}/profil`,  
-      icon: User,
-      items: [
-        {
-          title: 'Informations',
-          url: `/organisateurs/dashboard/${id_equipe}/profil/informations`,  
-        },
-        {
-          title: 'Statistiques',
-          url: `/organisateurs/dashboard/${id_equipe}/profil/statistiques`,  
-        },
-      ],
-    },
-  ]
 
   return (
     <Sidebar collapsible="icon" {...props}>
