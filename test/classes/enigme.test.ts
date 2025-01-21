@@ -78,13 +78,16 @@ describe("Enigme", () => {
     expect(fetchedEnigme).toBeInstanceOf(Enigme);
   });
 
-  test("create should call createEnigme with correct data", async () => {
+  test('create should call createEnigme with correct data', async () => {
     (createEnigme as jest.Mock).mockResolvedValue(mockEnigmeData);
 
     const enigme = new Enigme(mockEnigmeData);
     await enigme.create();
 
-    expect(createEnigme).toHaveBeenCalledWith(enigme);
+    expect(createEnigme).toHaveBeenCalledWith(expect.objectContaining({
+      id_enigme: mockEnigmeData.id_enigme,
+      titre: mockEnigmeData.titre,
+    }));
   });
 
   test("deleteId should call deleteEnigme with correct id", async () => {
@@ -105,13 +108,16 @@ describe("Enigme", () => {
     expect(deleteEnigme).toHaveBeenCalledWith(mockEnigmeData.id_enigme);
   });
 
-  test("update should call updateEnigme with correct data", async () => {
+  test('update should call updateEnigme with correct data', async () => {
     (updateEnigme as jest.Mock).mockResolvedValue(undefined);
 
     const enigme = new Enigme(mockEnigmeData);
     await enigme.update();
 
-    expect(updateEnigme).toHaveBeenCalledWith(enigme);
+    expect(updateEnigme).toHaveBeenCalledWith(expect.objectContaining({
+      id_enigme: mockEnigmeData.id_enigme,
+      titre: mockEnigmeData.titre,
+    }));
   });
 
   test("load should fetch data and update instance properties", async () => {

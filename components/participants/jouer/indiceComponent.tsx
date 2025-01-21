@@ -222,32 +222,32 @@ const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme
   console.log('log pour afficher id_enigme : ', enigmeId);
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">Indices disponibles</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold">Indices disponibles</h1>
 
       {/* Liste des indices */}
       <div className="space-y-4">
         {indices.map((indice, index) => (
           <div
             key={indice.id_indice}
-            className="p-4 bg-gray-50 rounded-lg shadow-sm cursor-pointer hover:bg-gray-100 transition duration-300"
+            className="cursor-pointer rounded-lg bg-gray-50 p-4 shadow-sm transition duration-300 hover:bg-gray-100"
             onClick={() => handleIndiceClick(indice)}
           >
             {discoveredIndices.includes(indice.id_indice) ? (
-
               // Si l'indice est déjà révélé, utiliser Link pour la redirection
-              <Link href={`/participants/dashboard/jouer/indice/${indice.id_indice}?chasseId=${chasseId}&enigmeId=${enigmeId}`}>
-                <div className="p-4 bg-gray-50 rounded-lg shadow-sm cursor-pointer hover:bg-gray-100 transition duration-300">
+              <Link
+                href={`/participants/dashboard/jouer/indice/${indice.id_indice}?chasseId=${chasseId}&enigmeId=${enigmeId}`}
+              >
+                <div className="cursor-pointer rounded-lg bg-gray-50 p-4 shadow-sm transition duration-300 hover:bg-gray-100">
                   <h2 className="text-lg font-semibold text-gray-800">
-                    Indice {index + 1} {discoveredIndices.includes(indice.id_indice) ? '(Déjà révélé)' : ''}
+                    Indice {index + 1}{' '}
+                    {discoveredIndices.includes(indice.id_indice) ? '(Déjà révélé)' : ''}
                   </h2>
                 </div>
               </Link>
             ) : (
               // Sinon, afficher uniquement le titre de l'indice
               <div>
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Indice {index + 1}
-                </h2>
+                <h2 className="text-lg font-semibold text-gray-800">Indice {index + 1}</h2>
               </div>
             )}
           </div>
@@ -262,20 +262,20 @@ const IndiceList: React.FC<{ idEnigme: UUID, participantId: UUID}> = ({ idEnigme
               Attention !
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-gray-600">
-              Révéler cet indice vous fera perdre {selectedIndice?.degre_aide} points.
-              Êtes-vous sûr de vouloir continuer ?
+              Révéler cet indice vous fera perdre {selectedIndice?.degre_aide} points. Êtes-vous sûr
+              de vouloir continuer ?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
               onClick={() => handleConfirmation(false)}
-              className="rounded-lg bg-gray-500 text-white px-6 py-3 shadow-lg hover:bg-gray-600 transition duration-300"
+              className="rounded-lg bg-gray-500 px-6 py-3 text-white shadow-lg transition duration-300 hover:bg-gray-600"
             >
               Non
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => handleConfirmation(true)}
-              className="rounded-lg bg-red-500 text-white px-6 py-3 shadow-lg hover:bg-red-600 transition duration-300"
+              className="rounded-lg bg-red-500 px-6 py-3 text-white shadow-lg transition duration-300 hover:bg-red-600"
             >
               Oui, continuer
             </AlertDialogAction>
