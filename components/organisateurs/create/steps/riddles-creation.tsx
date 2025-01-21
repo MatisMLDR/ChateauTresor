@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -34,10 +34,38 @@ import { CreateIndice } from "./create_indice";
 import { contenuTextuel } from '@/constants';
 import { ChasseType, EnigmeType, IndiceType } from "@/types";
 import { UUID } from "crypto";
+import { parseISO, differenceInSeconds } from "date-fns";
 
 interface RiddlesCreationProps {
   formData: Partial<ChasseType>;
   setFormData: (data: Partial<ChasseType>) => void;
+  onValidityChange: (isValid: boolean) => void; // Ajout de la prop pour la validation
+}
+
+function secondsToTimeString(totalSeconds: number): string {
+  if (isNaN(totalSeconds)) totalSeconds = 0;
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
+function timeStringToSeconds(timeString: string): number {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  return (hours * 3600) + (minutes * 60);
+}
+
+function parseDateTime(dateStr: string | undefined, timeStr: string | undefined): Date | null {
+  if (!dateStr || !timeStr) return null;
+  
+  try {
+    const date = parseISO(dateStr);
+    const [hours, mins] = timeStr.split(':').map(Number);
+    date.setHours(hours, mins, 0, 0);
+    return date;
+  } catch (error) {
+    console.error("Erreur de parsing date/heure:", error);
+    return null;
+  }
 }
 
 function IndiceCompacte({
@@ -62,7 +90,6 @@ function IndiceCompacte({
     transition,
   };
 
-  // Gestion type-safe du contenu
   const renderContenu = () => {
     if (indice.type === 'text') {
       return (
@@ -151,11 +178,12 @@ function IndiceCompacte({
   );
 }
 
-function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }: { 
+function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme, isActive }: { 
   enigme: EnigmeType; 
   onSelectEnigme: (enigme: EnigmeType) => void;
   onEditEnigme: (enigme: EnigmeType) => void;
   onDeleteEnigme: (id_enigme: UUID) => void;
+  isActive: boolean;
 }) {
   const {
     attributes,
@@ -172,7 +200,10 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <Card onClick={() => onSelectEnigme(enigme)}>
+      <Card 
+        className={`cursor-pointer ${isActive ? "ring-2 ring-primary" : ""}`}
+        onClick={() => onSelectEnigme(enigme)}
+      >
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
             <div {...listeners} className="cursor-grab">
@@ -195,6 +226,9 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
               <p className="text-sm text-muted-foreground">{enigme.description}</p>
               <div className="text-sm text-muted-foreground">
                 {enigme.indices?.length || 0} indices
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Durée max: {secondsToTimeString(enigme.temps_max)}
               </div>
             </div>
             <Button
@@ -224,7 +258,7 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme }
   );
 }
 
-export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps) {
+export function RiddlesCreation({ formData, setFormData, onValidityChange }: RiddlesCreationProps) {
   const [nouvelleEnigme, setNouvelleEnigme] = useState<Partial<EnigmeType>>({
     id_enigme: crypto.randomUUID() as UUID,
     titre: "",
@@ -240,6 +274,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
   const [enigmeEnCoursEdition, setEnigmeEnCoursEdition] = useState<EnigmeType | null>(null);
   const [indiceEnCoursEdition, setIndiceEnCoursEdition] = useState<IndiceType | null>(null);
   const [afficherModalIndice, setAfficherModalIndice] = useState(false);
+  const [erreurDuree, setErreurDuree] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -272,7 +307,6 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     contenu: string | File;
     degre_aide?: number;
   }) => {
-    // Calcul de l'ordre : on garde l'existant en édition, on incrémente seulement pour les nouveaux
     const currentIndices = enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || [];
     const nouvelOrdre = indiceEnCoursEdition 
       ? indiceEnCoursEdition.ordre 
@@ -283,7 +317,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
       ...indice,
       id_indice: indiceEnCoursEdition?.id_indice || crypto.randomUUID() as UUID,
       id_enigme: enigmeEnCoursEdition?.id_enigme || nouvelleEnigme.id_enigme || (crypto.randomUUID() as UUID),
-      ordre: nouvelOrdre, // Utilisation du bon ordre selon le contexte
+      ordre: nouvelOrdre,
       degre_aide: indice.degre_aide ?? 0,
     };
   
@@ -398,6 +432,48 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
     }
   };
 
+  const handleTempsMaxChange = (timeString: string) => {
+    const selectedSeconds = timeStringToSeconds(timeString);
+    
+    const startDateTime = parseDateTime(formData.date_debut ?? undefined, formData.horaire_debut ?? undefined);
+    const endDateTime = parseDateTime(formData.date_fin ?? undefined, formData.horaire_fin ?? undefined);
+    
+    let error = null;
+    
+    if (!startDateTime || !endDateTime) {
+      error = "Définissez d'abord les dates globales";
+    } else {
+      const totalSeconds = differenceInSeconds(endDateTime, startDateTime);
+      
+      if (totalSeconds <= 0) {
+        error = "La fin doit être après le début";
+      } else if (selectedSeconds > totalSeconds) {
+        error = `Durée max: ${secondsToTimeString(totalSeconds)}`;
+      }
+    }
+
+    setErreurDuree(error);
+    
+    if (!error) {
+      if (enigmeEnCoursEdition) {
+        setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, temps_max: selectedSeconds });
+      } else {
+        setNouvelleEnigme({ ...nouvelleEnigme, temps_max: selectedSeconds });
+      }
+    }
+  };
+
+  // Validation pour empêcher la création d'une énigme sans indices
+  const isEnigmeValid = (enigme: Partial<EnigmeType>) => {
+    return enigme.titre && enigme.indices?.length;
+  };
+
+  // Validation pour empêcher le passage à l'étape suivante sans énigmes
+  useEffect(() => {
+    const isValid = !!(formData.enigmes && formData.enigmes.length > 0);
+    onValidityChange(isValid);
+  }, [formData.enigmes, onValidityChange]);
+
   return (
     <div className="space-y-8">
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndEnigmes}>
@@ -419,6 +495,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
                       onSelectEnigme={setEnigmeEnCoursEdition}
                       onEditEnigme={setEnigmeEnCoursEdition}
                       onDeleteEnigme={supprimerEnigme}
+                      isActive={enigme.id_enigme === enigmeEnCoursEdition?.id_enigme}
                     />
                   ))}
                 </SortableContext>
@@ -446,6 +523,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
                   : setNouvelleEnigme({ ...nouvelleEnigme, titre: e.target.value })
               }
               placeholder="Entrez le titre de l'énigme"
+              required
             />
           </div>
 
@@ -460,6 +538,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
                   : setNouvelleEnigme({ ...nouvelleEnigme, description: e.target.value })
               }
               placeholder="Entrez le contenu de l'énigme"
+              required
             />
           </div>
 
@@ -483,7 +562,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
                     indice={indice}
                     onEditIndice={(indice) => {
                       setIndiceEnCoursEdition(indice);
-                      setAfficherModalIndice(true); // Ajoutez cette ligne
+                      setAfficherModalIndice(true);
                     }}
                     onDeleteIndice={supprimerIndice}
                   />
@@ -503,23 +582,25 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
                   : setNouvelleEnigme({ ...nouvelleEnigme, endroit_qrcode: e.target.value })
               }
               placeholder="Entrer la localisation exacte du QR Code"
+              required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="temps_max">Durée maximale (minutes)</Label>
+            <Label htmlFor="temps_max">Durée maximale (HH:mm)</Label>
             <Input
               id="temps_max"
-              type="number"
-              min={0}
-              step={5}
-              value={enigmeEnCoursEdition?.temps_max || nouvelleEnigme.temps_max || 0}
-              onChange={(e) =>
-                enigmeEnCoursEdition
-                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, temps_max: parseInt(e.target.value) })
-                  : setNouvelleEnigme({ ...nouvelleEnigme, temps_max: parseInt(e.target.value) })
-              }
+              type="time"
+              step="60"
+              value={secondsToTimeString(
+                enigmeEnCoursEdition?.temps_max ?? nouvelleEnigme.temps_max ?? 0
+              )}
+              onChange={(e) => handleTempsMaxChange(e.target.value)}
+              required
             />
+            {erreurDuree && (
+              <p className="text-red-500 text-sm mt-1">{erreurDuree}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -533,6 +614,7 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
                   : setNouvelleEnigme({ ...nouvelleEnigme, description_reponse: e.target.value })
               }
               placeholder="Entrez la description de la réponse"
+              required
             />
           </div>
 
@@ -597,7 +679,8 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
               }}
               disabled={
                 !(enigmeEnCoursEdition ? enigmeEnCoursEdition.titre : nouvelleEnigme.titre) ||
-                !(enigmeEnCoursEdition ? enigmeEnCoursEdition.indices?.length : nouvelleEnigme.indices?.length)
+                !(enigmeEnCoursEdition ? enigmeEnCoursEdition.indices?.length : nouvelleEnigme.indices?.length) ||
+                !!erreurDuree
               }
             >
               {enigmeEnCoursEdition ? "Enregistrer" : "Ajouter une énigme"}
@@ -611,10 +694,10 @@ export function RiddlesCreation({ formData, setFormData }: RiddlesCreationProps)
           <CreateIndice
             onClose={() => {
               setAfficherModalIndice(false);
-              setIndiceEnCoursEdition(null); // Réinitialiser l'édition
+              setIndiceEnCoursEdition(null);
             }}
             onSubmit={traiterSoumissionIndice}
-            indice={indiceEnCoursEdition} // Envoyez l'indice en cours d'édition
+            indice={indiceEnCoursEdition}
           />
         </div>
       )}

@@ -98,6 +98,7 @@ export function CreateIndice({ onClose, onSubmit, indice }: CreateIndiceProps) {
               value={typeof content === "string" ? content : ""}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Entrez le contenu de l'indice..."
+              required
             />
           </div>
         ) : (
@@ -114,6 +115,7 @@ export function CreateIndice({ onClose, onSubmit, indice }: CreateIndiceProps) {
                 type="file"
                 accept={type === "image" ? "image/*" : "audio/*"}
                 onChange={handleFileChange}
+                required
               />
               {content instanceof File && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -151,7 +153,7 @@ export function CreateIndice({ onClose, onSubmit, indice }: CreateIndiceProps) {
         <Button variant="outline" onClick={onClose}>
           Quitter
         </Button>
-        <Button onClick={handleSubmit}>
+        <Button onClick={handleSubmit} disabled={!content}>
           {indice ? "Enregistrer" : "Créer un indice"}
         </Button>
       </CardFooter>
