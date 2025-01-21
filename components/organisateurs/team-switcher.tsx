@@ -39,7 +39,6 @@ export function TeamSwitcher({
 }) {
   const { isMobile } = useSidebar()
   const [equipes, setEquipes] = useState<EquipeOrganisatrice[]>([])
-  const [hasMoreThanThreeTeams, setHasMoreThanThreeTeams] = useState(false)
   const [idMembre, setIdMembre] = useState<UUID | null>(null)
   const [activeTeam, setActiveTeam] = useState<EquipeOrganisatrice | undefined>(
     equipes.find((team) => team.getIdEquipe() === id_equipe_courante)
@@ -58,9 +57,8 @@ export function TeamSwitcher({
           const membre = await MembreEquipe.readByIdUser(user.id as UUID);
           setIdMembre(membre.getIdMembre() as UUID);
           let equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(membre.getIdMembre() as UUID);
-          // Display only the first three teams
+          // Display only the first three teams if they have more than commit
           if (equipesDuMembre.length > 3) {
-            setHasMoreThanThreeTeams(true);
             equipesDuMembre = equipesDuMembre.slice(0, 3);
           }
           setEquipes(equipesDuMembre as any);
@@ -154,7 +152,6 @@ export function TeamSwitcher({
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              {hasMoreThanThreeTeams && (
               <DropdownMenuItem className="gap-2 p-2">
                 <Link href={`/organisateurs/dashboard/${id_equipe_courante}/equipes/${idMembre}`} className="flex items-center gap-2">
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">
@@ -163,7 +160,6 @@ export function TeamSwitcher({
                   <div className="font-medium text-muted-foreground">Voir toutes ses équipes</div>
                 </Link>
               </DropdownMenuItem>
-              )}
               <DropdownMenuItem className="gap-2 p-2">
                 <Link href={`/organisateurs/onboarding`} className="flex items-center gap-2">
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">

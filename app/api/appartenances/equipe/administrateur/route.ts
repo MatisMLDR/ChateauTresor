@@ -19,19 +19,18 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
       .from('appartenance_equipe')
       .select(`
-        membre_equipe (
-          
+        membre_equipe (     
           profiles (*)
         )
       `)
       .eq('id_equipe', idEquipe)
       .eq('role_equipe', 'Administrateur')
-      .single();
+      .maybeSingle()
 
     // Gestion des erreurs Supabase
     if (error) {
       return NextResponse.json(
-        { error: 'Erreur lors de la récupération des participations', details: error.message },
+        { error: 'Erreur lors de la récupération de l"administrateur', details: error.message },
         { status: 500 }
       );
     }
