@@ -7,7 +7,7 @@ import { RiddlesCreation } from "./steps/riddles-creation";
 import { ReviewSubmit } from "./steps/review-submit";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChasseType, RecompenseType, EnigmeType, IndiceType } from "@/types";
+import { ChasseType, RecompenseType, EnigmeType, IndiceType, ChateauType } from "@/types";
 import { contenuTextuel } from "@/constants";
 import toast, { Toaster } from "react-hot-toast";
 import Chasse from "@/classes/Chasse";
@@ -32,6 +32,7 @@ interface CreateHuntFormProps {
   initialData?: Partial<ChasseType>;
   isEditMode?: boolean;
   onHuntCreated?: (id_equipe: string) => void;
+  chateauInitial?: ChateauType;
 }
 
 export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated }: CreateHuntFormProps) {
@@ -40,6 +41,7 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<ChasseType>>(initialData || { enigmes: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isStepValid, setIsStepValid] = useState(false);
 
   // Récupération de l'ID équipe depuis l'URL
   const idEquipe = params.id_equipe as UUID;
@@ -351,7 +353,8 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
       <div className="bg-card p-6 rounded-lg border shadow-sm">
         <CurrentStepComponent 
           formData={formData} 
-          setFormData={handleFormDataUpdate} 
+          setFormData={handleFormDataUpdate}
+          onValidityChange={(isValid) => setIsStepValid(isValid)}
         />
       </div>
 
@@ -380,13 +383,13 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
             )}
           </Button>
         ) : (
-          <Button 
-            onClick={() => handleStepNavigation('next')}
-            disabled={isSubmitting}
-            className="min-w-[120px]"
-          >
-            Suivant →
-          </Button>
+        <Button 
+          onClick={() => handleStepNavigation('next')}
+          disabled={isSubmitting || !isStepValid}
+          className="min-w-[120px]"
+        >
+          Suivant →
+        </Button>
         )}
       </div>
     </div>
