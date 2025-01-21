@@ -8,6 +8,8 @@ import toast from 'react-hot-toast'
 import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice'
 import { MembreEquipe } from '@/classes/MembreEquipe'
 import { UUID } from 'crypto'
+import { Participant } from '@/classes/Participant'
+import { getParticipantByUserId } from '@/utils/dao/ParticipantUtils'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
 
@@ -176,6 +178,7 @@ export async function loginUser(currentState: { message: string }, formData: For
 
     const { error } = await supabase.auth.signInWithPassword(data)
 
+
     if (error) {
         console.error('Error logging in:', error)
         return { message: "Erreur lors de la connexion" }
@@ -184,25 +187,40 @@ export async function loginUser(currentState: { message: string }, formData: For
     // Revalider le chemin pour mettre à jour les données de l'utilisateur
     revalidatePath("/", 'layout')
 
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user || !user.id) {
+        return { message: "Utilisateur introuvable" }
+    }
+
     if (type === "participant") {
-        return redirect('/participants/dashboard');
+        try {
+            const participantID = await Participant.readByIdUser(user.id as UUID);
+            if (!participantID) {
+                throw new Error('Participant not found');
+            }
+        } catch (error) {
+            // Créer un profil participant
+            const participant = new Participant({
+                id_participant: crypto.randomUUID() as UUID,
+                id_user: user.id as UUID,
+            })
+
+            participant.create();
+        } finally {
+            return redirect('/participants/dashboard');
+        }
     }
     // Rediriger vers la page asscoiée au type de l'utilisateur
     let redirectPath = '/organisateurs/onboarding';
 
-
     try {
-        const user = (await supabase.auth.getUser()).data.user;
-
-        if (user && user.id) {
-            const membre = await MembreEquipe.readByIdUser(user.id as UUID);
-            const equipesDuMembre = await MembreEquipe.getAllAppartenancesOfMembre(membre.getIdMembre() as UUID);
-            if (equipesDuMembre.length > 0) {
-                redirectPath = `/organisateurs/dashboard/${equipesDuMembre[0].id_equipe}`;
-            } else {
-                redirectPath = '/organisateurs/onboarding';
-            }
-        } 
+        const membre = await MembreEquipe.readByIdUser(user.id as UUID);
+        const equipesDuMembre = await MembreEquipe.getAllAppartenancesOfMembre(membre.getIdMembre() as UUID);
+        if (equipesDuMembre.length > 0) {
+            redirectPath = `/organisateurs/dashboard/${equipesDuMembre[0].id_equipe}`;
+        } else {
+            redirectPath = '/organisateurs/onboarding';
+        }
     } catch (error) {
         redirectPath = '/organisateurs/onboarding';
     } finally {

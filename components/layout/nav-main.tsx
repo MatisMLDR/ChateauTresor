@@ -34,6 +34,7 @@ export function NavMain({
         }[]
     }[]
 }) {
+    console.log("ITEMS IN NAVMAIN : ",items)
     return (
         <SidebarGroup>
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>

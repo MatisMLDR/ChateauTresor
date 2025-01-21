@@ -68,10 +68,8 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
       }
     };
 
-    if (id_equipe) {
-      fetchUser();
-    }
-  }, [id_equipe]);
+    fetchUser();
+  }, []);
 
 
   // Check if the current member is a team admin (owner)
@@ -146,10 +144,10 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
     ]
 
     setNavMainOrganisateur(navMainData);
-  }, [isOwner, idUser, id_equipe]);
+  }, [isOwner, idUser, id_equipe, type]);
 
   useEffect(() => {
-    if (type !== "participant") {
+    if (type != "participant") {
       return
     }
     if (!idUser) {
@@ -200,7 +198,7 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
       },
     ]
     setNavMainParticipant(navMainData);
-  }, [idUser]);
+  }, [idUser, type]);
 
 
 
