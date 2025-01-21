@@ -108,7 +108,7 @@ function IndiceCompacte({
         <img
           src={url}
           alt="Indice visuel"
-          className="h-16 w-16 object-cover rounded-lg"
+          className="image-cropped"
         />
       );
     }
@@ -218,7 +218,7 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme, 
                       URL.createObjectURL(enigme.image_reponse) : 
                       enigme.image_reponse}
                 alt={enigme.titre}
-                className="h-16 w-16 object-cover rounded-lg"
+                className="image-cropped"
               />
             )}
             <div className="flex-1">

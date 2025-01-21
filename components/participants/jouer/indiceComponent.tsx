@@ -22,6 +22,7 @@ import { createClient } from "@/utils/supabase/client"
 import { getParticipationByParticipantIdAndChasseId, updateParticipationScore } from "@/utils/dao/ParticipationUtils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Loader from "@/components/global/loader"
+import { getEnigmeById } from '@/utils/dao/EnigmeUtils';
 
 interface Indice {
   id_indice: UUID
@@ -64,7 +65,9 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
     const fetchIndices = async () => {
       try {
         const indices = await getAllIndicesByEnigme(idEnigme as UUID)
-        const sortedIndices = indices.sort((a, b) => a.ordre - b.ordre)
+        const sortedIndices = indices.sort(
+          (a: { ordre: number }, b: { ordre: number }) => a.ordre - b.ordre
+        );
         setIndices(sortedIndices)
         setError(null)
       } catch (error) {
@@ -79,7 +82,7 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
     const checkAllIndices = async () => {
       const discoveredIds: UUID[] = []
       const participant = await Participant.readByIdUser(userId as UUID)
-      const participantId = participant.id_participant
+      const participantId = participant.getIdParticipant()
 
       for (const indice of indices) {
         try {
@@ -100,7 +103,7 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
   const handleIndiceClick = async (indice: Indice) => {
     setSelectedIndice(indice)
     const participant = await Participant.readByIdUser(userId as UUID)
-    const isDiscovered = await IndiceParticipant.checkIfIndiceExists(participant.id_participant, indice.id_indice)
+    const isDiscovered = await IndiceParticipant.checkIfIndiceExists(participant.getIdParticipant(), indice.id_indice)
     if (isDiscovered) {
       setDiscoveredIndices((prev) => [...prev, indice.id_indice])
       setShowConfirmation(false)
@@ -117,10 +120,10 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
 
     try {
       const participant = await Participant.readByIdUser(userId as UUID)
-      if (!participant || !participant.id_participant) {
+      if (!participant || !participant.getIdParticipant()) {
         throw new Error("Participant non trouvé ou ID invalide.")
       }
-      const participantId = participant.id_participant
+      const participantId = participant.getIdParticipant()
       const isDiscovered = await IndiceParticipant.checkIfIndiceExists(participantId, selectedIndice.id_indice)
       if (isDiscovered) {
         setShowConfirmation(false)

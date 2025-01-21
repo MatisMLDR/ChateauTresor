@@ -123,7 +123,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
     setEditingReward(null);
   };
 
-  function SortableReward({ reward }: { reward: RecompenseType }) {
+  function SortableReward({ reward, isActive }: { reward: RecompenseType; isActive: boolean }) {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
       id: reward.id_recompense!,
     });
@@ -135,7 +135,7 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
 
     return (
       <div ref={setNodeRef} style={style} {...attributes}>
-        <Card>
+        <Card className={`cursor-pointer ${isActive ? "ring-2 ring-primary" : ""}`}>
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
               <div {...listeners} className="cursor-grab">
@@ -201,7 +201,11 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                   strategy={verticalListSortingStrategy}
                 >
                   {rewards.map((reward) => (
-                    <SortableReward key={reward.id_recompense} reward={reward} />
+                    <SortableReward
+                      key={reward.id_recompense}
+                      reward={reward}
+                      isActive={reward.id_recompense === editingReward?.id_recompense}
+                    />
                   ))}
                 </SortableContext>
               </div>
@@ -316,13 +320,21 @@ export default function RewardCreation({ formData, setFormData }: RewardCreation
                 accept="image/*"
                 onChange={handleFileChange}
               />
-              {editingReward?.image instanceof File && (
-                <div className="text-sm text-muted-foreground">
-                  Fichier sélectionné : {editingReward.image.name}
+              {editingReward?.image && (
+                <div className="mt-2">
+                  <img
+                    src={
+                      editingReward.image instanceof File
+                        ? URL.createObjectURL(editingReward.image)
+                        : editingReward.image || "/placeholder.png"
+                    }
+                    alt="Image de la récompense"
+                    className="h-32 w-32 object-cover rounded-lg"
+                  />
                 </div>
               )}
               {newReward.image instanceof File && (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground mt-2">
                   Fichier sélectionné : {newReward.image.name}
                 </div>
               )}
