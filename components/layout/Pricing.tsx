@@ -9,9 +9,9 @@ const Pricing = async () => {
   const products = await getStripeProducts();
 
   return (
-    <section className="w-full py-10 md:py-20 lg:py-32 bg-muted" id="pricing">
+    <section className="w-full py-10 md:py-20 bg-muted" id="pricing">
       <div className="container px-4 md:px-6">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4">Pricing Plans</h2>
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4">Plans tarifaires</h2>
         <p className="text-muted-foreground text-center mb-8 md:text-xl">Choisissez le plan adapté à vos besoins !</p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
@@ -23,8 +23,8 @@ const Pricing = async () => {
               <CardContent>
                 <p className="text-3xl font-bold">
                   {product.price.unit_amount
-                    ? `$${(product.price.unit_amount / 100).toFixed(2)}/${product.price.recurring?.interval}`
-                    : 'Custom'}
+                    ? `€${(product.price.unit_amount / 100).toFixed(2)}/mois`
+                    : '€0.00/mois'}
                 </p>
                 <ul className="mt-4 space-y-2">
                   {product.features?.map((feature, index) => (
@@ -40,7 +40,7 @@ const Pricing = async () => {
                   className="text-sm font-medium hover:underline underline-offset-4 w-full"
                   href={`/signup?plan=${product.id}`}
                 >
-                  <Button className="w-full">Get Started</Button>
+                  <Button className="w-full">Commencer</Button>
                 </Link>
               </CardFooter>
             </Card>

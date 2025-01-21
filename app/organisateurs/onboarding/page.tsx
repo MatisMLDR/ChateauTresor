@@ -2,6 +2,7 @@
 
 import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
 import { MembreEquipe } from '@/classes/MembreEquipe';
+import ButtonBack from '@/components/global/ButtonBack';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,7 +54,7 @@ const Onboarding = () => {
           setFormData((prevData) => ({
             ...prevData,
             id_membre: membre.getIdMembre(),
-            prenomUtilisateur: user.user_metadata.prenom,
+            prenomUtilisateur: user.user_metadata.nom,
           }));
         }
       } catch (err) {
@@ -133,7 +134,7 @@ const Onboarding = () => {
   const handleSubmitWithoutExistingTeam = async (e: any) => {
     setLoading(true); // On met le loading à true pendant l'opération
     e.preventDefault();
-    
+
     // Préparation des données pour la nouvelle équipe
     const data = {
       nom: formData.nomEquipe,
@@ -165,7 +166,7 @@ const Onboarding = () => {
         console.log("Membre à créer", membre);
 
         await membre.create();
-        
+
       }
 
       // Créer l'appartenance à l'équipe
@@ -178,7 +179,7 @@ const Onboarding = () => {
       });
       // Rediriger vers la page pour l'équipe créée
       router.push(`/organisateurs/dashboard/${createdTeam.getIdEquipe()}`);
-    } catch (err) { 
+    } catch (err) {
       console.error('Erreur lors de l\'insertion des données :', err);
     } finally {
       setLoading(false); // On met le loading à false après l'opération
@@ -189,9 +190,6 @@ const Onboarding = () => {
 
   return (
     <div className="h-screen w-full flex justify-center items-center">
-      <Button onClick={() => router.back()} className="mb-8">
-        Revenir à la page précédente
-      </Button>
       <div className='max-w-[800px]'>
         {/* Barre de progression */}
         {currentStep > 1 && (
@@ -203,6 +201,7 @@ const Onboarding = () => {
           </div>
         )}
         <form>
+          <ButtonBack />
           {currentStep === 1 && (
             <>
               {/* ÉTAPE 1 : Vérification de l'appartenance à une équipe */}
@@ -319,7 +318,7 @@ const Onboarding = () => {
                           onClick={handleSubmitWithExistingTeam}
                           disabled={loading}
                         >
-                          {loading ? <Loader className="animate-spin" color='#fff' size={16} /> : "Continuer"} 
+                          {loading ? <Loader className="animate-spin" color='#fff' size={16} /> : "Continuer"}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -615,7 +614,7 @@ const Onboarding = () => {
                           onClick={handleSubmitWithoutExistingTeam}
                           disabled={loading}
                         >
-                          {loading ? <Loader className="animate-spin" color='#fff' size={16} /> : "Continuer"} 
+                          {loading ? <Loader className="animate-spin" color='#fff' size={16} /> : "Continuer"}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

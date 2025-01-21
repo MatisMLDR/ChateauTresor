@@ -1,24 +1,23 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { BasicDetails } from "./steps/basic-details";
-import { CastleSelection } from "./steps/castle-selection";
-import { RiddlesCreation } from "./steps/riddles-creation";
-import { ReviewSubmit } from "./steps/review-submit";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ChasseType, RecompenseType, EnigmeType, IndiceType } from "@/types";
-import { contenuTextuel } from "@/constants";
-import toast, { Toaster } from "react-hot-toast";
 import Chasse from "@/classes/Chasse";
 import { Enigme } from "@/classes/Enigme";
 import Indice from "@/classes/Indice";
 import Recompense from "@/classes/Recompense";
-import { UUID } from "crypto";
-import RewardCreation from "./steps/reward-creation";
-import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { contenuTextuel } from "@/constants";
+import { ChasseType } from "@/types";
 import { createClient } from "@/utils/supabase/client";
-import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import { UUID } from "crypto";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { BasicDetails } from "./steps/basic-details";
+import { CastleSelection } from "./steps/castle-selection";
+import { ReviewSubmit } from "./steps/review-submit";
+import RewardCreation from "./steps/reward-creation";
+import { RiddlesCreation } from "./steps/riddles-creation";
 
 const steps = [
   { title: contenuTextuel.create.steps.basicDetails, component: BasicDetails },
