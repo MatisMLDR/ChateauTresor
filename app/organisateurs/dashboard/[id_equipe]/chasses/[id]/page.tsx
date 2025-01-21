@@ -94,7 +94,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
             <InformationBadge hoverText={`Thème de la chasse`}>{chasse.getTheme()}</InformationBadge>
           </div>
           <p className="mt-2">
-            Date : {new Date(chasse.getDateDebut()).toLocaleDateString()} - {new Date(chasse.getDateFin()).toLocaleDateString()}
+            Date : {chasse.getDateDebut() ? new Date(chasse.getDateDebut() as string).toLocaleDateString() : 'N/A'} - {chasse.getDateFin() ? new Date(chasse.getDateFin() as string).toLocaleDateString() : 'N/A'}
           </p>
         </div>
       </div>

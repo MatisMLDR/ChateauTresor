@@ -42,8 +42,8 @@ const EditHuntPage: React.FC = () => {
           chateau: {
             ...chasse.getChateau(),
             // Conversion UUID si nécessaire
-            id_chateau: chasse.getChateau()?.id_chateau as UUID,
-            image: chasse.getChateau()?.image || { /* default FileType object */ } as FileType
+            id_chateau: chasse.getChateau()?.getIdChateau() as UUID,
+            image: chasse.getChateau()?.getImage() || { /* default FileType object */ } as FileType
           }
         };
 
