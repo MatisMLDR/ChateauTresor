@@ -1,5 +1,6 @@
 import { ChateauType, ImageFile } from "@/types";
 import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
+import { getChateauOfProprietaire } from "@/utils/dao/ProprietaireUtils";
 import { UUID } from "crypto";
 
 class Chateau {
@@ -145,6 +146,13 @@ class Chateau {
       console.error("Erreur lors de la récupération des châteaux:", error);
       throw new Error("Impossible de récupérer la liste des châteaux");
     }
+  }
+
+  public static async readByIdProprietaire(id_proprietaire: UUID): Promise<Chateau> {
+    const data = await getChateauOfProprietaire(id_proprietaire);
+
+    // Retourne une instance de Proprietaire
+    return new Chateau(data);
   }
 
   public async read(): Promise<any> {

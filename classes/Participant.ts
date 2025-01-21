@@ -162,7 +162,7 @@ export class Participant {
     return new Participant(data);
   }
 
-  public static async readByIdUser(id_user: UUID): Promise<any> {
+  public static async readByIdUser(id_user: UUID): Promise<Participant> {
     const data = await getParticipantByUserId(id_user) as any;
     
     if (!data) {
