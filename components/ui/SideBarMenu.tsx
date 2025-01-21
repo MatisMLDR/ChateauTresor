@@ -7,7 +7,7 @@ import {
 
 import { SideBarProps } from '@/types';
 
-import React from "React";
+import React from "react";
 
 export function SideBarMenu({ children, type, fullyUnlocked = true }: SideBarProps) {
 
