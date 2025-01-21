@@ -150,6 +150,11 @@ export type ChateauType = {
   chasses?: ChasseType[];
 };
 
+export type ProprietaireType = {
+  id_proprietaire: UUID;
+  id_user: UUID;
+}
+
 export interface AvatarLinksProps {
   isShowed: boolean;
 }

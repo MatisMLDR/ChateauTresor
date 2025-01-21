@@ -24,6 +24,8 @@ import { useEffect, useState } from 'react';
 import { UUID } from 'crypto';
 import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
 import Chasse from '@/classes/Chasse';
+import { createClient } from '@/utils/supabase/client';
+import { Participant } from '@/classes/Participant';
 
 export function NavProjects({
   id_equipe_courante,
@@ -34,44 +36,99 @@ export function NavProjects({
 }) {
   const { isMobile } = useSidebar();
   const [lastThreeHunts, setLastThreeHunts] = useState<Chasse[]>([]);
-
-  useEffect(() => {
-    const fetchLastThreeHunts = async () => {
-      try {
-        const equipe = await EquipeOrganisatrice.readId(id_equipe_courante!);
-        if (equipe) {
-          localStorage.setItem('equipe', JSON.stringify(equipe));
-          const teamHunts = await equipe.getAllChasses();
-          setLastThreeHunts(teamHunts.slice(0, 3)); // Set the last 3 hunts
+  const [chateau, setChateau] = useState<Chasse | null>(null);
+  const [idUser, setIdUser] = useState<UUID | null>(null);
+  if (type === "organisateur") {
+    useEffect(() => {
+      const fetchLastThreeHunts = async () => {
+        try {
+          const equipe = await EquipeOrganisatrice.readId(id_equipe_courante!);
+          if (equipe) {
+            localStorage.setItem('equipe', JSON.stringify(equipe));
+            const teamHunts = await equipe.getAllChasses();
+            setLastThreeHunts(teamHunts.slice(0, 3)); // Set the last 3 hunts
+          }
+        } catch (err) {
+          console.error('Error fetching hunts:', err);
         }
-      } catch (err) {
-        console.error('Error fetching hunts:', err);
-      }
-    };
-    fetchLastThreeHunts();
-  }, [id_equipe_courante]);
+      };
+      fetchLastThreeHunts();
+    }, [id_equipe_courante]);
+  } else {
+    // fetch the current user
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (user && user.email) {
+            setIdUser(user.id as UUID);
+          }
+        } catch (err) {
+          console.error('Error fetching user:', err);
+        }
+      };
+    }, [idUser]);
+
+    if (type === "participant") {
+      // Fetch last three hunts of the participant
+      useEffect(() => {
+        if (!idUser) return;
+        const fetchLastThreeHunts = async () => {
+          try {
+            const participant = await Participant.readByIdUser(idUser as UUID);
+            let hunts = await participant.getAllChasses();
+            if (hunts) {
+              hunts = hunts.slice(0, 3);
+            }
+            setLastThreeHunts(hunts);
+          } catch (err) {
+            console.error('Erreur lors de la récupération des détails du château :', err);
+          }
+        }
+        fetchLastThreeHunts();
+      }, []);
+    }
+
+    if (type === "proprietaire") {
+      // Fetch the castle of the owner
+      useEffect(() => {
+        if (!idUser) return;
+        const fetchCastle = async () => {
+          try {
+            const proprietaire = await Propriet
+          } catch (err) {
+            console.error('Erreur lors de la récupération des détails du château :', err);
+          }
+        };
+        fetchCastle();
+      }, [idUser]);
+    }
+  }
 
   const renderMenuItems = (hunt: Chasse) => {
-    const baseUrl = `/organisateurs/dashboard/${id_equipe_courante}`;
 
     // Based on user type, determine actions
     switch (type) {
       case 'organisateur':
+
         return (
           <>
-            <Link href={`${baseUrl}/modifier_chasse/${hunt.getIdChasse()}`}>
+            <Link href={`/organisateurs/dashboard/${id_equipe_courante}/modifier_chasse/${hunt.getIdChasse()}`}>
               <DropdownMenuItem>
                 <Settings className="text-muted-foreground" />
                 Modifier
               </DropdownMenuItem>
             </Link>
-            <Link href={`${baseUrl}/${hunt.getIdChasse()}/avis`}>
+            <Link href={`/organisateurs/dashboard/${id_equipe_courante}/${hunt.getIdChasse()}/avis`}>
               <DropdownMenuItem>
                 <Star className="text-muted-foreground" />
                 Avis
               </DropdownMenuItem>
             </Link>
-            <Link href={`${baseUrl}/${hunt.getIdChasse()}/qr`}>
+            <Link href={`/organisateurs/dashboard/${id_equipe_courante}/${hunt.getIdChasse()}/qr`}>
               <DropdownMenuItem>
                 <QrCode className="text-muted-foreground" />
                 QR
@@ -151,8 +208,8 @@ export function NavProjects({
                   type === 'organisateur'
                     ? `/organisateurs/dashboard/${id_equipe_courante}/chasses/${hunt.getIdChasse()}`
                     : type === 'participant'
-                    ? `/participants/dashboard/chasses/${hunt.getIdChasse()}`
-                    : `/chateaux/${hunt.getIdChasse()}`
+                      ? `/participants/dashboard/chasses/${hunt.getIdChasse()}`
+                      : `/chateaux/${hunt.getIdChasse()}`
                 }
                 className="inline-flex max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis"
               >
