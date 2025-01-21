@@ -18,6 +18,7 @@ import { UUID } from "crypto";
 import RewardCreation from "./steps/reward-creation";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
 
 const steps = [
   { title: contenuTextuel.create.steps.basicDetails, component: BasicDetails },
@@ -198,6 +199,8 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
           date_modification: new Date().toISOString(),
           date_debut: chasse.date_debut ? new Date(chasse.date_debut).toISOString() : "",
           date_fin: chasse.date_fin ? new Date(chasse.date_fin).toISOString() : "",
+          horaire_debut: chasse.horaire_debut || "08:00:00",
+          horaire_fin: chasse.horaire_fin || "18:00:00",
           prix: chasse.prix || 0.0,
           difficulte: chasse.difficulte || 1,
           duree_estime: chasse.duree_estime || "00:00:00",
