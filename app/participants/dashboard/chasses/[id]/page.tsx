@@ -64,11 +64,13 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                     <p className="mt-2">
                         Date : {new Date(chasse.getDateDebut()).toLocaleDateString()} - {new Date(chasse.getDateFin()).toLocaleDateString()}
                     </p>
+                    {new Date(chasse.getDateFin()) < new Date() && (
                     <Button className="mt-4">
                         <Link href={`/participants/dashboard/chasses/${params.id}/inscription`}>
                             Réserver
                         </Link>
                     </Button>
+                    )}
                 </div>
             </div>
 
