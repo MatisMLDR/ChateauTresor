@@ -37,7 +37,7 @@ const ScanQRCodePage: React.FC = () => {
     try {
       const chasseInstance = await Chasse.readId(chasseId as UUID);
       const enigmes = await chasseInstance.getAllEnigmes();
-      const currentEnigme = enigmes.find((enigme: Enigme) => enigme.id_enigme === enigmeId);
+      const currentEnigme = enigmes.find((enigme: Enigme) => enigme.getId() === enigmeId);
       if (currentEnigme) {
         setEnigmeTitle(currentEnigme.titre);
       }
@@ -57,13 +57,13 @@ const ScanQRCodePage: React.FC = () => {
       const chasseInstance = await Chasse.readId(chasseId as UUID);
       const enigmes = await chasseInstance.getAllEnigmes();
       const enigmesTriees = enigmes.sort((a: { ordre: number; }, b: { ordre: number; }) => a.ordre - b.ordre);
-      const currentEnigme = enigmesTriees.find((enigme: Enigme) => enigme.id_enigme === enigmeId);
+      const currentEnigme = enigmesTriees.find((enigme: Enigme) => enigme.getId() === enigmeId);
 
       if (currentEnigme && code === currentEnigme.code_reponse) {
         setValidationMessage('Code correct !');
         setShowValidationPopup(true);
 
-        const currentIndex = enigmesTriees.findIndex((enigme: Enigme) => enigme.id_enigme === enigmeId);
+        const currentIndex = enigmesTriees.findIndex((enigme: Enigme) => enigme.getId() === enigmeId);
 
         if (currentIndex < enigmesTriees.length - 1) {
           const nextEnigme = enigmesTriees[currentIndex + 1];
@@ -237,7 +237,7 @@ const ScanQRCodePage: React.FC = () => {
               onClick={handleBackToEnigme}
               className="rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-gray-600 hover:to-gray-700 w-full mt-4"
             >
-              Revenir à l'énigme
+              Revenir à l&apos;énigme
             </button>
           </div>
         )}
@@ -257,7 +257,7 @@ const ScanQRCodePage: React.FC = () => {
                 onClick={handleBackToEnigme}
                 className="rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-gray-600 hover:to-gray-700"
               >
-                Revenir à l'énigme
+                Revenir à l&apos;énigme
               </button>
             </div>
           </div>

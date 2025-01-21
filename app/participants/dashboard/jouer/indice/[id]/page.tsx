@@ -77,12 +77,12 @@ export default function IndicePage() {
         onClick={handleBackToEnigme}
         className="rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:from-gray-600 hover:to-gray-700 w-full mt-4"
       >
-        Revenir à l'énigme
+        Revenir à l&apos;énigme
       </button>
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Détails de l'indice {indice.ordre}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Détails de l&apos;indice {indice.ordre}</h1>
         <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-800">Contenu de l'indice :</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Contenu de l&asos;indice :</h2>
           <p className="text-gray-600 mt-2">{indice.contenu}</p>
         </div>
       </div>
