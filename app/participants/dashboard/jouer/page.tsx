@@ -56,7 +56,7 @@ const GameInterface: React.FC = () => {
         setEnigmes(enigmesTriees);
 
         if (enigmeIdFromUrl) {
-          const index = enigmesTriees.findIndex((enigme: Enigme) => enigme.id_enigme === enigmeIdFromUrl);
+          const index = enigmesTriees.findIndex((enigme: Enigme) => enigme.getId() === enigmeIdFromUrl);
           if (index !== -1) {
             setCurrentEnigmeIndex(index);
           }
