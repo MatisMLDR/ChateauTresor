@@ -19,6 +19,7 @@ const Onboarding = () => {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [totalSteps, setTotalSteps] = useState(2);
+  const [idUser, setIdUser] = useState<UUID | null>(null);
   const [equipes, setEquipes] = useState<EquipeOrganisatrice[] | []>([]);
   const [formData, setFormData] = useState({
     hasTeam: 'non',
@@ -33,6 +34,7 @@ const Onboarding = () => {
     numeroTel: '',
     telephone: '',
     adressePostale: '',
+    date_creation: '',
     siteWeb: '',
     description: '',
     nSiret: '',
@@ -48,6 +50,7 @@ const Onboarding = () => {
       try {
         const user = (await supabase.auth.getUser()).data.user;
         if (user && user.id) {
+          setIdUser(user.id as UUID);
           const membre = await MembreEquipe.readByIdUser(user.id as UUID);
           setFormData((prevData) => ({
             ...prevData,
@@ -141,6 +144,7 @@ const Onboarding = () => {
       id_taxes: formData.type,
       site_web: formData.siteWeb,
       adresse_postale: formData.adressePostale,
+      date_creation: null,
       telephone: formData.telephone,
       description: formData.description,
       carte_identite_chef: formData.carteIdentite,
@@ -149,11 +153,29 @@ const Onboarding = () => {
 
     try {
       const createdTeam = await EquipeOrganisatrice.createEquipe(data);
+      console.log(createdTeam)
+      // Si il n'a pas d'id membre, alors on lui génère et on créé son compte membre
+      let membreID = formData.id_membre;
+      if (!formData.id_membre) {
+        membreID = crypto.randomUUID();
+        // Créer le membre
+        const membre = new MembreEquipe({
+          id_membre: membreID as UUID,
+          id_user: idUser as UUID,
+        });
+
+        console.log("Membre à créer", membre);
+
+        await membre.create();
+        
+      }
+
       // Créer l'appartenance à l'équipe
       await MembreEquipe.createAppartenanceEquipe({
-        id_membre: formData.id_membre as UUID,
+        id_membre: membreID as UUID,
         id_equipe: createdTeam.getIdEquipe(),
         role_equipe: 'Administrateur',
+        message_demande: formData.message,
         statut: 'Validé',
       });
       // Rediriger vers la page pour l'équipe créée

@@ -53,6 +53,7 @@ export class MembreEquipe {
   }
 
   public static async createAppartenanceEquipe(appartenanceData: AppartenanceEquipeType): Promise<void> {
+    console.log("Appartenance dans la classe : ", appartenanceData)
     try {
       await createAppartenanceMembreEquipe(appartenanceData);
     } catch (error) {
@@ -114,9 +115,9 @@ export class MembreEquipe {
   }
 
   public async create(): Promise<void> {
-    const avis = await createMembre(this) as any
+    const membre = await createMembre(this) as any
 
-    if (!avis) {
+    if (!membre) {
       throw new Error('Membre not created');
     }
   }
