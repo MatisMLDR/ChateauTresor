@@ -11,6 +11,7 @@ import Chasse from '@/classes/Chasse';
 import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
 import { DeleteChasseButton } from '@/components/organisateurs/deleteChasse'; // Importez le Client Component
+import Chateau from '@/classes/Chateau';
 
 export default async function OrganisateurChassePage({ params }: { params: { id_equipe: UUID; id: UUID } }) {
   // Récupérer les paramètres dynamiques
@@ -23,10 +24,13 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
   const nbParticipants = await chasse.getNbParticipants();
   const reussiteMoyenne = await chasse.getReussiteMoyenne();
   const dureeMoyenne = await chasse.getDureeMoyenne();
+  const chateau = await Chateau.readId(chasse.getIdChateau()!);
 
-  if (!chasse) {
+  if (!chasse || !chateau) {
     return <Loader />;
   }
+
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -63,7 +67,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
           <p className="mb-4 text-gray-700">{chasse.getDescription()}</p>
           <p className="mb-2 flex items-center">
             Lieu : <Link href={`/organisateurs/chateaux/${chasse.getIdChateau()}`} className="text-blue-600 hover:underline ml-1 flex justify-around items-center">
-              {chasse.getIdChateau()} <ExternalLink className="w-4 h-4 ml-1" />
+              {chateau.getLocalisation()} <ExternalLink className="w-4 h-4 ml-1" />
             </Link>
           </p>
           <p className="mb-2">Durée estimée : {chasse.getDureeEstime()} minutes</p>
