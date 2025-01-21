@@ -55,3 +55,8 @@ INSERT INTO "public"."indice" ("id_indice", "contenu", "ordre", "degre_aide", "t
             ('bf57289b-464a-4643-b920-156a15ac1f2a', 'https://blogvoyages.fr/wp-content/uploads/2021/01/VisiterChambord_Jardins2.jpg', '1', '2', 'text', '4c721cc7-2e4b-43ea-af31-370520321296'),
             ('c924efd5-81ec-4fa4-aede-1735e5cdb8f6', 'Indice : Dans le cœur du château il permet de se déplacer entre les étages.', '2', '2', 'text', '057f57dc-25eb-4375-90ca-c9ddf0d1853c'),
             ('feb1a269-e998-4b8e-bc1a-71e63df9642d', 'Indice : Regardez là où les visiteurs ne se croisent jamais.', '1', '1', 'text', '057f57dc-25eb-4375-90ca-c9ddf0d1853c');
+
+INSERT INTO "public"."recompense" ("id_recompense", "nom", "description", "type", "valeur", "quantite_dispo", "prix_reel", "image", "date_modification", "id_chasse")
+     VALUES ('00d01964-ec7a-4997-b559-4dd3e21dbeed', 'Figurine du château', 'Reproduction du château de Chambord', 'Générique', '15.00', '50', '5.00', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa5rQ6SA6Wwgs8WH3qBSVnai7tJ5KyFIEJKw&s', '2025-01-21 09:15:48.75275', '550e8400-e29b-41d4-a716-446655440000'),
+            ('5578eda0-0847-46f9-9eb0-4ef99bd731fd', 'Livre', 'Biographie de Léonard De Vinci', 'Générique', '10.00', '100', '3.00', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaGc79E542fzJd5GuxftYsN9_2e-M4cUWHEQ&s', '2025-01-21 09:11:02.092774', '550e8400-e29b-41d4-a716-446655440000'),
+            ('e6ae0806-fc4c-4fb6-bee6-a9c18cd57b80', 'Bonbons', 'De bons bonbons', 'Générique', '5.00', '200', '2.00', 'https://www.mesbonbons.net/_next/image?url=%2Fassets%2Fimages%2Fmesbonbons-primary-image.png&w=1200&q=75', '2025-01-21 09:12:37.151701', '550e8400-e29b-41d4-a716-446655440000');
