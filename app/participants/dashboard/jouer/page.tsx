@@ -45,7 +45,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 const GameInterface: React.FC = () => {
-  const [enigmes, setEnigmes] = useState<EnigmeType[]>([])
+  const [enigmes, setEnigmes] = useState<Enigme[]>([])
   const [currentEnigmeIndex, setCurrentEnigmeIndex] = useState(0)
   const [showIndices, setShowIndices] = useState(false)
   const [chasse, setChasse] = useState<Chasse | null>(null)
@@ -67,7 +67,7 @@ const GameInterface: React.FC = () => {
         const chasseInstance = await Chasse.readId(chasseId as UUID)
         setChasse(chasseInstance)
         const enigmes = await chasseInstance.getAllEnigmes()
-        const enigmesTriees = enigmes.sort((a: { ordre: number }, b: { ordre: number }) => a.ordre - b.ordre)
+        const enigmesTriees = enigmes.sort((a: Enigme, b: Enigme) => a.getOrdre() - b.getOrdre());
         setEnigmes(enigmesTriees)
 
         if (enigmeIdFromUrl) {
@@ -259,8 +259,8 @@ const GameInterface: React.FC = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <CardTitle className="text-3xl font-bold">{currentEnigme.titre}</CardTitle>
-        <CardDescription className="text-lg">{currentEnigme.description}</CardDescription>
+        <CardTitle className="text-3xl font-bold">{currentEnigme.getTitre()}</CardTitle>
+        <CardDescription className="text-lg">{currentEnigme.getDescription()}</CardDescription>
       </CardHeader>
       <CardContent>
 
@@ -285,7 +285,7 @@ const GameInterface: React.FC = () => {
               <DrawerDescription>Voici les indices disponibles pour cette énigme.</DrawerDescription>
             </DrawerHeader>
             <div className="p-4">
-              <IndiceComponent idEnigme={currentEnigme.id_enigme as UUID} participantId={participantId as UUID} />
+              <IndiceComponent idEnigme={currentEnigme.getId() as UUID} participantId={participantId as UUID} />
             </div>
             <DrawerFooter>
               <DrawerClose asChild>
@@ -296,7 +296,7 @@ const GameInterface: React.FC = () => {
         </Drawer>
 
         <Button asChild className="w-full">
-          <Link href={`/participants/dashboard/jouer/scan?chasseId=${chasseId}&enigmeId=${currentEnigme.id_enigme}`}>
+          <Link href={`/participants/dashboard/jouer/scan?chasseId=${chasseId}&enigmeId=${currentEnigme.getId()}`}>
             Valider le code
           </Link>
         </Button>
