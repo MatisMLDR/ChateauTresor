@@ -4,10 +4,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Trophy } from 'lucide-react';
-import { getAllRecompensesByChasse } from '@/utils/dao/RecompenseUtils';
+import { getAllRecompensesByChasse, getRecompensesByChasseAndScore } from '@/utils/dao/RecompenseUtils';
 import Loader from '@/components/global/loader';
 import Recompense from '@/classes/Recompense';
 import { UUID } from 'crypto';
+import { Participant } from '@/classes/Participant';
+import { getParticipationByParticipantIdAndChasseId } from '@/utils/dao/ParticipationUtils';
+import { createClient } from '@/utils/supabase/client'; // Import des styles de bouton
+
 
 const RecompensePage: React.FC = () => {
   const router = useRouter();
@@ -18,18 +22,79 @@ const RecompensePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null); // État pour gérer les erreurs
   const [selectedRecompense, setSelectedRecompense] = useState<Recompense | null>(null); // État pour la récompense sélectionnée
 
+  const [userId, setUserId] = useState<string | null>(null); // État pour l'ID de l'utilisateur connecté
+  const [participantId, setParticipantId] = useState<string | null>(null); // État pour l'ID du participant
+  const [score, setScore] = useState<number | null>(null); // État pour stocker le score
+
+
   const handleBack = () => {
     router.push('/participants/dashboard/chassesAchete'); // Rediriger vers la liste des chasses
   };
+  // Récupérer l'ID de l'utilisateur connecté
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  // Fonction pour récupérer les récompenses
+      if (user) {
+        setUserId(user.id); // Récupérer l'ID de l'utilisateur connecté
+      } else {
+        console.error('Utilisateur non connecté');
+        setError('Utilisateur non connecté. Veuillez vous connecter.');
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // Récupérer l'ID du participant une fois que userId est défini
+  useEffect(() => {
+    const fetchParticipantId = async () => {
+      if (userId) {
+        try {
+          const participant = await Participant.readByIdUser(userId as UUID);
+          setParticipantId(participant.id_participant);
+        } catch (error) {
+          console.error('Erreur lors de la récupération du participant :', error);
+          setError('Erreur lors de la récupération du participant. Veuillez réessayer.');
+        }
+      }
+    };
+
+    fetchParticipantId();
+  }, [userId]);
+
+  // Récupérer le score une fois que participantId et chasseId sont définis
+  useEffect(() => {
+    const fetchScore = async () => {
+      if (participantId && chasseId) {
+        try {
+          const participation = await getParticipationByParticipantIdAndChasseId(
+            participantId as UUID,
+            chasseId as UUID
+          );
+          setScore(participation.score); // Mettre à jour l'état du score
+        } catch (error) {
+          console.error('Erreur lors de la récupération du score :', error);
+          setError('Erreur lors de la récupération du score. Veuillez réessayer.');
+        }
+      }
+    };
+
+    fetchScore();
+  }, [participantId, chasseId]);
+
+  // Fonction pour récupérer les récompenses avec un score maximal
   const fetchRecompenses = async () => {
     try {
-      if (!chasseId) {
-        throw new Error('ID de chasse manquant');
+      if (!chasseId || !score) {
+        throw new Error('ID de chasse ou score manquant');
       }
 
-      const data = await getAllRecompensesByChasse(chasseId as UUID); // Récupérer les récompenses
+      // Récupérer les récompenses filtrées par score maximal
+      const data = await getRecompensesByChasseAndScore(chasseId as UUID, score);
       const recompenses = data.map((recompense: any) => new Recompense(recompense)); // Convertir en objets Recompense
       setRecompenses(recompenses);
     } catch (err) {
@@ -40,10 +105,12 @@ const RecompensePage: React.FC = () => {
     }
   };
 
-  // Récupérer les récompenses au chargement de la page
+  // Récupérer les récompenses une fois que le score est disponible
   useEffect(() => {
-    fetchRecompenses();
-  }, [chasseId]);
+    if (score !== null) {
+      fetchRecompenses();
+    }
+  }, [score]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 relative overflow-hidden">
@@ -68,7 +135,7 @@ const RecompensePage: React.FC = () => {
       {/* Titre et message de félicitations */}
       <h1 className="text-5xl font-bold mb-6 animate-pulse">Félicitations !</h1>
       <p className="text-xl mb-8 text-center">
-        Vous avez terminé la chasse avec succès. <br />
+        Vous avez terminé la chasse avec succès. Vous avez {score} points <br />
         Choisissez votre récompense :
       </p>
 
