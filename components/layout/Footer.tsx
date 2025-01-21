@@ -25,6 +25,9 @@ const Footer = () => {
         <Link href="/cgu">
           <span className="hover:underline">Conditions générales d&apos;utilisation</span>
         </Link>
+        <Link href="/organisateurs">
+          <span className="hover:underline">Organisateur</span>
+        </Link>
         <Link href="/sales">
           <span className="hover:underline">Conditions générales de vente</span>
         </Link>
