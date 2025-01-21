@@ -90,3 +90,11 @@ export async function createProprietaire(proprietaire: any): Promise<Proprietair
   const newProprietaire: ProprietaireType = await res.json();
   return new Proprietaire(newProprietaire);
 }
+
+export async function getChateauOfProprietaire(id_proprietaire: UUID) {
+  const res = await fetch(`${BASE_URL}/${id_proprietaire}/chateau`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération du chateau');
+  }
+  return await res.json();
+}
