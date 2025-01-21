@@ -289,7 +289,7 @@ const Onboarding = () => {
                     value={formData.message || ""}
                     onChange={handleInputChange}
                     placeholder="Bref message à l'équipe"
-                    className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px] h-[100px]"
+                    className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px] min-h-[64px]"
                   />
                 </div>
                 <div className="flex justify-between items-center mt-12">
@@ -340,7 +340,7 @@ const Onboarding = () => {
               <h2 className="text-xl mb-4">Veuillez entrer le nom de votre équipe</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="nomEquipe">Nom de l'équipe
+                  <label htmlFor="nomEquipe">Nom de l&apos;équipe
                     <span className="text-red-500 ml-1">*</span>
                   </label>
                   <Input
@@ -377,7 +377,7 @@ const Onboarding = () => {
               <h2 className="text-xl mb-4">Sélectionnez le type de votre équipe</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="type">Type de l'équipe
+                  <label htmlFor="type">Type de l&apos;équipe
                     <span className="text-red-500 ml-1">*</span>
                   </label>
                   <select
@@ -500,7 +500,7 @@ const Onboarding = () => {
                     value={formData.description || ""}
                     onChange={handleInputChange}
                     placeholder="Brève description du projet"
-                    className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px] h-[100px]"
+                    className="border border-gray-300 rounded-md shadow-sm p-2 w-[300px] min-h-[64px]"
                     required
                   />
                 </div>
@@ -522,10 +522,10 @@ const Onboarding = () => {
               {/* Enfin derniere étape demande la soumission de documents tels que la carte d'identité */}
               {/* Si information OK, passe à l'étape 6 */}
               <h1 className="text-3xl font-bold mb-2">Documents de vérification</h1>
-              <h2 className="text-xl mb-4">Veuillez télécharger votre carte d'identité</h2>
+              <h2 className="text-xl mb-4">Veuillez télécharger votre carte d&apos;identité</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex gap-4 items-center justify-between">
-                  <label htmlFor="carteIdentite">Carte d'identité du chef d'équipe (image ou .pdf)</label>
+                  <label htmlFor="carteIdentite">Carte d&apos;identité du chef d&apos;équipe (image ou .pdf)</label>
                   <Input
                     type="file"
                     id="carteIdentite"
@@ -559,7 +559,7 @@ const Onboarding = () => {
               <h1 className="text-3xl font-bold mb-2">Confirmation des informations</h1>
               <h2 className="text-xl mb-4">Veuillez vérifier vos informations</h2>
               <div className="space-y-4 mb-6">
-                <p><strong>Nom de l'équipe :</strong> {formData.nomEquipe}</p>
+                <p><strong>Nom de l&apos;équipe :</strong> {formData.nomEquipe}</p>
                 <p><strong>Type :</strong> {formData.type}</p>
                 <p><strong>Téléphone :</strong> {formData.telephone}</p>
                 <p><strong>Adresse postale :</strong> {formData.adressePostale}</p>
@@ -583,7 +583,7 @@ const Onboarding = () => {
                     required
                   />
                   <label htmlFor="terms">
-                    J'accepte les conditions d'utilisation
+                    J&apos;accepte les conditions d&apos;utilisation
                     <span className="text-red-500 ml-1">*</span>
                   </label>
                 </div>
