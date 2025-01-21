@@ -3,6 +3,7 @@ import { createEnigme, deleteEnigme, getAllEnigmesParticipants, getEnigmeById, u
 import { getAllIndicesParticipants } from "@/utils/dao/IndiceUtils";
 import { UUID } from "crypto";
 import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils";
+import Indice from '@/classes/Indice';
 
 export class Enigme {
   private id_enigme: UUID;
@@ -284,13 +285,14 @@ export class Enigme {
   /**
    * Méthode pour récupérer tous les indices d'une énigme
    */
-  public async getAllIndices(): Promise<any> {
-    const data = await getAllIndicesByEnigme(this.id_enigme);
-    if (data.length === 0) {
-      return [];
-    }
-    return data;
+  public async getAllIndices(): Promise<Indice[]> {
+    const indicesData = await getAllIndicesByEnigme(this.id_enigme);
+
+    const indices = indicesData.map((indicesData: IndiceType)=> new Indice(indicesData)) ;
+    return indices;
   }
+
+
 
 
 }

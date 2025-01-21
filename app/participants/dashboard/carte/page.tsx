@@ -50,7 +50,7 @@ export default function ParticipantsPage() {
   const franceCenter: [number, number] = [46.603354, 1.888334];
 
   const filteredChateaux = chateaux.filter((chateau) =>
-    chateau.nom.toLowerCase().includes(searchQuery.toLowerCase())
+    chateau.nom && chateau.nom.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (!L) return <Loader />;
@@ -84,6 +84,12 @@ export default function ParticipantsPage() {
               attribution="&copy; OpenStreetMap contributors"
             />
             {filteredChateaux.map((chateau) => {
+              // Vérifier que la localisation est définie
+              if (!chateau.localisation) {
+                console.warn(`Localisation manquante pour le château ${chateau.nom}`);
+                return null; // Ignorer ce château
+              }
+
               const position = chateau.localisation
                 .split(',')
                 .map((coord) => parseFloat(coord.trim())) as [number, number];

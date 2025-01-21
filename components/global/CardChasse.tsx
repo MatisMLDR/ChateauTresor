@@ -83,15 +83,15 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
     return `/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chasses/${chasse.getIdChasse()}`;
   };
 
+  const chasseimage = String(chasse.getImage());
+
+
   return (
     <Card className={`transition-shadow duration-200 hover:shadow-lg ${className}`}>
       <CardHeader className="relative p-0">
         <div className="relative">
-          <img
-            src={chasse.getImage() || '/default-chasse.webp'}
-            alt={chasse.getTitre()}
-            className="h-48 w-full rounded-t-md object-cover"
-          />
+          <img src={chasseimage} alt="Chasse Image" />
+
           <Badge
             className={`${getDifficultyColor(chasse.getDifficulte())} absolute right-2 top-2 cursor-default select-none px-2 py-1 text-xs font-bold`}
           >
@@ -143,14 +143,18 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
           )}
         </div>
       </CardContent>
-      <CardFooter className="p-4 flex flex-col gap-2">
+      <CardFooter className="flex flex-col gap-2 p-4">
         <Link href={getChasseLink()} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
         {participantType === 'proprietaire' && (
           <>
-            <Button className="w-full" variant={'outline'}>Valider</Button>
-            <Button className="w-full" variant={'destructive'}>Refuser</Button>
+            <Button className="w-full" variant={'outline'}>
+              Valider
+            </Button>
+            <Button className="w-full" variant={'destructive'}>
+              Refuser
+            </Button>
           </>
         )}
       </CardFooter>
