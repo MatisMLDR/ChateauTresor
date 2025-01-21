@@ -1,4 +1,4 @@
-import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType, ImageFile } from "@/types";
+import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType, ImageFile, RecompenseType } from "@/types";
 import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles, getChassesByEquipeId } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
@@ -30,10 +30,12 @@ class Chasse {
   private statut: string;
   private id_chateau: UUID | null;
   private id_equipe: UUID | null;
-  private chateau?: ChateauType;
+  private chateau?: Chateau;
+
+
   private enigmes?: EnigmeType[];
   private indices?: IndiceType[];
-  private recompenses?: any;
+  private recompenses?: RecompenseType[];
 
   constructor(chasse: ChasseType) {
     this.id_chasse = chasse.id_chasse as UUID;
@@ -116,6 +118,19 @@ class Chasse {
   public getDateCreation(): string {
     return this.date_creation;
   }
+  public getIndices(): IndiceType[] {
+    return this.indices ?? [];
+  }
+  public getRecompenses(): RecompenseType[] {
+    return this.recompenses ?? [];
+  }
+  public getEnigmes(): EnigmeType[] {
+    return this.enigmes ?? [];
+  }
+  public getChateau(): Chateau | undefined {
+    return this.chateau;
+  }
+
 
   // Setters
   public setImage(image: ImageFile): void {
@@ -174,6 +189,18 @@ class Chasse {
   }
   public setDateCreation(date_creation: string): void {
     this.date_creation = date_creation;
+  }
+  public setEnigmes(enigmes: EnigmeType[]): void {
+    this.enigmes = enigmes;
+  }
+  public setIndices(indices: IndiceType[]): void {
+    this.indices = indices;
+  }
+  public setRecompenses(recompenses: RecompenseType[]): void {
+    this.recompenses = recompenses;
+  }
+  public setChateau(chateau: Chateau): void {
+    this.chateau = chateau;
   }
 
   /* 
@@ -238,8 +265,7 @@ class Chasse {
   public async loadChateau(): Promise<void> {
     if (this.id_chateau) {
       const chateau = await Chateau.readId(this.id_chateau);
-      this.chateau = chateau;
-    }
+      this.chateau = chateau;}
   }
   
   public async loadEnigmes(): Promise<void> {
@@ -441,7 +467,7 @@ class Chasse {
     // On calcule la somme des réussites
     const sum = data.reduce((acc: number, participation: any) => acc + participation.est_terminee, 0);
     // On retourne la moyenne
-    return sum / data.length;
+    return (sum / data.length) * 100;
   }
 
   /*
