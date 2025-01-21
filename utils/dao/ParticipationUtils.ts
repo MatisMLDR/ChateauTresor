@@ -33,6 +33,40 @@ export async function getParticipationByParticipantIdAndChasseId(id_participant:
 
 
 /*
+ * Méthode pour récupérer les participations d'un participant par son id
+ * @returns Promise<any> Un tableau des participations du participant
+ * @throws Error si la récupération échoue
+ * @example const participations = await getParticipationsByParticipantId('123e4567-e89b-12d3-a456-426614174000');
+ * @params id_participant L'identifiant du participant
+ */
+export async function getNbParticipationsByChasse(id_chasse: UUID): Promise<number> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participations/chasse/nbParticipant?id_chasse=${id_chasse}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des participations');
+  }
+  const data = await res.json();
+  return data.count; // Retourne directement le nombre de participations
+}
+
+/*
+ * Méthode pour récupérer les participations d'un participant par son id
+ * @returns Promise<any> Un tableau des participations du participant
+ * @throws Error si la récupération échoue
+ * @example const participations = await getParticipationsByParticipantId('123e4567-e89b-12d3-a456-426614174000');
+ * @params id_participant L'identifiant du participant
+ */
+export async function getParticipationsByChasseAndDate(id_chasse: UUID, date: string): Promise<number> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participations/chasse/date?id_chasse=${id_chasse}&date=${date}`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des participations');
+  }
+  const data = await res.json();
+  return data.count; // Retourne directement le nombre de participations
+}
+
+
+
+/*
  * Méthode pour créer une participation
  * @param participation Les données de la participation à créer
  * @returns Promise<any> La participation créée
