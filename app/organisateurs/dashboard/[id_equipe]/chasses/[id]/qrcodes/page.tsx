@@ -26,7 +26,7 @@ export default function QRCodePage({ params }: { params: { id_equipe: UUID; id: 
       if (chasseData) {
         setChasse(chasseData);
         await chasseData.loadEnigmes();
-        setEnigmes(chasseData.enigmes || []);
+        setEnigmes(chasseData.getEnigmes() || []);
       }
     };
 

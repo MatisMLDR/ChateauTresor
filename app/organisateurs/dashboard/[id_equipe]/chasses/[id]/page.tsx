@@ -30,17 +30,15 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
     return <Loader />;
   }
 
+  const chasseimage = String(chasse.getImage())
+
 
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid md:grid-cols-2 gap-8">
         <div className={"relative min-h-[30vh]"}>
-          <img
-            src={chasse.getImage() || "/logo.svg"}
-            alt={chasse.getTitre()}
-            className="rounded-lg shadow-lg object-cover"
-          />
+          <img src={chasseimage} alt="Chasse Image" />
         </div>
         <div>
           <div className="flex justify-between items-center mb-4">

@@ -44,7 +44,7 @@ const ScanQRCodePage: React.FC = () => {
       const enigmes = await chasseInstance.getAllEnigmes()
       const currentEnigme = enigmes.find((enigme: Enigme) => enigme.getId() === enigmeId)
       if (currentEnigme) {
-        setEnigmeTitle(currentEnigme.titre)
+        setEnigmeTitle(currentEnigme.getTitre())
       }
     } catch (error) {
       console.error("Erreur lors de la récupération du titre de l'énigme :", error)
@@ -61,10 +61,10 @@ const ScanQRCodePage: React.FC = () => {
     try {
       const chasseInstance = await Chasse.readId(chasseId as UUID)
       const enigmes = await chasseInstance.getAllEnigmes()
-      const enigmesTriees = enigmes.sort((a: { ordre: number }, b: { ordre: number }) => a.ordre - b.ordre)
+      const enigmesTriees = enigmes.sort((a: Enigme, b: Enigme) => a.getOrdre() - b.getOrdre());
       const currentEnigme = enigmesTriees.find((enigme: Enigme) => enigme.getId() === enigmeId)
 
-      if (currentEnigme && code === currentEnigme.code_reponse) {
+      if (currentEnigme && code === currentEnigme.getCode_reponse()) {
         setValidationMessage("Code correct !")
         setShowValidationPopup(true)
 

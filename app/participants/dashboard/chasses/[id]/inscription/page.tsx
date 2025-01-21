@@ -27,11 +27,14 @@ const Page = () => {
         const supabase = createClient();
         const { data, error } = await supabase.auth.getUser();
 
-        if (error || !data) {
+        // Vérifier si l'utilisateur est connecté
+        if (error || !data || !data.user) {
           toast.error('Vous devez être connecté pour accéder à cette page');
           router.push('/login');
+          return; // Arrêter l'exécution si l'utilisateur n'est pas connecté
         }
 
+        // Mettre à jour l'ID de l'utilisateur
         setIdUser(data.user.id as UUID);
 
         // Récupération des détails de la chasse

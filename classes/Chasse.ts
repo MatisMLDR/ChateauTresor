@@ -264,7 +264,7 @@ class Chasse {
 
   public async loadChateau(): Promise<void> {
     if (this.id_chateau) {
-      const chateau = await Chateau.readId(this.id_chateau);
+      const chateau= await Chateau.readId(this.id_chateau);
       this.chateau = chateau;}
   }
   
@@ -289,17 +289,15 @@ class Chasse {
     this.recompenses = recompenses;
   }
 
-  public async getAllEnigmes(): Promise<any> {
+  public async getAllEnigmes(): Promise<Enigme[]> {
     // Récupération dans la base des énigmes de chaques participations avec l'id de la chasse
 
     // On récupère les données
-    const data = await getAllEnigmesByChasse(this.id_chasse);
+    const enigmesData = await getAllEnigmesByChasse(this.id_chasse);
 
-    if (data.length === 0) {
-      return [];
-    }
+    const enigmes = enigmesData.map((enigmesData: EnigmeType)=> new Enigme(enigmesData)) ;
 
-    return data;
+    return enigmes;
   }
 
   public static async getChassesByEquipeId(id_equipe: UUID): Promise<Chasse[]> {
@@ -325,14 +323,13 @@ class Chasse {
     }
   }
 
-  public static async getAllChasses(): Promise<any> {
-    const data = await getAllChasses() as any;
+  public static async getAllChasses(): Promise<Chasse[]> {
+    // On récupère les données
+    const chassesData = await getAllChasses();
 
-    if (!data) {
-      throw new Error('Chasses not found');
-    }
+    const chasses = chassesData.map((enigmesData: EnigmeType)=> new Enigme(enigmesData)) ;
 
-    return data.map((chasse: any) => new Chasse(chasse));
+    return chasses;
   }
 
   /*
