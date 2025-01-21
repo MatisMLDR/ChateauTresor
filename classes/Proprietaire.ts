@@ -1,6 +1,7 @@
 import { ProprietaireType } from '@/types';
 import { createProprietaire, deleteProprietaire, getProprietaireById, getProprietaireByUserId, updateProprietaire } from '@/utils/dao/ProprietaireUtils';
 import { UUID } from "crypto";
+import Chateau from './Chateau';
 
 export class Proprietaire {
   private id_proprietaire: UUID;
@@ -115,5 +116,11 @@ export class Proprietaire {
     } catch (error) {
       throw new Error('proprietaire does not exist');
     }
+  }
+
+  public async getChateau(): Promise<Chateau> {
+    const chateau = await Chateau.readByIdProprietaire(this.id_proprietaire);
+
+    return chateau;
   }
 }
