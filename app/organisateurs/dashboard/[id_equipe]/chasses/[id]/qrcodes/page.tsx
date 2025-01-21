@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from 'react';
-import { use } from 'react'; // Importez `use` depuis React
 import Link from 'next/link';
 import { ArrowLeft, QrCode } from 'lucide-react';
 import { Button } from "@/components/ui/button";

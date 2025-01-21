@@ -59,6 +59,7 @@ export async function createProfil(profil: any): Promise<any> {
  * @example const updatedProfil = await updateProfil({ id: "user_id", username: 'NewUsername' });
  */
 export async function updateProfil(profil: any): Promise<any> {
+    console.log("updateProfil", profil)
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/profils/${profil.id}`, {
         method: 'PUT',
         headers: {

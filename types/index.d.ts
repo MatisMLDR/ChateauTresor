@@ -179,7 +179,7 @@ export type AvisType = {
 }
 
 export type ProfilType = {
-  id_profil: UUID; // UUID, non null
+  id: UUID; // UUID, non null
   username?: string; // Optionnel, défaut 'anonyme'
   updated_at?: string | null; // Timestamp ISO 8601, nullable
   email: string; // Unique et non null

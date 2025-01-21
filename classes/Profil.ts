@@ -3,7 +3,7 @@ import { getProfilById, updateProfil, createProfil, deleteProfil } from "@/utils
 import { UUID } from "crypto";
 
 export class Profil {
-  private id_profil: UUID;
+  private id: UUID;
   private username: string;
   private updated_at: string | null;
   private email: string;
@@ -18,7 +18,7 @@ export class Profil {
   private plan: string;
 
   constructor(profile: ProfilType) {
-    this.id_profil = profile.id_profil;
+    this.id = profile.id;
     this.username = profile.username ?? "anonyme";
     this.updated_at = profile.updated_at ?? null;
     this.email = profile.email;
@@ -33,9 +33,27 @@ export class Profil {
     this.plan = profile.plan ?? "none";
   }
 
+  public toObject(): ProfilType {
+    return {
+      id: this.id,
+      username: this.username,
+      updated_at: this.updated_at,
+      email: this.email,
+      birthday: this.birthday,
+      email_confirm: this.email_confirm,
+      nom: this.nom,
+      prenom: this.prenom,
+      adresse: this.adresse,
+      ville: this.ville,
+      code_postal: this.code_postal,
+      stripe_id: this.stripe_id,
+      plan: this.plan,
+    };
+  }
+
   // Getters
-  public getId(): string {
-    return this.id_profil;
+  public getId(): UUID {
+    return this.id;
   }
 
   public getUsername(): string {
@@ -138,7 +156,7 @@ export class Profil {
   // Méthode pour récupérer les données du profil sous forme d'objet
   public getProfile(): ProfilType {
     return {
-      id_profil: this.id_profil,
+      id: this.id,
       username: this.username,
       updated_at: this.updated_at,
       email: this.email,
@@ -154,24 +172,22 @@ export class Profil {
     };
   }
 
-  public static async readId(id: string): Promise<any> {
+  public static async readId(id: string): Promise<Profil> {
     const profile = await getProfilById(id) as any;
 
     if (profile == null) {
       throw new Error("Profil introuvable");
     }
 
-    console.log("Profil après appel API dans read", profile);
-
     return new Profil(profile);
   }
 
   public async read(): Promise<any> {
-    if (!this.id_profil) {
+    if (!this.id) {
       throw new Error('ID is required');
     }
 
-    const avis = await getProfilById(this.id_profil) as any
+    const avis = await getProfilById(this.id) as any
 
     if (!avis) {
       throw new Error('Profil not found');
@@ -181,17 +197,17 @@ export class Profil {
   }
 
   public async load(): Promise<void> {
-    if (!this.id_profil) {
+    if (!this.id) {
       throw new Error('Profil ID is required');
     }
 
-    const avis = await getProfilById(this.id_profil) as any
+    const avis = await getProfilById(this.id) as any
 
     if (!avis) {
       throw new Error('Profil not found');
     }
 
-    this.id_profil = avis.id;
+    this.id = avis.id;
     this.username = avis.username;
     this.updated_at = avis.updated_at;
     this.email = avis.email;
@@ -223,12 +239,12 @@ export class Profil {
   }
 
   public async delete(): Promise<void> {
-    if (!this.id_profil) {
+    if (!this.id) {
       console.log("Pas d'id");
       throw new Error('id is required');
     }
     try {
-      await deleteProfil(this.id_profil);
+      await deleteProfil(this.id);
     } catch (error) {
       throw new Error('Profil does not exist');
     }
