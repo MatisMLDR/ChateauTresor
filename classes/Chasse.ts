@@ -441,7 +441,7 @@ class Chasse {
     // On calcule la somme des réussites
     const sum = data.reduce((acc: number, participation: any) => acc + participation.est_terminee, 0);
     // On retourne la moyenne
-    return sum / data.length;
+    return (sum / data.length) * 100;
   }
 
   /*

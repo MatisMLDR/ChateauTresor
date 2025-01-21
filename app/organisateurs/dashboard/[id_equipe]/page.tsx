@@ -8,6 +8,7 @@ import { formatEuro } from "@/lib/utils";
 import Chasse from '@/classes/Chasse';
 import { UUID } from 'crypto';
 import { useParams, useRouter } from 'next/navigation';
+import { getNbParticipationsByChasse, getParticipationsByChasseAndDate } from '@/utils/dao/ParticipationUtils';
 
 interface DashboardStats {
   totalRevenue: number;
@@ -41,88 +42,114 @@ interface HuntStats {
     const [selectedHunt, setSelectedHunt] = useState<HuntStats | null>(null);
     const [popupHunt, setPopupHunt] = useState<HuntStats | null>(null);
     const [totalDailyRevenue, setTotalDailyRevenue] = useState<{ date: string; revenue: number }[]>([]);
+    const [selectedInterval, setSelectedInterval] = useState<number>(30); // Par défaut, 30 jours
+
+    const intervalOptions = [
+      { label: "7 derniers jours", value: 7 },
+      { label: "30 derniers jours", value: 30 },
+      { label: "90 derniers jours", value: 90 },
+      { label: "Année en cours", value: 365 },
+    ];
+
+
+    const getLastNDays = (days: number): string[] => {
+      const dates: string[] = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push(date.toISOString().split("T")[0]); // Format YYYY-MM-DD
+      }
+      return dates;
+    };
+
+
+    const fetchData = async () => {
+      try {
+        if (!params.id_equipe) return;
+
+        const equipeId = params.id_equipe as UUID;
+
+        // Récupérer les chasses associées à l'équipe
+        const chasses = await Chasse.getChassesByEquipeId(equipeId);
+
+        // Récupérer les dates en fonction de l'intervalle sélectionné
+        const lastNDays = getLastNDays(selectedInterval);
+
+        // Transformer les chasses en format HuntStats
+        const hunts: HuntStats[] = await Promise.all(
+          chasses.map(async (chasse) => {
+            // Calculer les revenus journaliers en fonction des participations
+            const dailyRevenue = await Promise.all(
+              lastNDays.map(async (date) => {
+                const participations = await getParticipationsByChasseAndDate(chasse.getIdChasse(), date);
+                return {
+                  date,
+                  revenue: chasse.getPrix() * participations, // Revenu = prix * nombre de participations
+                };
+              })
+            );""
+
+            // Récupérer les statistiques de la chasse
+            const averageRating = await chasse.getNoteMoyenne();
+            const reviewCount = await getNbParticipationsByChasse(chasse.getIdChasse());
+            const successRate = await chasse.getReussiteMoyenne();
+            const riddleCompletionRate = await chasse.getEnigmesResoluesMoyennes();
+            const cluesRevealed = await chasse.getIndicesMoyens();
+
+            return {
+              id: chasse.getIdChasse(),
+              title: chasse.getTitre(),
+              dailyRevenue,
+              averageRating,
+              reviewCount,
+              successRate,
+              riddleCompletionRate,
+              cluesRevealed,
+            };
+          })
+        );
+
+        // Calculer les revenus journaliers totaux
+        const dailyRevenueMap = new Map();
+        hunts.forEach((hunt) => {
+          hunt.dailyRevenue.forEach(({ date, revenue }) => {
+            dailyRevenueMap.set(date, (dailyRevenueMap.get(date) || 0) + revenue);
+          });
+        });
+
+        const totalRevenueData = Array.from(dailyRevenueMap.entries()).map(([date, revenue]) => ({
+          date,
+          revenue,
+        }));
+
+        setTotalDailyRevenue(totalRevenueData);
+
+        // Calculer les statistiques globales
+        const totalRevenue = hunts.reduce(
+          (sum, hunt) => sum + hunt.dailyRevenue.reduce((revSum, day) => revSum + day.revenue, 0),
+          0
+        );
+        const totalParticipants = hunts.reduce((sum, hunt) => sum + hunt.reviewCount, 0);
+        const averageSuccess = hunts.reduce((sum, hunt) => sum + hunt.successRate, 0) / hunts.length;
+        const averageRating = hunts.reduce((sum, hunt) => sum + hunt.averageRating, 0) / hunts.length;
+
+        setStats({
+          totalRevenue,
+          totalParticipants,
+          averageSuccess,
+          averageRating,
+        });
+
+        setRecentHunts(hunts);
+        setSelectedHunt(hunts[0]); // Sélectionner la première chasse par défaut
+      } catch (error) {
+        console.error("Failed to fetch chasses:", error);
+      }
+    };
 
     useEffect(() => {
-      const fetchData = async () => {
-        try {
-
-          if (!params.id_equipe) return;
-
-          const equipeId = params.id_equipe as UUID; // Remplacez par l'ID de l'équipe réel
-
-          // Récupérer les chasses associées à l'équipe
-          const chasses = await Chasse.getChassesByEquipeId(equipeId);
-
-          // Transformer les chasses en format HuntStats
-          const hunts: HuntStats[] = await Promise.all(
-            chasses.map(async (chasse) => {
-              // Calculer les revenus journaliers (exemple fictif)
-              const dailyRevenue = [
-                { date: "2025-01-01", revenue: chasse.getPrix() * 10 }, // Exemple de calcul
-                { date: "2025-01-02", revenue: chasse.getPrix() * 15 },
-                { date: "2025-01-03", revenue: chasse.getPrix() * 20 },
-              ];
-
-              // Récupérer les statistiques de la chasse
-              const averageRating = await chasse.getNoteMoyenne();
-              const reviewCount = await chasse.getNbAvis();
-              const successRate = await chasse.getReussiteMoyenne();
-              const riddleCompletionRate = await chasse.getEnigmesResoluesMoyennes();
-              const cluesRevealed = await chasse.getIndicesMoyens();
-
-              return {
-                id: chasse.getIdChasse(),
-                title: chasse.getTitre(),
-                dailyRevenue,
-                averageRating,
-                reviewCount,
-                successRate,
-                riddleCompletionRate,
-                cluesRevealed,
-              };
-            })
-          );
-
-          // Calculer les revenus journaliers totaux
-          const dailyRevenueMap = new Map();
-          hunts.forEach((hunt) => {
-            hunt.dailyRevenue.forEach(({ date, revenue }) => {
-              dailyRevenueMap.set(date, (dailyRevenueMap.get(date) || 0) + revenue);
-            });
-          });
-
-          const totalRevenueData = Array.from(dailyRevenueMap.entries()).map(([date, revenue]) => ({
-            date,
-            revenue,
-          }));
-
-          setTotalDailyRevenue(totalRevenueData);
-
-          // Calculer les statistiques globales
-          const totalRevenue = hunts.reduce(
-            (sum, hunt) => sum + hunt.dailyRevenue.reduce((revSum, day) => revSum + day.revenue, 0),
-            0
-          );
-          const totalParticipants = hunts.reduce((sum, hunt) => sum + hunt.reviewCount, 0); // Exemple de calcul
-          const averageSuccess = hunts.reduce((sum, hunt) => sum + hunt.successRate, 0) / hunts.length;
-          const averageRating = hunts.reduce((sum, hunt) => sum + hunt.averageRating, 0) / hunts.length;
-
-          setStats({
-            totalRevenue,
-            totalParticipants,
-            averageSuccess,
-            averageRating,
-          });
-
-          setRecentHunts(hunts);
-          setSelectedHunt(hunts[0]); // Sélectionner la première chasse par défaut
-        } catch (error) {
-          console.error("Failed to fetch chasses:", error);
-        }
-      };
-
       fetchData();
-    }, [id_equipe]);
+    }, [id_equipe, selectedInterval]); // Recharger les données lorsque l'intervalle change
 
   const handleHuntSelection = (huntId: string) => {
     if (huntId === "total") {
@@ -204,6 +231,7 @@ interface HuntStats {
           </Card>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4" >
         {/* Select Hunt Dropdown */}
         <div className="mb-4">
           <label htmlFor="hunt-select" className="mb-2 block text-sm font-medium">
@@ -224,6 +252,28 @@ interface HuntStats {
           </select>
         </div>
 
+
+        <div className="mb-4">
+          <label htmlFor="interval-select" className="mb-2 block text-sm font-medium">
+            Sélectionnez un intervalle :
+          </label>
+          <select
+            id="interval-select"
+            className="block w-full rounded border p-2"
+            value={selectedInterval}
+            onChange={(e) => {
+              setSelectedInterval(Number(e.target.value));
+              fetchData(); // Recharger les données lorsque l'intervalle change
+            }}
+          >
+            {intervalOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        </div>
         {/* Revenue Chart */}
         {selectedHunt && (
           <Card className="mb-8">
@@ -262,32 +312,32 @@ interface HuntStats {
             <div className="relative w-full overflow-auto">
               <table className="w-full caption-bottom text-sm">
                 <thead>
-                  <tr className="border-b">
-                    <th className="h-12 px-4 text-left align-middle font-medium">
-                      Nom de la Chasse
-                    </th>
-                    <th className="h-12 px-4 text-left align-middle font-medium">Note Moyenne</th>
-                    <th className="h-12 px-4 text-left align-middle font-medium">
-                      Nombre d&apos;Avis
-                    </th>
-                    <th className="h-12 px-4 text-left align-middle font-medium">
-                      Taux de Réussite
-                    </th>
-                  </tr>
+                <tr className="border-b">
+                  <th className="h-12 px-4 text-left align-middle font-medium">
+                    Nom de la Chasse
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium">Note Moyenne</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium">
+                    Nombre d&apos;Avis
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium">
+                    Taux de Réussite
+                  </th>
+                </tr>
                 </thead>
                 <tbody>
-                  {recentHunts.map((hunt) => (
-                    <tr
-                      key={hunt.id}
-                      className="cursor-pointer border-b hover:bg-gray-100"
-                      onClick={() => handleHuntClick(hunt.id)}
-                    >
-                      <td className="h-12 px-4 align-middle">{hunt.title}</td>
-                      <td className="h-12 px-4 align-middle">{hunt.averageRating.toFixed(1)}</td>
-                      <td className="h-12 px-4 align-middle">{hunt.reviewCount}</td>
-                      <td className="h-12 px-4 align-middle">{hunt.successRate}%</td>
-                    </tr>
-                  ))}
+                {recentHunts.map((hunt) => (
+                  <tr
+                    key={hunt.id}
+                    className="cursor-pointer border-b hover:bg-gray-100"
+                    onClick={() => handleHuntClick(hunt.id)}
+                  >
+                    <td className="h-12 px-4 align-middle">{hunt.title}</td>
+                    <td className="h-12 px-4 align-middle">{hunt.averageRating.toFixed(1)}</td>
+                    <td className="h-12 px-4 align-middle">{hunt.reviewCount}</td>
+                    <td className="h-12 px-4 align-middle">{hunt.successRate}%</td>
+                  </tr>
+                ))}
                 </tbody>
               </table>
             </div>
@@ -336,4 +386,4 @@ interface HuntStats {
       </main>
     </div>
   );
-      }
+  }
