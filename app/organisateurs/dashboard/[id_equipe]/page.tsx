@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Euro, Users, Trophy, Star } from "lucide-react";
 import { formatEuro } from "@/lib/utils";
+import Chasse from '@/classes/Chasse';
+import { UUID } from 'crypto';
+import { useParams, useRouter } from 'next/navigation';
 
 interface DashboardStats {
   totalRevenue: number;
@@ -24,104 +27,102 @@ interface HuntStats {
   cluesRevealed: number;
 }
 
-export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalRevenue: 0,
-    totalParticipants: 0,
-    averageSuccess: 0,
-    averageRating: 0,
-  });
-
-  const [recentHunts, setRecentHunts] = useState<HuntStats[]>([]);
-  const [selectedHunt, setSelectedHunt] = useState<HuntStats | null>(null);
-  const [popupHunt, setPopupHunt] = useState<HuntStats | null>(null);
-  const [totalDailyRevenue, setTotalDailyRevenue] = useState<{ date: string; revenue: number }[]>([]);
-
-
-    // Données de test temporares
-    useEffect(() => {
-      // Temporary test data
-      const testHunts: HuntStats[] = [
-        {
-          id: "1",
-          title: "Chasse au trésor 1",
-          dailyRevenue: [
-            { date: "2025-01-01", revenue: 100 },
-            { date: "2025-01-02", revenue: 200 },
-            { date: "2025-01-03", revenue: 150 },
-          ],
-          averageRating: 4.5,
-          reviewCount: 10,
-          successRate: 75,
-          riddleCompletionRate: 85,
-          cluesRevealed: 50,
-        },
-        {
-          id: "2",
-          title: "Chasse au trésor 2",
-          dailyRevenue: [
-            { date: "2025-01-01", revenue: 50 },
-            { date: "2025-01-02", revenue: 80 },
-            { date: "2025-01-03", revenue: 100 },
-          ],
-          averageRating: 4.0,
-          reviewCount: 8,
-          successRate: 60,
-          riddleCompletionRate: 70,
-          cluesRevealed: 30,
-        },
-        {
-          id: "3",
-          title: "Chasse au trésor 3",
-          dailyRevenue: [
-            { date: "2025-01-01", revenue: 30 },
-            { date: "2025-01-02", revenue: 70 },
-            { date: "2025-01-03", revenue: 90 },
-          ],
-          averageRating: 3.8,
-          reviewCount: 5,
-          successRate: 40,
-          riddleCompletionRate: 55,
-          cluesRevealed: 20,
-        },
-      ];
-      // Calculate total daily revenue across all hunts
-      const dailyRevenueMap = new Map();
-      testHunts.forEach((hunt) => {
-        hunt.dailyRevenue.forEach(({ date, revenue }) => {
-          dailyRevenueMap.set(date, (dailyRevenueMap.get(date) || 0) + revenue);
-        });
-      });
-
-      const totalRevenueData = Array.from(dailyRevenueMap.entries()).map(([date, revenue]) => ({
-        date,
-        revenue,
-      }));
-
-      setTotalDailyRevenue(totalRevenueData);
-
-
-
-      const totalRevenue = testHunts.reduce(
-        (sum, hunt) => sum + hunt.dailyRevenue.reduce((revSum, day) => revSum + day.revenue, 0),
-        0
-      );
-      const totalParticipants = 50; // Example participants
-      const averageSuccess = testHunts.reduce((sum, hunt) => sum + hunt.successRate, 0) / testHunts.length;
-      const averageRating = testHunts.reduce((sum, hunt) => sum + hunt.averageRating, 0) / testHunts.length;
-
-      // Set temporary test stats
-    setStats({
-      totalRevenue,
-      totalParticipants,
-      averageSuccess,
-      averageRating,
+  export default function DashboardPage() {
+    const params = useParams();
+    const id_equipe = params.id_equipe;
+    const [stats, setStats] = useState<DashboardStats>({
+      totalRevenue: 0,
+      totalParticipants: 0,
+      averageSuccess: 0,
+      averageRating: 0,
     });
 
+    const [recentHunts, setRecentHunts] = useState<HuntStats[]>([]);
+    const [selectedHunt, setSelectedHunt] = useState<HuntStats | null>(null);
+    const [popupHunt, setPopupHunt] = useState<HuntStats | null>(null);
+    const [totalDailyRevenue, setTotalDailyRevenue] = useState<{ date: string; revenue: number }[]>([]);
 
-    setRecentHunts(testHunts);
-      setSelectedHunt(testHunts[0]); // Default selection
-    }, []);
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+
+          if (!params.id_equipe) return;
+
+          const equipeId = params.id_equipe as UUID; // Remplacez par l'ID de l'équipe réel
+
+          // Récupérer les chasses associées à l'équipe
+          const chasses = await Chasse.getChassesByEquipeId(equipeId);
+
+          // Transformer les chasses en format HuntStats
+          const hunts: HuntStats[] = await Promise.all(
+            chasses.map(async (chasse) => {
+              // Calculer les revenus journaliers (exemple fictif)
+              const dailyRevenue = [
+                { date: "2025-01-01", revenue: chasse.getPrix() * 10 }, // Exemple de calcul
+                { date: "2025-01-02", revenue: chasse.getPrix() * 15 },
+                { date: "2025-01-03", revenue: chasse.getPrix() * 20 },
+              ];
+
+              // Récupérer les statistiques de la chasse
+              const averageRating = await chasse.getNoteMoyenne();
+              const reviewCount = await chasse.getNbAvis();
+              const successRate = await chasse.getReussiteMoyenne();
+              const riddleCompletionRate = await chasse.getEnigmesResoluesMoyennes();
+              const cluesRevealed = await chasse.getIndicesMoyens();
+
+              return {
+                id: chasse.getIdChasse(),
+                title: chasse.getTitre(),
+                dailyRevenue,
+                averageRating,
+                reviewCount,
+                successRate,
+                riddleCompletionRate,
+                cluesRevealed,
+              };
+            })
+          );
+
+          // Calculer les revenus journaliers totaux
+          const dailyRevenueMap = new Map();
+          hunts.forEach((hunt) => {
+            hunt.dailyRevenue.forEach(({ date, revenue }) => {
+              dailyRevenueMap.set(date, (dailyRevenueMap.get(date) || 0) + revenue);
+            });
+          });
+
+          const totalRevenueData = Array.from(dailyRevenueMap.entries()).map(([date, revenue]) => ({
+            date,
+            revenue,
+          }));
+
+          setTotalDailyRevenue(totalRevenueData);
+
+          // Calculer les statistiques globales
+          const totalRevenue = hunts.reduce(
+            (sum, hunt) => sum + hunt.dailyRevenue.reduce((revSum, day) => revSum + day.revenue, 0),
+            0
+          );
+          const totalParticipants = hunts.reduce((sum, hunt) => sum + hunt.reviewCount, 0); // Exemple de calcul
+          const averageSuccess = hunts.reduce((sum, hunt) => sum + hunt.successRate, 0) / hunts.length;
+          const averageRating = hunts.reduce((sum, hunt) => sum + hunt.averageRating, 0) / hunts.length;
+
+          setStats({
+            totalRevenue,
+            totalParticipants,
+            averageSuccess,
+            averageRating,
+          });
+
+          setRecentHunts(hunts);
+          setSelectedHunt(hunts[0]); // Sélectionner la première chasse par défaut
+        } catch (error) {
+          console.error("Failed to fetch chasses:", error);
+        }
+      };
+
+      fetchData();
+    }, [id_equipe]);
 
   const handleHuntSelection = (huntId: string) => {
     if (huntId === "total") {
