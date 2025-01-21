@@ -6,19 +6,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { MapPin } from "lucide-react";
-import { contenuTextuel } from "@/constants";
 import { Input } from "@/components/ui/input";
 import Chateau from "@/classes/Chateau";
 import Loader from '@/components/global/loader';
 import { Button } from "@/components/ui/button";
-import { format, parseISO } from 'date-fns';
 
 interface SelectionChateauProps {
   formData: Partial<ChasseType>;
   setFormData: (data: Partial<ChasseType>) => void;
+  onValidityChange: (isValid: boolean) => void;
+  onNext?: () => void;
 }
 
-export function CastleSelection({ formData, setFormData }: SelectionChateauProps) {
+export function CastleSelection({ formData, setFormData, onValidityChange, onNext }: SelectionChateauProps) {
   const [chateaux, setChateaux] = useState<ChateauType[]>([]);
   const [filteredChateaux, setFilteredChateaux] = useState<ChateauType[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -26,22 +26,55 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
   const [erreur, setErreur] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [chateauxPerPage] = useState<number>(4);
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  // Charger les châteaux au montage du composant
+  // Validation du formulaire
+  useEffect(() => {
+    const validateForm = () => {
+      const { id_chateau, date_debut, date_fin, horaire_debut, horaire_fin, capacite } = formData;
+
+      const isChateauValid = !!id_chateau;
+      const isDateDebutValid = !!date_debut;
+      const isDateFinValid = !!date_fin;
+      const isHoraireDebutValid = !!horaire_debut;
+      const isHoraireFinValid = !!horaire_fin;
+      const isCapaciteValid = capacite !== undefined && capacite > 0;
+
+      return isChateauValid && isDateDebutValid && isDateFinValid && 
+             isHoraireDebutValid && isHoraireFinValid && isCapaciteValid;
+    };
+
+    const isValid = validateForm();
+    setIsFormValid(isValid);
+    onValidityChange(isValid);
+  }, [formData, onValidityChange]);
+
+  // Chargement des châteaux
   useEffect(() => {
     const chargerChateaux = async () => {
       try {
         setChargement(true);
         const tousLesChateaux = await Chateau.getAllChateaux();
+        
         const chateauxFormatted = tousLesChateaux.map((chateau) => ({
           id_chateau: chateau.getIdChateau(),
           nom: chateau.getNom(),
           localisation: chateau.getLocalisation(),
           description: chateau.getDescription(),
-          image: chateau.getImage(), // Assurez-vous que cette méthode retourne une URL (string) ou null
+          image: chateau.getImage(),
         }));
+
         setChateaux(chateauxFormatted);
         setFilteredChateaux(chateauxFormatted);
+
+        if (formData.id_chateau) {
+          const chateauExist = chateauxFormatted.find(
+            c => c.id_chateau === formData.id_chateau
+          );
+          if (chateauExist) {
+            setSearchTerm(chateauExist.nom || "");
+          }
+        }
       } catch (err) {
         console.error(err);
         setErreur("Erreur lors du chargement des châteaux.");
@@ -53,16 +86,15 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
     chargerChateaux();
   }, []);
 
-  // Filtrer les châteaux en fonction du terme de recherche
+  // Filtrage des châteaux en fonction de la recherche
   useEffect(() => {
     const filtered = chateaux.filter((chateau) =>
       chateau.nom?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredChateaux(filtered);
-    setCurrentPage(1); // Réinitialiser la pagination après un nouveau filtre
+    setCurrentPage(1);
   }, [searchTerm, chateaux]);
 
-  // Pagination
   const indexOfLastChateau = currentPage * chateauxPerPage;
   const indexOfFirstChateau = indexOfLastChateau - chateauxPerPage;
   const currentChateaux = filteredChateaux.slice(indexOfFirstChateau, indexOfLastChateau);
@@ -79,7 +111,6 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
 
   return (
     <div className="space-y-6">
-      {/* Barre de recherche */}
       <div className="space-y-2">
         <Label htmlFor="search">Rechercher un château</Label>
         <Input
@@ -91,16 +122,23 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
         />
       </div>
 
-      {/* Liste des châteaux */}
       <div className="space-y-4">
-        <Label>Sélectionner un château</Label>
+        <Label className="flex items-center gap-1">
+          Sélectionner un château
+          <span className="text-red-500">*</span>
+        </Label>
         <RadioGroup
           value={formData.id_chateau?.toString()}
           onValueChange={(valeur) => {
             const chateauSelectionne = chateaux.find(
               (chateau) => chateau.id_chateau.toString() === valeur
             );
-            setFormData({ ...formData, id_chateau: valeur as `${string}-${string}-${string}-${string}-${string}`, chateau: chateauSelectionne });
+            console.log("Château sélectionné :", chateauSelectionne); // Debug
+            setFormData({ 
+              ...formData, 
+              id_chateau: valeur as `${string}-${string}-${string}-${string}-${string}`, // Correction du type
+              chateau: chateauSelectionne 
+            });
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -111,14 +149,25 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
                 <Card
                   key={chateau.id_chateau}
                   className={`cursor-pointer transition-all ${
-                    formData.chateau?.id_chateau === chateau.id_chateau ? "ring-2 ring-primary" : ""
+                    formData.chateau?.id_chateau === chateau.id_chateau 
+                      ? "ring-2 ring-primary" 
+                      : ""
                   }`}
-                  onClick={() => setFormData({ ...formData, chateau })}
+                  onClick={() => {
+                    console.log("Château cliqué :", chateau); // Debug
+                    setFormData({ 
+                      ...formData, 
+                      id_chateau: chateau.id_chateau as `${string}-${string}-${string}-${string}-${string}`, // Correction du type
+                      chateau 
+                    });
+                  }}
                 >
                   <CardContent className="p-0">
                     <div className="relative">
                       <img
-                        src={chateau.image instanceof File ? URL.createObjectURL(chateau.image) : chateau.image || "https://via.placeholder.com/300x200"}
+                        src={chateau.image instanceof File 
+                          ? URL.createObjectURL(chateau.image) 
+                          : chateau.image || "https://via.placeholder.com/300x200"}
                         alt={chateau.nom}
                         className="w-full h-48 object-cover"
                       />
@@ -147,7 +196,6 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
           </div>
         </RadioGroup>
 
-        {/* Pagination */}
         <div className="flex justify-center gap-2">
           <Button
             variant="outline"
@@ -175,23 +223,30 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
         </div>
       </div>
 
-      {/* Dates et heures */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="date_debut">Date de début</Label>
+          <Label className="flex items-center gap-1" htmlFor="date_debut">
+            Date de début
+            <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="date_debut"
             type="date"
-            value={formData.date_debut ? format(parseISO(formData.date_debut), 'yyyy-MM-dd') : ""}
+            required
+            value={formData.date_debut || ""}
             onChange={(e) => setFormData({ ...formData, date_debut: e.target.value })}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="date_fin">Date de fin</Label>
+          <Label className="flex items-center gap-1" htmlFor="date_fin">
+            Date de fin
+            <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="date_fin"
             type="date"
-            value={formData.date_fin ? format(parseISO(formData.date_fin), 'yyyy-MM-dd') : ""}
+            required
+            value={formData.date_fin || ""}
             onChange={(e) => setFormData({ ...formData, date_fin: e.target.value })}
           />
         </div>
@@ -199,41 +254,63 @@ export function CastleSelection({ formData, setFormData }: SelectionChateauProps
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="horaire_debut">Heure de début</Label>
+          <Label className="flex items-center gap-1" htmlFor="horaire_debut">
+            Heure de début
+            <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="horaire_debut"
             type="time"
+            required
             value={formData.horaire_debut || ""}
             onChange={(e) => setFormData({ ...formData, horaire_debut: e.target.value })}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="horaire_fin">Heure de fin</Label>
+          <Label className="flex items-center gap-1" htmlFor="horaire_fin">
+            Heure de fin
+            <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="horaire_fin"
             type="time"
+            required
             value={formData.horaire_fin || ""}
             onChange={(e) => setFormData({ ...formData, horaire_fin: e.target.value })}
           />
         </div>
       </div>
 
-      {/* Capacité maximale */}
       <div className="space-y-2">
-        <Label htmlFor="capacite">Capacité maximale</Label>
+        <Label className="flex items-center gap-1" htmlFor="capacite">
+          Capacité maximale
+          <span className="text-red-500">*</span>
+        </Label>
         <Input
           id="capacite"
           type="number"
-          min={0}
-          value={formData.capacite || 1}
+          required
+          min={1}
+          value={formData.capacite || ""}
           onChange={(e) => {
-            const value = parseFloat(e.target.value);
-            if (!isNaN(value)) {
-              setFormData({ ...formData, capacite: value });
-            }
+            const value = parseInt(e.target.value, 10) || 0;
+            setFormData({ ...formData, capacite: value > 0 ? value : undefined });
           }}
         />
       </div>
+
+      {onNext && (
+        <div className="flex justify-end border-t pt-4">
+          <Button 
+            onClick={onNext}
+            disabled={!isFormValid}
+            className={`${!isFormValid ? "opacity-50 cursor-not-allowed" : "hover:bg-primary/90"}`}
+            size="lg"
+          >
+            Suivant
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

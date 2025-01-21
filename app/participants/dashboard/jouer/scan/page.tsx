@@ -42,7 +42,7 @@ const ScanQRCodePage: React.FC = () => {
     try {
       const chasseInstance = await Chasse.readId(chasseId as UUID)
       const enigmes = await chasseInstance.getAllEnigmes()
-      const currentEnigme = enigmes.find((enigme: Enigme) => enigme.id_enigme === enigmeId)
+      const currentEnigme = enigmes.find((enigme: Enigme) => enigme.getId() === enigmeId)
       if (currentEnigme) {
         setEnigmeTitle(currentEnigme.titre)
       }
@@ -62,17 +62,17 @@ const ScanQRCodePage: React.FC = () => {
       const chasseInstance = await Chasse.readId(chasseId as UUID)
       const enigmes = await chasseInstance.getAllEnigmes()
       const enigmesTriees = enigmes.sort((a: { ordre: number }, b: { ordre: number }) => a.ordre - b.ordre)
-      const currentEnigme = enigmesTriees.find((enigme: Enigme) => enigme.id_enigme === enigmeId)
+      const currentEnigme = enigmesTriees.find((enigme: Enigme) => enigme.getId() === enigmeId)
 
       if (currentEnigme && code === currentEnigme.code_reponse) {
         setValidationMessage("Code correct !")
         setShowValidationPopup(true)
 
-        const currentIndex = enigmesTriees.findIndex((enigme: Enigme) => enigme.id_enigme === enigmeId)
+        const currentIndex = enigmesTriees.findIndex((enigme: Enigme) => enigme.getId() === enigmeId)
 
         if (currentIndex < enigmesTriees.length - 1) {
           const nextEnigme = enigmesTriees[currentIndex + 1]
-          router.push(`/participants/dashboard/jouer?chasseId=${chasseId}&enigmeId=${nextEnigme.id_enigme}`)
+          router.push(`/participants/dashboard/jouer?chasseId=${chasseId}&enigmeId=${nextEnigme.getId()}`)
         } else {
           router.push(`/participants/dashboard/jouer/recompenses?chasseId=${chasseId}`)
         }
