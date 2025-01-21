@@ -121,18 +121,7 @@ export type ChasseType = {
 
 export type ParticipantType = {
   id_participant: UUID;
-  nom: string;
-  prenom: string;
-  email: string;
   id_user: UUID;
-  adresse: string;
-  ville: string;
-  code_postal: string;
-  birthday: string;
-  plan: string;
-  updated_at: string;
-  stripe_id: string;
-
 }
 
 export type ChateauType = {
