@@ -1,130 +1,124 @@
-import React from 'react';
-import Link from 'next/link';
+import React from 'react'
+import Link from 'next/link'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
+} from '@/components/ui/drawer'
+import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
-const PopUpChateau: React.FC<{ chateau: any }> = ({ chateau }) => {
+const PopUpChateau: React.FC<{ 
+  chateau: any
+  open: boolean
+  onClose: () => void
+}> = ({ chateau, open, onClose }) => {
+  const getDifficultyText = (level: number) => {
+    switch(level) {
+      case 1: return 'Facile'
+      case 2: return 'Intermédiaire'
+      case 3: return 'Difficile'
+      default: return 'N/A'
+    }
+  }
+
   return (
-    <div style={{ width: '100%', padding: '16px', backgroundColor: '#ffffff', borderRadius: '8px' }}>
-      {/* Section principale du château */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          borderBottom: '1px solid #ddd',
-          marginBottom: '16px',
-          paddingBottom: '16px',
-        }}
-      >
-        {/* Texte à gauche */}
-        <div style={{ flex: 1 }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>{chateau.nom}</h2>
-          <p style={{ fontSize: '14px', lineHeight: '1.5', color: '#666' }}>{chateau.description}</p>
+    <Drawer open={open} onOpenChange={onClose}>
+      <DrawerContent>
+        <DrawerHeader className="text-left">
+          <div className="flex items-start gap-4">
+            {chateau?.image && (
+              <img
+                src={chateau.image}
+                alt={chateau.nom}
+                className="h-24 w-2/6 rounded-lg object-cover"
+                width={96}
+                height={96}
+              />
+            )}
+            <div>
+              <DrawerTitle className="text-xl">{chateau?.nom}</DrawerTitle>
+              <DrawerDescription className="mt-1">
+                {chateau?.description}
+              </DrawerDescription>
+            </div>
+          </div>
+        </DrawerHeader>
+
+        <div className="p-4 space-y-4">
+          <h3 className="font-semibold">Chasses disponibles</h3>
+          
+          <div className="space-y-3 max-h-[50vh] overflow-y-auto">
+            {chateau?.chasses?.length > 0 ? (
+              chateau.chasses.map((chasse: any) => {
+                const difficultyText = getDifficultyText(chasse.difficulte)
+                
+                return (
+                  <Card key={chasse.id_chasse} className="p-3 flex justify-between">
+                    <div className="flex items-start gap-3">
+                      {chasse.image && (
+                        <img
+                          src={chasse.image}
+                          alt={chasse.titre}
+                          className="h-full w-2/6 rounded-lg object-cover"
+                          width={48}
+                          height={48}
+                        />
+                      )}
+                      <div className="flex-1">
+                        <CardTitle className="text-base">{chasse.titre}</CardTitle>
+                        <CardContent className="p-0 mt-1">                            
+                            <div className="flex flex-col">
+                              <div className="text-sm text-muted-foreground">
+                                ⭐ {difficultyText}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                💶 {chasse.prix}€
+                              </div>
+                            </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+                            {chasse.description}
+                          </p>
+                        </CardContent>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/participants/dashboard/chasses/${chasse.id_chasse}`}>
+                        Détails
+                      </Link>
+                    </Button>
+                  </Card>
+                )
+              })
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Aucune chasse disponible pour ce château
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Image à droite */}
-        {chateau.image && (
-          <div style={{ marginLeft: '16px' }}>
-            <img
-              src={chateau.image}
-              alt={chateau.nom}
-              style={{
-                width: '150px',
-                height: '100px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-                border: '1px solid #ddd',
-              }}
-            />
+        <DrawerFooter>
+          <div className="space-y-2">
+            <Button asChild className="w-full">
+              <Link href={`/participants/dashboard/chateaux/${chateau?.id_chateau}`}>
+                Voir la fiche complète
+              </Link>
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-full">
+                Fermer
+              </Button>
+            </DrawerClose>
           </div>
-        )}
-      </div>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  )
+}
 
-      {/* Bouton pour accéder à la page du château */}
-      <div style={{ marginBottom: '16px' }}>
-        <Link href={`/participants/dashboard/chateaux/${chateau.id_chateau}`}>
-          <button
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#007BFF',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              width: '100%',
-            }}
-          >
-            Voir la page du château
-          </button>
-        </Link>
-      </div>
-
-      {/* Liste des chasses associées */}
-      <div>
-        <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px', color: '#333' }}>
-          Chasses disponibles
-        </h3>
-        <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-          {chateau.chasses && chateau.chasses.length > 0 ? (
-            chateau.chasses.map((chasse: any) => (
-              <li
-                key={chasse.id_chasse}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  borderBottom: '1px solid #ddd',
-                  paddingBottom: '16px',
-                  marginBottom: '16px',
-                }}
-              >
-                {/* Image de la chasse */}
-                {chasse.image && (
-                  <img
-                    src={chasse.image}
-                    alt={chasse.titre}
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
-                      marginRight: '16px',
-                    }}
-                  />
-                )}
-
-                {/* Détails de la chasse */}
-                <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
-                    {chasse.titre}
-                  </h4>
-                  <p style={{ fontSize: '14px', marginBottom: '8px', color: '#666' }}>
-                    {chasse.description}
-                  </p>
-                  <p style={{ fontSize: '14px', marginBottom: '4px' }}>
-                    Difficulté : {chasse.difficulte} / 3 | Prix : {chasse.prix} €
-                  </p>
-                  <Link href={`/participants/dashboard/chasses/${chasse.id_chasse}`}>
-                    <button
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#007BFF',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Voir plus
-                    </button>
-                  </Link>
-                </div>
-              </li>
-            ))
-          ) : (
-            <p style={{ fontSize: '14px', color: '#999' }}>Aucune chasse disponible pour ce château.</p>
-          )}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
-export default PopUpChateau;
+export default PopUpChateau

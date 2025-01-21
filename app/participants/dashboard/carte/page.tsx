@@ -11,16 +11,16 @@ import { ChateauType } from '@/types';
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
 export default function ParticipantsPage() {
   const [chateaux, setChateaux] = useState<ChateauType[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [L, setLeaflet] = useState<any>(null); // Charger Leaflet côté client
+  const [L, setLeaflet] = useState<any>(null);
+  const [selectedChateau, setSelectedChateau] = useState<ChateauType | null>(null);
 
   useEffect(() => {
     const fetchLeaflet = async () => {
-      const leaflet = await import('leaflet'); // Charger Leaflet côté client
+      const leaflet = await import('leaflet');
       setLeaflet(leaflet);
     };
 
@@ -29,13 +29,10 @@ export default function ParticipantsPage() {
         const response = await fetch('/api/chateaux');
         const chateauxData: ChateauType[] = await response.json();
 
-        console.log('Châteaux récupérés :', chateauxData); // Debug
-
         const chateauxWithChasses = await Promise.all(
           chateauxData.map(async (chateau) => {
             const response = await fetch(`/api/chasses/chateau?id_chateau=${chateau.id_chateau}`);
             const chasses = await response.json();
-            console.log(`Chasses pour le château ${chateau.nom}:`, chasses); // Debug
             return { ...chateau, chasses };
           })
         );
@@ -69,9 +66,7 @@ export default function ParticipantsPage() {
 
   return (
     <div className="flex z-0 h-full">
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Barre de recherche */}
         <div className="p-4 bg-gray-100">
           <input
             type="text"
@@ -82,8 +77,7 @@ export default function ParticipantsPage() {
           />
         </div>
 
-        {/* Carte */}
-        <div className={"w-full h-full"}>
+        <div className="w-full h-full">
           <MapContainer center={franceCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -94,18 +88,25 @@ export default function ParticipantsPage() {
                 .split(',')
                 .map((coord) => parseFloat(coord.trim())) as [number, number];
 
-              console.log(`Position pour le château ${chateau.nom}:`, position); // Debug
-
               return (
-                <Marker key={chateau.id_chateau} position={position} icon={customIcon}>
-                  <Popup maxWidth={600} maxHeight={400}>
-                    <PopUpChateau chateau={chateau} />
-                  </Popup>
-                </Marker>
+                <Marker
+                  key={chateau.id_chateau}
+                  position={position}
+                  icon={customIcon}
+                  eventHandlers={{
+                    click: () => setSelectedChateau(chateau)
+                  }}
+                />
               );
             })}
           </MapContainer>
         </div>
+
+        <PopUpChateau
+          chateau={selectedChateau}
+          open={!!selectedChateau}
+          onClose={() => setSelectedChateau(null)}
+        />
       </div>
     </div>
   );
