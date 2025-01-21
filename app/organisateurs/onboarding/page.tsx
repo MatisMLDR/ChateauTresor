@@ -1,17 +1,15 @@
 "use client"
 
-import React, { use, useEffect, useState } from 'react';
+import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
+import { MembreEquipe } from '@/classes/MembreEquipe';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import EquipeOrganisatrice from '@/classes/EquipeOrganisatrice';
 import { createClient } from '@/utils/supabase/client';
-import { MembreEquipe } from '@/classes/MembreEquipe';
 import { UUID } from 'crypto';
-import { createEquipe } from '@/utils/dao/EquipeOrganisatriceUtils';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { useRouter } from 'next/navigation';
 import { Loader } from 'lucide-react';
-import { set } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const Onboarding = () => {
 
@@ -191,6 +189,9 @@ const Onboarding = () => {
 
   return (
     <div className="h-screen w-full flex justify-center items-center">
+      <Button onClick={() => router.back()} className="mb-8">
+        Revenir à la page précédente
+      </Button>
       <div className='max-w-[800px]'>
         {/* Barre de progression */}
         {currentStep > 1 && (
