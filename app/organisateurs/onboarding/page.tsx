@@ -117,7 +117,9 @@ const Onboarding = () => {
     // Préparation des données pour l'appartenance à l'équipe
     const data = {
       id_membre: formData.id_membre as UUID,
-      id_equipe: formData.equipe as UUID, // TODO : Corriger pour pouvoir utiliser l'objet EquipeOrganisatrice
+      id_equipe: formData.equipe as UUID, 
+      role_equipe: formData.role,
+      message_demande: formData.message,
     };
     try {
 
@@ -139,8 +141,8 @@ const Onboarding = () => {
     const data = {
       nom: formData.nomEquipe,
       type: formData.type,
-      n_siret: formData.type,
-      id_taxes: formData.type,
+      n_siret: formData.nSiret,
+      id_taxes: formData.idTaxes,
       site_web: formData.siteWeb,
       adresse_postale: formData.adressePostale,
       date_creation: null,
@@ -166,7 +168,6 @@ const Onboarding = () => {
         console.log("Membre à créer", membre);
 
         await membre.create();
-
       }
 
       // Créer l'appartenance à l'équipe
