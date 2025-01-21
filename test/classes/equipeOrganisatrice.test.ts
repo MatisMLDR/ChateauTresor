@@ -25,6 +25,7 @@ describe('EquipeOrganisatrice', () => {
     id_taxes: "FR123456789",
     site_web: "https://example.com",
     adresse_postale: "123 Rue Exemple, Paris, France",
+    date_creation: "un jour",
     telephone: "0123456789",
     statut_verification: "",
     carte_identite_chef: null,

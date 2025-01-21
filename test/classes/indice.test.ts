@@ -1,5 +1,5 @@
 import Indice from "@/classes/Indice";
-import { IndiceType, TypeIndice } from "@/types";
+import { IndiceType } from "@/types";
 import { getIndiceById, createIndice, deleteIndice, updateIndice } from "@/utils/dao/IndiceUtils";
 
 jest.mock('@/utils/dao/IndiceUtils');
@@ -7,10 +7,10 @@ jest.mock('@/utils/dao/IndiceUtils');
 describe("Indice Class", () => {
   const mockIndice: IndiceType = {
     id_indice: "ab5f8b98-1544-402a-b333-d06bfe6f9465",
-    type: "text" as TypeIndice, // ou le type que vous utilisez dans votre application
     contenu: "Ceci est un indice",
+    ordre: 1,
     degre_aide: 3,
-    ordre: 2,
+    type: "text",
     id_enigme: "9d987c89-e37e-4ff6-ac93-ed498721d319",
   };
 
@@ -24,7 +24,7 @@ describe("Indice Class", () => {
     expect(indice.getType()).toBe("text");
     expect(indice.getContenu()).toBe("Ceci est un indice");
     expect(indice.getDegreAide()).toBe(3);
-    expect(indice.getOrdre()).toBe(2);
+    expect(indice.getOrdre()).toBe(1);
     expect(indice.getIdEnigme()).toBe("9d987c89-e37e-4ff6-ac93-ed498721d319");
   });
 
