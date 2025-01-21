@@ -265,8 +265,7 @@ class Chasse {
   public async loadChateau(): Promise<void> {
     if (this.id_chateau) {
       const chateau = await Chateau.readId(this.id_chateau);
-      this.chateau = chateau;
-    }
+      this.chateau = chateau;}
   }
   
   public async loadEnigmes(): Promise<void> {

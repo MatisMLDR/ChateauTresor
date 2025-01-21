@@ -124,7 +124,7 @@ class Chateau {
   /*
    * Méthode pour charger les données de l'objet indice dans la classe
    */
-  public static async readId(id_chateau: UUID): Promise<Chateau> {
+  public static async readId(id_chateau: UUID): Promise<ChateauType> {
 
     const data = await getChateauById(id_chateau) as any;
 
@@ -134,7 +134,7 @@ class Chateau {
     
     console.log("Château après appel API dans read", data); 
 
-    return new Chateau(data);
+    return data;
   }
 
   // Méthode statique pour récupérer tous les châteaux
