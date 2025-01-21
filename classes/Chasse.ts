@@ -30,7 +30,7 @@ class Chasse {
   private statut: string;
   private id_chateau: UUID | null;
   private id_equipe: UUID | null;
-  private chateau?: ChateauType;
+  private chateau?: Chateau;
 
 
   private enigmes?: EnigmeType[];
@@ -127,7 +127,7 @@ class Chasse {
   public getEnigmes(): EnigmeType[] {
     return this.enigmes ?? [];
   }
-  public getChateau(): ChateauType | undefined {
+  public getChateau(): Chateau | undefined {
     return this.chateau;
   }
 
@@ -199,7 +199,7 @@ class Chasse {
   public setRecompenses(recompenses: RecompenseType[]): void {
     this.recompenses = recompenses;
   }
-  public setChateau(chateau: ChateauType): void {
+  public setChateau(chateau: Chateau): void {
     this.chateau = chateau;
   }
 
@@ -265,8 +265,7 @@ class Chasse {
   public async loadChateau(): Promise<void> {
     if (this.id_chateau) {
       const chateau = await Chateau.readId(this.id_chateau);
-      this.chateau = chateau;
-    }
+      this.chateau = chateau;}
   }
   
   public async loadEnigmes(): Promise<void> {

@@ -134,7 +134,7 @@ class Chateau {
     
     console.log("Château après appel API dans read", data); 
 
-    return new Chateau(data);
+    return data;
   }
 
   // Méthode statique pour récupérer tous les châteaux

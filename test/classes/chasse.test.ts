@@ -139,7 +139,7 @@ describe('Chasse', () => {
     const chasse = new Chasse(mockChasseData);
     const successRate = await chasse.getReussiteMoyenne();
 
-    expect(successRate).toBe(0.5);
+    expect(successRate).toBe(50);
   });
 
   test('getNbRecompensesAttribuees should return number of rewards', async () => {

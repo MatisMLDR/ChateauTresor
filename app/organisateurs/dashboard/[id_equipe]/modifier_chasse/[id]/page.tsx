@@ -52,12 +52,12 @@ const EditHuntPage: React.FC = () => {
           statut: chasse.getStatut(),
           id_chateau: chasse.getIdChateau(),
           id_equipe: chasse.getIdEquipe(),
-          chateau: chasse.chateau,
-          enigmes: chasse.enigmes || [], // Assurez-vous que les énigmes sont bien incluses
-          recompenses: chasse.recompenses || [], // Assurez-vous que les récompenses sont bien incluses
+          chateau: chasse.getChateau(),
+          enigmes: chasse.getEnigmes() || [], // Assurez-vous que les énigmes sont bien incluses
+          recompenses: chasse.getRecompenses() || [], // Assurez-vous que les récompenses sont bien incluses
         };
 
-        setHuntData(formattedHuntData);
+        setHuntData(formattedHuntData as ChasseType);
       } catch (err) {
         console.error('Erreur lors de la récupération des données de la chasse :', err);
         toast.error('Erreur lors du chargement des données de la chasse.');
