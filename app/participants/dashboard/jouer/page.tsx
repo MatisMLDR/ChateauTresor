@@ -22,7 +22,11 @@ import {
 import { buttonVariants } from '@/components/ui/button';
 import { UUID } from 'crypto';
 import { Enigme } from '@/classes/Enigme';
-import { createParticipation, participationExists } from '@/utils/dao/ParticipationUtils';
+import {
+  createParticipation,
+  getParticipationByParticipantIdAndChasseId,
+  participationExists,
+} from '@/utils/dao/ParticipationUtils';
 import { Participant } from '@/classes/Participant';
 import { createClient } from '@/utils/supabase/client'; // Import des styles de bouton
 
@@ -36,6 +40,8 @@ const GameInterface: React.FC = () => {
   const [isParticipating, setIsParticipating] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
   const[participantId, setParticipantId] = useState<string | null>(null);
+  const [score, setScore] = useState<number | null>(null); // État pour stocker le score
+
 
 
 
@@ -43,6 +49,7 @@ const GameInterface: React.FC = () => {
   const searchParams = useSearchParams();
   const chasseId = searchParams.get('chasseId');
   const enigmeIdFromUrl = searchParams.get('enigmeId');
+
 
   useEffect(() => {
     const fetchEnigmes = async () => {
@@ -111,6 +118,22 @@ const GameInterface: React.FC = () => {
     fetchParticipantId();
   }, [userId]);
 
+
+  useEffect(() => {
+    const fetchScore = async () => {
+      if (userId && chasseId) {
+        try {
+          const participant = await Participant.readByIdUser(userId as UUID);
+          const participation = await getParticipationByParticipantIdAndChasseId(participant.id_participant, chasseId as UUID);
+          setScore(participation.score); // Mettre à jour l'état du score
+        } catch (error) {
+          console.error('Erreur lors de la récupération du score :', error);
+        }
+      }
+    };
+
+    fetchScore();
+  }, [userId, chasseId]);
 
 
 
@@ -200,22 +223,22 @@ const GameInterface: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6">
+      <div className="mx-auto max-w-4xl rounded-xl bg-white p-6 shadow-2xl">
         {/* Bouton de retour avec AlertDialog */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button
-              className="mb-6 text-black p-3 rounded-lg shadow-lg transition duration-300 flex items-center justify-center"
+              className="mb-6 flex items-center justify-center rounded-lg p-3 text-black shadow-lg transition duration-300"
               title="Retour à la liste des chasses" // Info-bulle au survol
             >
-              <ArrowLeftFromLine className="w-6 h-6" /> {/* Icône de retour */}
+              <ArrowLeftFromLine className="h-6 w-6" /> {/* Icône de retour */}
             </button>
           </AlertDialogTrigger>
 
           {/* Pop-up de confirmation */}
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-xl font-bold mb-4">
+              <AlertDialogTitle className="mb-4 text-xl font-bold">
                 Êtes-vous sûr de vouloir quitter ?
               </AlertDialogTitle>
               <AlertDialogDescription className="mb-6">
@@ -238,43 +261,48 @@ const GameInterface: React.FC = () => {
 
         {/* Barre de progression */}
         <div className="mb-8">
-          <div className="flex justify-between mb-2">
+          <div className="mb-2 flex justify-between">
             <span className="text-sm font-medium text-gray-700">
               Énigme {currentEnigmeIndex + 1} sur {enigmes.length}
             </span>
             <span className="text-sm font-medium text-gray-700">{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-black h-2.5 rounded-full"
-              style={{ width: `${progress}%` }}
-            ></div>
+          <div className="h-2.5 w-full rounded-full bg-gray-200">
+            <div className="h-2.5 rounded-full bg-black" style={{ width: `${progress}%` }}></div>
+            <span className="text-sm font-medium text-gray-700">
+              Votre score est de : {score} points{' '}
+            </span>
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">{currentEnigme.titre}</h1>
-        <p className="text-lg text-gray-600 mb-8">{currentEnigme.description}</p>
+        <h1 className="mb-6 text-3xl font-bold text-gray-800">{currentEnigme.titre}</h1>
+        <p className="mb-8 text-lg text-gray-600">{currentEnigme.description}</p>
 
         <div className="mb-8">
           <button
             onClick={() => setShowIndices(!showIndices)}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 w-full"
+            className="w-full rounded-lg bg-blue-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:bg-blue-700"
           >
             {showIndices ? 'Masquer les indices' : 'Afficher les indices'}
           </button>
         </div>
 
         {showIndices && (
-          <div className="mb-8 bg-gray-50 p-6 rounded-lg shadow-inner">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Indices</h2>
-            <IndiceComponent idEnigme={currentEnigme.id_enigme as UUID} participantId={participantId as UUID} />
+          <div className="mb-8 rounded-lg bg-gray-50 p-6 shadow-inner">
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">Indices</h2>
+            <IndiceComponent
+              idEnigme={currentEnigme.id_enigme as UUID}
+              participantId={participantId as UUID}
+            />
           </div>
         )}
 
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Valider le code</h2>
-          <Link href={`/participants/dashboard/jouer/scan?chasseId=${chasseId}&enigmeId=${currentEnigme.id_enigme}`}>
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 w-full">
+          <h2 className="mb-6 text-2xl font-bold text-gray-800">Valider le code</h2>
+          <Link
+            href={`/participants/dashboard/jouer/scan?chasseId=${chasseId}&enigmeId=${currentEnigme.id_enigme}`}
+          >
+            <button className="w-full rounded-lg bg-blue-600 px-6 py-3 text-white shadow-lg transition duration-300 hover:bg-blue-700">
               Valider le code
             </button>
           </Link>

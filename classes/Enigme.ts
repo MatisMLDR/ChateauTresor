@@ -5,7 +5,7 @@ import { UUID } from "crypto";
 import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils";
 
 export class Enigme {
-  private id_enigme: UUID;
+  id_enigme: UUID;
   private id_chasse: UUID;
   private titre: string;
   private code_reponse: string;

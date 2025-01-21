@@ -92,3 +92,27 @@ export async function deleteRecompense(id_recompense: UUID): Promise<void> {
         throw new Error('Erreur lors de la suppression de la récompense');
     }
 }
+
+
+/**
+ * Méthode pour récupérer les récompenses d'une chasse avec un score maximal (via POST)
+ * @param id_chasse L'identifiant de la chasse
+ * @param score Le score maximal pour filtrer les récompenses
+ * @returns Promise<any> Le tableau des récompenses filtrées
+ * @throws Error si la récupération échoue
+ * @example const recompenses = await getRecompensesByChasseAndMaxScore(id_chasse, 100);
+ */
+export async function getRecompensesByChasseAndScore(id_chasse: UUID, score: number): Promise<any> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/recompenses/score`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_chasse, score }),
+    });
+
+    if (!res.ok) {
+        throw new Error('Erreur lors de la récupération des récompenses filtrées');
+    }
+    return await res.json();
+}
