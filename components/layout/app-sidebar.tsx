@@ -76,7 +76,10 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   // Check if the current member is a team admin (owner)
   useEffect(() => {
-    if (type !== "organisateur" && (!id_equipe || !idUser)) {
+    if (type !== "organisateur") {
+      return;
+    }
+    if (!id_equipe || !idUser) {
       return;
     }
     const checkIfIsOwner = async () => {
@@ -102,7 +105,10 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
 
   // Set navMain
   useEffect(() => {
-    if (type !== "organisateur" && (!id_equipe || !idUser)) {
+    if (type !== "organisateur") {
+      return
+    }
+    if (!id_equipe || !idUser) {
       return
     }
     let navMainData = [  // Use `let` so that it's mutable
@@ -143,7 +149,10 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
   }, [isOwner, idUser, id_equipe]);
 
   useEffect(() => {
-    if (type !== "participant" && !idUser) {
+    if (type !== "participant") {
+      return
+    }
+    if (!idUser) {
       return
     }
     console.log("Nous sommes rentrés dans le useEffect de type participant");

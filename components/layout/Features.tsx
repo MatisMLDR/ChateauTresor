@@ -8,7 +8,7 @@ type FeaturesProps = {
 
 const Features = ({type = "participant"}: FeaturesProps) => {
   return (
-    <section className="w-full py-10 md:py-20 lg:py-32 bg-[#f7f7f7]" id="features">
+    <section className="w-full py-10 md:py-20 bg-[#f7f7f7]" id="features">
       <div className="container px-4 md:px-6">
         <TitleTwo text={"Pourquoi choisir Château Trésor ?"} color="dark" />
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">

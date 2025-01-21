@@ -43,7 +43,7 @@ export class MembreEquipe {
 
   public static async readByIdUser(id_user: UUID): Promise<MembreEquipe> {
     const data = await getMembreByUserId(id_user) as any;
-
+    
     if (!data) {
       throw new Error("L'utilisateur n'a pas été trouvé");
     }

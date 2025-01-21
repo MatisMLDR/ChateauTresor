@@ -3,21 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import CardChateau from '@/components/global/CardChateau';
 import Chateau from '@/classes/Chateau';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ChateauListPage: React.FC = () => {
   const [chateaux, setChateaux] = useState<Chateau[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [isLoading, setIsLoading] = useState(true);
   // Récupère la liste des châteaux
   useEffect(() => {
     const fetchChateaux = async () => {
       try {
-        const response = await fetch('/api/chateaux');
-        const chateauxData = await response.json();
-        const chateauxList = chateauxData.map((chateau: any) => new Chateau(chateau));
-        setChateaux(chateauxList);
+        const chateaux = await Chateau.getAllChateaux();
+        setChateaux(chateaux);
       } catch (err) {
         console.error('Erreur lors de la récupération des châteaux :', err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -44,13 +45,23 @@ const ChateauListPage: React.FC = () => {
             className="w-full rounded-md border border-gray-300 p-3 shadow-sm"
           />
         </div>
+        {isLoading
+          ?
+          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+            <Skeleton className="h-[350px] rounded-md" />
+            <Skeleton className="h-[350px] rounded-md" />
+            <Skeleton className="h-[350px] rounded-md" />
+            <Skeleton className="h-[350px] rounded-md" />
+          </div>
 
-        {/* Liste des châteaux */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredChateaux.map((chateau) => (
-            <CardChateau chateau={chateau} key={chateau.getIdChateau()} />
-          ))}
-        </div>
+          :
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+            {filteredChateaux.map((chateau) => (
+              <CardChateau chateau={chateau} key={chateau.getIdChateau()} />
+            ))}
+          </div>
+        }
       </div>
     </div>
   );

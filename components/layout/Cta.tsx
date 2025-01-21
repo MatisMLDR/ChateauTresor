@@ -9,7 +9,7 @@ type CtaProps = {
 
 const Cta = ({ type="participant" }: CtaProps) => {
   return (
-    <section className="w-full py-10 md:py-20 lg:py-32 bg-[#1a3b5d]" id="cta">
+    <section className="w-full py-10 md:py-20 bg-[#1a3b5d]" id="cta">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center text-white">
           <TitleTwo text={type === "organisateur" ? "Prêt à révolutionner votre organisation ?" : "Prêt à venir découvrir les plus beaux châteaux de loire ?"} color={"light"} />
