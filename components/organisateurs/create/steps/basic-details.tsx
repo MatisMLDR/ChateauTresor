@@ -125,8 +125,8 @@ export function BasicDetails({ formData, setFormData, onValidityChange }: BasicD
           <img
             src={imagePreview}
             alt="Aperçu de l'image"
-            className="w-full h-48 object-cover rounded-lg mb-2 border"
-          />
+            className="image-cropped"
+            />
         ) : null}
 
         <div className="flex items-center gap-2">

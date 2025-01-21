@@ -5,7 +5,6 @@ import Chasse from '@/classes/Chasse';
 import { ChasseType, FileType } from '@/types';
 import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
-import { format, parseISO } from 'date-fns';
 import { toast } from "react-hot-toast";
 
 const EditHuntPage: React.FC = () => {
@@ -25,11 +24,17 @@ const EditHuntPage: React.FC = () => {
         await chasse.loadEnigmes();
         await chasse.loadRecompenses();
 
+        // Extraction des dates au format YYYY-MM-DD
+        const formatDate = (dateString: string | null): string => {
+          if (!dateString) return '';
+          return dateString.split('T')[0]; // Extrait la partie YYYY-MM-DD
+        };
+
         // Conversion correcte pour les dates et heures
         const formattedHuntData = {
           ...chasse,
-          date_debut: chasse.getDateDebut() ? format(new Date(chasse.getDateDebut() as string), 'yyyy-MM-dd') : '',
-          date_fin: chasse.getDateFin() ? format(new Date(chasse.getDateFin() as string), 'yyyy-MM-dd') : '',
+          date_debut: formatDate(chasse.getDateDebut() as string), // Format YYYY-MM-DD
+          date_fin: formatDate(chasse.getDateFin() as string), // Format YYYY-MM-DD
           horaire_debut: chasse.getHoraireDebut()?.substring(0, 5) || '', // Garde seulement HH:mm
           horaire_fin: chasse.getHoraireFin()?.substring(0, 5) || '',
           image: chasse.getImage() || '',

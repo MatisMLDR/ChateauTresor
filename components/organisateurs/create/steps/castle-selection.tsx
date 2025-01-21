@@ -28,14 +28,21 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
   const [chateauxPerPage] = useState<number>(4);
   const [isFormValid, setIsFormValid] = useState(false);
 
+  // Fonction pour valider le format de la date
+  const isValidDate = (dateString: string | undefined): boolean => {
+    if (!dateString) return false;
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    return regex.test(dateString);
+  };
+
   // Validation du formulaire
   useEffect(() => {
     const validateForm = () => {
       const { id_chateau, date_debut, date_fin, horaire_debut, horaire_fin, capacite } = formData;
 
       const isChateauValid = !!id_chateau;
-      const isDateDebutValid = !!date_debut;
-      const isDateFinValid = !!date_fin;
+      const isDateDebutValid = isValidDate(date_debut ?? undefined);
+      const isDateFinValid = isValidDate(date_fin ?? undefined);
       const isHoraireDebutValid = !!horaire_debut;
       const isHoraireFinValid = !!horaire_fin;
       const isCapaciteValid = capacite !== undefined && capacite > 0;
@@ -73,6 +80,12 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
           );
           if (chateauExist) {
             setSearchTerm(chateauExist.nom || "");
+            // Force la validation du formulaire si un château est déjà sélectionné
+            setFormData({ 
+              ...formData, 
+              id_chateau: formData.id_chateau,
+              chateau: chateauExist 
+            });
           }
         }
       } catch (err) {
@@ -233,8 +246,10 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
             id="date_debut"
             type="date"
             required
-            value={formData.date_debut || ""}
-            onChange={(e) => setFormData({ ...formData, date_debut: e.target.value })}
+            value={formData.date_debut ? formData.date_debut.split('T')[0] : ""} // Format YYYY-MM-DD
+            onChange={(e) => {
+              setFormData({ ...formData, date_debut: e.target.value });
+            }}
           />
         </div>
         <div className="space-y-2">
@@ -246,8 +261,10 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
             id="date_fin"
             type="date"
             required
-            value={formData.date_fin || ""}
-            onChange={(e) => setFormData({ ...formData, date_fin: e.target.value })}
+            value={formData.date_fin ? formData.date_fin.split('T')[0] : ""} // Format YYYY-MM-DD
+            onChange={(e) => {
+              setFormData({ ...formData, date_fin: e.target.value });
+            }}
           />
         </div>
       </div>

@@ -1,23 +1,23 @@
 "use client";
 
+import { useState, useCallback } from "react";
+import { BasicDetails } from "./steps/basic-details";
+import { CastleSelection } from "./steps/castle-selection";
+import { RiddlesCreation } from "./steps/riddles-creation";
+import { ReviewSubmit } from "./steps/review-submit";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ChasseType, RecompenseType, EnigmeType, IndiceType, ChateauType } from "@/types";
+import { contenuTextuel } from "@/constants";
+import toast, { Toaster } from "react-hot-toast";
 import Chasse from "@/classes/Chasse";
 import { Enigme } from "@/classes/Enigme";
 import Indice from "@/classes/Indice";
 import Recompense from "@/classes/Recompense";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { contenuTextuel } from "@/constants";
-import { ChasseType, ChateauType } from "@/types";
-import { createClient } from "@/utils/supabase/client";
 import { UUID } from "crypto";
-import { useParams, useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { BasicDetails } from "./steps/basic-details";
-import { CastleSelection } from "./steps/castle-selection";
-import { ReviewSubmit } from "./steps/review-submit";
 import RewardCreation from "./steps/reward-creation";
-import { RiddlesCreation } from "./steps/riddles-creation";
+import { useRouter, useParams } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 const steps = [
   { title: contenuTextuel.create.steps.basicDetails, component: BasicDetails },
@@ -198,8 +198,8 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
           image: uploadedImage,
           date_creation: chasse.date_creation || new Date().toISOString(),
           date_modification: new Date().toISOString(),
-          date_debut: chasse.date_debut ? new Date(chasse.date_debut).toISOString() : "",
-          date_fin: chasse.date_fin ? new Date(chasse.date_fin).toISOString() : "",
+          date_debut: chasse.date_debut ? chasse.date_debut.split('T')[0] : "", // Format YYYY-MM-DD
+          date_fin: chasse.date_fin ? chasse.date_fin.split('T')[0] : "", // Format YYYY-MM-DD
           horaire_debut: chasse.horaire_debut || "08:00:00",
           horaire_fin: chasse.horaire_fin || "18:00:00",
           prix: chasse.prix || 0.0,
@@ -323,6 +323,8 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
     setFormData(prev => ({
       ...prev,
       ...updatedData,
+      date_debut: updatedData.date_debut ? updatedData.date_debut.split('T')[0] : prev.date_debut, // Format YYYY-MM-DD
+      date_fin: updatedData.date_fin ? updatedData.date_fin.split('T')[0] : prev.date_fin, // Format YYYY-MM-DD
       enigmes: updatedData.enigmes ? updatedData.enigmes.map((newEnigme, index) => ({
         ...prev.enigmes?.[index],
         ...newEnigme,
@@ -382,13 +384,13 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
             )}
           </Button>
         ) : (
-        <Button 
-          onClick={() => handleStepNavigation('next')}
-          disabled={isSubmitting || !isStepValid}
-          className="min-w-[120px]"
-        >
-          Suivant →
-        </Button>
+          <Button 
+            onClick={() => handleStepNavigation('next')}
+            disabled={isSubmitting || !isStepValid}
+            className="min-w-[120px]"
+          >
+            Suivant →
+          </Button>
         )}
       </div>
     </div>
