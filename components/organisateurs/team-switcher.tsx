@@ -43,61 +43,62 @@ export function TeamSwitcher({
   const [activeTeam, setActiveTeam] = useState<EquipeOrganisatrice | undefined>(
     equipes.find((team) => team.getIdEquipe() === id_equipe_courante)
   )
-  
-  useEffect(() => {
-    const fetchUser = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  if (type === "organisateur") {
+    useEffect(() => {
+      const fetchUser = async () => {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-      if (user && user.email) {
+        if (user && user.email) {
 
-        try {
-          const membre = await MembreEquipe.readByIdUser(user.id as UUID);
-          setIdMembre(membre.getIdMembre() as UUID);
-          let equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(membre.getIdMembre() as UUID);
-          // Display only the first three teams if they have more than commit
-          if (equipesDuMembre.length > 3) {
-            equipesDuMembre = equipesDuMembre.slice(0, 3);
-          }
-          setEquipes(equipesDuMembre as any);
-        } catch (err) {
-          console.error('Erreur lors de la récupération des détails du château :', err);
-        }
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // Set the active team once equipes are fetched and id_equipe_courante is available
-  useEffect(() => {
-    const setTeam = async () => {
-      if (equipes.length > 0) {
-        // Try to find the active team from the equipes array
-        const team = equipes.find((team) => team.getIdEquipe() === id_equipe_courante);
-        if (team) {
-          setActiveTeam(team);
-        } else {
-          // If the team is not found, try using the `readId` method
           try {
-            const teamFromReadId = await EquipeOrganisatrice.readId(id_equipe_courante!);
-            setActiveTeam(teamFromReadId);
+            const membre = await MembreEquipe.readByIdUser(user.id as UUID);
+            setIdMembre(membre.getIdMembre() as UUID);
+            let equipesDuMembre = await MembreEquipe.getAllEquipesOfMembre(membre.getIdMembre() as UUID);
+            // Display only the first three teams if they have more than commit
+            if (equipesDuMembre.length > 3) {
+              equipesDuMembre = equipesDuMembre.slice(0, 3);
+            }
+            setEquipes(equipesDuMembre as any);
           } catch (err) {
-            console.error("Failed to fetch team using readId:", err);
+            console.error('Erreur lors de la récupération des détails du château :', err);
           }
         }
-      }
-    };
+      };
 
-    setTeam();
-  }, [equipes, id_equipe_courante]);  // Run whenever `equipes` or `id_equipe_courante` changes
-  
-  if (type === "organisateur" && (equipes.length === 0 || !activeTeam)) {
-    return (
-      <Skeleton className="w-full h-10 rounded-md" />
-    )
+      fetchUser();
+    }, []);
+
+    // Set the active team once equipes are fetched and id_equipe_courante is available
+    useEffect(() => {
+      const setTeam = async () => {
+        if (equipes.length > 0) {
+          // Try to find the active team from the equipes array
+          const team = equipes.find((team) => team.getIdEquipe() === id_equipe_courante);
+          if (team) {
+            setActiveTeam(team);
+          } else {
+            // If the team is not found, try using the `readId` method
+            try {
+              const teamFromReadId = await EquipeOrganisatrice.readId(id_equipe_courante!);
+              setActiveTeam(teamFromReadId);
+            } catch (err) {
+              console.error("Failed to fetch team using readId:", err);
+            }
+          }
+        }
+      };
+
+      setTeam();
+    }, [equipes, id_equipe_courante]);  // Run whenever `equipes` or `id_equipe_courante` changes
+
+    if (equipes.length === 0 || !activeTeam) {
+      return (
+        <Skeleton className="w-full h-10 rounded-md" />
+      )
+    }
   }
 
   return (
@@ -113,19 +114,21 @@ export function TeamSwitcher({
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
                 <Image src={"/logo.svg"} alt={"Logo Chateau Tresor"} layout={"fill"} className={"!static"} />
               </div>
-              {type === "participant" && 
+              {type === "participant" &&
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
                     C. Trésor
                   </span>
                 </div>
               }
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {activeTeam?.getNom()}
-                </span>
-                <span className="truncate text-xs">{activeTeam?.getStatutVerification()}</span>
-              </div>
+              {type === "organisateur" &&
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">
+                    {activeTeam?.getNom()}
+                  </span>
+                  <span className="truncate text-xs">{activeTeam?.getStatutVerification()}</span>
+                </div>
+              }
               {type === "organisateur" && <ChevronsUpDown className="ml-auto" />}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
