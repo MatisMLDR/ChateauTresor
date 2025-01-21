@@ -37,7 +37,7 @@ export async function getProprietaireByUserId(id_user: UUID): Promise<any> {
  * @returns Promise<Proprietaire> Une instance mise à jour de proprietaire
  * @throws Error si la mise à jour échoue
  */
-export async function updateProprietaire(proprietaire: ProprietaireType): Promise<Proprietaire> {
+export async function updateProprietaire(proprietaire: any): Promise<Proprietaire> {
   const res = await fetch(`${BASE_URL}/${proprietaire.id_proprietaire}`, {
     method: 'PUT',
     headers: {
