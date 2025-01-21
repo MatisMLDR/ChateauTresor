@@ -55,7 +55,7 @@ const RecompensePage: React.FC = () => {
       if (userId) {
         try {
           const participant = await Participant.readByIdUser(userId as UUID);
-          setParticipantId(participant.id_participant);
+          setParticipantId(participant.getIdParticipant());
         } catch (error) {
           console.error('Erreur lors de la récupération du participant :', error);
           setError('Erreur lors de la récupération du participant. Veuillez réessayer.');

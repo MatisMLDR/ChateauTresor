@@ -71,7 +71,7 @@ const GameInterface: React.FC = () => {
         setEnigmes(enigmesTriees)
 
         if (enigmeIdFromUrl) {
-          const index = enigmesTriees.findIndex((enigme: Enigme) => enigme.id_enigme === enigmeIdFromUrl)
+          const index = enigmesTriees.findIndex((enigme: Enigme) => enigme.getId() === enigmeIdFromUrl)
           if (index !== -1) {
             setCurrentEnigmeIndex(index)
           }
@@ -114,7 +114,7 @@ const GameInterface: React.FC = () => {
       if (userId) {
         try {
           const participant = await Participant.readByIdUser(userId as UUID)
-          setParticipantId(participant.id_participant)
+          setParticipantId(participant.getIdParticipant())
         } catch (error) {
           console.error("Erreur lors de la récupération du participant :", error)
           setError("Erreur lors de la récupération du participant. Veuillez réessayer.")
@@ -131,7 +131,7 @@ const GameInterface: React.FC = () => {
         try {
           const participant = await Participant.readByIdUser(userId as UUID)
           const participation = await getParticipationByParticipantIdAndChasseId(
-            participant.id_participant,
+            participant.getIdParticipant(),
             chasseId as UUID,
           )
           setScore(participation.score) // Mettre à jour l'état du score
