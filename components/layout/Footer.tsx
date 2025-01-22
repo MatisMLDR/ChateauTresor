@@ -22,6 +22,9 @@ const Footer = ({ type = "participant" }: { type?: "participant" | "organisateur
         <Link href="/legal/cgu">
           <span className="hover:underline">Conditions générales d&apos;utilisation</span>
         </Link>
+        <Link href="/legal/regles">
+          <span className="hover:underline">Règles du jeu</span>
+        </Link>
         <Link href={type === "organisateur" ? "/" : "/organisateurs"}>
           <span className="hover:underline">{type === "organisateur" ? "Je suis participant" : "Je suis organisateur"}</span>
         </Link>
