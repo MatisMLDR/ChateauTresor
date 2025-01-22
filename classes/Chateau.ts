@@ -1,5 +1,5 @@
 import { ChateauType, ImageFile } from "@/types";
-import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau } from '@/utils/dao/ChateauUtils';
+import { getAllChateaux, getChateauById, createChateau, deleteChateau, updateChateau, getPaginatedChateaux } from '@/utils/dao/ChateauUtils';
 import { getChateauOfProprietaire } from "@/utils/dao/ProprietaireUtils";
 import { UUID } from "crypto";
 
@@ -228,6 +228,29 @@ class Chateau {
             throw new Error('Chateau does not exist');
         }
       }
+
+      public static async getPaginated(params: { 
+        page: number;
+        pageSize: number;
+        searchQuery?: string;
+      }): Promise<{ 
+        data: Chateau[];
+        total: number;
+      }> {
+        try {
+          const response = await getPaginatedChateaux(params);
+          
+          return {
+            data: response.data.map(chateauData => new Chateau(chateauData)),
+            total: response.total
+          };
+        } catch (error) {
+          console.error("Erreur lors de la récupération paginée :", error);
+          throw new Error("Impossible de récupérer la liste paginée des châteaux");
+        }
+      }
 }
+
+
 
 export default Chateau;

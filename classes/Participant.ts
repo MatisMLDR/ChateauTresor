@@ -88,7 +88,6 @@ export class Participant {
     }
 
     this.id_participant = avis.id_participant;
-    this.nom = avis.nom;
     this.id_user = avis.id_user;
   }
 

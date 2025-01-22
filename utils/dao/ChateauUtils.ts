@@ -1,3 +1,4 @@
+import { ChateauType } from '@/types';
 import { UUID } from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -106,5 +107,40 @@ export async function deleteChateau(id_chateau: UUID): Promise<void> {
 
   if (!res.ok) {
     throw new Error(`Erreur lors de la suppression du château avec l'ID ${id_chateau}`);
+  }
+}
+
+export async function getPaginatedChateaux(params: { 
+  page: number;
+  pageSize: number;
+  searchQuery?: string;
+}): Promise<{ 
+  data: ChateauType[];
+  total: number;
+}> {
+  try {
+    const url = new URL(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chateaux/pagination`);
+    
+    url.searchParams.append('page', params.page.toString());
+    url.searchParams.append('pageSize', params.pageSize.toString());
+    if(params.searchQuery) {
+      url.searchParams.append('search', params.searchQuery);
+    }
+
+    const res = await fetch(url.toString());
+    
+    if (!res.ok) {
+      throw new Error('Erreur lors de la récupération paginée des châteaux');
+    }
+    
+    const response = await res.json();
+    
+    return {
+      data: response.data,
+      total: response.totalItems
+    };
+  } catch (error) {
+    console.error('Erreur dans getPaginatedChateaux:', error);
+    throw new Error('Erreur lors de la récupération des châteaux');
   }
 }

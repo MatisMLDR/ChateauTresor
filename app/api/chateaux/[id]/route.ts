@@ -6,7 +6,7 @@ export async function GET(request: Request, { params }: { params: { id: UUID } }
   const supabase = createClient();
 
   try {
-    const id = await params?.id; // Attendre `params` pour éviter l'erreur
+    const { id } = await params; // Attendre `params` pour éviter l'erreur
 
     if (!id) {
       return NextResponse.json(
