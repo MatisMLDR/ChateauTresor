@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { createClient } from '@/utils/supabase/client';
 import { UUID } from 'crypto';
 import { Loader } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -39,6 +40,7 @@ const Onboarding = () => {
     nSiret: '',
     idTaxes: '',
     terms: false, // Ajouté pour la case à cocher des conditions d'utilisation
+    legalAge: false,
   });
   const [loading, setLoading] = useState(false);
 
@@ -585,7 +587,22 @@ const Onboarding = () => {
                     required
                   />
                   <label htmlFor="terms">
-                    J&apos;accepte les conditions d&apos;utilisation
+                    J&apos;accepte les <Link href="/legal/cgu" className='text-primary underline'>conditions d&apos;utilisation</Link>
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
+                </div>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    id="legalAge"
+                    name="legalAge"
+                    checked={formData.legalAge}
+                    onChange={handleInputChange}
+                    className="h-4 w-4"
+                    required
+                  />
+                  <label htmlFor="legalAge">
+                    Je certifie avoir plus de 15 ans
                     <span className="text-red-500 ml-1">*</span>
                   </label>
                 </div>
@@ -596,7 +613,7 @@ const Onboarding = () => {
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button type="button" disabled={!formData.terms}>
+                      <Button type="button" disabled={!formData.terms || !formData.legalAge}>
                         Soumettre la demande
                       </Button>
                     </AlertDialogTrigger>

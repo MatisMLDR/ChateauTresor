@@ -7,6 +7,7 @@ import { signupOrganisateur, signupParticipant } from '@/app/auth/actions'
 import { useActionState } from "react"
 import { useState } from "react"
 import { AuthProps } from "@/types"
+import Link from "next/link"
 
 export default function SignupForm({ redirect }: AuthProps) {
     const initialState = {
@@ -23,6 +24,8 @@ export default function SignupForm({ redirect }: AuthProps) {
     const [postalCode, setPostalCode] = useState("")
     const [isValidPostal, setIsValidPostal] = useState(true)
     const [showPostalError, setShowPostalError] = useState(false)
+    const [terms, setTerms] = useState(false)
+    const [legalAge, setLegalAge] = useState(false)
 
     const validatePasswords = (pass: string, verify: string) => {
         const isMatch = pass === verify
@@ -71,6 +74,17 @@ export default function SignupForm({ redirect }: AuthProps) {
     const handlePostalBlur = () => {
         setShowPostalError(false)
     }
+
+    const handleTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const checked = e.target.checked
+        setTerms(checked)
+    }
+
+    const handleLegalAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const checked = e.target.checked
+        setLegalAge(checked)
+    }
+
     return (
         <>
             {step === 1 && (
@@ -196,8 +210,39 @@ export default function SignupForm({ redirect }: AuthProps) {
                             </div>
                         </div>
 
+                        <div className="flex items-center gap-4">
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                name="terms"
+                                checked={terms}
+                                onChange={handleTermsChange}
+                                className="h-4 w-4"
+                                required
+                            />
+                            <label htmlFor="terms">
+                                J&apos;accepte les <Link href="/legal/cgu" className='text-primary underline'>CGU</Link>
+                                <span className="text-red-500 ml-1">*</span>
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <input
+                                type="checkbox"
+                                id="legalAge"
+                                name="legalAge"
+                                checked={legalAge}
+                                onChange={handleLegalAgeChange}
+                                className="h-4 w-4"
+                                required
+                            />
+                            <label htmlFor="legalAge">
+                                Je certifie avoir plus de 15 ans
+                                <span className="text-red-500 ml-1">*</span>
+                            </label>
+                        </div>
 
-                        <Button className="w-full mt-4" type="submit" aria-disabled={pending}>
+
+                        <Button className="w-full mt-4" type="submit" aria-disabled={pending} disabled={!terms || !legalAge}>
                             {pending ? 'Submitting...' : "Finaliser l'inscription"}
                         </Button>
                         {formState?.message && (
