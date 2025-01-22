@@ -19,20 +19,14 @@ const Footer = ({ type = "participant" }: { type?: "participant" | "organisateur
       </div>
 
       <div className="flex flex-col max-md:text-center md:flex-row gap-4 text-xs">
-        <Link href="/legal">
-          <span className="hover:underline">Mentions légales</span>
-        </Link>
-        <Link href="/cgu">
+        <Link href="/legal/cgu">
           <span className="hover:underline">Conditions générales d&apos;utilisation</span>
+        </Link>
+        <Link href="/legal/regles">
+          <span className="hover:underline">Règles du jeu</span>
         </Link>
         <Link href={type === "organisateur" ? "/" : "/organisateurs"}>
           <span className="hover:underline">{type === "organisateur" ? "Je suis participant" : "Je suis organisateur"}</span>
-        </Link>
-        <Link href="/sales">
-          <span className="hover:underline">Conditions générales de vente</span>
-        </Link>
-        <Link href="/cookie">
-          <span className="hover:underline">Politique de gestion des cookies</span>
         </Link>
         <Link href="https://www.internet-signalement.gouv.fr/PharosS1/">
           <span className="hover:underline">Signaler un contenu illicite</span>
