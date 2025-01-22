@@ -17,6 +17,7 @@ import { SideBarProps } from '@/types';
 import { UUID } from 'crypto';
 import {
   BellPlus,
+  BookKeyIcon,
   Castle,
   History,
   LayoutDashboard,
@@ -116,6 +117,11 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
         icon: LayoutDashboard,
       },
       {
+        title: 'Règles du jeu',
+        url: `/organisateurs/dashboard/${id_equipe}/regles-du-jeu`,
+        icon: BookKeyIcon,
+      },
+      {
         title: 'Châteaux',
         url: `/organisateurs/dashboard/${id_equipe}/chateaux`,
         icon: Castle,
@@ -160,6 +166,11 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
         url: '/participants/dashboard/carte',
         icon: MapPin,
         isActive: true,
+      },
+      {
+        title: 'Règles du jeu',
+        url: `/participants/dashboard/regles-du-jeu`,
+        icon: BookKeyIcon,
       },
       {
         title: 'Châteaux',
