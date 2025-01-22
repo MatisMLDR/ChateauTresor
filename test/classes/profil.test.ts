@@ -6,7 +6,7 @@ jest.mock("@/utils/dao/ProfilUtils");
 
 describe("Profil Class", () => {
   const mockProfile: ProfilType = {
-    id_profil: "69bd765a-53b5-4639-b835-da7031139ecf",
+    id: "69bd765a-53b5-4639-b835-da7031139ecf",
     username: "testuser",
     updated_at: "2023-01-01",
     email: "testuser@example.com",

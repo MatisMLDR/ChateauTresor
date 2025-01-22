@@ -98,3 +98,17 @@ export async function getChateauOfProprietaire(id_proprietaire: UUID) {
   }
   return await res.json();
 }
+
+/*
+ * Méthode pour récupérer les chasses en cours de validation pour un propriétaire donné
+ * @param id_proprietaire L'identifiant du proprietaire
+ * @returns Promise<any[]> Une liste de chasses en cours de validation
+ * @throws Error si la récupération échoue
+ */
+export async function getChassesEnValidationParProprietaire(id_proprietaire: UUID): Promise<any[]> {
+  const res = await fetch(`${BASE_URL}/${id_proprietaire}/demandes`);
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des chasses en cours de validation');
+  }
+  return await res.json();
+}

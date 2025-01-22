@@ -19,7 +19,7 @@ const ForgotPasswordCard = ({ redirect }: AuthProps) => {
           Retour à la connexion
         </Link>
         <Link className="w-full text-sm text-muted-foreground" href={`/authentication/signup?redirect=${redirect}`}>
-          Pas de compte ? S'inscrire
+          Pas de compte ? S&apos;inscrire
         </Link>
       </CardFooter>
     </Card>

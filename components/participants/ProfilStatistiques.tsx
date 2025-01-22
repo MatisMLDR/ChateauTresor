@@ -25,8 +25,8 @@ export default function ProfilStatistiques({ participantData }: { participantDat
         <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-0 md:items-start w-full">
           <div className="flex items-center gap-6 flex-wrap">
             <Avatar className="h-20 w-20">
-              <AvatarFallback className="text-xl">
-                {participantData.prenom?.[0]}{participantData.nom?.[0]}
+              <AvatarFallback className="text-3xl bg-gold text-primary font-medium">
+                {participantData.prenom?.[0]}
               </AvatarFallback>
             </Avatar>
             <div className="space-y-1">
@@ -47,10 +47,7 @@ export default function ProfilStatistiques({ participantData }: { participantDat
             </Link> 
             <Link href="/participants/dashboard/classements">
               <Trophy className="h-6 w-6" />
-            </Link> 
-            <Link href="/participants/dashboard/chasses">
-              <Plus className="h-6 w-6" />
-            </Link> 
+            </Link>
           </div>
         </div>
         <Separator orientation="horizontal" className="text-gray-400 bg-gray-200 w-full h-[1px]" />

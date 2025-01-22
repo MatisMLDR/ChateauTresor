@@ -43,7 +43,8 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
         <div>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-3xl font-bold">{chasse.getTitre()}</h1>
-            <div className="flex items-center space-x-2">
+            {chasse.getIdEquipe() === params.id_equipe && (
+              <div className="flex items-center space-x-2">
               {/* Bouton de modification de la chasse */}
               <Link href={`/organisateurs/dashboard/${id_equipe}/modifier_chasse/${chasse.getIdChasse()}`}>
                 <Button variant="ghost" size="icon">
@@ -61,6 +62,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
                 </Button>
               </Link>
             </div>
+            )}
           </div>
           <p className="mb-4 text-gray-700">{chasse.getDescription()}</p>
           <p className="mb-2 flex items-center">

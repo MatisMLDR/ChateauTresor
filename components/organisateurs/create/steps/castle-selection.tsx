@@ -14,11 +14,18 @@ import { Button } from "@/components/ui/button";
 interface SelectionChateauProps {
   formData: Partial<ChasseType>;
   setFormData: (data: Partial<ChasseType>) => void;
-  onValidityChange: (isValid: boolean) => void;
+  onValidityChange?: (isValid: boolean) => void;
   onNext?: () => void;
+  readOnly?: boolean;
 }
 
-export function CastleSelection({ formData, setFormData, onValidityChange, onNext }: SelectionChateauProps) {
+export function CastleSelection({ 
+  formData, 
+  setFormData, 
+  onValidityChange, 
+  onNext, 
+  readOnly 
+}: SelectionChateauProps) {
   const [chateaux, setChateaux] = useState<ChateauType[]>([]);
   const [filteredChateaux, setFilteredChateaux] = useState<ChateauType[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -28,14 +35,12 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
   const [chateauxPerPage] = useState<number>(4);
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // Fonction pour valider le format de la date
   const isValidDate = (dateString: string | undefined): boolean => {
     if (!dateString) return false;
     const regex = /^\d{4}-\d{2}-\d{2}$/;
     return regex.test(dateString);
   };
 
-  // Validation du formulaire
   useEffect(() => {
     const validateForm = () => {
       const { id_chateau, date_debut, date_fin, horaire_debut, horaire_fin, capacite } = formData;
@@ -47,16 +52,20 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
       const isHoraireFinValid = !!horaire_fin;
       const isCapaciteValid = capacite !== undefined && capacite > 0;
 
-      return isChateauValid && isDateDebutValid && isDateFinValid && 
-             isHoraireDebutValid && isHoraireFinValid && isCapaciteValid;
+      const isValid = isChateauValid && 
+        isDateDebutValid && 
+        isDateFinValid && 
+        isHoraireDebutValid && 
+        isHoraireFinValid && 
+        isCapaciteValid;
+
+      setIsFormValid(isValid);
+      onValidityChange?.(isValid);
     };
 
-    const isValid = validateForm();
-    setIsFormValid(isValid);
-    onValidityChange(isValid);
+    validateForm();
   }, [formData, onValidityChange]);
 
-  // Chargement des châteaux
   useEffect(() => {
     const chargerChateaux = async () => {
       try {
@@ -80,7 +89,6 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
           );
           if (chateauExist) {
             setSearchTerm(chateauExist.nom || "");
-            // Force la validation du formulaire si un château est déjà sélectionné
             setFormData({ 
               ...formData, 
               id_chateau: formData.id_chateau,
@@ -99,7 +107,6 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
     chargerChateaux();
   }, []);
 
-  // Filtrage des châteaux en fonction de la recherche
   useEffect(() => {
     const filtered = chateaux.filter((chateau) =>
       chateau.nom?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -124,16 +131,19 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="search">Rechercher un château</Label>
-        <Input
-          id="search"
-          type="text"
-          placeholder="Rechercher par nom..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+      {!readOnly && (
+        <div className="space-y-2">
+          <Label htmlFor="search">Rechercher un château</Label>
+          <Input
+            id="search"
+            type="text"
+            placeholder="Rechercher par nom..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            readOnly={readOnly}
+          />
+        </div>
+      )}
 
       <div className="space-y-4">
         <Label className="flex items-center gap-1">
@@ -143,16 +153,17 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
         <RadioGroup
           value={formData.id_chateau?.toString()}
           onValueChange={(valeur) => {
+            if (readOnly) return;
             const chateauSelectionne = chateaux.find(
               (chateau) => chateau.id_chateau.toString() === valeur
             );
-            console.log("Château sélectionné :", chateauSelectionne); // Debug
             setFormData({ 
               ...formData, 
-              id_chateau: valeur as `${string}-${string}-${string}-${string}-${string}`, // Correction du type
+              id_chateau: valeur as `${string}-${string}-${string}-${string}-${string}`,
               chateau: chateauSelectionne 
             });
           }}
+          disabled={readOnly}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {currentChateaux.length === 0 ? (
@@ -165,12 +176,12 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
                     formData.chateau?.id_chateau === chateau.id_chateau 
                       ? "ring-2 ring-primary" 
                       : ""
-                  }`}
+                  } ${readOnly ? 'cursor-default' : ''}`}
                   onClick={() => {
-                    console.log("Château cliqué :", chateau); // Debug
+                    if (readOnly) return;
                     setFormData({ 
                       ...formData, 
-                      id_chateau: chateau.id_chateau as `${string}-${string}-${string}-${string}-${string}`, // Correction du type
+                      id_chateau: chateau.id_chateau as `${string}-${string}-${string}-${string}-${string}`,
                       chateau 
                     });
                   }}
@@ -189,6 +200,7 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
                           value={chateau.id_chateau.toString()}
                           id={chateau.id_chateau.toString()}
                           className="sr-only"
+                          disabled={readOnly}
                         />
                       </div>
                     </div>
@@ -209,31 +221,33 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
           </div>
         </RadioGroup>
 
-        <div className="flex justify-center gap-2">
-          <Button
-            variant="outline"
-            onClick={() => paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Précédent
-          </Button>
-          {Array.from({ length: Math.ceil(filteredChateaux.length / chateauxPerPage) }, (_, i) => (
+        {!readOnly && (
+          <div className="flex justify-center gap-2">
             <Button
-              key={i + 1}
-              variant={currentPage === i + 1 ? "default" : "outline"}
-              onClick={() => paginate(i + 1)}
+              variant="outline"
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
             >
-              {i + 1}
+              Précédent
             </Button>
-          ))}
-          <Button
-            variant="outline"
-            onClick={() => paginate(currentPage + 1)}
-            disabled={currentPage === Math.ceil(filteredChateaux.length / chateauxPerPage)}
-          >
-            Suivant
-          </Button>
-        </div>
+            {Array.from({ length: Math.ceil(filteredChateaux.length / chateauxPerPage) }, (_, i) => (
+              <Button
+                key={i + 1}
+                variant={currentPage === i + 1 ? "default" : "outline"}
+                onClick={() => paginate(i + 1)}
+              >
+                {i + 1}
+              </Button>
+            ))}
+            <Button
+              variant="outline"
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === Math.ceil(filteredChateaux.length / chateauxPerPage)}
+            >
+              Suivant
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -242,30 +256,40 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
             Date de début
             <span className="text-red-500">*</span>
           </Label>
-          <Input
-            id="date_debut"
-            type="date"
-            required
-            value={formData.date_debut ? formData.date_debut.split('T')[0] : ""} // Format YYYY-MM-DD
-            onChange={(e) => {
-              setFormData({ ...formData, date_debut: e.target.value });
-            }}
-          />
+          {readOnly ? (
+            <p className="text-sm pt-1">{formData.date_debut}</p>
+          ) : (
+            <Input
+              id="date_debut"
+              type="date"
+              required
+              value={formData.date_debut ? formData.date_debut.split('T')[0] : ""}
+              onChange={(e) => {
+                setFormData({ ...formData, date_debut: e.target.value });
+              }}
+              readOnly={readOnly}
+            />
+          )}
         </div>
         <div className="space-y-2">
           <Label className="flex items-center gap-1" htmlFor="date_fin">
             Date de fin
             <span className="text-red-500">*</span>
           </Label>
-          <Input
-            id="date_fin"
-            type="date"
-            required
-            value={formData.date_fin ? formData.date_fin.split('T')[0] : ""} // Format YYYY-MM-DD
-            onChange={(e) => {
-              setFormData({ ...formData, date_fin: e.target.value });
-            }}
-          />
+          {readOnly ? (
+            <p className="text-sm pt-1">{formData.date_fin}</p>
+          ) : (
+            <Input
+              id="date_fin"
+              type="date"
+              required
+              value={formData.date_fin ? formData.date_fin.split('T')[0] : ""}
+              onChange={(e) => {
+                setFormData({ ...formData, date_fin: e.target.value });
+              }}
+              readOnly={readOnly}
+            />
+          )}
         </div>
       </div>
 
@@ -275,26 +299,36 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
             Heure de début
             <span className="text-red-500">*</span>
           </Label>
-          <Input
-            id="horaire_debut"
-            type="time"
-            required
-            value={formData.horaire_debut || ""}
-            onChange={(e) => setFormData({ ...formData, horaire_debut: e.target.value })}
-          />
+          {readOnly ? (
+            <p className="text-sm pt-1">{formData.horaire_debut}</p>
+          ) : (
+            <Input
+              id="horaire_debut"
+              type="time"
+              required
+              value={formData.horaire_debut || ""}
+              onChange={(e) => setFormData({ ...formData, horaire_debut: e.target.value })}
+              readOnly={readOnly}
+            />
+          )}
         </div>
         <div className="space-y-2">
           <Label className="flex items-center gap-1" htmlFor="horaire_fin">
             Heure de fin
             <span className="text-red-500">*</span>
           </Label>
-          <Input
-            id="horaire_fin"
-            type="time"
-            required
-            value={formData.horaire_fin || ""}
-            onChange={(e) => setFormData({ ...formData, horaire_fin: e.target.value })}
-          />
+          {readOnly ? (
+            <p className="text-sm pt-1">{formData.horaire_fin}</p>
+          ) : (
+            <Input
+              id="horaire_fin"
+              type="time"
+              required
+              value={formData.horaire_fin || ""}
+              onChange={(e) => setFormData({ ...formData, horaire_fin: e.target.value })}
+              readOnly={readOnly}
+            />
+          )}
         </div>
       </div>
 
@@ -303,20 +337,25 @@ export function CastleSelection({ formData, setFormData, onValidityChange, onNex
           Capacité maximale
           <span className="text-red-500">*</span>
         </Label>
-        <Input
-          id="capacite"
-          type="number"
-          required
-          min={1}
-          value={formData.capacite || ""}
-          onChange={(e) => {
-            const value = parseInt(e.target.value, 10) || 0;
-            setFormData({ ...formData, capacite: value > 0 ? value : undefined });
-          }}
-        />
+        {readOnly ? (
+          <p className="text-sm pt-1">{formData.capacite}</p>
+        ) : (
+          <Input
+            id="capacite"
+            type="number"
+            required
+            min={1}
+            value={formData.capacite || ""}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10) || 0;
+              setFormData({ ...formData, capacite: value > 0 ? value : undefined });
+            }}
+            readOnly={readOnly}
+          />
+        )}
       </div>
 
-      {onNext && (
+      {!readOnly && onNext && (
         <div className="flex justify-end border-t pt-4">
           <Button 
             onClick={onNext}

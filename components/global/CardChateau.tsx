@@ -6,7 +6,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Euro, MapPin, Users } from 'lucide-react';
 import Chateau from '@/classes/Chateau';
-import Chasse from '@/classes/Chasse';
 import { getAllChassesByChateau } from '@/utils/dao/ChasseUtils';
 import { ChasseType } from '@/types';
 import { usePathname } from 'next/navigation'; // Import du hook usePathname
@@ -16,22 +15,7 @@ interface CardChateauProps {
 }
 
 const CardChateau = ({ chateau }: CardChateauProps) => {
-  const [chasses, setChasses] = useState<Chasse[]>([]);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const fetchChasses = async () => {
-      try {
-        const chassesData = await getAllChassesByChateau(chateau.getIdChateau());
-        setChasses(chassesData.map((chasseData: ChasseType) => new Chasse(chasseData)));
-      } catch (error) {
-        console.error('Error fetching chasses:', error);
-      }
-    };
-    fetchChasses();
-  }, [chateau.getIdChateau()]);
-
-  const availableChasses = chasses.filter((chasse) => chasse.isAvailable());
 
   const url = pathname.split('/');
   let teamId = null;
@@ -53,7 +37,7 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
         </div>
       </CardHeader>
       <CardContent className="flex-1 p-4">
-        <CardTitle className="mb-2 text-xl font-bold">{chateau.getNom()}</CardTitle>
+        <CardTitle className="mb-2 text-xl font-bold line-clamp-1">{chateau.getNom()}</CardTitle>
         <p className="mb-4 line-clamp-1 text-sm text-gray-600">
           {chateau.getDescription() || 'Pas de description disponible.'}
         </p>
@@ -79,25 +63,6 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
               </span>
             </div>
           }
-        </div>
-        <div className="mt-4">
-          <h3 className="text-lg font-bold">Chasses Disponibles ({availableChasses.length})</h3>
-          {availableChasses.length > 0 ? (
-            <ul className="max-h-40 list-disc overflow-y-auto pl-5">
-              {availableChasses.map((chasse) => (
-                <li key={chasse.getIdChasse()} className="text-sm text-gray-800">
-                  <Link
-                    href={`/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chasses/${chasse.getIdChasse()}`}
-                    className="hover:text-blue-600"
-                  >
-                    {chasse.getTitre()}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-gray-600">Aucune chasse disponible pour le moment.</p>
-          )}
         </div>
       </CardContent>
       <CardFooter className="p-4">

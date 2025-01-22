@@ -35,11 +35,22 @@ import { contenuTextuel } from '@/constants';
 import { ChasseType, EnigmeType, IndiceType } from "@/types";
 import { UUID } from "crypto";
 import { parseISO, differenceInSeconds } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface RiddlesCreationProps {
   formData: Partial<ChasseType>;
   setFormData: (data: Partial<ChasseType>) => void;
-  onValidityChange: (isValid: boolean) => void; // Ajout de la prop pour la validation
+  onValidityChange: (isValid: boolean) => void;
+  readOnly?: boolean;
 }
 
 function secondsToTimeString(totalSeconds: number): string {
@@ -72,10 +83,12 @@ function IndiceCompacte({
   indice,
   onEditIndice,
   onDeleteIndice,
+  readOnly,
 }: {
   indice: IndiceType;
   onEditIndice: (indice: IndiceType) => void;
   onDeleteIndice: (id_indice: UUID) => void;
+  readOnly?: boolean;
 }) {
   const {
     attributes,
@@ -134,9 +147,11 @@ function IndiceCompacte({
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <div {...listeners} className="cursor-grab">
-              <GripVertical className="h-5 w-5 text-muted-foreground" />
-            </div>
+            {!readOnly && (
+              <div {...listeners} className="cursor-grab">
+                <GripVertical className="h-5 w-5 text-muted-foreground" />
+              </div>
+            )}
 
             <div className="flex items-center justify-center w-8 h-8 bg-muted rounded-full">
               <span className="text-sm font-medium">{indice.ordre}</span>
@@ -149,28 +164,32 @@ function IndiceCompacte({
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditIndice(indice);
-                }}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteIndice(indice.id_indice);
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
+            {!readOnly && (
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditIndice(indice);
+                  }}
+                  disabled={readOnly}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteIndice(indice.id_indice);
+                  }}
+                  disabled={readOnly}
+                >
+                  <Trash2 className="h-4 w-4 hover:text-red-500" />
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -178,12 +197,20 @@ function IndiceCompacte({
   );
 }
 
-function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme, isActive }: { 
+function EnigmeCompacte({ 
+  enigme, 
+  onSelectEnigme, 
+  onEditEnigme, 
+  onDeleteEnigme, 
+  isActive, 
+  readOnly 
+}: { 
   enigme: EnigmeType; 
   onSelectEnigme: (enigme: EnigmeType) => void;
   onEditEnigme: (enigme: EnigmeType) => void;
   onDeleteEnigme: (id_enigme: UUID) => void;
   isActive: boolean;
+  readOnly?: boolean;
 }) {
   const {
     attributes,
@@ -201,14 +228,16 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme, 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
       <Card 
-        className={`cursor-pointer ${isActive ? "ring-2 ring-primary" : ""}`}
-        onClick={() => onSelectEnigme(enigme)}
+        className={`${isActive ? "ring-2 ring-primary" : ""} ${!readOnly ? "cursor-pointer" : ""}`}
+        onClick={!readOnly ? () => onSelectEnigme(enigme) : undefined}
       >
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <div {...listeners} className="cursor-grab">
-              <GripVertical className="h-5 w-5 text-muted-foreground" />
-            </div>
+            {!readOnly && (
+              <div {...listeners} className="cursor-grab">
+                <GripVertical className="h-5 w-5 text-muted-foreground" />
+              </div>
+            )}
             <div className="flex items-center justify-center w-8 h-8 bg-muted rounded-full">
               <span className="text-sm font-medium">{enigme.ordre}</span>
             </div>
@@ -231,26 +260,31 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme, 
                 Durée max: {secondsToTimeString(enigme.temps_max)}
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEditEnigme(enigme);
-              }}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteEnigme(enigme.id_enigme as UUID);
-              }}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            {!readOnly && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditEnigme(enigme);
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteEnigme(enigme.id_enigme as UUID);
+                  }}
+                  disabled={isActive}
+                >
+                  <Trash2 className="h-4 w-4 hover:text-red-500" />
+                </Button>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -258,7 +292,7 @@ function EnigmeCompacte({ enigme, onSelectEnigme, onEditEnigme, onDeleteEnigme, 
   );
 }
 
-export function RiddlesCreation({ formData, setFormData, onValidityChange }: RiddlesCreationProps) {
+export function RiddlesCreation({ formData, setFormData, onValidityChange, readOnly }: RiddlesCreationProps) {
   const [nouvelleEnigme, setNouvelleEnigme] = useState<Partial<EnigmeType>>({
     id_enigme: crypto.randomUUID() as UUID,
     titre: "",
@@ -275,15 +309,31 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
   const [indiceEnCoursEdition, setIndiceEnCoursEdition] = useState<IndiceType | null>(null);
   const [afficherModalIndice, setAfficherModalIndice] = useState(false);
   const [erreurDuree, setErreurDuree] = useState<string | null>(null);
+  const [enigmeToDelete, setEnigmeToDelete] = useState<UUID | null>(null);
+  const [indiceToDelete, setIndiceToDelete] = useState<UUID | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+    useSensor(KeyboardSensor)
   );
 
+  const isEnigmeValide = () => {
+    const currentEnigme = enigmeEnCoursEdition || nouvelleEnigme;
+    return Boolean(
+      currentEnigme.titre?.trim() &&
+      currentEnigme.description?.trim() &&
+      currentEnigme.indices?.length &&
+      currentEnigme.endroit_qrcode?.trim() &&
+      currentEnigme.temps_max &&
+      currentEnigme.description_reponse?.trim() &&
+      currentEnigme.image_reponse &&
+      currentEnigme.degre_difficulte &&
+      !erreurDuree
+    );
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (readOnly) return;
     const file = e.target.files?.[0];
     if (file) {
       if (enigmeEnCoursEdition) {
@@ -307,6 +357,8 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
     contenu: string | File;
     degre_aide?: number;
   }) => {
+    if (readOnly) return;
+    
     const currentIndices = enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || [];
     const nouvelOrdre = indiceEnCoursEdition 
       ? indiceEnCoursEdition.ordre 
@@ -318,7 +370,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
       id_indice: indiceEnCoursEdition?.id_indice || crypto.randomUUID() as UUID,
       id_enigme: enigmeEnCoursEdition?.id_enigme || nouvelleEnigme.id_enigme || (crypto.randomUUID() as UUID),
       ordre: nouvelOrdre,
-      degre_aide: indice.degre_aide ?? 0,
+      degre_aide: indice.degre_aide ?? 1,
     };
   
     if (enigmeEnCoursEdition) {
@@ -346,6 +398,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
   };
 
   const mettreAJourEnigme = (enigme: EnigmeType) => {
+    if (readOnly) return;
     const updatedEnigmes = formData.enigmes?.map(e => 
       e.id_enigme === enigme.id_enigme ? enigme : e
     ) || [];
@@ -353,6 +406,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
   };
 
   const supprimerIndice = (id_indice: UUID) => {
+    if (readOnly) return;
     if (enigmeEnCoursEdition) {
       const updatedIndices = enigmeEnCoursEdition.indices?.filter(i => i.id_indice !== id_indice);
       setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, indices: updatedIndices });
@@ -360,43 +414,47 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
       const updatedIndices = nouvelleEnigme.indices?.filter(i => i.id_indice !== id_indice);
       setNouvelleEnigme({ ...nouvelleEnigme, indices: updatedIndices });
     }
+    setIndiceToDelete(null);
   };
 
   const ajouterEnigme = () => {
-    if (nouvelleEnigme.titre && nouvelleEnigme.indices?.length) {
-      const enigmeComplete = {
-        ...nouvelleEnigme,
-        ordre: (formData.enigmes?.length || 0) + 1,
-      } as EnigmeType;
+    if (readOnly || !isEnigmeValide()) return;
+    
+    const enigmeComplete = {
+      ...nouvelleEnigme,
+      ordre: (formData.enigmes?.length || 0) + 1,
+    } as EnigmeType;
 
-      setFormData({
-        ...formData,
-        enigmes: [...(formData.enigmes || []), enigmeComplete],
-      });
+    setFormData({
+      ...formData,
+      enigmes: [...(formData.enigmes || []), enigmeComplete],
+    });
 
-      setNouvelleEnigme({
-        id_enigme: crypto.randomUUID() as UUID,
-        titre: "",
-        description: "",
-        indices: [],
-        endroit_qrcode: "",
-        temps_max: 0,
-        description_reponse: "",
-        image_reponse: "",
-        degre_difficulte: 1,
-      });
-    }
+    setNouvelleEnigme({
+      id_enigme: crypto.randomUUID() as UUID,
+      titre: "",
+      description: "",
+      indices: [],
+      endroit_qrcode: "",
+      temps_max: 0,
+      description_reponse: "",
+      image_reponse: "",
+      degre_difficulte: 1,
+    });
   };
 
   const supprimerEnigme = (id_enigme: UUID) => {
+    if (readOnly) return;
     const updatedEnigmes = formData.enigmes?.filter(e => e.id_enigme !== id_enigme) || [];
     setFormData({
       ...formData,
       enigmes: updatedEnigmes.map((e, index) => ({ ...e, ordre: index + 1 })),
     });
+    setEnigmeToDelete(null);
   };
 
   const handleDragEndEnigmes = (event: any) => {
+    if (readOnly) return;
     const { active, over } = event;
     if (active.id !== over?.id) {
       const oldIndex = formData.enigmes?.findIndex(e => e.id_enigme === active.id);
@@ -413,6 +471,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
   };
 
   const handleDragEndIndices = (event: any) => {
+    if (readOnly) return;
     const { active, over } = event;
     if (active.id !== over?.id) {
       const indices = enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || [];
@@ -433,6 +492,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
   };
 
   const handleTempsMaxChange = (timeString: string) => {
+    if (readOnly) return;
     const selectedSeconds = timeStringToSeconds(timeString);
     
     const startDateTime = parseDateTime(formData.date_debut ?? undefined, formData.horaire_debut ?? undefined);
@@ -463,12 +523,6 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
     }
   };
 
-  // Validation pour empêcher la création d'une énigme sans indices
-  const isEnigmeValid = (enigme: Partial<EnigmeType>) => {
-    return enigme.titre && enigme.indices?.length;
-  };
-
-  // Validation pour empêcher le passage à l'étape suivante sans énigmes
   useEffect(() => {
     const isValid = !!(formData.enigmes && formData.enigmes.length > 0);
     onValidityChange(isValid);
@@ -476,11 +530,15 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
 
   return (
     <div className="space-y-8">
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndEnigmes}>
+      <DndContext 
+        sensors={readOnly ? undefined : sensors} 
+        collisionDetection={closestCenter} 
+        onDragEnd={readOnly ? undefined : handleDragEndEnigmes}
+      >
         {formData.enigmes && formData.enigmes.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Énigmes ajoutées</CardTitle>
+              <CardTitle>Énigmes {!readOnly && "ajoutées"}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -494,8 +552,9 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
                       enigme={enigme}
                       onSelectEnigme={setEnigmeEnCoursEdition}
                       onEditEnigme={setEnigmeEnCoursEdition}
-                      onDeleteEnigme={supprimerEnigme}
+                      onDeleteEnigme={(id) => setEnigmeToDelete(id)}
                       isActive={enigme.id_enigme === enigmeEnCoursEdition?.id_enigme}
+                      readOnly={readOnly}
                     />
                   ))}
                 </SortableContext>
@@ -505,189 +564,250 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
         )}
       </DndContext>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {enigmeEnCoursEdition ? "Modifier l'énigme" : "Ajouter une nouvelle énigme"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="titre">Titre de l'énigme</Label>
-            <Textarea
-              id="titre"
-              value={enigmeEnCoursEdition?.titre || nouvelleEnigme.titre || ""}
-              onChange={(e) =>
-                enigmeEnCoursEdition
-                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, titre: e.target.value })
-                  : setNouvelleEnigme({ ...nouvelleEnigme, titre: e.target.value })
-              }
-              placeholder="Entrez le titre de l'énigme"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Contenu de l'énigme</Label>
-            <Textarea
-              id="description"
-              value={enigmeEnCoursEdition?.description || nouvelleEnigme.description || ""}
-              onChange={(e) =>
-                enigmeEnCoursEdition
-                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description: e.target.value })
-                  : setNouvelleEnigme({ ...nouvelleEnigme, description: e.target.value })
-              }
-              placeholder="Entrez le contenu de l'énigme"
-              required
-            />
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label>Indices</Label>
-              <Button variant="outline" size="sm" onClick={ajouterIndice}>
-                <Plus className="mr-2 h-4 w-4" />
-                Ajouter un indice
-              </Button>
+      {!readOnly ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {enigmeEnCoursEdition ? "Modifier l'énigme" : "Ajouter une nouvelle énigme"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="titre">
+                Titre de l'énigme <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="titre"
+                value={enigmeEnCoursEdition?.titre || nouvelleEnigme.titre || ""}
+                onChange={(e) =>
+                  enigmeEnCoursEdition
+                    ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, titre: e.target.value })
+                    : setNouvelleEnigme({ ...nouvelleEnigme, titre: e.target.value })
+                }
+                placeholder="Entrez le titre de l'énigme"
+                required
+              />
             </div>
 
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndIndices}>
-              <SortableContext
-                items={(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(i => i.id_indice)}
-                strategy={verticalListSortingStrategy}
-              >
-                {(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map((indice) => (
-                  <IndiceCompacte
-                    key={indice.id_indice}
-                    indice={indice}
-                    onEditIndice={(indice) => {
-                      setIndiceEnCoursEdition(indice);
-                      setAfficherModalIndice(true);
-                    }}
-                    onDeleteIndice={supprimerIndice}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="endroit_qrcode">Endroit du QR Code</Label>
-            <Input
-              id="endroit_qrcode"
-              value={enigmeEnCoursEdition?.endroit_qrcode || nouvelleEnigme.endroit_qrcode || ""}
-              onChange={(e) =>
-                enigmeEnCoursEdition
-                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, endroit_qrcode: e.target.value })
-                  : setNouvelleEnigme({ ...nouvelleEnigme, endroit_qrcode: e.target.value })
-              }
-              placeholder="Entrer la localisation exacte du QR Code"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="temps_max">Durée maximale (HH:mm)</Label>
-            <Input
-              id="temps_max"
-              type="time"
-              step="60"
-              value={secondsToTimeString(
-                enigmeEnCoursEdition?.temps_max ?? nouvelleEnigme.temps_max ?? 0
-              )}
-              onChange={(e) => handleTempsMaxChange(e.target.value)}
-              required
-            />
-            {erreurDuree && (
-              <p className="text-red-500 text-sm mt-1">{erreurDuree}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description_reponse">Description de la réponse</Label>
-            <Textarea
-              id="description_reponse"
-              value={enigmeEnCoursEdition?.description_reponse || nouvelleEnigme.description_reponse || ""}
-              onChange={(e) =>
-                enigmeEnCoursEdition
-                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description_reponse: e.target.value })
-                  : setNouvelleEnigme({ ...nouvelleEnigme, description_reponse: e.target.value })
-              }
-              placeholder="Entrez la description de la réponse"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="image_reponse">Image de la réponse</Label>
-            {enigmeEnCoursEdition?.image_reponse || nouvelleEnigme.image_reponse ? (
-              <img 
-                src={
-                  enigmeEnCoursEdition?.image_reponse instanceof File ? 
-                  URL.createObjectURL(enigmeEnCoursEdition.image_reponse) : 
-                  nouvelleEnigme.image_reponse instanceof File ?
-                  URL.createObjectURL(nouvelleEnigme.image_reponse) :
-                  enigmeEnCoursEdition?.image_reponse || nouvelleEnigme.image_reponse
+            <div className="space-y-2">
+              <Label htmlFor="description">
+                Contenu de l'énigme <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="description"
+                value={enigmeEnCoursEdition?.description || nouvelleEnigme.description || ""}
+                onChange={(e) =>
+                  enigmeEnCoursEdition
+                    ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description: e.target.value })
+                    : setNouvelleEnigme({ ...nouvelleEnigme, description: e.target.value })
                 }
-                className="h-32 w-32 object-cover mb-2 rounded-lg"
-                alt="Prévisualisation"
+                placeholder="Entrez le contenu de l'énigme"
+                required
               />
-            ) : null}
-            <Input
-              id="image_reponse"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          </div>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="degre_difficulte">Difficulté</Label>
-            <Select
-              value={(enigmeEnCoursEdition?.degre_difficulte || nouvelleEnigme.degre_difficulte || 1).toString()}
-              onValueChange={(value) =>
-                enigmeEnCoursEdition
-                  ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, degre_difficulte: parseInt(value) })
-                  : setNouvelleEnigme({ ...nouvelleEnigme, degre_difficulte: parseInt(value) })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner la difficulté" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Facile</SelectItem>
-                <SelectItem value="2">Moyen</SelectItem>
-                <SelectItem value="3">Difficile</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>
+                  Indices <span className="text-red-500">*</span>
+                </Label>
+                <Button variant="outline" size="sm" onClick={ajouterIndice}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Ajouter un indice
+                </Button>
+              </div>
 
-          <div className="flex justify-end space-x-2">
-            {enigmeEnCoursEdition && (
-              <Button variant="outline" onClick={() => setEnigmeEnCoursEdition(null)}>
-                Annuler
-              </Button>
-            )}
-            <Button
-              onClick={() => {
-                if (enigmeEnCoursEdition) {
-                  mettreAJourEnigme(enigmeEnCoursEdition);
-                  setEnigmeEnCoursEdition(null);
-                } else {
-                  ajouterEnigme();
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndIndices}>
+                <SortableContext
+                  items={(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map(i => i.id_indice)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {(enigmeEnCoursEdition?.indices || nouvelleEnigme.indices || []).map((indice) => (
+                    <IndiceCompacte
+                      key={indice.id_indice}
+                      indice={indice}
+                      onEditIndice={(indice) => {
+                        setIndiceEnCoursEdition(indice);
+                        setAfficherModalIndice(true);
+                      }}
+                      onDeleteIndice={(id) => setIndiceToDelete(id)}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="endroit_qrcode">
+                Endroit du QR Code <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="endroit_qrcode"
+                value={enigmeEnCoursEdition?.endroit_qrcode || nouvelleEnigme.endroit_qrcode || ""}
+                onChange={(e) =>
+                  enigmeEnCoursEdition
+                    ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, endroit_qrcode: e.target.value })
+                    : setNouvelleEnigme({ ...nouvelleEnigme, endroit_qrcode: e.target.value })
                 }
-              }}
-              disabled={
-                !(enigmeEnCoursEdition ? enigmeEnCoursEdition.titre : nouvelleEnigme.titre) ||
-                !(enigmeEnCoursEdition ? enigmeEnCoursEdition.indices?.length : nouvelleEnigme.indices?.length) ||
-                !!erreurDuree
-              }
-            >
-              {enigmeEnCoursEdition ? "Enregistrer" : "Ajouter une énigme"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+                placeholder="Entrer la localisation exacte du QR Code"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="temps_max">
+                Durée maximale (HH:mm) <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="temps_max"
+                type="time"
+                step="60"
+                value={secondsToTimeString(
+                  enigmeEnCoursEdition?.temps_max ?? nouvelleEnigme.temps_max ?? 0
+                )}
+                onChange={(e) => handleTempsMaxChange(e.target.value)}
+                required
+              />
+              {erreurDuree && (
+                <p className="text-red-500 text-sm mt-1">{erreurDuree}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description_reponse">
+                Description de la réponse <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="description_reponse"
+                value={enigmeEnCoursEdition?.description_reponse || nouvelleEnigme.description_reponse || ""}
+                onChange={(e) =>
+                  enigmeEnCoursEdition
+                    ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, description_reponse: e.target.value })
+                    : setNouvelleEnigme({ ...nouvelleEnigme, description_reponse: e.target.value })
+                }
+                placeholder="Entrez la description de la réponse"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="image_reponse">
+                Image de la réponse <span className="text-red-500">*</span>
+              </Label>
+              {(enigmeEnCoursEdition?.image_reponse || nouvelleEnigme.image_reponse) && (
+                <img 
+                  src={
+                    enigmeEnCoursEdition?.image_reponse instanceof File ? 
+                    URL.createObjectURL(enigmeEnCoursEdition.image_reponse) : 
+                    nouvelleEnigme.image_reponse instanceof File ?
+                    URL.createObjectURL(nouvelleEnigme.image_reponse) :
+                    enigmeEnCoursEdition?.image_reponse || nouvelleEnigme.image_reponse
+                  }
+                  className="h-32 w-32 object-cover mb-2 rounded-lg"
+                  alt="Prévisualisation"
+                />
+              )}
+              <Input
+                id="image_reponse"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                required
+              />
+              {!enigmeEnCoursEdition?.image_reponse && !nouvelleEnigme.image_reponse && (
+                <p className="text-red-500 text-sm">L'image de réponse est obligatoire</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="degre_difficulte">
+                Difficulté <span className="text-red-500">*</span>
+              </Label>
+              <Select
+                value={(enigmeEnCoursEdition?.degre_difficulte || nouvelleEnigme.degre_difficulte || 1).toString()}
+                onValueChange={(value) =>
+                  enigmeEnCoursEdition
+                    ? setEnigmeEnCoursEdition({ ...enigmeEnCoursEdition, degre_difficulte: parseInt(value) })
+                    : setNouvelleEnigme({ ...nouvelleEnigme, degre_difficulte: parseInt(value) })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner la difficulté" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Facile</SelectItem>
+                  <SelectItem value="2">Moyen</SelectItem>
+                  <SelectItem value="3">Difficile</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              {enigmeEnCoursEdition && (
+                <Button variant="outline" onClick={() => setEnigmeEnCoursEdition(null)}>
+                  Annuler
+                </Button>
+              )}
+              <Button
+                onClick={() => {
+                  if (enigmeEnCoursEdition) {
+                    mettreAJourEnigme(enigmeEnCoursEdition);
+                    setEnigmeEnCoursEdition(null);
+                  } else {
+                    ajouterEnigme();
+                  }
+                }}
+                disabled={!isEnigmeValide()}
+              >
+                {enigmeEnCoursEdition ? "Enregistrer" : "Ajouter une énigme"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Détails des énigmes</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {formData.enigmes?.map((enigme) => (
+              <Card key={enigme.id_enigme} className="mb-4">
+                <CardContent className="p-4 space-y-2">
+                  <h3 className="font-semibold">{enigme.titre}</h3>
+                  <p className="text-muted-foreground whitespace-pre-line">{enigme.description}</p>
+                  <div className="text-sm text-muted-foreground">
+                    Localisation QR Code: {enigme.endroit_qrcode}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Durée maximale: {secondsToTimeString(enigme.temps_max)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Difficulté: {enigme.degre_difficulte}/3
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    <h4 className="font-medium">Indices associés:</h4>
+                    {enigme.indices?.map((indice) => (
+                      <Card key={indice.id_indice} className="p-2">
+                        <div className="text-sm">
+                          <span className="font-medium">Type:</span> {indice.type}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium">Degré d'aide:</span> {indice.degre_aide}
+                        </div>
+                        {indice.type === 'text' && (
+                          <div className="text-sm text-muted-foreground">
+                            {typeof indice.contenu === 'string' ? indice.contenu : ''}
+                          </div>
+                        )}
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {afficherModalIndice && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -698,9 +818,44 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange }: Rid
             }}
             onSubmit={traiterSoumissionIndice}
             indice={indiceEnCoursEdition}
+            readOnly={readOnly}
           />
         </div>
       )}
+
+      <AlertDialog open={!!enigmeToDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer cette énigme ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setEnigmeToDelete(null)}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => supprimerEnigme(enigmeToDelete!)}>
+              Confirmer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!indiceToDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer cet indice ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIndiceToDelete(null)}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => supprimerIndice(indiceToDelete!)}>
+              Confirmer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

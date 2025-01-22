@@ -17,17 +17,7 @@ jest.mock("@/utils/dao/ParticipantUtils");
 describe("Participant Class", () => {
   const mockParticipantData: ParticipantType = {
     id_participant: "8a5ff2e7-2852-479a-9aa0-abdc505adb88",
-    nom: "Doe",
-    prenom: "John",
-    email: "john.doe@example.com",
     id_user: "74df808b-48de-4a7b-b26f-e581a06f75b3",
-    adresse: "123 Main St",
-    ville: "Anytown",
-    code_postal: "12345",
-    birthday: "1990-01-01",
-    plan: "premium",
-    updated_at: "2025-01-01",
-    stripe_id: "stripe_123",
   };
 
   let participant: Participant;
@@ -36,10 +26,11 @@ describe("Participant Class", () => {
     participant = new Participant(mockParticipantData);
   });
 
-  it("should instantiate correctly", () => {
-    expect(participant.getNom()).toBe("Doe");
-    expect(participant.getPrenom()).toBe("John");
-    expect(participant.getEmail()).toBe("john.doe@example.com");
+  test('should initialize correctly', () => {
+    const participant = new Participant(mockParticipantData);
+
+    expect(participant.getIdParticipant()).toBe(mockParticipantData.id_participant);
+    expect(participant.getIdUser()).toBe(mockParticipantData.id_user);
   });
 
   it("should return correct participant data", () => {
@@ -47,20 +38,23 @@ describe("Participant Class", () => {
     expect(data).toEqual(mockParticipantData);
   });
 
-  it("should update participant fields", () => {
-    participant.setNom("Smith");
-    participant.setEmail("smith.john@example.com");
+  test('update should call updateParticipant with correct data', async () => {
+    (updateParticipant as jest.Mock).mockResolvedValue(undefined);
 
-    expect(participant.getNom()).toBe("Smith");
-    expect(participant.getEmail()).toBe("smith.john@example.com");
+    const participant = new Participant(mockParticipantData);
+    await participant.update();
+
+    expect(updateParticipant).toHaveBeenCalledWith(participant);
   });
 
-  it("should fetch participant by ID", async () => {
+  test('readId should fetch and return a new Participant instance', async () => {
     (getParticipantById as jest.Mock).mockResolvedValue(mockParticipantData);
-    const fetchedParticipant = await Participant.readId("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
 
-    expect(fetchedParticipant.getNom()).toBe("Doe");
-    expect(getParticipantById).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+    const participant = await Participant.readId("123e4567-e89b-12d3-a456-426614174000");
+
+    expect(getParticipantById).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+    expect(participant).toBeInstanceOf(Participant);
+    expect(participant.getIdParticipant()).toBe(mockParticipantData.id_participant);
   });
 
   it("should create a new participant", async () => {
@@ -130,39 +124,26 @@ describe("Participant Class", () => {
     expect(avgNote).toBe(4);
   });
 
-  it("should fetch participant by user ID", async () => {
-    // Simuler la réponse de getParticipantByUserId
+  test('readByIdUser should fetch and return a new Participant instance', async () => {
     (getParticipantByUserId as jest.Mock).mockResolvedValue(mockParticipantData);
-  
-    // Appeler la méthode readByIdUser
-    const fetchedParticipant = await Participant.readByIdUser("74df808b-48de-4a7b-b26f-e581a06f75b3");
-  
-    // Vérifier que les données retournées sont correctes
-    expect(fetchedParticipant.getNom()).toBe("Doe");
-    expect(fetchedParticipant.getPrenom()).toBe("John");
-    expect(fetchedParticipant.getEmail()).toBe("john.doe@example.com");
-  
-    // Vérifier que la fonction getParticipantByUserId a été appelée avec le bon ID utilisateur
-    expect(getParticipantByUserId).toHaveBeenCalledWith("74df808b-48de-4a7b-b26f-e581a06f75b3");
+
+    const participant = await Participant.readByIdUser("456e7890-a12b-34c5-d678-987654321000");
+
+    expect(getParticipantByUserId).toHaveBeenCalledWith("456e7890-a12b-34c5-d678-987654321000");
+    expect(participant).toBeInstanceOf(Participant);
   });
 
-  it("should read a participant using read()", async () => {
-    (getParticipantById as jest.Mock).mockResolvedValue(mockParticipantData);
+  test('load should fetch data and update instance properties', async () => {
+    (getParticipantById as jest.Mock).mockResolvedValue({
+      ...mockParticipantData,
+      id_user: "updated-id-user",
+    });
 
-    const fetchedParticipant = await participant.read();
-
-    expect(fetchedParticipant.getNom()).toBe("Doe");
-    expect(getParticipantById).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
-  });
-
-  it("should load data into the participant instance using load()", async () => {
-    const updatedData = { ...mockParticipantData, nom: "Smith" };
-    (getParticipantById as jest.Mock).mockResolvedValue(updatedData);
-
+    const participant = new Participant(mockParticipantData);
     await participant.load();
 
-    expect(participant.getNom()).toBe("Smith");
-    expect(getParticipantById).toHaveBeenCalledWith("8a5ff2e7-2852-479a-9aa0-abdc505adb88");
+    expect(getParticipantById).toHaveBeenCalledWith(mockParticipantData.id_participant);
+    expect(participant.getIdUser()).toBe("updated-id-user");
   });
 
   it("should calculate average success rate of chasses", async () => {

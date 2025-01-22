@@ -1,5 +1,5 @@
 import { ProprietaireType } from '@/types';
-import { createProprietaire, deleteProprietaire, getProprietaireById, getProprietaireByUserId, updateProprietaire } from '@/utils/dao/ProprietaireUtils';
+import { createProprietaire, deleteProprietaire, getChassesEnValidationParProprietaire, getProprietaireById, getProprietaireByUserId, updateProprietaire } from '@/utils/dao/ProprietaireUtils';
 import { UUID } from "crypto";
 import Chateau from './Chateau';
 
@@ -122,5 +122,19 @@ export class Proprietaire {
     const chateau = await Chateau.readByIdProprietaire(this.id_proprietaire);
 
     return chateau;
+  }
+
+   /**
+   * Méthode pour récupérer les chasses en cours de validation pour ce propriétaire
+   * @returns Promise<any[]> Une liste de chasses en cours de validation
+   * @throws Error si la récupération échoue
+   */
+   public async getChassesEnValidation(): Promise<any[]> {
+    try {
+      return await getChassesEnValidationParProprietaire(this.id_proprietaire);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des chasses en cours de validation:', error);
+      throw new Error('Erreur lors de la récupération des chasses en cours de validation');
+    }
   }
 }
