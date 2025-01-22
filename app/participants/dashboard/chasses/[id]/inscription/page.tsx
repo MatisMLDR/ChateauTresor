@@ -1,107 +1,69 @@
-"use client";
+import Chasse from '@/classes/Chasse'
+import { Participant } from '@/classes/Participant'
+import Loader from '@/components/global/loader'
+import InscriptionForm from '@/components/participants/InscriptionForm'
+import { createClient } from '@/utils/supabase/server'
+import { UUID } from 'crypto'
+import Link from 'next/link'
 
-import Chasse from '@/classes/Chasse';
-import { Participant } from '@/classes/Participant';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { createClient } from '@/utils/supabase/client';
-import Loader from '@/components/global/loader';
-import { UUID } from 'crypto';
-import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+const InscriptionChasse = async ({ params }: { params: { id: string } }) => {
+  const { id } = params
 
-const Page = () => {
-  const [chasse, setChasse] = useState<Chasse | null>(null);
-  const [idUser, setIdUser] = useState<UUID | null>(null);
-  const [idParticipant, setIdParticipant] = useState<UUID | null>(null);
+  const supabase = createClient()
+  const user = (await supabase.auth.getUser()).data.user
+  const idUser = user?.id as UUID
 
-  const params = useParams();
-  const router = useRouter();
+  const participant = await Participant.readByIdUser(idUser)
+  const chasse = await Chasse.readId(id as UUID)
 
-  // Récupération des données utilisateur et de la chasse
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const supabase = createClient();
-        const { data, error } = await supabase.auth.getUser();
+  if (!chasse) return <Loader />
 
-        // Vérifier si l'utilisateur est connecté
-        if (error || !data || !data.user) {
-          toast.error('Vous devez être connecté pour accéder à cette page');
-          router.push('/login');
-          return; // Arrêter l'exécution si l'utilisateur n'est pas connecté
-        }
-
-        // Mettre à jour l'ID de l'utilisateur
-        setIdUser(data.user.id as UUID);
-
-        // Récupération des détails de la chasse
-        const chasseDetails = await Chasse.readId(params.id as UUID);
-        setChasse(chasseDetails);
-
-        // Récupération du participant lié à l'utilisateur
-        const participant = await Participant.readByIdUser(data.user.id as UUID);
-        if (participant) {
-          setIdParticipant(participant.getIdParticipant());
-        }
-      } catch (err) {
-        console.error('Erreur lors de la récupération des données :', err);
-        toast.error('Une erreur est survenue. Veuillez réessayer plus tard.');
-      }
-    };
-
-    fetchData();
-  }, [params.id]);
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const day = form.day.value;
-
-    if (!idParticipant) {
-      toast.error('Participant introuvable. Veuillez vérifier vos informations.');
-      return;
-    }
-
-    try {
-      await chasse?.addParticipant(idParticipant, day);
-      toast.success('Inscription à la chasse effectuée avec succès !');
-      router.push('/participants/dashboard/chassesAchete');
-    } catch (err) {
-      console.error("Erreur lors de l'inscription à la chasse :", err);
-      toast.error("Erreur lors de l'inscription. Veuillez réessayer.");
-    }
-  };
-
-  if (!chasse || !idUser) {
-    return <Loader />;
+  const serverData = {
+    idUser,
+    idParticipant: participant?.getIdParticipant(),
+    chasse: chasse.toObject()
   }
 
   return (
-    <div>
-      <h3>Log pour voir</h3>
-      <p>idUser : {idUser}</p>
-      <p>idParticipant : {idParticipant}</p>
-      <h1 className="text-3xl font-bold mb-4">
-        Paiement chasse : {chasse.getTitre()}
-      </h1>
-      <p>Envoyer un chèque de {chasse.getPrix()} € à l'adresse suivante :</p>
-      <Link
-        className="mb-4 underline text-blue-500 hover:text-blue-400"
-        href="https://www.google.com/maps/search/I.U.T.2+Institut+Universitaire+de+Technologie+-+B%C3%A2timent/@45.1916643,5.7171449,17z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D"
-      >
-        2 Pl. Doyen Gosse, 38000 Grenoble
-      </Link>
-      <form onSubmit={handleFormSubmit}>
-        <label htmlFor="day">Choisir le jour : </label>
-        <Input type="text" name="day" id="day" required />
-        <Button type="submit">Commencer</Button>
-      </form>
-      <h2 className="mb-2">Merci pour le paiement !</h2>
-    </div>
-  );
-};
+    <div className="container max-w-4xl py-8 px-4 text-center">
+      <div className="space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">
+            Finaliser votre inscription
+          </h1>
+          <p className="text-muted-foreground">
+            Dernière étape avant l&apos;aventure !
+          </p>
+        </div>
 
-export default Page;
+        <div className="prose prose-sm max-w-none">
+          <h2 className="text-xl font-semibold mb-4">Moyen de paiement</h2>
+          <p>
+            Veuillez envoyer votre chèque à l&apos;adresse suivante :<br />
+            <Link
+              href="https://www.google.com/maps/search/I.U.T.2+Institut+Universitaire+de+Technologie+-+B%C3%A2timent/@45.1916643,5.7171449,17z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D"
+              className="text-primary underline hover:text-primary/80"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              2 Pl. Doyen Gosse, 38000 Grenoble
+            </Link>
+          </p>
+          
+          <div className="my-6 p-4 bg-muted rounded-lg">
+            <p className="font-medium">
+              Montant total : {chasse.getPrix()} €
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Libellez votre chèque à l&apos;ordre de "Trésor Public"
+            </p>
+          </div>
+        </div>
+
+        <InscriptionForm serverData={serverData} />
+      </div>
+    </div>
+  )
+}
+
+export default InscriptionChasse

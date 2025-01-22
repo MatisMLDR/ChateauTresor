@@ -20,7 +20,7 @@ export default async function LandingPage() {
         <Testimonials />
         <Cta />
       </main>
-      <Footer />
+      <Footer  />
     </div>
   )
 }

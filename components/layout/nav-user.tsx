@@ -31,6 +31,7 @@ export function NavUser({type} : SideBarProps) {
   const [firstLetter, setFirstLetter] = useState('');
   const [email, setEmail] = useState('');
   const [login, setLogin] = useState('');
+  const [idUser, setIdUser] = useState('');
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,6 +41,7 @@ export function NavUser({type} : SideBarProps) {
       } = await supabase.auth.getUser();
 
       if (user && user.email) {
+        setIdUser(user.id);
         setFirstLetter(user.email.charAt(0).toUpperCase()); // Set the first letter of the user's email
         setEmail(user.email);
         try {
@@ -63,7 +65,7 @@ export function NavUser({type} : SideBarProps) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarFallback className="rounded-lg">{firstLetter}</AvatarFallback>
+                <AvatarFallback className="rounded-lg text-primary">{firstLetter}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 {login ? (
@@ -109,7 +111,7 @@ export function NavUser({type} : SideBarProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href={`/${type === "organisateur" ? "organisateurs" : type === "participant" ? "participants" : "proprietaires"}/dashboard/profil`}>
+              <Link href={`/${type === "organisateur" ? "organisateurs" : type === "participant" ? "participants" : "proprietaires"}/dashboard/profil/${idUser}/parametres`}>
                 <DropdownMenuItem>
                   <UserPen />
                   Profil
