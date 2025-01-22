@@ -7,7 +7,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const supabase = createClient();
-  const idParticipant = await params.id;
+  const {id:idParticipant} = await params
+
 
   if (!idParticipant) {
     return NextResponse.json(
@@ -45,7 +46,8 @@ export async function PUT(
   { params }: { params: { id_participant: string } }
 ) {
   const supabase = createClient();
-  const idParticipant = params.id_participant;
+  const {id_participant:idParticipant} = await params
+
 
   if (!idParticipant) {
     return NextResponse.json(
@@ -84,7 +86,8 @@ export async function DELETE(
   { params }: { params: { id_participant: string } }
 ) {
   const supabase = createClient();
-  const idParticipant = params.id_participant;
+  const {id_participant:idParticipant} = await params
+
 
   if (!idParticipant) {
     return NextResponse.json(

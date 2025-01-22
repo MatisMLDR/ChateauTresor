@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // Récupérer la difficulté d'une énigme par ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const enigmeId = params.id;
+  const {id:enigmeId} = await params
 
   try {
     const { data, error } = await supabase

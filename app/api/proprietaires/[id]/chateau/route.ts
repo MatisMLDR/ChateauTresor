@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // GET : Récupérer un Chateau par son proprietaire
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_proprietaire = await params.id;
+  const {id:id_proprietaire} = await params;
 
   try {
     const { data, error } = await supabase.from('chateau').select('*').eq('id_proprietaire', id_proprietaire).single();

@@ -4,7 +4,8 @@ import { NextResponse } from 'next/server';
 // GET : Récupérer un membre spécifique
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_membre = await params.id;
+  const {id:id_membre} = await params
+
 
   try {
     const { data, error } = await supabase.from('membre_equipe').select('*').eq('id_membre', id_membre).single();
@@ -20,7 +21,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
 // PUT : Mettre à jour un membre spécifique
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_membre = params.id;
+  const {id:id_membre} = await params
+
 
   try {
     const body = await request.json();
@@ -43,7 +45,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 // DELETE : Supprimer un membre spécifique
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_membre = params.id;
+  const {id:id_membre} = await params
+
 
   try {
     const { error } = await supabase.from('membre_equipe').delete().eq('id_membre', id_membre);
