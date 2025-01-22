@@ -10,7 +10,7 @@ export interface StripeProduct {
 }
 
 export interface AuthProps {
-  redirect: "participant" | "organisateur";
+  redirect: "participant" | "organisateur" | "proprietaire";
 }
 
 export interface InputWithLabelProps {

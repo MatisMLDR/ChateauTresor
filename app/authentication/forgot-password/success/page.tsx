@@ -12,7 +12,7 @@ export default async function ForgotPasswordSuccess({ searchParams }: { searchPa
         <div>loading...</div>
     }
 
-    if (redirect != "participant" && redirect != "organisateur") {
+    if (redirect != "participant" && redirect != "organisateur" && redirect != "proprietaire") {
         notFound()
     }
 

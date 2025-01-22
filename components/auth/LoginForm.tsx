@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { loginOrganisateur, loginParticipant, loginUser } from '@/app/auth/actions'
+import { loginOrganisateur, loginParticipant, loginProprietaire, loginUser } from '@/app/auth/actions'
 import { useActionState } from "react"
 import { AuthProps } from "@/types"
 
@@ -11,7 +11,18 @@ export default function LoginForm({ redirect }: AuthProps) {
     const initialState = {
         message: ''
     }
-    const [formState, formAction] = useActionState(redirect === "participant" ? loginParticipant : loginOrganisateur, initialState)
+    let action;
+    switch (redirect) {
+        case "participant":
+            action = loginParticipant;
+            break;
+        case "organisateur":
+            action = loginOrganisateur;
+            break;
+        default:
+            action = loginProprietaire;
+    }
+    const [formState, formAction] = useActionState(action, initialState)
     return (<>
         <form action={formAction}>
             <div className="grid gap-2">

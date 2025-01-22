@@ -8,7 +8,7 @@ import { ChasseType } from '@/types';
 import Loader from '@/components/global/loader';
 import { UUID } from 'crypto';
 import { toast } from "react-hot-toast";
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import { BasicDetails } from '@/components/organisateurs/create/steps/basic-details';
 import { CastleSelection } from '@/components/organisateurs/create/steps/castle-selection';
 import { RiddlesCreation } from '@/components/organisateurs/create/steps/riddles-creation';
@@ -63,7 +63,7 @@ const PageVisualisationChasse: React.FC = () => {
       if (error) throw error;
 
       toast.success(`Chasse ${nouveauStatut.toLowerCase()} avec succès !`);
-      router.push('/proprietaires/dashboard/demandes');
+      router.push(`/proprietaires/dashboard/${params.id_proprietaire}/demandes`);
     } catch (error) {
       console.error('Erreur lors de la mise à jour :', error);
       toast.error(`Erreur lors de la mise à jour : ${(error as Error).message}`);
@@ -87,7 +87,7 @@ const PageVisualisationChasse: React.FC = () => {
           </Button>
           <Button 
             onClick={() => modifierStatut('Acceptée')}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3"
+            className="px-6 py-3"
           >
             Accepter la chasse
           </Button>

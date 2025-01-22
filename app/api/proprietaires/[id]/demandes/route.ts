@@ -9,7 +9,7 @@ export async function GET(
 
   try {
     // Récupérer l'id_proprietaire depuis les paramètres dynamiques
-    const id_proprietaire = params.id; // Pas besoin de await ici, car params.id est synchrone
+    const { id:id_proprietaire } = await params; // Pas besoin de await ici, car params.id est synchrone
 
     if (!id_proprietaire) {
       return NextResponse.json(

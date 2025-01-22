@@ -11,7 +11,7 @@ if (!redirect) {
         <div>loading...</div>
     }
 
-    if (redirect != "participant" && redirect != "organisateur") {
+    if (redirect != "participant" && redirect != "organisateur" && redirect != "proprietaire") {
         notFound()
     }
 

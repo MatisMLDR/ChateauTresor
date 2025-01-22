@@ -10,6 +10,7 @@ import { MembreEquipe } from '@/classes/MembreEquipe'
 import { UUID } from 'crypto'
 import { Participant } from '@/classes/Participant'
 import { getParticipantByUserId } from '@/utils/dao/ParticipantUtils'
+import { Proprietaire } from '@/classes/Proprietaire'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ? process.env.NEXT_PUBLIC_WEBSITE_URL : "http://localhost:3000"
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
 
@@ -167,8 +168,15 @@ export async function loginParticipant(currentState: { message: string }, formDa
         return result;
     }
 }
+export async function loginProprietaire(currentState: { message: string }, formData: FormData): Promise<any> {
+    const result = await loginUser(currentState, formData, "proprietaire");
 
-export async function loginUser(currentState: { message: string }, formData: FormData, type: "participant" | "organisateur") {
+    if (result?.message) {
+        return result;
+    }
+}
+
+export async function loginUser(currentState: { message: string }, formData: FormData, type: "participant" | "organisateur" | "proprietaire") {
     const supabase = createClient()
 
     const data = {
@@ -208,6 +216,25 @@ export async function loginUser(currentState: { message: string }, formData: For
             participant.create();
         } finally {
             return redirect(`/participants/dashboard/profil/${user.id}/informations`);
+        }
+    }
+    if (type === "proprietaire") {
+        let proprietaire;
+        try {
+            proprietaire = await Proprietaire.readByIdUser(user.id as UUID);
+            if (!proprietaire) {
+                throw new Error('Proprietaire not found');
+            }
+        } catch (error) {
+            // Créer un profil proprietaire
+            proprietaire = new Proprietaire({
+                id_proprietaire: crypto.randomUUID() as UUID,
+                id_user: user.id as UUID,
+            })
+
+            proprietaire.create();
+        } finally {
+            return redirect(`/proprietaires/dashboard/${proprietaire?.getIdProprietaire()}/demandes`);
         }
     }
     // Rediriger vers la page asscoiée au type de l'utilisateur

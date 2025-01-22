@@ -27,10 +27,11 @@ const ButtonDemandeChasse = ({ action, id_chasse, chasseData }: ButtonDemandeCha
         chasse.setStatut('En attente de validation'); // Mettre à jour le statut de la chasse
       }
       await chasse.update(); // Enregistrer les modifications
-      router.refresh(); // Rafraîchir la page après l'action
+     
     } catch (error) {
       console.error('Erreur lors du traitement de la demande', error);
     } finally {
+      router.refresh(); // Rafraîchir la page après l'action
       setLoading(false); // Fin du chargement
     }
   }

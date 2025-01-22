@@ -1,20 +1,15 @@
 import { Proprietaire } from '@/classes/Proprietaire';
 import ButtonDemandeChasse from '@/components/proprietaires/bouttonDemandeChasse';
 import { UUID } from 'crypto';
-import { createClient } from '@/utils/supabase/client';
-import { revalidatePath } from 'next/cache';
 import Link from 'next/link'; // Import de Link pour la navigation
 import React from 'react';
 
-const DemandesChasses = async () => {
-  const supabase = createClient();
+const DemandesChasses = async ({ params }: { params: { id_proprietaire: UUID }}) => {
 
-  // Récupérer l'utilisateur connecté
-  const { data: { user } } = await supabase.auth.getUser();
-  const id_user = user?.id;
-
+  
+  const { id_proprietaire } = await params;
   // Récupérer le propriétaire par son id_user
-  const proprietaire = await Proprietaire.readByIdUser(id_user as UUID);
+  const proprietaire = await Proprietaire.readId(id_proprietaire);
 
   // Récupérer les chasses en cours de validation pour ce propriétaire
   const chassesEnValidation = await proprietaire.getChassesEnValidation();
@@ -30,9 +25,6 @@ const DemandesChasses = async () => {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Titre
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Description
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Château
@@ -55,14 +47,11 @@ const DemandesChasses = async () => {
                 <tr key={chasse.id_chasse} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     <Link
-                      href={`/proprietaires/dashboard/chasses/${chasse.id_chasse}`} // Lien vers la page de détail
+                      href={`/proprietaires/dashboard/${id_proprietaire}/chasses/${chasse.id_chasse}`} // Lien vers la page de détail
                       className="text-blue-600 hover:text-blue-800"
                     >
                       {chasse.titre}
                     </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {chasse.description}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     {chasse.chateau?.nom || 'Non spécifié'} {/* Afficher le nom du château */}

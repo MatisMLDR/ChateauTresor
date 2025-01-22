@@ -9,7 +9,7 @@ export default async function Login({ searchParams }: { searchParams: { redirect
     }
 
 
-    if (redirect != "participant" && redirect != "organisateur") {
+    if (redirect != "participant" && redirect != "organisateur" && redirect != "proprietaire") {
         notFound()
     }
 

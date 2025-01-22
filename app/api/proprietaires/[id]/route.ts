@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // GET : Récupérer un Proprietaire spécifique
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_proprietaire = await params.id;
+  const { id: id_proprietaire } = await params;
 
   try {
     const { data, error } = await supabase.from('proprietaire_chateau').select('*').eq('id_proprietaire', id_proprietaire).single();
@@ -20,7 +20,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
 // PUT : Mettre à jour un Proprietaire spécifique
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_proprietaire = params.id;
+  const { id: id_proprietaire } = await params;
+
 
   try {
     const body = await request.json();
@@ -43,7 +44,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 // DELETE : Supprimer un Proprietaire spécifique
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   const supabase = createClient();
-  const id_proprietaire = params.id;
+  const { id: id_proprietaire } = await params;
+
 
   try {
     const { error } = await supabase.from('proprietaire_chateau').delete().eq('id_proprietaire', id_proprietaire);

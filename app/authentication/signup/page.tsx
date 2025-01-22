@@ -10,7 +10,7 @@ export default async function Signup({ searchParams }: { searchParams: { redirec
     }
 
 
-    if (redirect != "participant" && redirect != "organisateur") {
+    if (redirect != "participant" && redirect != "organisateur" && redirect != "proprietaire") {
         notFound()
     }
 
