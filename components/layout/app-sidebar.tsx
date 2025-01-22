@@ -25,6 +25,7 @@ import {
   MapPin,
   Plus,
   Search,
+  Shovel,
   Trophy,
   User
 } from 'lucide-react';
@@ -181,6 +182,11 @@ export function AppSidebar({ type, fullyUnlocked, ...props }: SideBarProps) {
         title: 'Chasses',
         url: '/participants/dashboard/chasses',
         icon: Search,
+      },
+      {
+        title: 'Mes chasses',
+        url: '/participants/dashboard/chassesAchete',
+        icon: Shovel,
       },
       {
         title: 'Classements',

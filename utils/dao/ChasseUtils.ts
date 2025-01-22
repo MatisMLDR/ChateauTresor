@@ -212,3 +212,22 @@ export async function getClassementPointsOfChasse(id_chasse: UUID): Promise<any>
   }
   return await res.json();
 }
+
+export async function getChassesByParticipant(participantId: UUID) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/participant?participantId=${participantId}`
+    );
+
+    if (!res.ok) {
+      if (res.status === 404) return [];
+      throw new Error(`Erreur ${res.status}`);
+    }
+
+    return await res.json();
+
+  } catch (error) {
+    console.error('DAO Error:', error);
+    return [];
+  }
+}

@@ -1,5 +1,5 @@
 import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType, ImageFile, RecompenseType } from "@/types";
-import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles, getChassesByEquipeId, getAllChassesFinies, getClassementPointsOfChasse } from '@/utils/dao/ChasseUtils';
+import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles, getChassesByEquipeId, getAllChassesFinies, getClassementPointsOfChasse, getChassesByParticipant } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
@@ -640,6 +640,11 @@ class Chasse {
     return data;
     
   }
+
+  public static async getChassesByParticipantId(participantId: UUID) {
+    return getChassesByParticipant(participantId);
+  }
+
 
 }
 

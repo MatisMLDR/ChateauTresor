@@ -1,56 +1,59 @@
-// /app/participants/chassesAchete/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import ChasseCard from '@/components/participants/jouer/chasseCard';
+import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import Chasse from '@/classes/Chasse';
+import { Participant } from '@/classes/Participant';
+import { UUID } from 'crypto';
 
 const ChasseList: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
-  const [chassesAchetees, setChassesAchetees] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const participantId = '1'; // Remplacez par une gestion dynamique si nécessaire.
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
   const router = useRouter();
 
-  // Récupération des chasses et des chasses achetées
   useEffect(() => {
-    const fetchChasses = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/chasses');
-        const data = await response.json();
-        setChasses(Array.isArray(data) ? data : []);
+        // Récupération de l'utilisateur
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Récupération du participant
+        const participant = await Participant.readByIdUser(user.id as UUID);
+        const participantId = participant.getIdParticipant();
+
+        // Récupération des chasses
+        const chassesData = await Chasse.getChassesByParticipantId(participantId);
+        setChasses(Array.isArray(chassesData) ? chassesData : []);
       } catch (err) {
-        console.error('Erreur lors de la récupération des chasses :', err);
+        console.error('Erreur:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    const fetchChassesAchetees = async () => {
-      try {
-        const response = await fetch(`/api/participants/chasse?id_participant=${participantId}`);
-        const data = await response.json();
-        setChassesAchetees(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error('Erreur lors de la récupération des chasses achetées :', err);
-      }
-    };
+    fetchData();
+  }, [supabase.auth]);
 
-    fetchChasses();
-    fetchChassesAchetees();
-  }, [participantId]);
-
-  // Filtrage des chasses en fonction de la recherche
   const chassesFiltrees = chasses.filter((chasse) =>
     chasse.titre.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Fonction pour rediriger vers la page de jeu
   const handleJouer = (chasseId: string) => {
     router.push(`/participants/dashboard/jouer?chasseId=${chasseId}`);
   };
 
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Liste des Chasses</h1>
+      <h1 className="text-2xl font-bold mb-6">Mes Chasses Achetées</h1>
 
       <div className="mb-6">
         <input
@@ -67,8 +70,8 @@ const ChasseList: React.FC = () => {
           <ChasseCard
             key={chasse.id_chasse}
             chasse={chasse}
-            isAchetee={true} // On force la valeur à true pour permettre de jouer à toutes les chasses
-            onJouer={() => handleJouer(chasse.id_chasse)} // Passe la fonction de redirection
+            isAchetee={true}
+            onJouer={() => handleJouer(chasse.id_chasse)}
           />
         ))}
       </div>

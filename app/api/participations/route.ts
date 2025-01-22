@@ -7,36 +7,45 @@ export async function GET(request: Request) {
   const idParticipant = searchParams.get('id_participant');
   const idChasse = searchParams.get('id_chasse');
 
-  // Vérification du paramètre
   if (!idParticipant) {
     return NextResponse.json(
-      { error: 'Paramètre id_participant invalide ou manquant' },
+      { error: 'Paramètre id_participant requis' },
       { status: 400 }
     );
   }
 
   try {
-    // Requête pour récupérer les participations
-    const { data, error } = await supabase
+    // Récupération de toutes les participations correspondantes
+    const { data: participations, error } = await supabase
       .from('participation')
       .select('*')
       .eq('id_participant', idParticipant)
-      .eq('id_chasse', idChasse)
-      .single();
-    // Gestion des erreurs Supabase
-    if (error) {
+      .eq('id_chasse', idChasse);
+
+    if (error) throw error;
+
+    // Si aucune participation trouvée
+    if (!participations?.length) {
       return NextResponse.json(
-        { error: 'Erreur lors de la récupération des participations', details: error.message },
-        { status: 500 }
+        { message: 'Aucune participation trouvée' },
+        { status: 404 }
       );
     }
 
-    // Réponse avec les données
-    return NextResponse.json(data, { status: 200 });
+    // Tri par proximité de date
+    const now = new Date().getTime();
+    const closestParticipation = participations.reduce((prev, current) => {
+      const prevDiff = Math.abs(new Date(prev.date).getTime() - now);
+      const currentDiff = Math.abs(new Date(current.date).getTime() - now);
+      return currentDiff < prevDiff ? current : prev;
+    });
+
+    return NextResponse.json(closestParticipation, { status: 200 });
+
   } catch (err) {
-    // Gestion des erreurs inattendues
+    console.error('Erreur:', err);
     return NextResponse.json(
-      { error: 'Une erreur est survenue lors du traitement de la requête', details: String(err) },
+      { error: 'Erreur de traitement', details: String(err) },
       { status: 500 }
     );
   }
