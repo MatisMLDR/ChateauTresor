@@ -2,12 +2,12 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: Request) {
   const supabase = createClient();
   
   try {
     const { data, error } = await supabase
-      .from('Participant')
+      .from('participant')
       .select(`
         id_participant,
         id_user,

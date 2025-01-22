@@ -12,11 +12,11 @@ const ChasseListPage: React.FC = () => {
     const fetchChasses = async () => {
       try {
         // Utilisation directe de la méthode de classe
-        const chasseInstances = await Chasse.getAllChasses();
+        const chasseInstances = await Chasse.getAllChassesFinies()
         
         // Tri
         const sortedChasses = chasseInstances.sort(
-          (a, b) => 
+          (a: any, b: any) => 
             new Date(b.getDateCreation()).getTime() - 
             new Date(a.getDateCreation()).getTime()
         );

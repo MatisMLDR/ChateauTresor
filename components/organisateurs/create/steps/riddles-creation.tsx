@@ -257,7 +257,7 @@ function EnigmeCompacte({
                 {enigme.indices?.length || 0} indices
               </div>
               <div className="text-xs text-muted-foreground">
-                Durée max: {secondsToTimeString(enigme.temps_max)}
+                Durée moyenne: {secondsToTimeString(enigme.temps_max)}
               </div>
             </div>
             {!readOnly && (
@@ -508,7 +508,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange, readO
       if (totalSeconds <= 0) {
         error = "La fin doit être après le début";
       } else if (selectedSeconds > totalSeconds) {
-        error = `Durée max: ${secondsToTimeString(totalSeconds)}`;
+        error = `Durée moyenne: ${secondsToTimeString(totalSeconds)}`;
       }
     }
 
@@ -656,7 +656,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange, readO
 
             <div className="space-y-2">
               <Label htmlFor="temps_max">
-                Durée maximale (HH:mm) <span className="text-red-500">*</span>
+                Durée moyenne <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="temps_max"
@@ -714,9 +714,6 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange, readO
                 onChange={handleFileChange}
                 required
               />
-              {!enigmeEnCoursEdition?.image_reponse && !nouvelleEnigme.image_reponse && (
-                <p className="text-red-500 text-sm">L'image de réponse est obligatoire</p>
-              )}
             </div>
 
             <div className="space-y-2">
@@ -779,7 +776,7 @@ export function RiddlesCreation({ formData, setFormData, onValidityChange, readO
                     Localisation QR Code: {enigme.endroit_qrcode}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Durée maximale: {secondsToTimeString(enigme.temps_max)}
+                    Durée moyenne: {secondsToTimeString(enigme.temps_max)}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Difficulté: {enigme.degre_difficulte}/3
