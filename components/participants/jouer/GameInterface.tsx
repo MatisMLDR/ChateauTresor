@@ -286,7 +286,7 @@ const GameInterface = ({chasseId, enigmeId}: GameInterfaceProps) => {
               <DrawerDescription>Voici les indices disponibles pour cette énigme.</DrawerDescription>
             </DrawerHeader>
             <div className="p-4">
-              <IndiceComponent idEnigme={currentEnigme.getId() as UUID} participantId={participantId as UUID} />
+              <IndiceComponent chasseId={chasseId} enigmeId={currentEnigme.getId() as UUID} participantId={participantId as UUID} />
             </div>
             <DrawerFooter>
               <DrawerClose asChild>

@@ -3,7 +3,7 @@ import { SearchParamProps } from '@/types'
 import { UUID } from 'crypto'
 import React from 'react'
 
-const Game = async ({searchParams}: SearchParamProps) => {
+const GameParticipant = async ({searchParams}: SearchParamProps) => {
 
   const {enigmeId, chasseId} = await searchParams
 
@@ -12,4 +12,4 @@ const Game = async ({searchParams}: SearchParamProps) => {
   )
 }
 
-export default Game
+export default GameParticipant
