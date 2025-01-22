@@ -7,20 +7,20 @@ import { Participant } from "./Participant";
 class Avis {
   private id_avis: UUID;
   private note: number;
-  private titre: string;
-  private description: string;
+  private titre: string | null;
+  private description: string | null;
   private nb_like: number;
-  private date_modification: string;
+  private date_modification: string | null;
   private id_chasse: UUID;
   private id_participant: UUID;
 
   constructor(avis: AvisType) {
     this.id_avis = avis.id_avis;
     this.note = avis.note;
-    this.titre = avis.titre;
-    this.description = avis.description;
+    this.titre = avis.titre ?? "";
+    this.description = avis.description ?? "";
     this.nb_like = avis.nb_like ?? 0;
-    this.date_modification = avis.date_modification;
+    this.date_modification = avis.date_modification ?? "";
     this.id_chasse = avis.id_chasse;
     this.id_participant = avis.id_participant;
   }
@@ -33,16 +33,16 @@ class Avis {
   public getNote(): number {
     return this.note;
   }
-  public getTitre(): string {
+  public getTitre(): string | null {
     return this.titre;
   }
-  public getDescription(): string {
+  public getDescription(): string | null {
     return this.description;
   }
   public getNbLike(): number {
     return this.nb_like;
   }
-  public getDateModification(): string {
+  public getDateModification(): string | null {
     return this.date_modification;
   }
   public getIdChasse(): UUID {

@@ -1,28 +1,26 @@
 "use client"
-import type React from "react"
-import { useState, useEffect } from "react"
-import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils"
-import type { UUID } from "crypto"
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog"
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
 import { IndiceParticipant } from "@/classes/IndiceParticipant"
 import { Participant } from "@/classes/Participant"
-import { createClient } from "@/utils/supabase/client"
-import { getParticipationByParticipantIdAndChasseId, updateParticipationScore } from "@/utils/dao/ParticipationUtils"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Loader from "@/components/global/loader"
-import { getEnigmeById } from '@/utils/dao/EnigmeUtils';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getAllIndicesByEnigme } from "@/utils/dao/IndiceUtils"
+import { getParticipationByParticipantIdAndChasseId, updateParticipationScore } from "@/utils/dao/ParticipationUtils"
+import { createClient } from "@/utils/supabase/client"
+import type { UUID } from "crypto"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import type React from "react"
+import { useEffect, useState } from "react"
 
 interface Indice {
   id_indice: UUID
@@ -140,8 +138,10 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
       const participation = await getParticipationByParticipantIdAndChasseId(participantId, chasseId as UUID)
       const pointsLost = selectedIndice.degre_aide
       const participationScore = participation.score
-      const score = participationScore - pointsLost
-
+      let score = participationScore - pointsLost
+      if (score < 0) {
+        score = 0
+      }
       console.log(`Vous avez perdu ${pointsLost} points.`)
       console.log(`Votre nouveau score est de ${score} points.`)
       await updateParticipationScore(participantId, chasseId as UUID, score)

@@ -169,7 +169,7 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
           <Button className="w-full">Voir plus</Button>
         </Link>
         {participantType === 'participants' && (
-          <Link href={getChasseLink() + "/classements"} className="w-full">
+          <Link href={getChasseLink() + "/classements"} className="w-full lg:ml-2">
             <Button className="w-full bg-gold text-gray-900 hover:bg-orange-200">Classement</Button>
           </Link>
         )}

@@ -170,10 +170,10 @@ export type LineChart = {
 export type AvisType = {
   id_avis: UUID;
   note: number;
-  titre: string;
-  description: string;
-  nb_like: number;
-  date_modification: string;
+  titre?: string | null;
+  description?: string | null;
+  nb_like?: number;
+  date_modification?: string | null;
   id_chasse: UUID;
   id_participant: UUID;
 }

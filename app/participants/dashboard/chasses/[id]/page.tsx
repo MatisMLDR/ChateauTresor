@@ -12,14 +12,22 @@ import Loader from '@/components/global/loader';
 import AddAvisForm from '@/components/participants/AddAvisForm';
 import Chateau from '@/classes/Chateau';
 import { convertTimeToMinutesAndHours } from '@/lib/utils';
+import { Participant } from '@/classes/Participant';
+import { createClient } from '@/utils/supabase/server';
 
 export default async function ChassePage({ params }: { params: { id: UUID } }) {
-    const chasse = await Chasse.readId(params.id);
+    const { id } = await params;
+    const chasse = await Chasse.readId(id);
     const note = await chasse.getNoteMoyenne();
     const avis = await chasse.getAllAvis();
     const chateau = await Chateau.readId(chasse.getIdChateau() as UUID);
+    // fetch user data for id of participant
+    const supabase = createClient();
+    const { data: { user} } = await supabase.auth.getUser()
 
-    if (!chasse) {
+    const participant = await Participant.readByIdUser(user?.id as UUID);
+
+    if (!participant) {
         return <Loader />;
     }
 
@@ -70,12 +78,12 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                         {dateDebut ? new Date(dateDebut).toLocaleDateString() : "Non spécifiée"} - {dateFin ? new Date(dateFin).toLocaleDateString() : "Non spécifiée"}
                     </p>
                     <Button className="mb-2 px-16">
-                        <Link href={`/participants/dashboard/chasses/${params.id}/inscription`}>
+                        <Link href={`/participants/dashboard/chasses/${id}/inscription`}>
                             Réserver
                         </Link>
                     </Button>
                     <Button className="mb-2 px-16 bg-gold text-gray-900 hover:bg-orange-200">
-                        <Link href={`/participants/dashboard/chasses/${params.id}/classements`}>
+                        <Link href={`/participants/dashboard/chasses/${id}/classements`}>
                             Classement
                         </Link>
                     </Button>
@@ -85,7 +93,7 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
             </div>
 
             <h2 className="text-2xl font-bold mt-12 mb-6">Laisser un avis</h2>
-            <AddAvisForm chasseId={params.id} />
+            <AddAvisForm chasseId={id} participantId={participant.getIdParticipant()} />
 
             <h2 className="text-2xl font-bold mt-12 mb-6">Avis des utilisateurs</h2>
             <div className="space-y-6">
