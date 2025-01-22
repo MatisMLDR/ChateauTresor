@@ -42,7 +42,6 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isStepValid, setIsStepValid] = useState(false);
 
-  // Récupération de l'ID équipe depuis l'URL
   const idEquipe = params.id_equipe as UUID;
 
   const progress = ((currentStep + 1) / steps.length) * 100;
@@ -70,7 +69,6 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
     const fileName = `${folder}/${subfolderPath}${id}.${extension}`;
 
     try {
-      console.log(`Tentative d'upload vers ${fileName}`);
       const { data, error } = await supabase.storage
         .from('ChateauTresor')
         .upload(fileName, file, {
@@ -78,20 +76,15 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
           upsert: isEditMode
         });
 
-      if (error) {
-        console.error(`Erreur upload ${fileName}:`, error);
-        throw new Error(`Échec de l'upload: ${error.message}`);
-      }
+      if (error) throw new Error(`Échec de l'upload: ${error.message}`);
 
       const { data: urlData } = supabase.storage
         .from('ChateauTresor')
         .getPublicUrl(fileName);
 
-      console.log(`Upload réussi pour ${fileName}`, urlData);
       return urlData.publicUrl;
 
     } catch (error) {
-      console.error(`Erreur complète upload ${fileName}:`, error);
       throw error;
     }
   }, [isEditMode]);
@@ -101,25 +94,17 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
     const chasseId = (isEditMode && chasse.id_chasse) ? chasse.id_chasse : crypto.randomUUID() as UUID;
 
     try {
-      // Validation des champs obligatoires
       if (!chasse.titre?.trim()) throw new Error("Le titre est obligatoire");
       if (!chasse.description?.trim()) throw new Error("La description est obligatoire");
       if (!chasse.chateau?.id_chateau) throw new Error("Aucun château sélectionné");
 
-      // Upload image principale
       let uploadedImage = chasse.image;
       if (chasse.image instanceof File) {
-        console.log("Début upload image principale...");
         uploadedImage = await handleUpload(chasse.image, 'chasses', chasseId);
-        console.log("Image principale uploadée:", uploadedImage);
       }
 
-      // Traitement des énigmes
       const processedEnigmes = [];
       for (const enigme of chasse.enigmes || []) {
-        console.log("Traitement énigme:", enigme.titre);
-
-        // Upload image réponse
         let uploadedImageReponse = enigme.image_reponse;
         if (enigme.image_reponse instanceof File) {
           const enigmeId = enigme.id_enigme || crypto.randomUUID() as UUID;
@@ -128,13 +113,10 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
             'enigmes',
             enigmeId
           );
-          console.log("Image réponse uploadée:", uploadedImageReponse);
         }
 
-        // Traitement des indices
         const processedIndices = [];
         for (const indice of enigme.indices || []) {
-          console.log("Traitement indice:", indice.type);
           let contenu = indice.contenu;
 
           if (indice.contenu instanceof File) {
@@ -146,7 +128,6 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
               indiceId,
               { subfolder }
             );
-            console.log("Contenu indice uploadé:", contenu);
           }
 
           processedIndices.push({
@@ -164,10 +145,8 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
         });
       }
 
-      // Traitement des récompenses
       const processedRecompenses = [];
       for (const recompense of chasse.recompenses || []) {
-        console.log("Traitement récompense:", recompense.nom);
         let uploadedImage = recompense.image;
 
         if (recompense.image instanceof File) {
@@ -177,7 +156,6 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
             'recompenses',
             recompenseId
           );
-          console.log("Image récompense uploadée:", uploadedImage);
         }
 
         processedRecompenses.push({
@@ -187,7 +165,6 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
         });
       }
 
-      // Construction final des données
       const finalData = {
         chasseTable: {
           id_chasse: chasseId,
@@ -198,8 +175,8 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
           image: uploadedImage,
           date_creation: chasse.date_creation || new Date().toISOString(),
           date_modification: new Date().toISOString(),
-          date_debut: chasse.date_debut ? chasse.date_debut.split('T')[0] : "", // Format YYYY-MM-DD
-          date_fin: chasse.date_fin ? chasse.date_fin.split('T')[0] : "", // Format YYYY-MM-DD
+          date_debut: chasse.date_debut ? chasse.date_debut.split('T')[0] : "",
+          date_fin: chasse.date_fin ? chasse.date_fin.split('T')[0] : "",
           horaire_debut: chasse.horaire_debut || "08:00:00",
           horaire_fin: chasse.horaire_fin || "18:00:00",
           prix: chasse.prix || 0.0,
@@ -208,7 +185,7 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
           theme: chasse.theme || "Aucun thème",
           statut: chasse.statut || "En attente de validation",
           id_chateau: chasse.chateau.id_chateau,
-          id_equipe: idEquipe, // Utilisation de l'ID équipe depuis l'URL
+          id_equipe: idEquipe,
         },
         enigmesTable: processedEnigmes.map((enigme, index) => ({
           id_enigme: enigme.id_enigme,
@@ -247,11 +224,9 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
         }))
       };
 
-      console.log("Données finales transformées:", JSON.stringify(finalData, null, 2));
       return finalData;
 
     } catch (error) {
-      console.error("Erreur lors de la transformation des données:", error);
       throw error;
     } finally {
       setIsSubmitting(false);
@@ -260,44 +235,32 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
 
   const handleSubmit = useCallback(async () => {
     try {
-      console.log("Début de la soumission...");
       const transformedData = await transformFormDataToTables(formData as ChasseType);
       
-      console.log("Enregistrement de la chasse...");
       const chasseInstance = new Chasse(transformedData.chasseTable);
       const chasseResult = isEditMode 
         ? await chasseInstance.update() 
         : await chasseInstance.create();
-      console.log("Résultat chasse:", chasseResult);
 
-      console.log(`Enregistrement des ${transformedData.enigmesTable.length} énigmes...`);
       for (const enigmeData of transformedData.enigmesTable) {
-        console.log("Enregistrement énigme:", enigmeData.titre);
         const enigmeInstance = new Enigme(enigmeData);
         const result = isEditMode && enigmeData.id_enigme 
           ? await enigmeInstance.update() 
           : await enigmeInstance.create();
-        console.log("Résultat énigme:", result);
       }
 
-      console.log(`Enregistrement des ${transformedData.indicesTable.length} indices...`);
       for (const indiceData of transformedData.indicesTable) {
-        console.log("Enregistrement indice:", indiceData.type);
         const indiceInstance = new Indice(indiceData);
         const result = isEditMode && indiceData.id_indice 
           ? await indiceInstance.update() 
           : await indiceInstance.create();
-        console.log("Résultat indice:", result);
       }
 
-      console.log(`Enregistrement des ${transformedData.recompensesTable.length} récompenses...`);
       for (const recompenseData of transformedData.recompensesTable) {
-        console.log("Enregistrement récompense:", recompenseData.nom);
         const recompenseInstance = new Recompense(recompenseData);
         const result = isEditMode && recompenseData.id_recompense 
           ? await recompenseInstance.update() 
           : await recompenseInstance.create();
-        console.log("Résultat récompense:", result);
       }
 
       toast.success("Chasse créée avec succès !");
@@ -305,16 +268,6 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
       router.refresh();
 
     } catch (error) {
-      console.error("Erreur complète:", {
-        error: error instanceof Error ? {
-          message: error.message,
-          stack: error.stack
-        } : error,
-        formData: JSON.parse(JSON.stringify(formData, (_, v) => {
-          if (v instanceof File) return { name: v.name, type: v.type, size: v.size };
-          return v;
-        }))
-      });
       toast.error(`Erreur lors de la création : ${(error as Error).message}`);
     }
   }, [formData, isEditMode, transformFormDataToTables, onHuntCreated, router]);
@@ -323,8 +276,8 @@ export function CreateHuntForm({ initialData, isEditMode = false, onHuntCreated 
     setFormData(prev => ({
       ...prev,
       ...updatedData,
-      date_debut: updatedData.date_debut ? updatedData.date_debut.split('T')[0] : prev.date_debut, // Format YYYY-MM-DD
-      date_fin: updatedData.date_fin ? updatedData.date_fin.split('T')[0] : prev.date_fin, // Format YYYY-MM-DD
+      date_debut: updatedData.date_debut ? updatedData.date_debut.split('T')[0] : prev.date_debut,
+      date_fin: updatedData.date_fin ? updatedData.date_fin.split('T')[0] : prev.date_fin,
       enigmes: updatedData.enigmes ? updatedData.enigmes.map((newEnigme, index) => ({
         ...prev.enigmes?.[index],
         ...newEnigme,

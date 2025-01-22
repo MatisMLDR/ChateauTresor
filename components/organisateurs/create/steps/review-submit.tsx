@@ -3,31 +3,14 @@
 import React from "react";
 import { ChasseType } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, MapPin, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Clock, MapPin } from "lucide-react";
 
 interface ReviewSubmitProps {
   formData: Partial<ChasseType>;
-  setFormData: (data: Partial<ChasseType>) => void;
+  readOnly?: boolean;
 }
 
-export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
-  // Vérifier si toutes les informations requises sont complètes
-  const estComplet =
-    formData.titre &&
-    formData.description &&
-    formData.chateau &&
-    formData.prix !== undefined &&
-    formData.age_requis !== undefined &&
-    formData.duree_estime &&
-    formData.difficulte !== undefined &&
-    formData.date_fin &&
-    formData.date_debut &&
-    formData.theme &&
-    formData.capacite !== undefined &&
-    formData.recompenses?.length &&
-    formData.enigmes?.length;
-
+export function ReviewSubmit({ formData, readOnly }: ReviewSubmitProps) {
   return (
     <div className="space-y-8">
       {/* Informations de base */}
@@ -38,20 +21,22 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
         <CardContent className="space-y-4">
           <div>
             <h3 className="font-semibold">Titre</h3>
-            <p className="text-muted-foreground">{formData.titre}</p>
+            <p className="text-muted-foreground">{formData.titre || "Non spécifié"}</p>
           </div>
           <div>
             <h3 className="font-semibold">Description</h3>
-            <p className="text-muted-foreground">{formData.description}</p>
+            <p className="text-muted-foreground whitespace-pre-line">
+              {formData.description || "Aucune description"}
+            </p>
           </div>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>Durée estimée : {formData.duree_estime} minutes</span>
+              <span>Durée estimée : {formData.duree_estime || "Non spécifiée"}</span>
             </div>
-            <div>Prix du ticket : {formData.prix}€</div>
-            <div>Âge Minimum : {formData.age_requis} ans</div>
-            <div className="capitalize">Difficulté : {formData.difficulte}</div>
+            <div>Prix du ticket : {formData.prix ? `${formData.prix}€` : "Non spécifié"}</div>
+            <div>Âge Minimum : {formData.age_requis || "Non spécifié"} ans</div>
+            <div className="capitalize">Difficulté : {formData.difficulte || "Non spécifiée"}</div>
           </div>
         </CardContent>
       </Card>
@@ -65,15 +50,19 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
           {formData.chateau ? (
             <div className="space-y-4">
               <img
-                src={formData.chateau.image instanceof File ? URL.createObjectURL(formData.chateau.image) : formData.chateau.image || "/placeholder-image.png"}
+                src={
+                  formData.chateau.image instanceof File
+                    ? URL.createObjectURL(formData.chateau.image)
+                    : formData.chateau.image || "/placeholder-image.png"
+                }
                 alt={formData.chateau.nom}
                 className="h-48 w-full rounded-lg object-cover"
               />
               <div>
-                <h3 className="font-semibold">{formData.chateau.nom}</h3>
+                <h3 className="font-semibold">{formData.chateau.nom || "Nom non spécifié"}</h3>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
-                  {formData.chateau.localisation}
+                  {formData.chateau.localisation || "Localisation non spécifiée"}
                 </div>
               </div>
             </div>
@@ -91,11 +80,14 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
         <CardContent>
           <div className="space-y-4">
             {formData.enigmes?.map((enigme, index) => (
-              <div key={enigme.id_enigme || index} className="rounded-lg bg-muted p-4">
+              <div
+                key={enigme.id_enigme || index}
+                className="rounded-lg bg-muted p-4"
+              >
                 <h3 className="mb-2 font-semibold">Énigme {index + 1}</h3>
-                <p className="mb-2 text-muted-foreground">{enigme.titre}</p>
+                <p className="mb-2 text-muted-foreground">{enigme.titre || "Sans titre"}</p>
                 <div className="text-sm text-muted-foreground">
-                  {enigme.indices?.length || 0} indices fournis
+                  {enigme.indices?.length || 0} indice(s) fourni(s)
                 </div>
               </div>
             ))}
@@ -111,11 +103,16 @@ export function ReviewSubmit({ formData, setFormData }: ReviewSubmitProps) {
         <CardContent>
           <div className="space-y-4">
             {formData.recompenses?.map((recompense, index) => (
-              <div key={recompense.id_recompense || index} className="rounded-lg bg-muted p-4">
+              <div
+                key={recompense.id_recompense || index}
+                className="rounded-lg bg-muted p-4"
+              >
                 <h3 className="mb-2 font-semibold">Récompense {index + 1}</h3>
-                <p className="mb-2 text-muted-foreground">{recompense.nom}</p>
+                <p className="mb-2 text-muted-foreground">{recompense.nom || "Sans nom"}</p>
                 <div className="text-sm text-muted-foreground">
-                  Type: {recompense.type} | Valeur: {recompense.valeur} | Quantité: {recompense.quantite_dispo}
+                  Type: {recompense.type || "Non spécifié"} | 
+                  Valeur: {recompense.valeur || "0"} | 
+                  Quantité: {recompense.quantite_dispo || "0"}
                 </div>
               </div>
             ))}
