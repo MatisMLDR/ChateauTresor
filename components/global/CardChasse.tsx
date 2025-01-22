@@ -5,11 +5,13 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Euro, MapPin, Users } from 'lucide-react';
+import { Castle, Clock, Euro, MapPin, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { RatingStars } from '@/components/RatingStars';
 import Chasse from '@/classes/Chasse';
 import { usePathname } from 'next/navigation'; // Import usePathname
+import Chateau from '@/classes/Chateau';
+import { UUID } from 'crypto';
 
 interface CardChasseProps {
   chasse: Chasse;
@@ -19,6 +21,7 @@ interface CardChasseProps {
 const CardChasse = ({ chasse, className }: CardChasseProps) => {
   const [nbAvis, setNbAvis] = useState<number>(0);
   const [note, setNote] = useState<number>(0);
+  const [chateau, setChateau] = useState<Chateau | null>(null);
   const pathname = usePathname(); // Utilise usePathname pour obtenir le chemin actuel
 
   useEffect(() => {
@@ -41,6 +44,18 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
     fetchNbAvis();
     fetchNote();
   }, [chasse]);
+
+  useEffect(() => {
+    const fetchChateau = async () => {
+      try {
+        const chateau = await Chateau.readId(chasse.getIdChateau() as UUID);
+        setChateau(chateau);
+      } catch (err) {
+        console.error('Erreur lors de la récupération du château :', err);
+      }
+    };
+    fetchChateau();
+  }, [])
 
   const getDifficultyText = (difficulty: number) => {
     switch (difficulty) {
@@ -74,7 +89,7 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
   let teamId = null;
 
   const participantType = url[1]
-  if(participantType === 'organisateurs') {
+  if (participantType === 'organisateurs') {
     teamId = url[3]
   }
 
@@ -119,6 +134,12 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
           </span>
         </div>
         <div className="space-y-2">
+          {chasse.getIdChateau() && (
+            <div className="flex items-center space-x-2">
+              <Castle className="h-4 w-4 text-gray-600" />
+              <span className="text-sm text-gray-800">{chateau?.getNom()}</span>
+            </div>
+          )}
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-gray-600" />
             <span className="text-sm text-gray-800">
@@ -138,7 +159,7 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
           {chasse.getIdChateau() && (
             <div className="flex items-center space-x-2">
               <MapPin className="h-4 w-4 text-gray-600" />
-              <span className="text-sm text-gray-800">{chasse.getIdChateau()}</span>
+              <span className="text-sm text-gray-800">{chateau?.getAdressePostale()}</span>
             </div>
           )}
         </div>

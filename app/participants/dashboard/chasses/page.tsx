@@ -26,7 +26,7 @@ const ChasseListPage: React.FC = () => {
   const [filteredChasses, setFilteredChasses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const minPrice = 0; // Connecter à la base de donnéees
-  const maxPrice = 1000; // Idem
+  const maxPrice = 200; // Idem
   const [filters, setFilters] = useState({
     priceRange: [minPrice, maxPrice] as [number, number],
     duration: '',
