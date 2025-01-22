@@ -2,7 +2,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { InformationBadge } from "@/components/ui/information-badge";
 import { Separator } from "@radix-ui/react-separator";
-import { CheckCircle2, Trophy, Clock, Puzzle, ScrollText, MapPin, Calendar } from "lucide-react";
+import { CheckCircle2, Trophy, Clock, Puzzle, ScrollText, MapPin, Calendar, PenBox, Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfilStatistiques({ participantData }: { participantData: any }) {
   const badgesData = [
@@ -21,22 +22,35 @@ export default function ProfilStatistiques({ participantData }: { participantDat
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Section Profil */}
-        <div className="flex items-center gap-6 flex-wrap">
-          <Avatar className="h-20 w-20">
-            <AvatarFallback className="text-xl">
-              {participantData.prenom?.[0]}{participantData.nom?.[0]}
-            </AvatarFallback>
-          </Avatar>
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold">{participantData.nom} {participantData.prenom}</h1>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span>{participantData.ville}</span>
+        <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-0 md:items-start w-full">
+          <div className="flex items-center gap-6 flex-wrap">
+            <Avatar className="h-20 w-20">
+              <AvatarFallback className="text-xl">
+                {participantData.prenom?.[0]}{participantData.nom?.[0]}
+              </AvatarFallback>
+            </Avatar>
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold">{participantData.nom} {participantData.prenom}</h1>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span>{participantData.ville}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Calendar className="h-4 w-4" />
+                <span>Né(e) le {formatDate(participantData.dateNaissance)}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>Né(e) le {formatDate(participantData.dateNaissance)}</span>
-            </div>
+          </div>
+          <div className="flex gap-2 md:gap-4 md:mt-2">
+            <Link href={`/participants/dashboard/profil/${participantData.idUser}/parametres`}>
+              <PenBox className="h-6 w-6" />
+            </Link> 
+            <Link href="/participants/dashboard/classements">
+              <Trophy className="h-6 w-6" />
+            </Link> 
+            <Link href="/participants/dashboard/chasses">
+              <Plus className="h-6 w-6" />
+            </Link> 
           </div>
         </div>
         <Separator orientation="horizontal" className="text-gray-400 bg-gray-200 w-full h-[1px]" />

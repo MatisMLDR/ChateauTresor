@@ -72,7 +72,8 @@ const ProfilInformations = async ({ params }: { params: { id_user: string } }) =
     username: profile.getUsername(),
     dateNaissance: profile.getBirthday(),
     ville: profile.getVille(),
-    allChasses
+    allChasses,
+    idUser: id_user
   }
 
   if (!profile || !participant) {
