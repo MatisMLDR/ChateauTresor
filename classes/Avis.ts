@@ -8,8 +8,8 @@ class Avis {
   private id_avis: UUID;
   private note: number;
   private titre: string | null;
-  private description: string | null;
-  private nb_like: number;
+  private description: string | null | undefined;
+  private nb_likes: number;
   private date_modification: string | null;
   private id_chasse: UUID;
   private id_participant: UUID;
@@ -18,8 +18,8 @@ class Avis {
     this.id_avis = avis.id_avis;
     this.note = avis.note;
     this.titre = avis.titre ?? "";
-    this.description = avis.description ?? "";
-    this.nb_like = avis.nb_like ?? 0;
+    this.description = avis.description ?? null;
+    this.nb_likes = avis.nb_likes ?? 0;
     this.date_modification = avis.date_modification ?? "";
     this.id_chasse = avis.id_chasse;
     this.id_participant = avis.id_participant;
@@ -36,11 +36,11 @@ class Avis {
   public getTitre(): string | null {
     return this.titre;
   }
-  public getDescription(): string | null {
+  public getDescription(): string | null | undefined{
     return this.description;
   }
   public getNbLike(): number {
-    return this.nb_like;
+    return this.nb_likes;
   }
   public getDateModification(): string | null {
     return this.date_modification;
@@ -68,8 +68,8 @@ class Avis {
     this.description = description;
   }
 
-  public setNbLike(nb_like: number): void {
-    this.nb_like = nb_like;
+  public setNbLike(nb_likes: number): void {
+    this.nb_likes = nb_likes;
   }
 
   public setDateModification(date_modification: string): void {
@@ -90,7 +90,7 @@ class Avis {
       note: this.note,
       titre: this.titre,
       description: this.description,
-      nb_like: this.nb_like,
+      nb_likes: this.nb_likes,
       date_modification: this.date_modification,
       id_chasse: this.id_chasse,
       id_participant: this.id_participant
@@ -138,14 +138,21 @@ class Avis {
     this.note = avis.note;
     this.titre = avis.titre;
     this.description = avis.description;
-    this.nb_like = avis.nb_like;
+    this.nb_likes = avis.nb_likes;
     this.date_modification = avis.date_modification;
     this.id_chasse = avis.id_chasse;
     this.id_participant = avis.id_participant;
   }
 
   public async create(): Promise<void> {
-    const avis = await createAvis(this) as any
+    const avis = await createAvis({
+      note: this.note,
+      titre: this.titre,
+      description: this.description,
+      nb_likes: this.nb_likes,
+      id_chasse: this.id_chasse,
+      id_participant: this.id_participant
+    }) as any
 
     if (!avis) {
       throw new Error('Avis not created');
@@ -187,12 +194,12 @@ class Avis {
   }
 
   public async addLike(): Promise<void> {
-    this.nb_like++;
+    this.nb_likes++;
     await this.update();
   }
 
   public async removeLike(): Promise<void> {
-    this.nb_like--;
+    this.nb_likes--;
     await this.update();
   }
 }

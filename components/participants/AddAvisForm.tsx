@@ -10,14 +10,14 @@ import { UUID } from 'crypto';
 import { Input } from '../ui/input';
 import Avis from '@/classes/Avis';
 import toast, { Toaster } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface AddAvisFormProps {
     chasseId: UUID;
     participantId: UUID;
-    onSuccess?: () => void; // Callback optionnel après succès
 }
 
-export default function AddAvisForm({ chasseId, participantId, onSuccess }: AddAvisFormProps) {
+export default function AddAvisForm({ chasseId, participantId }: AddAvisFormProps) {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const [title, setTitle] = useState('');
@@ -26,14 +26,11 @@ export default function AddAvisForm({ chasseId, participantId, onSuccess }: AddA
     const MAX_TITLE_LENGTH = 50;
     const MAX_COMMENT_LENGTH = 500;
 
+    const router = useRouter();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (rating === 0) {
-            toast.error('Veuillez sélectionner une note');
-            return;
-        }
-        // Validation côté client
         if (rating === 0) {
             toast.error('Veuillez sélectionner une note');
             return;
@@ -48,7 +45,7 @@ export default function AddAvisForm({ chasseId, participantId, onSuccess }: AddA
             toast.error(`Le commentaire ne doit pas dépasser ${MAX_COMMENT_LENGTH} caractères`);
             return;
         }
-        
+
         setIsSubmitting(true);
 
         try {
@@ -60,7 +57,7 @@ export default function AddAvisForm({ chasseId, participantId, onSuccess }: AddA
                 id_chasse: chasseId,
                 id_participant: participantId
             });
-
+            console.log("AVIS DANS ADD AVIS COMP : ", avis);
             await avis.create();
 
             // Réinitialisation du formulaire
@@ -75,6 +72,7 @@ export default function AddAvisForm({ chasseId, participantId, onSuccess }: AddA
             toast.error('Une erreur est survenue lors de l\'ajout de l\'avis.');
         } finally {
             setIsSubmitting(false);
+            router.refresh(); // Rafraîchir la page pour afficher le nouvel avis
         }
     };
 

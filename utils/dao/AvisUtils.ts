@@ -2,8 +2,6 @@ import { AvisType } from '@/types';
 import dotenv from 'dotenv';
 import { UUID } from 'crypto';
 
-dotenv.config();
-
 /**
  * Fonction permettant de récupérer tous les avis d'une chasse
  * @returns Promise<any> Le tableau des avis de la chasse
@@ -15,6 +13,9 @@ export async function getAllAvisByChasse(id_chasse: UUID): Promise<any[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/avis/chasse?id_chasse=${id_chasse}`);
     
+    if (res.status === 404) {
+      return [];
+    }
     // Si la réponse n'est pas OK, lever une erreur
     if (!res.ok) {
       throw new Error('Erreur lors de la récupération des avis');

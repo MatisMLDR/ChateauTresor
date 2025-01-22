@@ -172,7 +172,7 @@ export type AvisType = {
   note: number;
   titre?: string | null;
   description?: string | null;
-  nb_like?: number;
+  nb_likes?: number;
   date_modification?: string | null;
   id_chasse: UUID;
   id_participant: UUID;

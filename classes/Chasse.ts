@@ -593,6 +593,11 @@ class Chasse {
   public async getAllAvis(): Promise<any> {
     // Récupération dans la base des avis avec l'id de la chasse
     const data = await getAllAvisByChasse(this.id_chasse);
+
+    if (data.length === 0) {
+      return [];
+    }
+
     return data.map((avis: any) => new Avis(avis));
   }
 

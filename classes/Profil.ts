@@ -173,11 +173,13 @@ export class Profil {
   }
 
   public static async readId(id: string): Promise<Profil> {
+    console.log("id DANS PROFIL READ ID", id);  
     const profile = await getProfilById(id) as any;
 
-    if (profile == null) {
-      throw new Error("Profil introuvable");
+    if (!profile) {
+      throw new Error('Profil not found');
     }
+    console.log("PROFILE DANS PROFIL READ ID", profile);
 
     return new Profil(profile);
   }
@@ -201,25 +203,25 @@ export class Profil {
       throw new Error('Profil ID is required');
     }
 
-    const avis = await getProfilById(this.id) as any
+    const profil = await getProfilById(this.id) as any
 
-    if (!avis) {
+    if (!profil) {
       throw new Error('Profil not found');
     }
 
-    this.id = avis.id;
-    this.username = avis.username;
-    this.updated_at = avis.updated_at;
-    this.email = avis.email;
-    this.birthday = avis.birthday;
-    this.email_confirm = avis.email_confirm;
-    this.nom = avis.nom;
-    this.prenom = avis.prenom;
-    this.adresse = avis.adresse;
-    this.ville = avis.ville;
-    this.code_postal = avis.code_postal;
-    this.stripe_id = avis.stripe_id;
-    this.plan = avis.plan;
+    this.id = profil.id;
+    this.username = profil.username;
+    this.updated_at = profil.updated_at;
+    this.email = profil.email;
+    this.birthday = profil.birthday;
+    this.email_confirm = profil.email_confirm;
+    this.nom = profil.nom;
+    this.prenom = profil.prenom;
+    this.adresse = profil.adresse;
+    this.ville = profil.ville;
+    this.code_postal = profil.code_postal;
+    this.stripe_id = profil.stripe_id;
+    this.plan = profil.plan;
   }
 
   public async create(): Promise<void> {

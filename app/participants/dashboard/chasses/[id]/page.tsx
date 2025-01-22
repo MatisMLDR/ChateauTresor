@@ -14,6 +14,9 @@ import Chateau from '@/classes/Chateau';
 import { convertTimeToMinutesAndHours } from '@/lib/utils';
 import { Participant } from '@/classes/Participant';
 import { createClient } from '@/utils/supabase/server';
+import { Skeleton } from '@/components/ui/skeleton';
+import { profile } from 'console';
+import { Profil } from '@/classes/Profil';
 
 export default async function ChassePage({ params }: { params: { id: UUID } }) {
     const { id } = await params;
@@ -23,7 +26,7 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
     const chateau = await Chateau.readId(chasse.getIdChateau() as UUID);
     // fetch user data for id of participant
     const supabase = createClient();
-    const { data: { user} } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
 
     const participant = await Participant.readByIdUser(user?.id as UUID);
 
@@ -104,16 +107,26 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                         }
                         return 1;
                     })
-                    .map((avis: any) => (
+                    .map(async (avis: any) => {
+
+                        const participant = await Participant.readId(avis.getIdParticipant() as UUID);
+                        console.log("ID PARTICIPANT DANS MAP : ", participant);
+                        const profile = await Profil.readId(participant.getIdUser());
+
+                        if (!profile) {
+                            return <Skeleton key={avis.getIdAvis()} className="h-10 w-full rounded-md"/>;
+                        }
+
+                        return (
                         <Card key={avis.getIdAvis()}>
                             <CardContent className="pt-6">
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-center space-x-4">
                                         <Avatar>
-                                            <AvatarFallback>{avis.getIdParticipant().charAt(0)}</AvatarFallback>
+                                            <AvatarFallback>{profile.getNom().charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <p className="font-semibold">{avis.getIdParticipant()}</p>
+                                            <p className="font-semibold">{profile.getNom() + " " + profile.getPrenom()}</p>
                                             <div className="flex items-center">
                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                     <Star
@@ -133,7 +146,7 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                                 )}
                             </CardContent>
                         </Card>
-                    ))
+                    )})
                 }
             </div>
         </div>
