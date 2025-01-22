@@ -203,6 +203,30 @@ class Chasse {
     this.chateau = chateau;
   }
 
+  public toObject(): ChasseType {
+    return {
+      id_chasse: this.id_chasse,
+      titre: this.titre,
+      capacite: this.capacite,
+      description: this.description,
+      age_requis: this.age_requis,
+      image: this.image,
+      date_creation: this.date_creation,
+      date_modification: this.date_modification,
+      date_debut: this.date_debut,
+      date_fin: this.date_fin,
+      horaire_debut: this.horaire_debut!,
+      horaire_fin: this.horaire_fin!,
+      prix: this.prix,
+      difficulte: this.difficulte,
+      duree_estime: this.duree_estime,
+      theme: this.theme,
+      statut: this.statut,
+      id_chateau: this.id_chateau,
+      id_equipe: this.id_equipe!,
+    }
+  }
+
   /* 
    * Méthode pour charger les données de l'objet indice dans la classe
     * @returns Promise<any> L'objet Chasse avec les données chargées à partir de l'id

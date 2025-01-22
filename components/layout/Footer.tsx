@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import Image from 'next/image';
 
-const Footer = ({ type = "participant" }: { type: "participant" | "organisateur"}) => {
+const Footer = ({ type = "participant" }: { type?: "participant" | "organisateur"}) => {
   return (
     <footer
       className="grid bg-primary grid-cols-1 w-full place-items-center gap-2 px-4 py-6 md:px-6 text-white"

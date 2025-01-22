@@ -22,7 +22,7 @@ export default async function LandingPage() {
         <Pricing />
         <Cta type="organisateur" />
       </main>
-      <Footer />
+      <Footer type="organisateur" />
     </div>
   )
 }
