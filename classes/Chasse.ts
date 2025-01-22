@@ -1,12 +1,12 @@
 import { ChasseType, ChateauType, EnigmeType, IndiceType, ProfilType, ImageFile, RecompenseType } from "@/types";
-import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles, getChassesByEquipeId } from '@/utils/dao/ChasseUtils';
+import { getAllParticipations, getChasseById, createChasse, deleteChasse, updateChasse, getAllChasses, isChasseAvailableForDay, getAllChassesDisponibles, getChassesByEquipeId, getAllChassesFinies, getClassementPointsOfChasse } from '@/utils/dao/ChasseUtils';
 import { getAllRecompensesByChasse } from "@/utils/dao/RecompenseUtils";
 import { getAllAvisByChasse } from "@/utils/dao/AvisUtils";
 import { UUID } from "crypto";
 import { getAllEnigmesByChasse } from "@/utils/dao/EnigmeUtils";
 import Avis from "./Avis";
 import { getProfilById } from "@/utils/dao/ProfilUtils";
-import { addParticipation } from "@/utils/dao/ParticipantUtils";
+import { addParticipation, getClassementChassesTerminees } from "@/utils/dao/ParticipantUtils";
 import Chateau from "./Chateau";
 import { Enigme } from "./Enigme";
 
@@ -618,6 +618,22 @@ class Chasse {
     // Multiplier par la difficulté de la chasse
 
     return scoreInitial * this.difficulte;
+  }
+
+  public static async getAllChassesFinies(): Promise<any> {
+    const chasses = await getAllChassesFinies();
+
+    if (chasses.length === 0) {
+      return [];
+    }
+    
+    return chasses.map((chasse: any) => new Chasse(chasse));
+  }
+  public async getClassementPoints(): Promise<any> {
+    const data = await getClassementPointsOfChasse(this.id_chasse)
+
+    return data;
+    
   }
 
 }

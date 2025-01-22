@@ -1,4 +1,5 @@
 import Chasse from '@/classes/Chasse';
+import ClassementGeneralPoints from '@/components/global/ClassementGeneralPoints';
 import { LoaderCircle } from 'lucide-react';
 import React from 'react'
 
@@ -18,8 +19,7 @@ const ClassementsOfChasse = async ({ params }: { params: { id: any } }) => {
   return (
     <div className="p-4">
       <h1 className="mb-8 text-3xl font-bold">Classements de la chasse {chasse.getTitre()}</h1>
-      <h2>Classement général du nombre de points total par participant</h2>
-      {/* <ClassementGeneralPointOfChasse id_chasse={id} /> */}
+      <ClassementGeneralPoints id_chasse={id} />
     </div>
   );
 };

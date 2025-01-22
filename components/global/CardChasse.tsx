@@ -105,7 +105,7 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
     <Card className={`transition-shadow duration-200 hover:shadow-lg ${className}`}>
       <CardHeader className="relative p-0 aspect-video overflow-hidden">
         <div className="relative h-full w-full">
-          <img src={chasseimage} alt="Chasse Image" className="h-full w-full object-cover"/>
+          <img src={chasseimage} alt="Chasse Image" className="h-full w-full object-cover" />
 
           <Badge
             className={`${getDifficultyColor(chasse.getDifficulte())} absolute right-2 top-2 cursor-default select-none px-2 py-1 text-xs font-bold`}
@@ -168,6 +168,11 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
         <Link href={getChasseLink()} className="w-full">
           <Button className="w-full">Voir plus</Button>
         </Link>
+        {participantType === 'participants' && (
+          <Link href={getChasseLink() + "/classements"} className="w-full">
+            <Button className="w-full bg-gold text-gray-900 hover:bg-orange-200">Classement</Button>
+          </Link>
+        )}
         {participantType === 'proprietaire' && (
           <>
             <Button className="w-full" variant={'outline'}>

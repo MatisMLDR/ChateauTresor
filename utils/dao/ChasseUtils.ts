@@ -181,11 +181,34 @@ export async function isChasseAvailableForDay(id_chasse: UUID, day: Date): Promi
 */
 export async function getAllChassesDisponibles(): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/disponibles`);
+  
   if (!res.ok) {
     throw new Error('Erreur lors de la récupération des chasses disponibles');
   }
   return await res.json();
 }
 
+export async function getAllChassesFinies(): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/chasses/finies`);
+  
+  if (res.status === 404) {
+    return [];
+  }
+  
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des chasses disponibles');
+  }
+  return await res.json();
+}
 
-
+export async function getClassementPointsOfChasse(id_chasse: UUID): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/classement/chasses/${id_chasse}/points`);
+  
+  if (res.status === 404) {
+    return [];
+  }
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération du classement par points');
+  }
+  return await res.json();
+}
