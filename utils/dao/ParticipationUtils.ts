@@ -262,4 +262,23 @@ export async function updateParticipationNbEnigmesResolues(
   }
 }
 
+export async function getAllParticipations(): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participations`);
+
+  if (res.status === 404) {
+    return [];
+  }
+
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des participations');
+  }
+  return await res.json();
+}
+
+export async function getNbParticipations(): Promise<any> {
+  const allParticipations = await getAllParticipations();
+
+  return allParticipations.length;
+}
+
 

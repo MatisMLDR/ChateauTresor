@@ -207,7 +207,7 @@ export async function loginUser(currentState: { message: string }, formData: For
 
             participant.create();
         } finally {
-            return redirect(`/participants/dashboard/${user.id}/profil/informations`);
+            return redirect(`/participants/dashboard/profil/${user.id}/informations`);
         }
     }
     // Rediriger vers la page asscoiée au type de l'utilisateur

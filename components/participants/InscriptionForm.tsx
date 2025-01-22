@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { Label } from '../ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Loader2 } from 'lucide-react'
+import Chasse from '@/classes/Chasse'
 
 const InscriptionForm = ({ serverData }: { serverData: any }) => {
   const router = useRouter()
@@ -23,7 +24,9 @@ const InscriptionForm = ({ serverData }: { serverData: any }) => {
         throw new Error('Veuillez sélectionner une date')
       }
 
-      await serverData.chasse.addParticipant(serverData.idParticipant, selectedDate)
+      const instanceChasse = new Chasse(serverData.chasse);
+
+      await instanceChasse.addParticipant(serverData.idParticipant, selectedDate)
       
       toast.success('Inscription confirmée ! Redirection en cours...', {
         duration: 2000

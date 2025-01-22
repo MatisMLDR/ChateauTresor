@@ -604,8 +604,6 @@ class Chasse {
       jour: jour,
     }
 
-    console.log("jour dans addParticipant : ", jour);
-
     await addParticipation(participation);
     
   }

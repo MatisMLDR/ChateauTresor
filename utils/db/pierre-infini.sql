@@ -190,7 +190,7 @@ CREATE TABLE public.Invitations_Equipe
 CREATE TABLE public.Participant
 (
     id_participant UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-    id_user        UUID             NOT NULL UNIQUE REFERENCES auth.users ON DELETE CASCADE
+    id_user        UUID             NOT NULL UNIQUE REFERENCES public.profiles ON DELETE CASCADE
 );
 
 -- Table Chasse

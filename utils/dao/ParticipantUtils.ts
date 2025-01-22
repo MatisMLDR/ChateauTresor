@@ -157,3 +157,42 @@ export async function addParticipation(participation: any): Promise<void> {
     throw new Error('Erreur lors de la création de la participation');
   }
 }
+
+export async function getAllParticipants(): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants`);
+  if (res.status === 404) {
+    return [];
+  }
+  
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des participants');
+  }
+  return await res.json();
+}
+
+export async function getNbChassesTerminees(id_participant: UUID): Promise<any> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/${id_participant}/chasses/terminees`);
+  
+  if (res.status === 404) {
+    return [];
+  }
+  
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des chasses terminées du participant');
+  }
+  return await res.json();
+}
+
+export const getClassementChassesTerminees = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/classement/chasses`);
+    
+    if (res.status === 404) {
+      return [];
+    }
+
+    if (!res.ok) {
+      throw new Error(`Erreur HTTP: ${res.status}`);
+    }
+
+    return await res.json();
+};
