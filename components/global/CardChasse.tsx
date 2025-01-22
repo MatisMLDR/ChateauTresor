@@ -88,9 +88,9 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
 
   return (
     <Card className={`transition-shadow duration-200 hover:shadow-lg ${className}`}>
-      <CardHeader className="relative p-0">
-        <div className="relative">
-          <img src={chasseimage} alt="Chasse Image" />
+      <CardHeader className="relative p-0 h-1/5 overflow-hidden">
+        <div className="relative h-full w-full">
+          <img src={chasseimage} alt="Chasse Image"/>
 
           <Badge
             className={`${getDifficultyColor(chasse.getDifficulte())} absolute right-2 top-2 cursor-default select-none px-2 py-1 text-xs font-bold`}
@@ -112,7 +112,7 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
         >
           {chasse.getDescription()}
         </p>
-        <div className="mb-4 flex items-center space-x-2">
+        <div className="mb-4 flex flex-wrap items-center space-x-2">
           <RatingStars value={note} maxStars={5} />
           <span className="text-sm text-gray-600">
             {formattedNote} ({nbAvis} avis)
