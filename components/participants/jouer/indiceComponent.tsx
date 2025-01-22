@@ -18,7 +18,6 @@ import { getParticipationByParticipantIdAndChasseId, updateParticipationScore } 
 import { createClient } from "@/utils/supabase/client"
 import type { UUID } from "crypto"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
 import type React from "react"
 import { useEffect, useState } from "react"
 
@@ -31,7 +30,13 @@ interface Indice {
   type: string
 }
 
-const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigme, participantId }) => {
+interface IndiceListProps {
+  chasseId: UUID
+  enigmeId: UUID
+  participantId: UUID
+}
+
+const IndiceList = ({chasseId, enigmeId, participantId}: IndiceListProps) => {
   const [indices, setIndices] = useState<Indice[]>([])
   const [error, setError] = useState<string | null>(null)
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false)
@@ -39,10 +44,6 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
   const [discoveredIndices, setDiscoveredIndices] = useState<UUID[]>([])
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState<string | null>(null)
-
-  const searchParams = useSearchParams()
-  const chasseId = searchParams.get("chasseId")
-  const enigmeId = searchParams.get("enigmeId")
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -62,7 +63,7 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
   useEffect(() => {
     const fetchIndices = async () => {
       try {
-        const indices = await getAllIndicesByEnigme(idEnigme as UUID)
+        const indices = await getAllIndicesByEnigme(enigmeId as UUID)
         const sortedIndices = indices.sort(
           (a: { ordre: number }, b: { ordre: number }) => a.ordre - b.ordre
         );
@@ -74,7 +75,7 @@ const IndiceList: React.FC<{ idEnigme: UUID; participantId: UUID }> = ({ idEnigm
       }
     }
     fetchIndices()
-  }, [idEnigme])
+  }, [enigmeId])
 
   useEffect(() => {
     const checkAllIndices = async () => {
