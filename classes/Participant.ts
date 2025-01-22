@@ -253,7 +253,9 @@ export class Participant {
     * @throws Error si la récupération des participations échoue
     */
   public async getAllChasses(): Promise<any> {
-    return await getAllParticipantChasses(this.id_participant);
+    const chasses = await getAllParticipantChasses(this.id_participant);
+
+    return chasses;
   }
 
   // Méthodes pour calculer des statistiques 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import Image from 'next/image';
 
-const Footer = () => {
+const Footer = ({ type = "participant" }: { type: "participant" | "organisateur"}) => {
   return (
     <footer
       className="grid bg-primary grid-cols-1 w-full place-items-center gap-2 px-4 py-6 md:px-6 text-white"
@@ -25,8 +25,8 @@ const Footer = () => {
         <Link href="/cgu">
           <span className="hover:underline">Conditions générales d&apos;utilisation</span>
         </Link>
-        <Link href="/organisateurs">
-          <span className="hover:underline">Organisateur</span>
+        <Link href={`/${type}s`}>
+          <span className="hover:underline">{type.charAt(0).toUpperCase() + type.slice(1)}</span>
         </Link>
         <Link href="/sales">
           <span className="hover:underline">Conditions générales de vente</span>

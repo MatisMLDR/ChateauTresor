@@ -114,6 +114,8 @@ const Onboarding = () => {
     setLoading(true); // On met le loading à true pendant l'opération
     e.preventDefault();
 
+    console.log('formData', formData);
+    
     // Préparation des données pour l'appartenance à l'équipe
     const data = {
       id_membre: formData.id_membre as UUID,
@@ -273,12 +275,12 @@ const Onboarding = () => {
                     <option value="" disabled>
                       Sélectionner un rôle
                     </option>
-                    <option value="organisateur">Organisateur</option>
-                    <option value="createur">Créateur</option>
-                    <option value="membre">Invité</option>
-                    <option value="moderateur">Modérateur</option>
-                    <option value="tresorier">Trésorier</option>
-                    <option value="autre">Autre</option>
+                    <option value="Organisateur">Organisateur</option>
+                    <option value="Créateur">Créateur</option>
+                    <option value="Invité">Invité</option>
+                    <option value="Modérateur">Modérateur</option>
+                    <option value="Trésorier">Trésorier</option>
+                    <option value="Autre">Autre</option>
                   </select>
                 </div>
                 <div className="flex gap-4 items-center justify-between">
