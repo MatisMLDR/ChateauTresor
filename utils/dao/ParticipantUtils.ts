@@ -45,7 +45,7 @@ export async function getAllParticipantEnigmes(id_participant: UUID): Promise<an
  */
 export async function getAllParticipantChasses(id_participant: UUID): Promise<any> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/participants/chasses/${id_participant}`);
-  if (!res.ok) {
+  if (!res.ok || res.status != 404) {
     throw new Error('Erreur lors de la récupération des chasses du participant');
   }
   return await res.json();
