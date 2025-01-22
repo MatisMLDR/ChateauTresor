@@ -7,7 +7,7 @@ export async function GET() {
   try {
     // Récupérer toutes les chasses terminées
     const { data, error } = await supabase
-      .from('chasses')
+      .from('chasse')
       .select('*')
       .eq('statut', 'Finie');
 
