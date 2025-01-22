@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { indiceDecouvert, updateIndiceParticipant, deleteIndiceParticipant } from "@/utils/dao/IndiceParticipantUtils";
+import { indiceDecouvert, updateIndiceParticipant, deleteIndiceParticipant, checkIfIndiceExists } from "@/utils/dao/IndiceParticipantUtils";
 
 export class IndiceParticipant {
   id_indice: UUID;
@@ -166,37 +166,12 @@ export class IndiceParticipant {
   }
 
 
-  /**
-   * Méthode pour vérifier si un indice est déjà renseigné pour un participant
-   * @param participantId L'identifiant du participant
-   * @param indiceId L'identifiant de l'indice
-   * @returns Promise<boolean> True si l'indice est déjà renseigné, false sinon
-   */
-  public static async checkIfIndiceExists(participantId: UUID, indiceId: UUID): Promise<boolean> {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant/discovered?participantId=${participantId}&idIndice=${indiceId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      // Si la réponse n'est pas OK, renvoyer false
-      if (!res.ok) {
-        const errorResponse = await res.json();
-        console.error('Erreur API:', res.status, errorResponse);
-        return false; // Renvoyer false en cas d'erreur
-      }
-
-      const data = await res.json();
-      return data.exists; // Renvoie true ou false
-    } catch (error) {
-      console.error('Erreur dans checkIfIndiceExists:', error);
-      return false; // Renvoyer false en cas d'erreur
-    }
+  public static async checkIfIndiceExists(
+    participantId: UUID,
+    indiceId: UUID
+  ): Promise<boolean> {
+    // Appel direct au DAO sans logique supplémentaire
+    return checkIfIndiceExists(participantId, indiceId);
   }
 
 }

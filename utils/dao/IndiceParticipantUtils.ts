@@ -85,35 +85,25 @@ export async function deleteIndiceParticipant(id_indice: UUID, id_participant: U
   }
 }
 
-/**
-* Méthode pour vérifier si un indice est déjà renseigné pour un participant
-* @param participantId L'identifiant du participant
-* @param indiceId L'identifiant de l'indice
-* @returns Promise<boolean> True si l'indice est déjà renseigné, false sinon
-* @throws Error si l'opération échoue
-*/
-export async function checkIfIndiceExists(participantId: UUID, indiceId: UUID): Promise<boolean> {
+export async function checkIfIndiceExists(
+  participantId: UUID,
+  indiceId: UUID
+): Promise<boolean> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant/discovered?participantId=${participantId}&idIndice=${indiceId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
+      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/indices/participant/discovered?participantId=${participantId}&idIndice=${indiceId}`
     );
 
     if (!res.ok) {
-      const errorResponse = await res.json();
-      console.error('Erreur API:', res.status, errorResponse);
-      throw new Error(errorResponse.error || 'Erreur lors de la vérification de l\'indice');
+      if (res.status === 404) return false; // Cas spécifique 404
+      throw new Error(`Erreur HTTP: ${res.status}`);
     }
 
     const data = await res.json();
-    return data.exists; // Renvoie true ou false
+    return data.exists;
+
   } catch (error) {
-    console.error('Erreur dans checkIfIndiceExists:', error);
-    throw error;
+    console.error('DAO Error:', error);
+    return false; // Fallback safe
   }
 }

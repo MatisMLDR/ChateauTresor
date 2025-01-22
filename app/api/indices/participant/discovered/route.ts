@@ -6,10 +6,10 @@ export async function GET(request: Request) {
   const participantId = searchParams.get('participantId');
   const indiceId = searchParams.get('idIndice');
 
-  // Validation des paramètres
+  // Validation basique
   if (!participantId || !indiceId) {
     return NextResponse.json(
-      { error: 'Les paramètres participantId et idIndice sont obligatoires' },
+      { error: 'Paramètres manquants' },
       { status: 400 }
     );
   }
@@ -17,28 +17,22 @@ export async function GET(request: Request) {
   const supabase = createClient();
 
   try {
-    // Vérifier si l'indice est déjà renseigné pour ce participant
     const { data, error } = await supabase
       .from('indice_participant')
       .select('*')
       .eq('id_participant', participantId)
       .eq('id_indice', indiceId)
-      .single(); // Utiliser .single() pour récupérer un seul enregistrement
+      .maybeSingle(); // Accepte les résultats null
 
-    if (error) {
-      console.error('Erreur Supabase:', error);
-      return NextResponse.json(
-        { error: 'Erreur lors de la vérification de l\'indice', details: error.message },
-        { status: 500 }
-      );
-    }
+    if (error) throw error;
 
-    // Si l'enregistrement existe, renvoyer true, sinon false
-    return NextResponse.json({ exists: !!data }, { status: 200 });
-  } catch (err) {
-    console.error('Erreur inattendue:', err);
+    // Renvoie explicitement exists: true/false
+    return NextResponse.json({ exists: !!data });
+
+  } catch (error) {
+    console.error('Erreur:', error);
     return NextResponse.json(
-      { error: 'Une erreur est survenue', details: String(err) },
+      { error: 'Erreur serveur' },
       { status: 500 }
     );
   }

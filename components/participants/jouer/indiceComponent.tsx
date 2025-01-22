@@ -47,18 +47,18 @@ const IndiceList = ({chasseId, enigmeId, participantId}: IndiceListProps) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const supabase = createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (user) {
-        setUserId(user.id)
-      } else {
-        console.error("Utilisateur non connecté")
+      const supabase = createClient();
+      const { data: { user }, error } = await supabase.auth.getUser();
+  
+      if (error || !user) {
+        console.error("Utilisateur non connecté");
+        setError("Veuillez vous connecter pour accéder aux indices.");
+        return;
       }
-    }
-    fetchUser()
-  }, [])
+      setUserId(user.id);
+    };
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     const fetchIndices = async () => {
@@ -79,25 +79,30 @@ const IndiceList = ({chasseId, enigmeId, participantId}: IndiceListProps) => {
 
   useEffect(() => {
     const checkAllIndices = async () => {
-      const discoveredIds: UUID[] = []
-      const participant = await Participant.readByIdUser(userId as UUID)
-      const participantId = participant.getIdParticipant()
-
-      for (const indice of indices) {
-        try {
-          const isDiscovered = await IndiceParticipant.checkIfIndiceExists(participantId, indice.id_indice)
-          if (isDiscovered) {
-            discoveredIds.push(indice.id_indice)
-          }
-        } catch (error) {
-          console.error(`Erreur lors de la vérification de l'indice ${indice.id_indice}:`, error)
+      if (!userId) return; // Blocage si userId est null
+  
+      try {
+        const participant = await Participant.readByIdUser(userId as UUID);
+        const discoveredIds: UUID[] = [];
+        
+        for (const indice of indices) {
+          const isDiscovered = await IndiceParticipant.checkIfIndiceExists(
+            participant.getIdParticipant(), 
+            indice.id_indice
+          );
+          if (isDiscovered) discoveredIds.push(indice.id_indice);
         }
+        
+        setDiscoveredIndices(discoveredIds);
+      } catch (error) {
+        console.error("Erreur vérification indices:", error);
+      } finally {
+        setLoading(false);
       }
-      setDiscoveredIndices(discoveredIds)
-      setLoading(false)
-    }
-    checkAllIndices()
-  }, [indices, participantId, userId])
+    };
+    
+    if (indices.length > 0) checkAllIndices();
+  }, [indices, userId]); // Déclencher seulement sur userId
 
   const handleIndiceClick = async (indice: Indice) => {
     setSelectedIndice(indice)

@@ -7,7 +7,7 @@ import { UUID } from 'crypto'
 import Link from 'next/link'
 
 const InscriptionChasse = async ({ params }: { params: { id: string } }) => {
-  const { id } = params
+  const { id } = await params
 
   const supabase = createClient()
   const user = (await supabase.auth.getUser()).data.user
