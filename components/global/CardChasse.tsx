@@ -103,9 +103,9 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
 
   return (
     <Card className={`transition-shadow duration-200 hover:shadow-lg ${className}`}>
-      <CardHeader className="relative p-0 h-1/5 overflow-hidden">
+      <CardHeader className="relative p-0 aspect-video overflow-hidden">
         <div className="relative h-full w-full">
-          <img src={chasseimage} alt="Chasse Image"/>
+          <img src={chasseimage} alt="Chasse Image" className="h-full w-full object-cover"/>
 
           <Badge
             className={`${getDifficultyColor(chasse.getDifficulte())} absolute right-2 top-2 cursor-default select-none px-2 py-1 text-xs font-bold`}
@@ -137,29 +137,29 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
           {chasse.getIdChateau() && (
             <div className="flex items-center space-x-2">
               <Castle className="h-4 w-4 text-gray-600" />
-              <span className="text-sm text-gray-800">{chateau?.getNom()}</span>
+              <span className="text-sm text-gray-800 line-clamp-1">{chateau?.getNom()}</span>
             </div>
           )}
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-800">
+            <span className="text-sm text-gray-800 line-clamp-1">
               Durée : {convertTimeToMinutesAndHours(chasse.getDureeEstime()).minutesFormatted}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <Users className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-800">
+            <span className="text-sm text-gray-800 line-clamp-1">
               Capacité : {chasse.getCapacite()} personnes
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <Euro className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-800">Prix : {chasse.getPrix()} €</span>
+            <span className="text-sm text-gray-800 line-clamp-1">Prix : {chasse.getPrix()} €</span>
           </div>
           {chasse.getIdChateau() && (
             <div className="flex items-center space-x-2">
               <MapPin className="h-4 w-4 text-gray-600" />
-              <span className="text-sm text-gray-800">{chateau?.getAdressePostale()}</span>
+              <span className="text-sm text-gray-800 line-clamp-1">{chateau?.getAdressePostale()}</span>
             </div>
           )}
         </div>

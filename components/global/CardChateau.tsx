@@ -53,7 +53,7 @@ const CardChateau = ({ chateau }: CardChateauProps) => {
         </div>
       </CardHeader>
       <CardContent className="flex-1 p-4">
-        <CardTitle className="mb-2 text-xl font-bold">{chateau.getNom()}</CardTitle>
+        <CardTitle className="mb-2 text-xl font-bold line-clamp-1">{chateau.getNom()}</CardTitle>
         <p className="mb-4 line-clamp-1 text-sm text-gray-600">
           {chateau.getDescription() || 'Pas de description disponible.'}
         </p>
