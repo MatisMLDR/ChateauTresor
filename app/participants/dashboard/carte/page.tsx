@@ -8,8 +8,12 @@ import Loader from '@/components/global/loader';
 import { ChateauType } from '@/types';
 
 // Import dynamique des composants React-Leaflet
-const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
+  ssr: false,
+});
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
+  ssr: false,
+});
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
 
 export default function ParticipantsPage() {
@@ -49,8 +53,8 @@ export default function ParticipantsPage() {
 
   const franceCenter: [number, number] = [46.603354, 1.888334];
 
-  const filteredChateaux = chateaux.filter((chateau) =>
-    chateau.nom && chateau.nom.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredChateaux = chateaux.filter(
+    (chateau) => chateau.nom && chateau.nom.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (!L) return <Loader />;
@@ -65,19 +69,22 @@ export default function ParticipantsPage() {
   });
 
   return (
-    <div className="flex z-0 h-full">
-      <div className="flex-1 flex flex-col">
-        <div className="p-4 bg-gray-100">
-          <input
-            type="text"
-            placeholder="Rechercher un château..."
-            className="p-2 w-full border rounded"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+    <div className="z-0 flex h-full">
+      <div className="relative flex flex-1 flex-col">
+        <input
+          type="text"
+          placeholder="Rechercher un château..."
+          className="fixed bottom-8 left-1/2 z-[1000] h-8
+             w-72 -translate-x-1/2 rounded-full p-2 pl-4 text-gray-700 placeholder-gray-500
+             shadow-lg !outline-none
+             transition-all duration-200
+             hover:shadow-xl focus:shadow-xl
+             md:absolute md:right-4 md:top-4 md:translate-x-0"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
 
-        <div className="w-full h-full">
+        <div className="h-full w-full">
           <MapContainer center={franceCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -100,7 +107,7 @@ export default function ParticipantsPage() {
                   position={position}
                   icon={customIcon}
                   eventHandlers={{
-                    click: () => setSelectedChateau(chateau)
+                    click: () => setSelectedChateau(chateau),
                   }}
                 />
               );
