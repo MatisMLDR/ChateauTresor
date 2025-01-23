@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { AudioPlayer } from '@/components/ui/AudioPlayer';
 
 interface Indice {
   id_indice: UUID;
@@ -113,7 +114,13 @@ export default function GameIndice({chasseId, enigmeId}: GameIndiceProps) {
           <CardContent>
             <div className="space-y-4">
               <div className="rounded-lg bg-muted p-4">
-                <p className="text-primary">{indice.contenu}</p>
+                {indice.contenu.endsWith('.jpg') || indice.contenu.endsWith('jpeg') || indice.contenu.endsWith('.png') || indice.contenu.endsWith('.webp') ? (
+                  <img src={indice.contenu} alt={`Indice ${indice.ordre}`} className="w-full h-auto rounded-lg" />
+                ) : (indice.contenu.endsWith('.mp3') || (indice.contenu.endsWith('.ogg') || indice.contenu.endsWith('.wav') || indice.contenu.endsWith('.aac')) ? (
+                  <AudioPlayer soundLink={indice.contenu} />
+                ) : (
+                  <p className='text-primary'>{indice.contenu}</p>
+                ))}
               </div>
               <div className="text-sm text-muted-foreground">
                 Degré d&apos;aide : {indice.degre_aide}/5
