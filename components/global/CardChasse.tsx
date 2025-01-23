@@ -9,7 +9,7 @@ import { Castle, Clock, Euro, MapPin, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { RatingStars } from '@/components/RatingStars';
 import Chasse from '@/classes/Chasse';
-import { usePathname } from 'next/navigation'; // Import usePathname
+import { usePathname } from 'next/navigation';
 import Chateau from '@/classes/Chateau';
 import { UUID } from 'crypto';
 
@@ -22,7 +22,7 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
   const [nbAvis, setNbAvis] = useState<number>(0);
   const [note, setNote] = useState<number>(0);
   const [chateau, setChateau] = useState<Chateau | null>(null);
-  const pathname = usePathname(); // Utilise usePathname pour obtenir le chemin actuel
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchNbAvis = async () => {
@@ -55,58 +55,54 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
       }
     };
     fetchChateau();
-  }, [])
+  }, []);
 
   const getDifficultyText = (difficulty: number) => {
     switch (difficulty) {
-      case 1:
-        return 'Facile';
-      case 2:
-        return 'Moyen';
-      case 3:
-        return 'Difficile';
-      default:
-        return 'Inconnu';
+      case 1: return 'Facile';
+      case 2: return 'Moyen';
+      case 3: return 'Difficile';
+      default: return 'Inconnu';
     }
   };
 
   const getDifficultyColor = (difficulty: number) => {
     switch (difficulty) {
-      case 1:
-        return 'bg-green-500 hover:bg-green-700 text-secondary';
-      case 2:
-        return 'bg-orange-500 hover:bg-orange-700 text-secondary';
-      case 3:
-        return 'bg-red-500 hover:bg-red-700 text-secondary';
-      default:
-        return 'bg-gray-500 hover:bg-gray-700 text-secondary';
+      case 1: return 'bg-green-500 hover:bg-green-700 text-secondary';
+      case 2: return 'bg-orange-500 hover:bg-orange-700 text-secondary';
+      case 3: return 'bg-red-500 hover:bg-red-700 text-secondary';
+      default: return 'bg-gray-500 hover:bg-gray-700 text-secondary';
+    }
+  };
+
+  const getStatusColor = (statut: string) => {
+    switch (statut.toLowerCase()) {
+      case 'validée': return 'bg-green-500 text-white';
+      case 'en attente de validation': return 'bg-orange-500 text-white';
+      case 'refusée': return 'bg-red-500 text-white';
     }
   };
 
   const formattedNote = note.toFixed(1);
-
   const url = pathname.split('/');
+  const participantType = url[1];
   let teamId = null;
 
-  const participantType = url[1]
   if (participantType === 'organisateurs') {
-    teamId = url[3]
+    teamId = url[3];
   }
 
-  // Fonction pour déterminer le bon lien en fonction du chemin actuel
   const getChasseLink = () => {
     return `/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chasses/${chasse.getIdChasse()}`;
   };
 
   const chasseimage = String(chasse.getImage());
 
-
   return (
     <Card className={`transition-shadow duration-200 hover:shadow-lg ${className}`}>
       <CardHeader className="relative p-0 aspect-video overflow-hidden">
         <div className="relative h-full w-full">
           <img src={chasseimage} alt="Chasse Image" className="h-full w-full object-cover" />
-
           <Badge
             className={`${getDifficultyColor(chasse.getDifficulte())} absolute right-2 top-2 cursor-default select-none px-2 py-1 text-xs font-bold`}
           >
@@ -134,6 +130,13 @@ const CardChasse = ({ chasse, className }: CardChasseProps) => {
           </span>
         </div>
         <div className="space-y-2">
+          {participantType === 'organisateurs' && (
+            <div className="flex items-center space-x-2">
+              <Badge className={`${getStatusColor(chasse.getStatut())} px-2 py-1 text-xs font-medium`}>
+                {chasse.getStatut()}
+              </Badge>
+            </div>
+          )}
           {chasse.getIdChateau() && (
             <div className="flex items-center space-x-2">
               <Castle className="h-4 w-4 text-gray-600" />

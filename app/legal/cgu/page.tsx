@@ -20,7 +20,7 @@ export default function CGUPage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Article 1 : Les mentions l&eacute;gales</h2>
             <p>
-              L&apos;édition du site https://www.chateautresor.fr est assurée par la Société SARL Prestige Heritage au capital de 1000 euros, immatriculée au RCS de Grenoble sous le numéro 123456789ABCDE
+              L&apos;édition du site chateau-tresor.vercel.app est assurée par la Société SARL Prestige Heritage au capital de 1000 euros, immatriculée au RCS de Grenoble sous le numéro 123456789ABCDE
               Siège social : 2 Place Doyen Gosse, 38000 Grenoble.
             </p>
             <p>
@@ -42,7 +42,7 @@ export default function CGUPage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Article 2 : Acc&egrave;s au site</h2>
             <p>
-              Le site https://www.chateautresor.fr permet à l&apos;Utilisateur un accès gratuit aux services suivants :
+              Le site chateau-tresor.vercel.app permet à l&apos;Utilisateur un accès gratuit aux services suivants :
               Le site internet propose les services suivants :
             </p>
             <p>
@@ -73,7 +73,7 @@ export default function CGUPage() {
               rendant à la page dédiée sur son espace personnel. Celle-ci sera effective dans un délai raisonnable.
               Tout événement dû à un cas de force majeure ayant pour conséquence un dysfonctionnement du site
               ou serveur et sous réserve de toute interruption ou modification en cas de maintenance, n&apos;engage
-              pas la responsabilité de https://www.chateautresor.fr. Dans ces cas, l&apos;Utilisateur accepte ainsi ne pas
+              pas la responsabilité de chateau-tresor.vercel.app. Dans ces cas, l&apos;Utilisateur accepte ainsi ne pas
               tenir rigueur à l&apos;éditeur de toute interruption ou suspension de service, même sans préavis.
               L&apos;Utilisateur a la possibilité de contacter le site par messagerie électronique à l&apos;adresse email de
               l&apos;éditeur communiqué à l&apos;ARTICLE 1</p>
@@ -127,12 +127,12 @@ export default function CGUPage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Article 5 : Responsabilit&eacute;</h2>
             <p>
-              Les sources des informations diffusées sur le site https://www.chateautresor.fr sont réputées fiables
+              Les sources des informations diffusées sur le site chateau-tresor.vercel.app sont réputées fiables
               mais le site ne garantit pas qu&apos;il soit exempt de défauts, d&apos;erreurs ou d&apos;omissions.
             </p>
             <p>
               Les informations communiquées sont présentées à titre indicatif et général sans valeur contractuelle.
-              Malgré des mises à jour régulières, le site https://www.chateautresor.fr ne peut être tenu responsable
+              Malgré des mises à jour régulières, le site chateau-tresor.vercel.app ne peut être tenu responsable
               de la modification des dispositions administratives et juridiques survenant après la publication. De
               même, le site ne peut être tenue responsable de l&apos;utilisation et de l&apos;interprétation de l&apos;information
               contenue dans ce site.
@@ -143,7 +143,7 @@ export default function CGUPage() {
               passe. Le site décline toute responsabilité.
             </p>
             <p>
-              Le site https://www.chateautresor.fr ne peut être tenu pour responsable d&apos;éventuels virus qui
+              Le site chateau-tresor.vercel.app ne peut être tenu pour responsable d&apos;éventuels virus qui
               pourraient infecter l&apos;ordinateur ou tout matériel informatique de l&apos;Internaute, suite à une utilisation, à
               l&apos;accès, ou au téléchargement provenant de ce site.
             </p>
@@ -160,7 +160,7 @@ export default function CGUPage() {
             <h2 className="text-xl font-semibold mb-4">Article 6 : Liens hypertextes</h2>
             <p>
               Des liens hypertextes peuvent être présents sur le site. L&apos;Utilisateur est informé qu&apos;en cliquant sur ces
-              liens, il sortira du site https://www.chateautresor.fr. Ce dernier n&apos;a pas de contrôle sur les pages web
+              liens, il sortira du site chateau-tresor.vercel.app. Ce dernier n&apos;a pas de contrôle sur les pages web
               sur lesquelles aboutissent ces liens et ne saurait, en aucun cas, être responsable de leur contenu.
             </p>
           </div>
@@ -177,13 +177,13 @@ export default function CGUPage() {
             <p>
               Les cookies sont de petits fichiers stockés temporairement sur le disque dur de l&apos;ordinateur de
               l&apos;Utilisateur par votre navigateur et qui sont nécessaires à l&apos;utilisation du site
-              https://www.chateautresor.fr. Les cookies ne contiennent pas d&apos;information personnelle et ne peuvent
+              chateau-tresor.vercel.app. Les cookies ne contiennent pas d&apos;information personnelle et ne peuvent
               pas être utilisés pour identifier quelqu&apos;un. Un cookie contient un identifiant unique, généré aléatoirement et donc anonyme. Certains cookies expirent à la fin de la visite de l&apos;Utilisateur, d&apos;autres
               restent.
             </p>
             <p>
               L&apos;information contenue dans les cookies est utilisée pour améliorer le site
-              https://www.chateautresor.fr.
+              chateau-tresor.vercel.app.
               En naviguant sur le site, L&apos;Utilisateur les accepte.
               L&apos;Utilisateur pourra désactiver ces cookies par l&apos;intermédiaire des paramètres figurant au sein de son
               logiciel de navigation.
@@ -245,7 +245,7 @@ export default function CGUPage() {
           <Separator className="my-6" />
 
           <p className="text-sm text-muted-foreground">
-            Version en vigueur au 17/01/2025. <Link href="https://www.chateautresor.fr">https://www.chateautresor.fr</Link> se r&eacute;serve le droit de modifier unilat&eacute;ralement les CGU. Consultation r&eacute;guli&egrave;re recommand&eacute;e.
+            Version en vigueur au 17/01/2025. <Link href="chateau-tresor.vercel.app">chateau-tresor.vercel.app</Link> se r&eacute;serve le droit de modifier unilat&eacute;ralement les CGU. Consultation r&eacute;guli&egrave;re recommand&eacute;e.
           </p>
         </div>
       </Card>

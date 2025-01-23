@@ -1,11 +1,12 @@
 import { IndiceParticipant } from "@/classes/IndiceParticipant"; // Ajustez le chemin d'import
-import { indiceDecouvert, updateIndiceParticipant, deleteIndiceParticipant } from "@/utils/dao/IndiceParticipantUtils";
+import { indiceDecouvert, updateIndiceParticipant, deleteIndiceParticipant, checkIfIndiceExists } from "@/utils/dao/IndiceParticipantUtils";
 import { UUID } from "crypto";
 
 jest.mock('@/utils/dao/IndiceParticipantUtils', () => ({
   indiceDecouvert: jest.fn(),
   updateIndiceParticipant: jest.fn(),
   deleteIndiceParticipant: jest.fn(),
+  checkIfIndiceExists: jest.fn(),
 }));
 
 describe('IndiceParticipant', () => {
@@ -97,25 +98,18 @@ describe('IndiceParticipant', () => {
     expect(result[0].getEstDecouvert()).toBe(true);
   });
 
-  test('checkIfIndiceExists should return true if indice exists', async () => {
-    jest.spyOn(global, 'fetch').mockResolvedValue({
-      ok: true,
-      json: jest.fn().mockResolvedValue({ exists: true }),
-    } as any);
+  test("checkIfIndiceExists should call the DAO function with correct IDs", async () => {
+    (checkIfIndiceExists as jest.Mock).mockResolvedValue(true);
 
-    const exists = await IndiceParticipant.checkIfIndiceExists(mockData.id_participant, mockData.id_indice);
+    const exists = await IndiceParticipant.checkIfIndiceExists(
+      mockData.id_participant,
+      mockData.id_indice
+    );
 
+    expect(checkIfIndiceExists).toHaveBeenCalledWith(
+      mockData.id_participant,
+      mockData.id_indice
+    );
     expect(exists).toBe(true);
-  });
-
-  test('checkIfIndiceExists should return false on error or no match', async () => {
-    jest.spyOn(global, 'fetch').mockResolvedValue({
-      ok: false,
-      json: jest.fn().mockResolvedValue({}),
-    } as any);
-
-    const exists = await IndiceParticipant.checkIfIndiceExists(mockData.id_participant, mockData.id_indice);
-
-    expect(exists).toBe(false);
   });
 });
