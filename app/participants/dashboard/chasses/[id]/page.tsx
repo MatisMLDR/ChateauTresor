@@ -80,16 +80,18 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                     <p className="mt-2 mb-4">
                         {dateDebut ? new Date(dateDebut).toLocaleDateString() : "Non spécifiée"} - {dateFin ? new Date(dateFin).toLocaleDateString() : "Non spécifiée"}
                     </p>
-                    <Button className="mb-2 px-16">
-                        <Link href={`/participants/dashboard/chasses/${id}/inscription`}>
-                            Réserver
-                        </Link>
-                    </Button>
-                    <Button className="mb-2 px-16 bg-gold text-gray-900 hover:bg-orange-200">
-                        <Link href={`/participants/dashboard/chasses/${id}/classements`}>
-                            Classement
-                        </Link>
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                        <Button className="mb-2 px-16">
+                            <Link href={`/participants/dashboard/chasses/${id}/inscription`}>
+                                Réserver
+                            </Link>
+                        </Button>
+                        <Button className="mb-2 px-16 bg-gold text-gray-900 hover:bg-orange-200">
+                            <Link href={`/participants/dashboard/chasses/${id}/classements`}>
+                                Classement
+                            </Link>
+                        </Button>
+                    </div>
 
                 </div>
 
