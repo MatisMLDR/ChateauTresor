@@ -15,7 +15,6 @@ describe('Avis', () => {
     note: 5,
     titre: "Great experience",
     description: "It was fantastic!",
-    nb_like: 10,
     date_modification: "2025-01-01",
     id_chasse: "f764ff5d-426f-4c6e-818f-46bfe510f544",
     id_participant: "e94f0bed-26e9-4bf4-a7a5-5da550ea6e9b"
@@ -32,7 +31,6 @@ describe('Avis', () => {
     expect(avis.getNote()).toBe(mockAvisData.note);
     expect(avis.getTitre()).toBe(mockAvisData.titre);
     expect(avis.getDescription()).toBe(mockAvisData.description);
-    expect(avis.getNbLike()).toBe(mockAvisData.nb_like);
     expect(avis.getDateModification()).toBe(mockAvisData.date_modification);
     expect(avis.getIdChasse()).toBe(mockAvisData.id_chasse);
     expect(avis.getIdParticipant()).toBe(mockAvisData.id_participant);
@@ -58,13 +56,20 @@ describe('Avis', () => {
     expect(fetchedAvis).toBeInstanceOf(Avis);
   });
 
-  test('create should call createAvis with correct data', async () => {
+  test("create should call createAvis with correct data", async () => {
     (createAvis as jest.Mock).mockResolvedValue(mockAvisData);
 
     const avis = new Avis(mockAvisData);
     await avis.create();
 
-    expect(createAvis).toHaveBeenCalledWith(avis);
+    expect(createAvis).toHaveBeenCalledWith({
+      note: avis.getNote(),
+      titre: avis.getTitre(),
+      description: avis.getDescription(),
+      nb_likes: avis.getNbLike(),
+      id_chasse: avis.getIdChasse(),
+      id_participant: avis.getIdParticipant(),
+    });
   });
 
   test('deleteId should call deleteAvis with correct id', async () => {
