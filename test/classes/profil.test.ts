@@ -43,7 +43,7 @@ describe("Profil Class", () => {
 
   it("should throw an error if Profil not found", async () => {
     (getProfilById as jest.Mock).mockResolvedValue(null);
-    await expect(Profil.readId("69bd765a-53b5-4639-b835-da7031139ecd")).rejects.toThrow("Profil introuvable");
+    await expect(Profil.readId("69bd765a-53b5-4639-b835-da7031139ecd")).rejects.toThrow("Profil not found");
   });
 
   it("should load Profil data into instance", async () => {
