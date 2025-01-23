@@ -420,6 +420,202 @@ BEFORE INSERT ON public.Appartenance_Equipe
 FOR EACH ROW
 EXECUTE FUNCTION update_date_appartenance_on_validation();
 
+-----------------------------
+-- Table Proprietaire_Chateau
+-----------------------------
+CREATE POLICY "Propriétaires peuvent gérer leur propre château" 
+ON Proprietaire_Chateau 
+FOR ALL 
+USING (
+  id_user = auth.uid()
+);
+
+-----------------------------
+-- Table Chateau
+-----------------------------
+CREATE POLICY "Tout le monde peut voir les châteaux" 
+ON Chateau 
+FOR SELECT 
+USING (true);
+
+CREATE POLICY "Propriétaires peuvent gérer leurs châteaux" 
+ON Chateau 
+FOR ALL 
+USING (
+  id_proprietaire IN (
+    SELECT id_proprietaire 
+    FROM Proprietaire_Chateau 
+    WHERE id_user = auth.uid()
+  )
+);
+
+-----------------------------
+-- Table Equipe_Organisatrice
+-----------------------------
+CREATE POLICY "Membres peuvent voir leur équipe" 
+ON Equipe_Organisatrice 
+FOR SELECT 
+USING (
+  id_equipe IN (
+    SELECT id_equipe 
+    FROM Appartenance_Equipe 
+    WHERE id_membre IN (
+      SELECT id_membre 
+      FROM Membre_equipe 
+      WHERE id_user = auth.uid()
+    )
+  )
+);
+
+CREATE POLICY "Créateurs peuvent modifier leur équipe" 
+ON Equipe_Organisatrice 
+FOR UPDATE 
+USING (
+  EXISTS (
+    SELECT 1 
+    FROM Appartenance_Equipe 
+    WHERE id_equipe = Equipe_Organisatrice.id_equipe 
+      AND role_equipe = 'Créateur' 
+      AND id_membre IN (
+        SELECT id_membre 
+        FROM Membre_equipe 
+        WHERE id_user = auth.uid()
+      )
+  )
+);
+
+-----------------------------
+-- Table Membre_equipe
+-----------------------------
+CREATE POLICY "Utilisateurs peuvent gérer leur propre membre d'équipe" 
+ON Membre_equipe 
+FOR ALL 
+USING (id_user = auth.uid());
+
+-----------------------------
+-- Table Appartenance_Equipe
+-----------------------------
+CREATE POLICY "Administrateurs peuvent gérer les appartenances" 
+ON Appartenance_Equipe 
+FOR ALL 
+USING (
+  EXISTS (
+    SELECT 1 
+    FROM Appartenance_Equipe ae
+    JOIN Membre_equipe me ON ae.id_membre = me.id_membre
+    WHERE me.id_user = auth.uid()
+      AND ae.role_equipe IN ('Créateur', 'Administrateur')
+  )
+);
+
+-----------------------------
+-- Table Invitations_Equipe
+-----------------------------
+CREATE POLICY "Administrateurs peuvent gérer les invitations" 
+ON Invitations_Equipe 
+FOR ALL 
+USING (
+  EXISTS (
+    SELECT 1 
+    FROM Appartenance_Equipe 
+    WHERE id_equipe = Invitations_Equipe.id_equipe 
+      AND role_equipe IN ('Créateur', 'Administrateur') 
+      AND id_membre IN (
+        SELECT id_membre 
+        FROM Membre_equipe 
+        WHERE id_user = auth.uid()
+      )
+  )
+);
+
+-----------------------------
+-- Table Participant
+-----------------------------
+CREATE POLICY "Utilisateurs peuvent gérer leur participant" 
+ON Participant 
+FOR ALL 
+USING (id_user = auth.uid());
+
+-----------------------------
+-- Table Chasse
+-----------------------------
+CREATE POLICY "Tout le monde peut voir les chasses publiées" 
+ON Chasse 
+FOR SELECT 
+USING (statut = 'Validée');
+
+CREATE POLICY "Organisateurs peuvent gérer leurs chasses" 
+ON Chasse 
+FOR ALL 
+USING (
+  id_equipe IN (
+    SELECT id_equipe 
+    FROM Appartenance_Equipe 
+    WHERE role_equipe IN ('Créateur', 'Organisateur') 
+      AND id_membre IN (
+        SELECT id_membre 
+        FROM Membre_equipe 
+        WHERE id_user = auth.uid()
+      )
+  )
+);
+
+-----------------------------
+-- Table Participation
+-----------------------------
+CREATE POLICY "Participants peuvent gérer leurs participations" 
+ON Participation 
+FOR ALL 
+USING (
+  id_participant IN (
+    SELECT id_participant 
+    FROM Participant 
+    WHERE id_user = auth.uid()
+  )
+);
+
+-----------------------------
+-- Table Avis
+-----------------------------
+CREATE POLICY "Tout le monde peut voir les avis" 
+ON Avis 
+FOR SELECT 
+USING (true);
+
+CREATE POLICY "Auteurs peuvent gérer leurs avis" 
+ON Avis 
+FOR ALL 
+USING (
+  id_participant IN (
+    SELECT id_participant 
+    FROM Participant 
+    WHERE id_user = auth.uid()
+  )
+);
+
+-----------------------------
+-- Table Enigme
+-----------------------------
+CREATE POLICY "Organisateurs peuvent gérer les énigmes" 
+ON Enigme 
+FOR ALL 
+USING (
+  id_chasse IN (
+    SELECT id_chasse 
+    FROM Chasse 
+    WHERE id_equipe IN (
+      SELECT id_equipe 
+      FROM Appartenance_Equipe 
+      WHERE role_equipe IN ('Créateur', 'Organisateur') 
+        AND id_membre IN (
+          SELECT id_membre 
+          FROM Membre_equipe 
+          WHERE id_user = auth.uid()
+        )
+    )
+  )
+);
+
 -- Insert data into profiles
 INSERT INTO public.profiles (id, username, updated_at, email, birthday, email_confirm, nom, adresse, ville, code_postal,
                              stripe_id, plan, prenom)
