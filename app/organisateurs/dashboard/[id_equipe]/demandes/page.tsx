@@ -13,7 +13,7 @@ const Demandes = async ({ params }: { params: { id_equipe: UUID } }) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-semibold text-gray-800 mb-8">
-        Demandes d'appartenance à l'équipe {equipe.getNom()}  
+        Demandes d&apos;appartenance à l&apos;équipe {equipe.getNom()}  
       </h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
