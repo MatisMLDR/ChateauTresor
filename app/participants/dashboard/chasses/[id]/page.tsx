@@ -80,16 +80,18 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                     <p className="mt-2 mb-4">
                         {dateDebut ? new Date(dateDebut).toLocaleDateString() : "Non spécifiée"} - {dateFin ? new Date(dateFin).toLocaleDateString() : "Non spécifiée"}
                     </p>
-                    <Button className="mb-2 px-16">
-                        <Link href={`/participants/dashboard/chasses/${id}/inscription`}>
-                            Réserver
-                        </Link>
-                    </Button>
-                    <Button className="mb-2 px-16 bg-gold text-gray-900 hover:bg-orange-200">
-                        <Link href={`/participants/dashboard/chasses/${id}/classements`}>
-                            Classement
-                        </Link>
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                        <Button className="mb-2 px-16">
+                            <Link href={`/participants/dashboard/chasses/${id}/inscription`}>
+                                Réserver
+                            </Link>
+                        </Button>
+                        <Button className="mb-2 px-16 bg-gold text-gray-900 hover:bg-orange-200">
+                            <Link href={`/participants/dashboard/chasses/${id}/classements`}>
+                                Classement
+                            </Link>
+                        </Button>
+                    </div>
 
                 </div>
 
@@ -126,7 +128,7 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                                             <AvatarFallback>{profile.getNom().charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <p className="font-semibold">{profile.getNom() + " " + profile.getPrenom()}</p>
+                                            <p className="font-semibold">{`${avis.getTitre() && (`${avis.getTitre()} - `)}`}{profile.getNom() + " " + profile.getPrenom()}</p>
                                             <div className="flex items-center">
                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                     <Star

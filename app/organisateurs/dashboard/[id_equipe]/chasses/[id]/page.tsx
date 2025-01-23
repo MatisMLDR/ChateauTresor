@@ -67,7 +67,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
           <p className="mb-4 text-gray-700">{chasse.getDescription()}</p>
           <p className="mb-2 flex items-center">
             Lieu : <Link href={`/organisateurs/chateaux/${chasse.getIdChateau()}`} className="text-blue-600 hover:underline ml-1 flex justify-around items-center">
-              {chateau.getLocalisation()} <ExternalLink className="w-4 h-4 ml-1" />
+              {chateau.getNom()} <ExternalLink className="w-4 h-4 ml-1" />
             </Link>
           </p>
           <p className="mb-2">Durée estimée : {chasse.getDureeEstime()} minutes</p>
