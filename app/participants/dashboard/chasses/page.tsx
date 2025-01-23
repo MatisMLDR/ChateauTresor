@@ -26,7 +26,7 @@ const ChasseListPage: React.FC = () => {
   const [filteredChasses, setFilteredChasses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const minPrice = 0; // Connecter à la base de donnéees
-  const maxPrice = 1000; // Idem
+  const maxPrice = 100; // Idem
   const [filters, setFilters] = useState({
     priceRange: [minPrice, maxPrice] as [number, number],
     duration: '',
@@ -145,8 +145,8 @@ const ChasseListPage: React.FC = () => {
             <div>
               <Label htmlFor="priceRange">Prix</Label>
               <RangeSlider
-                min={0}
-                max={1000}
+                min={minPrice}
+                max={maxPrice}
                 defaultValue={filters.priceRange}
                 onValueChange={handlePriceRangeChange}
               />
