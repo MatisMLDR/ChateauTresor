@@ -198,6 +198,10 @@ export function NavProjects({
     }
   };
 
+  if(lastThreeHunts.length === 0) {
+    return;
+  }
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>
