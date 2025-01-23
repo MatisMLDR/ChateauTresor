@@ -603,14 +603,20 @@ class Chasse {
 
   public async addParticipant(id_participant: UUID, jour: string): Promise<void> {
     
-    const participation = {
-      id_participant: id_participant,
-      id_chasse: this.id_chasse,
-      jour: jour,
-    }
-
-    await addParticipation(participation);
     
+    try {
+      const score = await this.getScoreInitial();
+      const participation = {
+        id_participant: id_participant,
+        id_chasse: this.id_chasse,
+        jour: jour,
+        score: score
+      }
+      await addParticipation(participation);
+
+    } catch (error) {
+      throw new Error('Erreur lors de l\'ajout du participant');
+    }
   }
 
   public async getScoreInitial(): Promise<number> {

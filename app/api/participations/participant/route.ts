@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     console.log(body);
     // Vérification des paramètres
-    if (!body.id_participant || !body.id_chasse || !body.jour) {
+    if (!body.id_participant || !body.id_chasse || !body.jour || !body.score) {
       return NextResponse.json(
         { error: 'Paramètre id_participant, jour ou id_chasse invalide ou manquant' },
         { status: 400 }
