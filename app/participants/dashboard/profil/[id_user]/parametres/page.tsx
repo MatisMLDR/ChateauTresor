@@ -37,7 +37,7 @@ const ProfileParameters = async ({ params }: { params: { id_user: string} }) => 
           ) : (
             <>
               <Avatar className="h-20 w-20">
-                <AvatarFallback className={'text-xl'}>{profil?.getPrenom().charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className={'text-2xl bg-gold text-primary font-semibold'}>{profil?.getPrenom().charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>
                 <h1 className="text-3xl font-bold">{profil?.getUsername()}</h1>

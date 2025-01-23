@@ -146,19 +146,6 @@ const ProfileForm = ({ initialData }: { initialData: ProfilType }) => {
         </div>
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium">Adresse</label>
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            value={profil.adresse ?? ''}
-            placeholder="10 rue de la Paix"
-            name="adresse"
-            onChange={(e) => handleInputChange('adresse', e.target.value)}
-          />
-        </div>
-      </div>
-      <div className="space-y-2">
         <label className="text-sm font-medium">Code Postal</label>
         <div className="relative">
           <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -178,7 +165,7 @@ const ProfileForm = ({ initialData }: { initialData: ProfilType }) => {
             <Button
               variant={"outline"}
               className={cn(
-                `w-[240px] justify-start text-left font-normal`,
+                `w-full justify-start text-left font-normal`,
                 !date && "text-muted-foreground"
               )}
             >
