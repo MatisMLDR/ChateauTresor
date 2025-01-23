@@ -4,7 +4,8 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Trophy } from 'lucide-react';
-import { getAllRecompensesByChasse, getRecompensesByChasseAndScore } from '@/utils/dao/RecompenseUtils';
+import { getRecompensesByChasseAndScore } from '@/utils/dao/RecompenseUtils';
+import { Button } from '@/components/ui/button';
 import Loader from '@/components/global/loader';
 import Recompense from '@/classes/Recompense';
 import { UUID } from 'crypto';
@@ -115,7 +116,7 @@ const GameRecompense = ({chasseId}: GameRecompenseProps) => {
   }, [score]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 relative overflow-hidden">
+    <div className="h-full flex flex-col items-center justify-center text-primary p-6 relative overflow-hidden gap-4">
       {/* Confettis */}
       {[...Array(20)].map((_, index) => (
         <div
@@ -137,8 +138,8 @@ const GameRecompense = ({chasseId}: GameRecompenseProps) => {
       {/* Titre et message de félicitations */}
       <h1 className="text-5xl font-bold mb-6 animate-pulse">Félicitations !</h1>
       <p className="text-xl mb-8 text-center">
-        Vous avez terminé la chasse avec succès. Vous avez {score} points <br />
-        Choisissez votre récompense :
+        Vous avez terminé la chasse avec succès. Vous avez {score ? score : "X"} points <br />
+        Choisissez votre récompense et allez voir l&apos;organisateur sur place
       </p>
 
       {/* Affichage des récompenses */}
@@ -153,35 +154,38 @@ const GameRecompense = ({chasseId}: GameRecompenseProps) => {
           <h2 className="text-3xl font-bold">{selectedRecompense.getNom()}</h2>
           <p className="text-xl text-center">{selectedRecompense.getDescription()}</p>
           <p className="text-xl font-semibold">Valeur : {selectedRecompense.getValeur()} points</p>
-          <button
-            onClick={() => setSelectedRecompense(null)} // Revenir à la liste des récompenses
-            className="bg-white text-blue-600 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105"
-          >
+          <Button
+            onClick={() => setSelectedRecompense(null)}
+            className="bg-gold hover:bg-gold text-primary
+                    px-6 py-3 rounded-lg shadow-md transition-all duration-300 transform 
+                    hover:scale-105 font-semibold" >
             Retour aux récompenses
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {recompenses.map((recompense) => (
-            <button
-              key={recompense.getIdRecompense()}
-              onClick={() => setSelectedRecompense(recompense)} // Sélectionner la récompense
-              className="bg-white text-blue-600 px-6 py-4 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 flex flex-col items-center"
-            >
-              <h2 className="text-xl font-bold">{recompense.getNom()}</h2>
-              <p className="text-lg font-semibold mt-2">Valeur : {recompense.getValeur()} points</p>
-            </button>
+            <Button
+            key={recompense.getIdRecompense()}
+            onClick={() => setSelectedRecompense(recompense)}
+            variant="outline"
+            className="h-full w-full flex flex-col items-center justify-center p-6 space-y-2 
+                     transition-all duration-300 hover:scale-105 hover:bg-primary/5 
+                     hover:border-primary hover:shadow-lg border-2"
+          >
+            <h2 className="text-xl font-bold text-primary">{recompense.getNom()}</h2>
+            <p className="text-lg font-semibold text-muted-foreground">
+              Valeur : {recompense.getValeur()} points
+            </p>
+          </Button>
           ))}
         </div>
       )}
 
       {/* Bouton de retour */}
-      <button
-        onClick={handleBack}
-        className="mt-8 bg-white text-blue-600 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105"
-      >
+      <Button onClick={handleBack} variant={'outline'} >
         Retour aux chasses
-      </button>
+      </Button>
 
       {/* Styles CSS pour les confettis */}
       <style jsx>{`
