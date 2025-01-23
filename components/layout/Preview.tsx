@@ -6,20 +6,20 @@ const Preview = ({ type = "participant" }: { type?: "participant" | "organisateu
   const participantPreview = [
     {
       title: "Découvrez des chasses passionnantes",
-      text: "Parcourez notre catalogue de chasses au trésor personnalisables...",
-      image: "/default-castle.webp", // A REMPLACER AVEC PREVIEW EN GIF
-      alt: "Interface participant"
+      text: "Parcourez notre catalogue de chasses au trésor...",
+      image: "/chasses.png", // A REMPLACER AVEC PREVIEW EN GIF
+      alt: "Marketplace de chasses au trésor"
     },
     {
       title: "Participer sur place à l'aide de votre smartphone",
       text: "Résolvez des énigmes et gagnez des récompenses...",
-      image: "/default-castle.webp", // A REMPLACER AVEC PREVIEW EN GIF
+      image: "/jouer.png", // A REMPLACER AVEC PREVIEW EN GIF
       alt: "Chasse au trésor intéractive"
     },
     {
       title: "Dashboard de progression & classements",
       text: "Visualisez votre progression et comparez vos résultats...",
-      image: "/default-castle.webp", // A REMPLACER AVEC PREVIEW EN GIF
+      image: "/profil_participant.png", // A REMPLACER AVEC PREVIEW EN GIF
       alt: "Tableau de bord participant"
     },
   ];
@@ -28,19 +28,19 @@ const Preview = ({ type = "participant" }: { type?: "participant" | "organisateu
     {
       title: "Créez vos propres chasses",
       text: "Notre interface intuitive vous permet de créer des énigmes...",
-      image:"/default-castle.webp", // A REMPLACER AVEC PREVIEW EN GIF
+      image:"/creer_chasse.png", // A REMPLACER AVEC PREVIEW EN GIF
       alt: "Éditeur de chasses"
     },
     {
       title: "Analytiques détaillées",
       text: "Suivez les performances de vos chasses avec des statistiques...",
-      image:"/default-castle.webp", // A REMPLACER AVEC PREVIEW EN GIF
+      image:"/analytics.png", // A REMPLACER AVEC PREVIEW EN GIF
       alt: "Tableau d'analytiques"
     },
     {
       title: "Configurer votre équipe",
       text: "Ajoutez des membres à votre équipe et gérez leurs rôles...",
-      image:"/default-castle.webp", // A REMPLACER AVEC PREVIEW EN GIF
+      image:"/equipes.png", // A REMPLACER AVEC PREVIEW EN GIF
       alt: "Gestion d'équipe"
     },
   ];

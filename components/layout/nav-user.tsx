@@ -58,10 +58,6 @@ export function NavUser({ type }: SideBarProps) {
     fetchUser();
   });
 
-  if (!params.id_equipe) {
-    return <Skeleton className="h-12 w-full" />;
-  }
-
   let profileLink;
 
   switch (type) {

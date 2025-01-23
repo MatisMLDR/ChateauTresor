@@ -123,7 +123,7 @@ export default function GameIndice({chasseId, enigmeId}: GameIndiceProps) {
                 ))}
               </div>
               <div className="text-sm text-muted-foreground">
-                Degré d&apos;aide : {indice.degre_aide}/5
+                Degré d&apos;aide : {indice.degre_aide}/3
               </div>
             </div>
           </CardContent>
