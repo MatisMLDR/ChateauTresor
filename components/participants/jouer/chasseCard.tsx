@@ -1,10 +1,8 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button'; // Import du composant Button personnalisé
+import { Button } from '@/components/ui/button';
 
 interface ChasseCardProps {
   chasse: any;
@@ -27,6 +25,7 @@ const ChasseCard: React.FC<ChasseCardProps> = ({ chasse, isAchetee, onJouer }) =
       case 1: return 'Facile';
       case 2: return 'Moyen';
       case 3: return 'Difficile';
+      default: return 'Inconnu';
     }
   };
 
@@ -35,11 +34,13 @@ const ChasseCard: React.FC<ChasseCardProps> = ({ chasse, isAchetee, onJouer }) =
       case 1: return 'bg-green-500';
       case 2: return 'bg-orange-500';
       case 3: return 'bg-red-500';
+      default: return 'bg-gray-500';
     }
   };
 
+  // Modification ici pour utiliser chasseId
   const getChasseLink = () => {
-    return `/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/chasses/${chasse.id}`;
+    return `/${participantType}/dashboard${teamId ? `/${teamId}` : ''}/jouer?chasseId=${chasse.id_chasse}`;
   };
 
   return (
@@ -60,14 +61,23 @@ const ChasseCard: React.FC<ChasseCardProps> = ({ chasse, isAchetee, onJouer }) =
       <p className="text-gray-800 font-medium">Prix : {chasse.prix} €</p>
 
       <div className="mt-4 space-y-2">
-        <Link href={getChasseLink()} passHref legacyBehavior>
-          <Button 
-            onClick={onJouer}
-            className="w-full"
+        {isAchetee ? (
+          <Link href={getChasseLink()} passHref>
+            <Button 
+              onClick={onJouer}
+              className="w-full"
+            >
+              Jouer
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            disabled
+            className="w-full bg-gray-300 text-gray-600 cursor-not-allowed"
           >
-            Jouer
+            Non achetée
           </Button>
-        </Link>
+        )}
       </div>
     </div>
   );
