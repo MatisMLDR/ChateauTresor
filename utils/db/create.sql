@@ -420,30 +420,33 @@ USING (
 -----------------------------
 -- Table Equipe_Organisatrice
 -----------------------------
-CREATE POLICY "Membres peuvent voir leur équipe" 
+
+CREATE POLICY "Membres validés peuvent voir leur équipe" 
 ON Equipe_Organisatrice 
 FOR SELECT 
 USING (
   id_equipe IN (
     SELECT id_equipe 
     FROM Appartenance_Equipe 
-    WHERE id_membre IN (
-      SELECT id_membre 
-      FROM Membre_equipe 
-      WHERE id_user = auth.uid()
-    )
+    WHERE statut = 'Validé'  -- Ajout de la condition de statut
+      AND id_membre IN (
+        SELECT id_membre 
+        FROM Membre_equipe 
+        WHERE id_user = auth.uid()
+      )
   )
 );
 
-CREATE POLICY "Créateurs peuvent modifier leur équipe" 
-ON Equipe_Organisatrice 
-FOR UPDATE 
+-- Pour les opérations sur les chasses
+CREATE POLICY "Organisateurs validés peuvent gérer leurs chasses" 
+ON Chasse 
+FOR ALL 
 USING (
-  EXISTS (
-    SELECT 1 
+  id_equipe IN (
+    SELECT id_equipe 
     FROM Appartenance_Equipe 
-    WHERE id_equipe = Equipe_Organisatrice.id_equipe 
-      AND role_equipe = 'Créateur' 
+    WHERE statut = 'Validé'  -- Condition ajoutée
+      AND role_equipe IN ('Créateur', 'Organisateur') 
       AND id_membre IN (
         SELECT id_membre 
         FROM Membre_equipe 
@@ -479,7 +482,8 @@ USING (
 -----------------------------
 -- Table Invitations_Equipe
 -----------------------------
-CREATE POLICY "Administrateurs peuvent gérer les invitations" 
+-- Pour les invitations
+CREATE POLICY "Administrateurs validés peuvent gérer les invitations" 
 ON Invitations_Equipe 
 FOR ALL 
 USING (
@@ -487,6 +491,7 @@ USING (
     SELECT 1 
     FROM Appartenance_Equipe 
     WHERE id_equipe = Invitations_Equipe.id_equipe 
+      AND statut = 'Validé'  -- Condition ajoutée
       AND role_equipe IN ('Créateur', 'Administrateur') 
       AND id_membre IN (
         SELECT id_membre 
@@ -512,19 +517,27 @@ ON Chasse
 FOR SELECT 
 USING (statut = 'Validée');
 
-CREATE POLICY "Organisateurs peuvent gérer leurs chasses" 
+CREATE POLICY "Les membres des équipes validées peuvent voir les chasses" 
+ON Chasse 
+FOR SELECT 
+USING true
+
+-- Nouvelle politique avec vérification du statut de l'équipe
+CREATE POLICY "Organisateurs vérifiés peuvent gérer leurs chasses" 
 ON Chasse 
 FOR ALL 
 USING (
-  id_equipe IN (
-    SELECT id_equipe 
-    FROM Appartenance_Equipe 
-    WHERE role_equipe IN ('Créateur', 'Organisateur') 
-      AND id_membre IN (
-        SELECT id_membre 
-        FROM Membre_equipe 
-        WHERE id_user = auth.uid()
-      )
+  EXISTS (
+    SELECT 1
+    FROM Equipe_Organisatrice
+    INNER JOIN Appartenance_Equipe 
+      ON Equipe_Organisatrice.id_equipe = Appartenance_Equipe.id_equipe
+    INNER JOIN Membre_equipe 
+      ON Appartenance_Equipe.id_membre = Membre_equipe.id_membre
+    WHERE Chasse.id_equipe = Equipe_Organisatrice.id_equipe
+      AND Equipe_Organisatrice.statut_verification = 'Vérifiée' -- Bloque les équipes non vérifiées
+      AND Membre_equipe.id_user = auth.uid()
+      AND Appartenance_Equipe.statut = 'Validé' -- Vérifie que le membre est validé
   )
 );
 

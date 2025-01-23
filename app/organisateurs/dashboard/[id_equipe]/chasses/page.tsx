@@ -25,12 +25,12 @@ export default function OrganisateurChassesPage() {
           })
         );
 
-        // Filtrage des chasses validée
-        const chassesVerifiees = chassesAvecDetails.filter(
-          chasse => chasse.getStatut() === "Validée"
+        // Filtrer les chasses selon les statuts souhaités
+        const chassesFiltrees = chassesAvecDetails.filter(chasse => 
+          ["Validée", "En attente de validation", "Refusée"].includes(chasse.getStatut())
         );
 
-        setChasses(chassesVerifiees);
+        setChasses(chassesFiltrees);
       } catch (error) {
         console.error('Erreur lors de la récupération des chasses :', error);
       } finally {
@@ -47,7 +47,7 @@ export default function OrganisateurChassesPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Mes Chasses Vérifiées</h1>
+      <h1 className="text-3xl font-bold mb-8">Gestion des Chasses</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {chasses.map((chasse) => (
           <CardChasse key={chasse.getIdChasse()} chasse={chasse} />
