@@ -46,7 +46,7 @@ const Navbar = ({ type = 'participant' }: NavbarProps) => {
         </Button>
         <Button className='max-md:hidden'>
           <Link className="w-full text-white text-sm font-medium" href={`/authentication/signup?redirect=${type}`}>
-            S'inscrire
+            S&apos;inscrire
           </Link>
         </Button>
         {/* Menu mobile */}
@@ -98,7 +98,7 @@ const Navbar = ({ type = 'participant' }: NavbarProps) => {
             </Button>
             <Button className="md:hidden w-full">
               <Link className="w-full text-white text-sm font-medium" href={`/authentication/signup?redirect=${type}`}>
-                S'inscrire
+                S&apos;inscrire
               </Link>
             </Button>
           </div>
