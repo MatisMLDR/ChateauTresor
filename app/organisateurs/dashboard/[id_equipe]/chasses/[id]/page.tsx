@@ -15,7 +15,7 @@ import Chateau from '@/classes/Chateau';
 
 export default async function OrganisateurChassePage({ params }: { params: { id_equipe: UUID; id: UUID } }) {
   // Récupérer les paramètres dynamiques
-  const { id_equipe, id } = params;
+  const { id_equipe, id } = await params;
 
   // Utiliser l'ID pour récupérer les données de la chasse
   const chasse = await Chasse.readId(id);
@@ -43,7 +43,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
         <div>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-3xl font-bold">{chasse.getTitre()}</h1>
-            {chasse.getIdEquipe() === params.id_equipe && (
+            {chasse.getIdEquipe() === id_equipe && (
               <div className="flex items-center space-x-2">
               {/* Bouton de modification de la chasse */}
               <Link href={`/organisateurs/dashboard/${id_equipe}/modifier_chasse/${chasse.getIdChasse()}`}>
