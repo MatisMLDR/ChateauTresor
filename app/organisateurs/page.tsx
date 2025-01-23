@@ -5,6 +5,7 @@ import Pricing from "@/components/layout/Pricing"
 import Testimonials from "@/components/layout/Testimonials"
 import Features from "@/components/layout/Features"
 import Hero from "@/components/layout/Hero"
+import Preview from "@/components/layout/Preview"
 
 // This makes the page dynamic instead of static
 export const revalidate = 3600 // Revalidate every hour
@@ -17,6 +18,7 @@ export default async function LandingPage() {
       <Navbar type="organisateur" />
       <main className="flex-1">
         <Hero type="organisateur" />
+        <Preview type="organisateur" />
         <Features type="organisateur" />
         <Testimonials />
         <Pricing />

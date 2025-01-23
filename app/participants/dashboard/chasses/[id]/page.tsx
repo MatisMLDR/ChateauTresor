@@ -141,6 +141,11 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                                         </div>
                                     </div>
                                 </div>
+                                {avis.getTitre() && (
+                                    <h3 className="text-xl font-bold text-gray-900 mt-4 mb-2">
+                                        {avis.getTitre()}
+                                    </h3>
+                                )}
                                 {avis.getDescription() && (
                                     <p className="mt-4 text-gray-700">{avis.getDescription()}</p>
                                 )}
