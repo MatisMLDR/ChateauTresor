@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Chasse from '@/classes/Chasse';
 import { Participant } from '@/classes/Participant';
 import { UUID } from 'crypto';
+import Loader from '@/components/global/loader';
 
 const ChasseList: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);
@@ -48,7 +49,7 @@ const ChasseList: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return <Loader />;
   }
 
   return (
