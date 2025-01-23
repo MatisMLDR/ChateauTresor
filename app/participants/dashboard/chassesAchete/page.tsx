@@ -8,6 +8,7 @@ import Chasse from '@/classes/Chasse';
 import { Participant } from '@/classes/Participant';
 import { UUID } from 'crypto';
 import Loader from '@/components/global/loader';
+import CardChasse from '@/components/global/CardChasse';
 
 const ChasseList: React.FC = () => {
   const [chasses, setChasses] = useState<any[]>([]);

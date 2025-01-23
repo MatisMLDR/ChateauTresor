@@ -53,7 +53,7 @@ const PageVisualisationChasse: React.FC = () => {
     if (params.id) chargerDonneesChasse();
   }, [params.id]);
 
-  const modifierStatut = async (nouveauStatut: 'Acceptée' | 'Refusée') => {
+  const modifierStatut = async (nouveauStatut: 'Validée' | 'Refusée') => {
     try {
       const { error } = await supabase
         .from('chasse')
@@ -86,7 +86,7 @@ const PageVisualisationChasse: React.FC = () => {
             Refuser la chasse
           </Button>
           <Button 
-            onClick={() => modifierStatut('Acceptée')}
+            onClick={() => modifierStatut('Validée')}
             className="px-6 py-3"
           >
             Accepter la chasse

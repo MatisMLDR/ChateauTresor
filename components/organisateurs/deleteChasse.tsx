@@ -1,4 +1,4 @@
-'use client'; // Indique que ce composant est un Client Component
+'use client';
 
 import { Button } from "@/components/ui/button";
 import { Trash2 } from 'lucide-react';
@@ -14,23 +14,27 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { UUID } from 'crypto';
+import Chasse from "@/classes/Chasse";
+import { useParams } from 'next/navigation';
 
-export function DeleteChasseButton({ chasseId }: { chasseId: UUID }) {
+interface DeleteChasseButtonProps {
+  chasseId: UUID;
+  id_equipe: UUID; // Ajout de la prop id_equipe
+}
+
+export function DeleteChasseButton({ chasseId, id_equipe }: DeleteChasseButtonProps) {
   const handleDeleteChasse = async () => {
     try {
-      // Appeler l'API pour supprimer la chasse
       const response = await fetch(`/api/chasses/${chasseId}`, {
         method: 'DELETE',
       });
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la suppression de la chasse');
-      }
+      if (!response.ok) throw new Error('Erreur lors de la suppression');
 
-      // Rediriger vers le tableau de bord après la suppression
-      window.location.href = '/organisateurs/dashboard';
+      // Utilisation de l'id_equipe dans la redirection
+      window.location.href = `/organisateurs/dashboard/${id_equipe}`;
     } catch (error) {
-      console.error('Erreur lors de la suppression de la chasse :', error);
+      console.error('Erreur lors de la suppression :', error);
     }
   };
 
@@ -43,15 +47,15 @@ export function DeleteChasseButton({ chasseId }: { chasseId: UUID }) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+          <AlertDialogTitle>Confirmation</AlertDialogTitle>
           <AlertDialogDescription>
-            Cette action supprimera définitivement cette chasse. Vous ne pourrez pas annuler cette action.
+            Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cette chasse ?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction onClick={handleDeleteChasse}>
-            Supprimer
+            Confirmer
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1,10 +1,10 @@
 'use client';
 
-import { ChevronsUpDown, LogOut, UserPen } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 import { Skeleton } from '@/components/ui/skeleton';
-import Link from 'next/link';
 import { SideBarProps } from '@/types';
+import { ChevronsUpDown, LogOut, UserPen } from 'lucide-react';
+import Link from 'next/link';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -22,16 +22,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-export function NavUser({type} : SideBarProps) {
+export function NavUser({ type }: SideBarProps) {
   const { isMobile } = useSidebar();
   const [firstLetter, setFirstLetter] = useState('');
   const [email, setEmail] = useState('');
   const [login, setLogin] = useState('');
   const [idUser, setIdUser] = useState('');
+  const [idEquipe, setIdEquipe] = useState<string | string[]>('');
+
+  const params = useParams();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -49,11 +52,26 @@ export function NavUser({type} : SideBarProps) {
         } catch (err) {
           console.error('Erreur lors de la récupération des détails du château :', err);
         }
-      } 
+      }
     };
 
     fetchUser();
   });
+
+  if (!params.id_equipe) {
+    return <Skeleton className="h-12 w-full" />;
+  }
+
+  let profileLink;
+
+  switch (type) {
+    case "participant":
+      profileLink = `/participants/dashboard/profil/${idUser}/parametres`;
+      break;
+    case "organisateur":
+      profileLink = `/organisateurs/dashboard/${params.id_equipe}/profil/${idUser}/parametres`;
+      break;
+  }
 
   return (
     <SidebarMenu>
@@ -110,17 +128,19 @@ export function NavUser({type} : SideBarProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <Link href={`/${type === "organisateur" ? "organisateurs" : type === "participant" ? "participants" : "proprietaires"}/dashboard/profil/${idUser}/parametres`}>
-                <DropdownMenuItem>
-                  <UserPen />
-                  Profil
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            {type != "proprietaire" && (
+              <DropdownMenuGroup>
+                <Link className='w-full h-full' href={profileLink!}>
+                  <DropdownMenuItem>
+                    <UserPen />
+                    Profil
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuGroup>
+            )}
+            {type != "proprietaire" && <DropdownMenuSeparator />}
             {/* TODO : Modifier le lien pour qu'il redirige vers la landing page correspondante */}
-            <DropdownMenuItem onClick={() => logout(type)}> 
+            <DropdownMenuItem onClick={() => logout(type)}>
               <LogOut />
               Déconnexion
             </DropdownMenuItem>

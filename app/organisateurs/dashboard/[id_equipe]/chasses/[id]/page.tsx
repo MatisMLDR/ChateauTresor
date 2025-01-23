@@ -53,7 +53,7 @@ export default async function OrganisateurChassePage({ params }: { params: { id_
               </Link>
 
               {/* Bouton de suppression de la chasse */}
-              <DeleteChasseButton chasseId={chasse.getIdChasse()} />
+              <DeleteChasseButton chasseId={chasse.getIdChasse()} id_equipe={chasse.getIdEquipe() as UUID} />
 
               {/* Bouton pour accéder aux QR codes */}
               <Link href={`/organisateurs/dashboard/${id_equipe}/chasses/${chasse.getIdChasse()}/qrcodes`}>
