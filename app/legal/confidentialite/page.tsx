@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="space-y-8">
           <p>
-            La présente politique de confidentialité s&apos;applique aux traitements de données personnelles effectués par la SARL Prestige Heritage dans le cadre de l&apos;exploitation du site <Link href="https://www.chateautresor.fr">https://www.chateautresor.fr</Link>.
+            La présente politique de confidentialité s&apos;applique aux traitements de données personnelles effectués par la SARL Prestige Heritage dans le cadre de l&apos;exploitation du site chateau-tresor.vercel.app.
           </p>
 
           <Separator />
