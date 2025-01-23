@@ -128,7 +128,7 @@ export default async function ChassePage({ params }: { params: { id: UUID } }) {
                                             <AvatarFallback>{profile.getNom().charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <p className="font-semibold">{profile.getNom() + " " + profile.getPrenom()}</p>
+                                            <p className="font-semibold">{`${avis.getTitre() && (`${avis.getTitre()} - `)}`}{profile.getNom() + " " + profile.getPrenom()}</p>
                                             <div className="flex items-center">
                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                     <Star
