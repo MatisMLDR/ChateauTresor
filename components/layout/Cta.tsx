@@ -21,9 +21,9 @@ const Cta = ({ type="participant" }: CtaProps) => {
             }
           </p>
           <div className="w-full max-w-sm">
-          <Button className="w-full bg-[#8797af] hover:bg-[#6d8096] text-white">
+          <Button className="w-full bg-[#f7c46d] hover:bg-gold text-primary">
           <Link
-          className="text-sm font-medium hover:underline underline-offset-4 text-white"
+          className="text-sm font-medium"
           href={`/authentication/login?redirect=${type}`}
           >
           Commencer Maintenant

@@ -6,7 +6,7 @@ const Testimonials = () => {
     {
       name: "Marie Lefreve",
       title: "Mère de famille",
-      text: "Merci Château Trésor, participer des chasses au trésor avec mes enfants n'a jamais été aussi simple. Une solution amusante et efficace !",
+      text: "Merci Château Trésor, participer à des chasses au trésor avec mes enfants n'a jamais été aussi simple. Une solution amusante et efficace !",
       image: "/user1.jpg",
     },
     {
@@ -18,7 +18,7 @@ const Testimonials = () => {
     {
       name: "Jean Dubois",
       title: "Entrepreneur en évènementiel",
-      text: "Un gain de temps incroyable. J'adorent l'expérience et je peux tout gérer facilement en quelques clics.",
+      text: "Un gain de temps incroyable. J'ai adoré l'expérience utilisateur et je peux tout gérer facilement en quelques clics.",
       image: "/user3.jpg",
     },
   ];
