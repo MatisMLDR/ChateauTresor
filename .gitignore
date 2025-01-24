@@ -518,7 +518,7 @@ DerivedData/
 .yarn/install-state.gz
 
 # local env files
-.env
+# .env
 .env*.local
 .env*.production
 
